@@ -1,1 +1,12 @@
-Please put your button somewhere here. :)
+<button nz-button nzType="primary" (click)="showAddChainModal()">
+    <span>Add Chain</span>
+  </button>
+  <nz-modal
+    [(nzVisible)]="isChainModalVisible"
+    nzTitle="Add Chain Name"
+    (nzOnCancel)="handleCancel()"
+    (nzOnOk)="handleOk()"
+    [nzOkLoading]="isOkLoading"
+  >
+    <input nz-input type="text" name="parserChainName" placeholder="Parser Chain Name">
+  </nz-modal>

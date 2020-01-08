@@ -16,12 +16,12 @@ import { environment } from '../environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ChainListPageComponent } from './chain-list-page/chain-list-page.component';
 import { CanDeactivateComponent } from './misc/can-deactivate-component';
 import { MainContainerComponent } from './misc/main/main.container';
 import { ThemeSwitchModule } from './misc/theme-switch/theme-switch.module';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { MonacoEditorService } from './services/monaco-editor.service';
-import { ChainListPageComponent } from './chain-list-page/chain-list-page.component';
 
 registerLocaleData(en);
 
