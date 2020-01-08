@@ -14,9 +14,10 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 import { environment } from '../environments/environment';
 
+import { ChainListPageModule } from './chain-list-page/chain-list-page.module'
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ChainListPageComponent } from './chain-list-page/chain-list-page.component';
 import { CanDeactivateComponent } from './misc/can-deactivate-component';
 import { MainContainerComponent } from './misc/main/main.container';
 import { ThemeSwitchModule } from './misc/theme-switch/theme-switch.module';
@@ -34,7 +35,6 @@ export const metaReducers: MetaReducer<{}>[] = !environment.production
     AppComponent,
     MainContainerComponent,
     PageNotFoundComponent,
-    ChainListPageComponent
   ],
   imports: [
     BrowserModule,
@@ -48,6 +48,7 @@ export const metaReducers: MetaReducer<{}>[] = !environment.production
     StoreDevtoolsModule.instrument(),
     EffectsModule.forRoot([]),
     ThemeSwitchModule,
+    ChainListPageModule,
     MonacoEditorModule.forRoot({
       onMonacoLoad() {
         monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
