@@ -22,4 +22,8 @@ export class ChainListPageService {
         return this.http.get(this.BASE_URL + 'chains');
     }
 
+    public deleteChain(chainId: string) {
+        return this.http.delete(this.BASE_URL + 'chains/' + chainId);
+    }
+
 }

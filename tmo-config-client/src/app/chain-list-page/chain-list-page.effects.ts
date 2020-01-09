@@ -56,11 +56,10 @@ export class ChainListEffects {
   deleteChain$: Observable<Action> = this.actions$.pipe(
     ofType(fromActions.DELETE_CHAIN),
     switchMap((action: fromActions.DeleteChainAction) => {
-      return of([
-        { id: 'dummychainA', name: 'Dummy Chain A' },
-      ])
+      return this.chainListService.deleteChain(action.chainId)
         .pipe(
           map((chains: ChainModel[]) => {
+            this.messageService.create('success', action.chainId + ' deleted Successfully');
             return new fromActions.DeleteChainSuccessAction(chains);
           }),
           catchError((error: { message: string }) => {

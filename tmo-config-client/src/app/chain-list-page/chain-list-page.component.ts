@@ -43,6 +43,9 @@ export class ChainListPageComponent implements OnInit {
     this.isChainModalVisible = false;
   }
 
+  deleteChain(event: Event, chainId: string): void {
+    this.store.dispatch(new fromActions.DeleteChainAction(chainId));
+  }
   handleCancel(): void {
     this.isChainModalVisible = false;
   }
