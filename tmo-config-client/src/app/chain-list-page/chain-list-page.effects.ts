@@ -41,10 +41,10 @@ export class ChainListEffects {
   createChain$: Observable<Action> = this.actions$.pipe(
     ofType(fromActions.CREATE_CHAIN),
     switchMap((action: fromActions.CreateChainAction) => {
-      return this.chainListService.createEnrichmentType(action.payload)
+      return this.chainListService.createChain(action.newChain)
         .pipe(
           map((chain: ChainModel) => {
-            this.messageService.create('success', action.payload.name + ' New Chain has been created');
+            this.messageService.create('success', action.newChain.name + ' New Chain has been created');
             return new fromActions.CreateChainSuccessAction(chain);
           }),
           catchError((error: { message: string }) => {
