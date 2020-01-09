@@ -44,12 +44,12 @@ export class ChainListEffects {
       return this.chainListService.createChain(action.newChain)
         .pipe(
           map((chain: ChainModel) => {
-            this.messageService.create('success', action.newChain.name + ' New Chain has been created');
+            this.messageService.create('success', 'Chain ' + action.newChain.name + ' has been created');
             return new fromActions.CreateChainSuccessAction(chain);
           }),
           catchError((error: { message: string }) => {
             this.messageService.create('error', error.message);
-            return of(new fromActions.DeleteChainFailAction(error));
+            return of(new fromActions.CreateChainFailAction(error));
           })
         );
     })

@@ -11,7 +11,7 @@
     <form [formGroup]="newChainForm" (ngSubmit)='pushChain()'>
       <input nz-input formControlName="chainName" type="text" id="chainName" placeholder="Parser Chain Name">
       <nz-form-explain *ngIf="chainName.dirty && chainName.errors && (chainName.errors.required || chainName.errors.minlength)">
-        Label is Required with atleast 3 characters
+        Chain Name is Required with atleast 3 characters
       </nz-form-explain>
     </form>
   </nz-modal>
