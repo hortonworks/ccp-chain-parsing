@@ -6,7 +6,7 @@
     nzTitle="Add Chain Name"
     (nzOnCancel)="handleCancel()"
     (nzOnOk)="pushChain()"
-    [nzOkLoading]="isOkLoading"
+    [nzOkDisabled]="!newChainForm.valid"
   >
     <form [formGroup]="newChainForm" (ngSubmit)='pushChain()'>
       <input nz-input formControlName="chainName" type="text" id="chainName" placeholder="Parser Chain Name">

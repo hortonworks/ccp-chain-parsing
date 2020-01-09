@@ -5,15 +5,16 @@ import { NzMessageService } from 'ng-zorro-antd';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
+import { ChainListPageService } from './../services/chain-list-page.service';
 import * as fromActions from './chain-list-page.actions';
-
 import { ChainModel } from './chain.model';
 
 @Injectable()
 export class ChainListEffects {
   constructor(
     private actions$: Actions,
-    private messageService: NzMessageService
+    private messageService: NzMessageService,
+    private chainListService: ChainListPageService
   ) { }
 
   @Effect()
@@ -40,12 +41,10 @@ export class ChainListEffects {
   createChain$: Observable<Action> = this.actions$.pipe(
     ofType(fromActions.CREATE_CHAIN),
     switchMap((action: fromActions.CreateChainAction) => {
-      return of(
-        { id: 'dummychainC', name: 'Dummy Chain C' },
-      )
+      return this.chainListService.createEnrichmentType(action.payload)
         .pipe(
           map((chain: ChainModel) => {
-            this.messageService.create('success', 'New Chain has been created');
+            this.messageService.create('success', action.payload.name + ' New Chain has been created');
             return new fromActions.CreateChainSuccessAction(chain);
           }),
           catchError((error: { message: string }) => {

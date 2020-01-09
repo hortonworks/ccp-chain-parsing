@@ -13,6 +13,6 @@ export class ChainListPageService {
     ) {}
 
     public createEnrichmentType(chain: ChainOperationModel) {
-        return this.http.post('api/v1/chains/', chain);
+        return this.http.post('/api/v1/parserconfig/chains/', chain);
     }
 }

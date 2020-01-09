@@ -38,14 +38,9 @@ export class ChainListPageComponent implements OnInit {
   }
 
   pushChain(): void {
-    const dummyChain = 'FirstChain';
-    this.store.dispatch(new fromActions.CreateChainAction({name: dummyChain}));
-
-    this.isOkLoading = true;
-    setTimeout(() => {
-      this.isChainModalVisible = false;
-      this.isOkLoading = false;
-    }, 1000);
+    const chainData = {name: this.chainName.value};
+    this.store.dispatch(new fromActions.CreateChainAction(chainData));
+    this.isChainModalVisible = false;
   }
 
   handleCancel(): void {
