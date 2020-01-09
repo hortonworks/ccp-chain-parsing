@@ -19,14 +19,13 @@ function getChains(req, res) {
 
 function createChain(req, res) {
   const id = crypto.randomBytes(8).toString('hex');
-  const name = req.query.name;
   const newChain = {
-    id: id,
-    name: name
+    ...req.body,
+    id: id
   }
 
-  if (chains.find(chain => chain.name === name)) {
-    res.status(409).send("This chain name already exists.");
+  if (chains.find(chain => chain.name === newChain.name)) {
+    res.status(409).send("This parser chain name already exists");
     return;
   }
 
@@ -35,7 +34,7 @@ function createChain(req, res) {
     newChain
   ]
 
-  res.status(201).send(chains);
+  res.status(201).send(newChain);
 }
 
 function updateChain(req, res) {
@@ -43,7 +42,7 @@ function updateChain(req, res) {
   chains.map(chain => {
     if (chain.id === id) {
       chain.name = req.query.name;
-      res.status(204).send(chains);
+      res.status(204).send(chain);
       return;
     }
   });
@@ -54,7 +53,7 @@ function deleteChain(req, res) {
   const id = req.params.id;
   if (chains.filter(chain => chain.id === id)) {
     chains = chains.filter(chain => chain.id !== id);
-    res.status(200).send(chains);
+    res.status(204).send();
     return;
   }
   res.status(404).send();

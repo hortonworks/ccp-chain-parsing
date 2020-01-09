@@ -1,14 +1,14 @@
 [
   {
-    "id": "asa",
-    "name": "asa"
+    "id": "58485407",
+    "name": "Dummy Chain A"
   },
   {
-    "id": "syslog",
-    "name": "syslog"
+    "id": "58302658",
+    "name": "Dummy Chain B"
   },
   {
-    "id": "grok",
-    "name": "grok"
+    "id": "12905884",
+    "name": "Dummy Chain C"
   }
 ]
