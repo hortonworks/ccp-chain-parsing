@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+
+import { ChainListPageState } from './chain-list-page.reducers'
 
 @Component({
   selector: 'app-chain-list-page',
@@ -9,7 +12,7 @@ export class ChainListPageComponent implements OnInit {
   isChainModalVisible = false;
   isOkLoading = false;
 
-  constructor() { }
+  constructor(private store: Store<ChainListPageState>) { }
 
   showAddChainModal(): void {
     this.isChainModalVisible = true;

@@ -2,22 +2,22 @@ import * as chainListPageActions from './chain-list-page.actions';
 
 import { ChainModel } from './chain.model';
 
-export interface State {
+export interface ChainListPageState {
   loading: boolean;
   error: string;
   items: ChainModel[];
 }
 
-export const initialState: State = {
+export const initialState: ChainListPageState = {
   loading: false,
   items: [],
   error: ''
 };
 
 export function reducer(
-  state: State = initialState,
+  state: ChainListPageState = initialState,
   action: chainListPageActions.ChainListAction
-): State {
+): ChainListPageState {
   switch (action.type) {
     case chainListPageActions.LOAD_CHAINS: {
       return {
