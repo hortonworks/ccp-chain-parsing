@@ -1,7 +1,7 @@
-import * as chainListPageActions from './chain-list-page.actions';
-
-import { ChainModel } from './chain.model';
 import { createSelector } from '@ngrx/store';
+
+import * as chainListPageActions from './chain-list-page.actions';
+import { ChainModel } from './chain.model';
 
 export interface ChainListPageState {
   loading: boolean;

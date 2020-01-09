@@ -7,9 +7,9 @@ import { StoreModule } from '@ngrx/store';
 import { NgZorroAntdModule, NzInputModule, NzMessageService, NzTableModule } from 'ng-zorro-antd';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 
+import { ChainListPageComponent } from './chain-list-page.component';
 import { ChainListEffects } from './chain-list-page.effects';
 import { reducer } from './chain-list-page.reducers';
-import { ChainListPageComponent } from './chain-list-page.component';
 
 @NgModule({
   declarations: [ ChainListPageComponent ],
@@ -17,6 +17,7 @@ import { ChainListPageComponent } from './chain-list-page.component';
     NgZorroAntdModule,
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     NzInputModule,
     NzTableModule,
     RouterModule,

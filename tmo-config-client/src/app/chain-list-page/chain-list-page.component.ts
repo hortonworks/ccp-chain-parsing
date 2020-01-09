@@ -53,7 +53,6 @@ export class ChainListPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('hello world');
     this.newChainForm = this.fb.group({
       chainName: new FormControl('', [Validators.required, Validators.minLength(3)]),
     });

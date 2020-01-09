@@ -5,15 +5,15 @@
     [(nzVisible)]="isChainModalVisible"
     nzTitle="Add Chain Name"
     (nzOnCancel)="handleCancel()"
-    (nzOnOk)="handleOk()"
+    (nzOnOk)="pushChain()"
     [nzOkLoading]="isOkLoading"
   >
-    <!-- <form [formGroup]="newChainForm" (ngSubmit)='pushChain()'>
+    <form [formGroup]="newChainForm" (ngSubmit)='pushChain()'>
       <input nz-input formControlName="chainName" type="text" id="chainName" placeholder="Parser Chain Name">
       <nz-form-explain *ngIf="chainName.dirty && chainName.errors && (chainName.errors.required || chainName.errors.minlength)">
         Label is Required with atleast 3 characters
       </nz-form-explain>
-    </form> -->
+    </form>
   </nz-modal>
 
 <nz-card nzTitle="Parser Chains">
