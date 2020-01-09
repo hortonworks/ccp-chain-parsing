@@ -53,7 +53,7 @@ function deleteChain(req, res) {
   const id = req.params.id;
   if (chains.filter(chain => chain.id === id)) {
     chains = chains.filter(chain => chain.id !== id);
-    res.status(204).send();
+    res.status(200).send(chains);
     return;
   }
   res.status(404).send();
