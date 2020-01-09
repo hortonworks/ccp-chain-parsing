@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { ChainModel } from './../chain-list-page/chain.model';
+import { ChainModel, ChainOperationalModel } from './../chain-list-page/chain.model';
 
 @Injectable({
     providedIn: 'root'
@@ -11,7 +11,7 @@ export class ChainListPageService {
       private http: HttpClient
     ) {}
 
-    public createChain(chain: ChainModel) {
+    public createChain(chain: ChainOperationalModel) {
         return this.http.post('api/v1/parserconfig/chains', chain);
     }
 }

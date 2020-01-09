@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { LoadChainsAction } from './chain-list-page.actions';
 import * as fromActions from './chain-list-page.actions';
 import { ChainListPageState, getChains } from './chain-list-page.reducers';
-import { ChainModel } from './chain.model';
+import { ChainModel, ChainOperationalModel } from './chain.model';
 
 @Component({
   selector: 'app-chain-list-page',
@@ -38,7 +38,7 @@ export class ChainListPageComponent implements OnInit {
   }
 
   pushChain(): void {
-    const chainData = { id: '', name: this.chainName.value };
+    const chainData: ChainOperationalModel = { name: this.chainName.value };
     this.store.dispatch(new fromActions.CreateChainAction(chainData));
     this.isChainModalVisible = false;
   }
