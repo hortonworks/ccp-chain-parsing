@@ -21,10 +21,11 @@ export class ChainListEffects {
   loadChains$: Observable<Action> = this.actions$.pipe(
     ofType(fromActions.LOAD_CHAINS),
     switchMap((action: fromActions.LoadChainsAction) => {
-      return of([
-        { id: 'dummychainA', name: 'Dummy Chain A' },
-        { id: 'dummychainB', name: 'Dummy Chain B' },
-      ])
+      // return of([
+      //   { id: 'dummychainA', name: 'Dummy Chain A' },
+      //   { id: 'dummychainB', name: 'Dummy Chain B' },
+      // ])
+      return this.chainListService.getChains()
         .pipe(
           map((chains: ChainModel[]) => {
             return new fromActions.LoadChainsSuccessAction(chains);
