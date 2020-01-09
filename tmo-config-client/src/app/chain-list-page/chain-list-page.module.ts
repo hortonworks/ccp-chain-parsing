@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
-import { NgZorroAntdModule, NzInputModule, NzMessageService } from 'ng-zorro-antd';
+import { NgZorroAntdModule, NzInputModule, NzMessageService, NzTableModule } from 'ng-zorro-antd';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 import { ChainListEffects } from './chain-list-page.effects';
@@ -18,6 +18,7 @@ import { ChainListPageComponent } from './chain-list-page.component';
     CommonModule,
     FormsModule,
     NzInputModule,
+    NzTableModule,
     RouterModule,
     StoreModule.forFeature('chain-lisst-page', reducer),
     EffectsModule.forFeature([ ChainListEffects ]),

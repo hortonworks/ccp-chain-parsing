@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 
-import { ChainListPageState } from './chain-list-page.reducers'
+import { ChainListPageState, getChains } from './chain-list-page.reducers'
+import { Observable } from 'rxjs';
+import { ChainModel } from './chain.model';
+import { LoadChainsAction } from './chain-list-page.actions';
 
 @Component({
   selector: 'app-chain-list-page',
@@ -12,7 +15,12 @@ export class ChainListPageComponent implements OnInit {
   isChainModalVisible = false;
   isOkLoading = false;
 
-  constructor(private store: Store<ChainListPageState>) { }
+  chains$: Observable<ChainModel[]>;
+
+  constructor(private store: Store<ChainListPageState>) {
+    store.dispatch(new LoadChainsAction());
+    this.chains$ = store.pipe(select(getChains));
+  }
 
   showAddChainModal(): void {
     this.isChainModalVisible = true;

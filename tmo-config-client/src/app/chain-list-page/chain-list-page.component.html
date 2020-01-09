@@ -10,3 +10,24 @@
   >
     <input nz-input type="text" name="parserChainName" placeholder="Parser Chain Name">
   </nz-modal>
+
+<nz-card nzTitle="Parser Chains">
+  <nz-table #basicTable [nzData]="chains$ | async">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.name }}</td>
+        <td>
+          <a routerLink="{{ 'chains/' + data.id }}">Open</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a>Delete</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

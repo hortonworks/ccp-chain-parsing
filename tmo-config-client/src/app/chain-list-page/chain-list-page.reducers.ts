@@ -1,6 +1,7 @@
 import * as chainListPageActions from './chain-list-page.actions';
 
 import { ChainModel } from './chain.model';
+import { createSelector } from '@ngrx/store';
 
 export interface ChainListPageState {
   loading: boolean;
@@ -84,3 +85,12 @@ export function reducer(
     }
   }
 }
+
+function getChainListPageState(state: any): ChainListPageState {
+  return state['chain-lisst-page'];
+}
+
+export const getChains = createSelector(
+  getChainListPageState,
+  (state: ChainListPageState) => state.items
+);

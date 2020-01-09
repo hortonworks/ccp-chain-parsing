@@ -22,7 +22,7 @@ export class ChainListEffects {
     switchMap((action: fromActions.LoadChainsAction) => {
       return of([
         { id: 'dummychainA', name: 'Dummy Chain A' },
-        { id: 'dummychainA', name: 'Dummy Chain B' },
+        { id: 'dummychainB', name: 'Dummy Chain B' },
       ])
         .pipe(
           map((chains: ChainModel[]) => {
