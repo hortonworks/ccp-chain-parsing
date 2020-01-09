@@ -5,23 +5,9 @@
     </div>
     <ul nz-menu [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed" [nzTheme]="'dark'">
       <li nz-submenu>
-        <span title><i nz-icon nzType="warning"></i><span class="nav-text">Alerts</span></span>
-        <ul>
-          <li nz-menu-item>Overview</li>
-          <li nz-menu-item>PCAP</li>
-        </ul>
-      </li>
-      <li nz-submenu>
-        <span title><i nz-icon nzType="tool"></i><span class="nav-text">Management</span></span>
-        <ul>
-          <li nz-menu-item>Sensors</li>
-          <li nz-menu-item>General Settings</li>
-        </ul>
-      </li>
-      <li nz-submenu>
         <span title><i nz-icon nzType="setting"></i><span class="nav-text">Configuration</span></span>
         <ul>
-          <li nz-menu-item>Parsers</li>
+          <li nz-menu-item routerLink="parserconfig" >Parsers</li>
         </ul>
       </li>
     </ul>
@@ -29,9 +15,9 @@
   <nz-layout>
     <nz-header>
       <h1 class="header-page-title">
-        <!-- include title here -->
+        Parser Configuration
       </h1>
-      <app-theme-switch></app-theme-switch>
+      <!-- <app-theme-switch></app-theme-switch> -->
     </nz-header>
     <nz-content>
       <router-outlet></router-outlet>

@@ -2,7 +2,7 @@ import { registerLocaleData } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import en from '@angular/common/locales/en';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EffectsModule } from '@ngrx/effects';
@@ -13,6 +13,8 @@ import { storeFreeze } from 'ngrx-store-freeze';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 import { environment } from '../environments/environment';
+
+import { ChainListPageModule } from './chain-list-page/chain-list-page.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -32,20 +34,21 @@ export const metaReducers: MetaReducer<{}>[] = !environment.production
   declarations: [
     AppComponent,
     MainContainerComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgZorroAntdModule,
     NzLayoutModule,
-    FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
     StoreModule.forRoot({}, { metaReducers }),
     StoreDevtoolsModule.instrument(),
     EffectsModule.forRoot([]),
     ThemeSwitchModule,
+    ChainListPageModule,
     MonacoEditorModule.forRoot({
       onMonacoLoad() {
         monaco.languages.json.jsonDefaults.setDiagnosticsOptions({

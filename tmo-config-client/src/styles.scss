@@ -36,10 +36,10 @@
   border-bottom: none;
 }
 
-.ant-table-thead > tr > th {
-  background: var(--background);
-  color: var(--text);
-}
+// .ant-table-thead > tr > th {
+//   background: var(--background);
+//   color: var(--text);
+// }
 
 .ant-table-tbody > tr:hover:not(.ant-table-expanded-row) > td {
   background: var(--background);
