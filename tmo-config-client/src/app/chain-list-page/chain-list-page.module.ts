@@ -21,7 +21,7 @@ import { reducer } from './chain-list-page.reducers';
     NzInputModule,
     NzTableModule,
     RouterModule,
-    StoreModule.forFeature('chain-lisst-page', reducer),
+    StoreModule.forFeature('chain-list-page', reducer),
     EffectsModule.forFeature([ ChainListEffects ]),
     MonacoEditorModule,
   ],

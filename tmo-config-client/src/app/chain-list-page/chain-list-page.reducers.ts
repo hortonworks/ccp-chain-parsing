@@ -87,7 +87,7 @@ export function reducer(
 }
 
 function getChainListPageState(state: any): ChainListPageState {
-  return state['chain-lisst-page'];
+  return state['chain-list-page'];
 }
 
 export const getChains = createSelector(

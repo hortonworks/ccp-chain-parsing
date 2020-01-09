@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { ChainModel, ChainOperationalModel } from './../chain-list-page/chain.model';
+import { ChainOperationalModel } from './../chain-list-page/chain.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ChainListPageService {
 
-    private readonly BASE_URL = '/api/v1/parserconfig/'
+    private readonly BASE_URL = '/api/v1/parserconfig/';
 
     constructor(
       private http: HttpClient
