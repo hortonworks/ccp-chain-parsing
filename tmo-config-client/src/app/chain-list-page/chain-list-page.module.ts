@@ -19,7 +19,7 @@ import { ChainListPageComponent } from './chain-list-page.component';
     FormsModule,
     NzInputModule,
     RouterModule,
-    StoreModule.forFeature('enrichment-types', reducer),
+    StoreModule.forFeature('chain-lisst-page', reducer),
     EffectsModule.forFeature([ ChainListEffects ]),
     MonacoEditorModule,
   ],
