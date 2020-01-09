@@ -1,5 +1,6 @@
 import { Action } from '@ngrx/store';
-import { ChainModel } from './chain.model';
+
+import { ChainModel, ChainOperationModel } from './chain.model';
 
 export const LOAD_CHAINS = '[Chain List] load all start';
 export const LOAD_CHAINS_SUCCESS = '[Chain List] load all success';
@@ -43,15 +44,15 @@ export class DeleteChainFailAction implements Action {
 
 export class CreateChainAction implements Action {
     readonly type = CREATE_CHAIN;
-    constructor(public payload: ChainModel) {}
+    constructor(public payload: ChainOperationModel) {}
   }
-  
-  export class CreateChainSuccessAction implements Action {
+
+export class CreateChainSuccessAction implements Action {
     readonly type = CREATE_CHAIN_SUCCESS;
     constructor(public chain: ChainModel) {}
   }
-  
-  export class CreateChainFailAction implements Action {
+
+export class CreateChainFailAction implements Action {
     readonly type = CREATE_CHAIN_FAIL;
     constructor(public error: { message: string }) {}
   }

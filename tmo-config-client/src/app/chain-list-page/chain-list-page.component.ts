@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Store, select } from '@ngrx/store';
-
-import { ChainListPageState, getChains } from './chain-list-page.reducers'
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { ChainModel } from './chain.model';
+
 import { LoadChainsAction } from './chain-list-page.actions';
+import * as fromActions from './chain-list-page.actions';
+import { ChainListPageState, getChains } from './chain-list-page.reducers';
+import { ChainModel } from './chain.model';
 
 @Component({
   selector: 'app-chain-list-page',
@@ -17,16 +19,28 @@ export class ChainListPageComponent implements OnInit {
 
   chains$: Observable<ChainModel[]>;
 
-  constructor(private store: Store<ChainListPageState>) {
+  constructor(
+    private store: Store<ChainListPageState>,
+    private fb: FormBuilder,
+    ) {
     store.dispatch(new LoadChainsAction());
     this.chains$ = store.pipe(select(getChains));
+  }
+
+  newChainForm: FormGroup;
+
+  get chainName() {
+    return this.newChainForm.get('chainName') as FormControl;
   }
 
   showAddChainModal(): void {
     this.isChainModalVisible = true;
   }
 
-  handleOk(): void {
+  pushChain(): void {
+    const dummyChain = 'FirstChain';
+    this.store.dispatch(new fromActions.CreateChainAction({name: dummyChain}));
+
     this.isOkLoading = true;
     setTimeout(() => {
       this.isChainModalVisible = false;
@@ -39,6 +53,10 @@ export class ChainListPageComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('hello world');
+    this.newChainForm = this.fb.group({
+      chainName: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    });
   }
 
 }

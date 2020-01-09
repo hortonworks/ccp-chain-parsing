@@ -36,7 +36,25 @@ export class ChainListEffects {
     })
   );
 
-  // TODO impl dummy create chain
+  @Effect()
+  createChain$: Observable<Action> = this.actions$.pipe(
+    ofType(fromActions.CREATE_CHAIN),
+    switchMap((action: fromActions.CreateChainAction) => {
+      return of(
+        { id: 'dummychainC', name: 'Dummy Chain C' },
+      )
+        .pipe(
+          map((chain: ChainModel) => {
+            this.messageService.create('success', 'New Chain has been created');
+            return new fromActions.CreateChainSuccessAction(chain);
+          }),
+          catchError((error: { message: string }) => {
+            this.messageService.create('error', error.message);
+            return of(new fromActions.DeleteChainFailAction(error));
+          })
+        );
+    })
+  );
 
   @Effect()
   deleteChain$: Observable<Action> = this.actions$.pipe(
