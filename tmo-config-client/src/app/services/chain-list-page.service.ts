@@ -15,7 +15,7 @@ export class ChainListPageService {
     ) {}
 
     public createChain(chain: ChainOperationalModel) {
-        return this.http.post('api/v1/parserconfig/chains', chain);
+        return this.http.post('/api/v1/parserconfig/chains', chain);
     }
 
     public getChains() {
