@@ -12,6 +12,10 @@ export const CREATE_CHAIN = '[Chain List] create item';
 export const CREATE_CHAIN_SUCCESS = '[Chain List] create item success';
 export const CREATE_CHAIN_FAIL = '[Chain List] create item fail';
 
+export class NoopChainAction implements Action {
+  readonly type: '';
+  constructor(public payload?: any) {}
+}
 export class LoadChainsAction implements Action {
   readonly type = LOAD_CHAINS;
   constructor() {}

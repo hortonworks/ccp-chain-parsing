@@ -86,7 +86,7 @@ export function reducer(
   }
 }
 
-function getChainListPageState(state: any): ChainListPageState {
+export function getChainListPageState(state: any): ChainListPageState {
   return state['chain-list-page'];
 }
 
