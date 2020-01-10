@@ -97,7 +97,9 @@ fdescribe('ChainListPage: effects', () => {
       id: 'id2',
       name: 'Chain 2'
     }];
+
     service.getChains = (): Observable<ChainModel[]> => of(initialValue);
+    service.createChain = (): Observable<ChainModel> => of({id: 'id2', name: 'Chain 2'});
 
     const spy = spyOn(service, 'createChain').and.callThrough();
     const spyMsgSrv = spyOn(msgService, 'create').and.callThrough();
@@ -127,11 +129,8 @@ fdescribe('ChainListPage: effects', () => {
       name: 'Chain 2'
     }];
 
-    const finalValue = [{
-      id: 'id2',
-      name: 'Chain 2'
-    }];
     service.getChains = (): Observable<ChainModel[]> => of(initialValue);
+    service.deleteChain = (): Observable<ChainModel[]> => of(initialValue);
 
     const spy = spyOn(service, 'deleteChain').and.callThrough();
     const spyMsgSrv = spyOn(msgService, 'create').and.callThrough();
@@ -141,7 +140,7 @@ fdescribe('ChainListPage: effects', () => {
 
     effects.deleteChain$.subscribe(result => {
       expect(result).toEqual(
-        new fromActions.DeleteChainSuccessAction(finalValue)
+        new fromActions.DeleteChainSuccessAction(initialValue)
       );
     });
 
