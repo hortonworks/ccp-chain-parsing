@@ -13,6 +13,8 @@ POST('/chains', createChain);
 PUT('/chains/:id', updateChain);
 DELETE('/chains/:id', deleteChain);
 
+GET('/chains/:id/parsers', getChainDetails);
+
 function getChains(req, res) {
   res.status(200).send(chains);
 }
@@ -54,6 +56,16 @@ function deleteChain(req, res) {
   if (chains.filter(chain => chain.id === id)) {
     chains = chains.filter(chain => chain.id !== id);
     res.status(200).send(chains);
+    return;
+  }
+  res.status(404).send();
+}
+
+function getChainDetails(req, res) {
+  const id = req.params.id;
+  const chain = chains.find(chain => chain.id === id);
+  if (chain) {
+    res.status(200).send(chain);
     return;
   }
   res.status(404).send();

@@ -18,6 +18,7 @@ import { ChainListPageModule } from './chain-list-page/chain-list-page.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ChainPageModule } from './chain-page/chain-page.module';
 import { CanDeactivateComponent } from './misc/can-deactivate-component';
 import { MainContainerComponent } from './misc/main/main.container';
 import { ThemeSwitchModule } from './misc/theme-switch/theme-switch.module';
@@ -34,7 +35,7 @@ export const metaReducers: MetaReducer<{}>[] = !environment.production
   declarations: [
     AppComponent,
     MainContainerComponent,
-    PageNotFoundComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,
@@ -49,6 +50,7 @@ export const metaReducers: MetaReducer<{}>[] = !environment.production
     EffectsModule.forRoot([]),
     ThemeSwitchModule,
     ChainListPageModule,
+    ChainPageModule,
     MonacoEditorModule.forRoot({
       onMonacoLoad() {
         monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
