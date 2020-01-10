@@ -21,7 +21,7 @@ export class MockChainListPageService {
 }
 const icons: IconDefinition[] = [PlusCircleOutline];
 
-fdescribe('ChainListPage: effects', () => {
+describe('ChainListPage: effects', () => {
   let effects: ChainListEffects;
   let actions: ReplaySubject<any>;
   let service: ChainListPageService;
