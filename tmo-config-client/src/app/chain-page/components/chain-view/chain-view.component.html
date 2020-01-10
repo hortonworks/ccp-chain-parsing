@@ -1,0 +1,24 @@
+<div>
+  <div *ngFor="let parser of parsers">
+    <nz-card class="chain-item" [nzBordered]="true" [nzTitle]="parser.name">
+      <nz-tabset nzTabPosition="top" nzType="line">
+        <nz-tab nzTitle="Basics">
+          Parser Class: {{ parser.name }}
+        </nz-tab>
+        <nz-tab nzTitle="Config">
+          Config tab
+        </nz-tab>
+        <nz-tab nzTitle="Outputs">
+          Outputs tab
+        </nz-tab>
+        <nz-tab nzTitle="Advanced">
+          Advanced tab
+          <ngx-monaco-editor
+            class="advanced-editor"
+            [options]="{}"
+          ></ngx-monaco-editor>
+        </nz-tab>
+      </nz-tabset>
+    </nz-card>
+  </div>
+</div>
