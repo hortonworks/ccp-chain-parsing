@@ -69,4 +69,5 @@ export type ChainListAction = LoadChainsAction
   | DeleteChainFailAction
   | CreateChainAction
   | CreateChainSuccessAction
-  | CreateChainFailAction;
+  | CreateChainFailAction
+  | NoopChainAction;
