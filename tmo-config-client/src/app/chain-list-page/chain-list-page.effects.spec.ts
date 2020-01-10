@@ -90,14 +90,6 @@ describe('ChainListPage: effects', () => {
       name: 'Chain 1'
     }];
 
-    const finalValue = [{
-      id: 'id2',
-      name: 'Chain 2'
-    }, {
-      id: 'id2',
-      name: 'Chain 2'
-    }];
-
     service.getChains = (): Observable<ChainModel[]> => of(initialValue);
     service.createChain = (): Observable<ChainModel> => of({id: 'id2', name: 'Chain 2'});
 

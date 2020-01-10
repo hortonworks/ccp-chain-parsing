@@ -32,8 +32,12 @@ class FakeChainListPageService {
     }]);
   }
 
-  deleteEnrichmentType() {
+  deleteChain() {
     return of([]);
+  }
+
+  createChain() {
+    return of({});
   }
 }
 
@@ -92,6 +96,13 @@ describe('ChainListPageComponent', () => {
   });
 
   it('should show up confimation when user click the delete button', () => {
+    component.chains$ = of([
+      { id: 'id1', name: 'Chain 1' },
+      { id: 'id2', name: 'Chain 2' },
+      { id: 'id3', name: 'Chain 3' }
+    ]);
+    fixture.detectChanges();
+
     const indexOfSecondDeleteBtn = 1;
     clickDeleteBtnOnIndex(indexOfSecondDeleteBtn);
     fixture.detectChanges();
