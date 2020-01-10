@@ -73,7 +73,7 @@ describe('ChainListPageService', () => {
     });
   });
 
-  describe('deleteEnrichmentType()', () => {
+  describe('deleteChain()', () => {
     it('should return an Observable<string[]>', () => {
       const responseMock: ChainModel[] = chainListMockResponse;
       let response;
@@ -100,7 +100,7 @@ describe('ChainListPageService', () => {
     });
   });
 
-  describe('createEnrichmentType()', () => {
+  describe('createChain()', () => {
     it('should return an Observable<string[]>', () => {
       const service: ChainListPageService = TestBed.get(ChainListPageService);
       const responseMock: ChainModel[] = chainListMockResponse;
