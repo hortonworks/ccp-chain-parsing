@@ -121,3 +121,7 @@
   background-color: var(--warning);
   border-color: var(--warning);
 }
+
+.ant-select-selection {
+  border:1px solid var(--input-border-color);
+}

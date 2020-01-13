@@ -14,10 +14,10 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 import { environment } from '../environments/environment';
 
-import { ChainListPageModule } from './chain-list-page/chain-list-page.module';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ChainAddParserPageModule } from './chain-add-parser-page/chain-add-parser-page.module';
+import { ChainListPageModule } from './chain-list-page/chain-list-page.module';
 import { ChainPageModule } from './chain-page/chain-page.module';
 import { CanDeactivateComponent } from './misc/can-deactivate-component';
 import { MainContainerComponent } from './misc/main/main.container';
@@ -51,6 +51,7 @@ export const metaReducers: MetaReducer<{}>[] = !environment.production
     ThemeSwitchModule,
     ChainListPageModule,
     ChainPageModule,
+    ChainAddParserPageModule,
     MonacoEditorModule.forRoot({
       onMonacoLoad() {
         monaco.languages.json.jsonDefaults.setDiagnosticsOptions({

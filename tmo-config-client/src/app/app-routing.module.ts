@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { ChainAddParserPageComponent } from './chain-add-parser-page/chain-add-parser-page.component';
 import { ChainListPageComponent } from './chain-list-page/chain-list-page.component';
 import { ChainPageComponent } from './chain-page/chain-page.component';
 import { MainContainerComponent } from './misc/main/main.container';
@@ -11,6 +12,7 @@ export const routes: Routes = [
   { path: '', component: MainContainerComponent },
   { path: 'parserconfig', component: ChainListPageComponent },
   { path: 'parserconfig/chains/:id', component: ChainPageComponent },
+  { path: 'parserconfig/chains/:id/new', component: ChainAddParserPageComponent },
   { path: ':type', component: MainContainerComponent },
   { path: '**', component: PageNotFoundComponent },
 ];
