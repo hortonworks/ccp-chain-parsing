@@ -53,7 +53,7 @@ export function reducer(
         items: [...state.items, action.chain]
       };
     }
-    case chainListPageActions.DELETE_CHAIN_FAIL: {
+    case chainListPageActions.CREATE_CHAIN_FAIL: {
       return {
         ...state,
         error: action.error.message,
@@ -86,7 +86,7 @@ export function reducer(
   }
 }
 
-function getChainListPageState(state: any): ChainListPageState {
+export function getChainListPageState(state: any): ChainListPageState {
   return state['chain-list-page'];
 }
 

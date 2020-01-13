@@ -15,11 +15,15 @@ export class ChainListPageService {
     ) {}
 
     public createChain(chain: ChainOperationalModel) {
-        return this.http.post('api/v1/parserconfig/chains', chain);
+        return this.http.post('/api/v1/parserconfig/chains', chain);
     }
 
     public getChains() {
         return this.http.get(this.BASE_URL + 'chains');
+    }
+
+    public deleteChain(chainId: string) {
+        return this.http.delete(this.BASE_URL + 'chains/' + chainId);
     }
 
 }
