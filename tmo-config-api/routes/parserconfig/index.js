@@ -7,6 +7,7 @@ const POST = router.post.bind(router);
 const DELETE = router.delete.bind(router);
 
 let chains = require('./mock-data/chains.json');
+let parserTypes = require('./mock-data/parser-types.json');
 
 GET('/chains', getChains);
 POST('/chains', createChain);
@@ -14,6 +15,9 @@ PUT('/chains/:id', updateChain);
 DELETE('/chains/:id', deleteChain);
 
 GET('/chains/:id/parsers', getChainDetails);
+POST('/chains/:id/parsers', addParser);
+
+GET('/parser-types', getParserTypes);
 
 function getChains(req, res) {
   res.status(200).send(chains);
@@ -69,6 +73,27 @@ function getChainDetails(req, res) {
     return;
   }
   res.status(404).send();
+}
+
+function addParser(req, res) {
+  const id = req.params.id;
+  const parser = req.params.parser;
+  const index = req.params.index;
+  const chain = chains.find(chain => chain.id === id);
+  if (chain) {
+    if (!chain.parsers) {
+      chain.parsers = [];
+    }
+    parser.id = chain.parsers.length + 1;
+    chain.parsers.splice(index, 0, parser);
+    res.status(200).send(parser);
+    return;
+  }
+  res.status(404).send();
+}
+
+function getParserTypes(req, res) {
+  return res.status(200).send(parserTypes);
 }
 
 module.exports = router;
