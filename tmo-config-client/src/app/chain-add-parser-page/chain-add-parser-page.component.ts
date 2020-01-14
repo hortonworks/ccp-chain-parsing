@@ -64,7 +64,7 @@ export class ChainAddParserPageComponent implements OnInit {
     });
 
     this.store.pipe(select(getParsers)).subscribe((parsers) => {
-      this.parsersList = parsers;
+      this.parsersList = parsers || [];
 
       if (this.parsersList.length) {
         this.addParserForm.addControl('parentId', new FormControl(null));

@@ -25,17 +25,11 @@
               <nz-option nzLabel="{{ parser.name }}" nzValue="{{ parser.id }}" *ngFor="let parser of parsersList"></nz-option>
             </nz-select>
           </nz-form-control>
-          <nz-form-explain *ngIf="type.dirty && type.errors && type.errors.required">
-            Select source Parser
-          </nz-form-explain>
         </nz-form-item>
         <nz-form-item *ngIf="parsersList.length">
           <nz-form-control>
             <input type="text" nz-input formControlName="outputs" placeholder="Parser Output" />
           </nz-form-control>
-          <nz-form-explain *ngIf="sourceParserOutput.dirty && sourceParserOutput.errors && (sourceParserOutput.errors.required || sourceParserOutput.errors.minlength)">
-            Parser Output is Required with atleast 3 characters
-          </nz-form-explain>
         </nz-form-item>
         <nz-form-item>
           <nz-form-control>
