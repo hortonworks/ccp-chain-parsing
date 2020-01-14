@@ -20,6 +20,7 @@ DELETE('/chains/:id', deleteChain);
 
 GET('/chains/:id/parsers', getChainDetails);
 POST('/chains/:id/parsers', addParser);
+DELETE('/chains/:id/parsers/:parser', deleteParserFromChain);
 
 GET('/parser-types', getParserTypes);
 
@@ -90,6 +91,19 @@ function addParser(req, res) {
     parser.id = uuid();
     chain.parsers.push(parser);
     res.status(200).send(parser);
+    return;
+  }
+  res.status(404).send();
+}
+
+function deleteParserFromChain(req, res) {
+  const id = req.params.id;
+  const parser = req.params.parser;
+  let chain = chains.find(chain => chain.id === id);
+
+  if (chain) {
+    chains = chains.find(chain => chain.id === id).parsers.filter(p => p.id !== parser);
+    res.status(200).send(chains);
     return;
   }
   res.status(404).send();
