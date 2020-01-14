@@ -16,7 +16,6 @@ export class AddParserAction implements Action {
   readonly type = ADD_PARSER;
   constructor(public payload: {
     chainId: string,
-    index: number,
     parser: ParserModel
   }) {}
 }

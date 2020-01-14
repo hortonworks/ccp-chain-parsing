@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { NzMessageService } from 'ng-zorro-antd';
@@ -15,7 +16,8 @@ export class AddParserEffects {
   constructor(
     private actions$: Actions,
     private messageService: NzMessageService,
-    private addParserService: AddParserPageService
+    private addParserService: AddParserPageService,
+    private router: Router
   ) { }
 
   @Effect()
@@ -24,11 +26,11 @@ export class AddParserEffects {
     switchMap((action: fromActions.AddParserAction) => {
       return this.addParserService.add(
         action.payload.chainId,
-        action.payload.index,
         action.payload.parser
       )
         .pipe(
           map((parser: ParserModel) => {
+            this.router.navigateByUrl(`/parserconfig/chains/${action.payload.chainId}`);
             return new fromActions.AddParserSuccessAction({
               chainId: action.payload.chainId,
               parser
@@ -61,7 +63,7 @@ export class AddParserEffects {
 
   @Effect()
   getParsers$: Observable<Action> = this.actions$.pipe(
-    ofType(fromActions.GET_PARSER_TYPES),
+    ofType(fromActions.GET_PARSERS),
     switchMap((action: fromActions.GetParsersAction) => {
       return this.addParserService.getParsers(action.payload.chainId)
         .pipe(

@@ -16,12 +16,8 @@ export class AddParserPageService {
     private http: HttpClient
   ) {}
 
-  public add(chainId: string, index: number, parser: ParserModel) {
-    return this.http.post(this.BASE_URL + `chains/${chainId}/parsers`, {
-      id: chainId,
-      index,
-      parser,
-    });
+  public add(chainId: string, parser: ParserModel) {
+    return this.http.post(this.BASE_URL + `chains/${chainId}/parsers`, parser);
   }
 
   public getParserTypes() {

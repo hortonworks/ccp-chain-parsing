@@ -1,5 +1,9 @@
 const router = require('express').Router();
 const crypto = require('crypto');
+const uuid = require('uuid/v1');
+const debug = require('debug');
+
+const log = debug('tmo-config');
 
 const GET = router.get.bind(router);
 const PUT = router.put.bind(router);
@@ -77,15 +81,14 @@ function getChainDetails(req, res) {
 
 function addParser(req, res) {
   const id = req.params.id;
-  const parser = req.params.parser;
-  const index = req.params.index;
+  const parser = req.body;
   const chain = chains.find(chain => chain.id === id);
   if (chain) {
     if (!chain.parsers) {
       chain.parsers = [];
     }
-    parser.id = chain.parsers.length + 1;
-    chain.parsers.splice(index, 0, parser);
+    parser.id = uuid();
+    chain.parsers.push(parser);
     res.status(200).send(parser);
     return;
   }
