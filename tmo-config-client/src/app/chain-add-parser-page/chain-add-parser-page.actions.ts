@@ -12,6 +12,11 @@ export const GET_PARSERS = '[Chain Add Parser] get parsers';
 export const GET_PARSERS_SUCCESS = '[Chain Add Parser] get parsers success';
 export const GET_PARSERS_FAIL = '[Chain Add Parser] get parsersfail';
 
+export class NoopAction implements Action {
+  readonly type: '';
+  constructor(public payload?: any) {}
+}
+
 export class AddParserAction implements Action {
   readonly type = ADD_PARSER;
   constructor(public payload: {
@@ -72,4 +77,5 @@ export type ParserAction = AddParserAction
   | GetParserTypesFailAction
   | GetParsersAction
   | GetParsersSuccessAction
-  | GetParsersFailAction;
+  | GetParsersFailAction
+  | NoopAction;
