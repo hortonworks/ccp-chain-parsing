@@ -1,5 +1,9 @@
 const router = require('express').Router();
 const crypto = require('crypto');
+const uuid = require('uuid/v1');
+const debug = require('debug');
+
+const log = debug('tmo-config');
 
 const GET = router.get.bind(router);
 const PUT = router.put.bind(router);
@@ -7,6 +11,7 @@ const POST = router.post.bind(router);
 const DELETE = router.delete.bind(router);
 
 let chains = require('./mock-data/chains.json');
+let parserTypes = require('./mock-data/parser-types.json');
 
 GET('/chains', getChains);
 POST('/chains', createChain);
@@ -14,6 +19,9 @@ PUT('/chains/:id', updateChain);
 DELETE('/chains/:id', deleteChain);
 
 GET('/chains/:id/parsers', getChainDetails);
+POST('/chains/:id/parsers', addParser);
+
+GET('/parser-types', getParserTypes);
 
 function getChains(req, res) {
   res.status(200).send(chains);
@@ -69,6 +77,26 @@ function getChainDetails(req, res) {
     return;
   }
   res.status(404).send();
+}
+
+function addParser(req, res) {
+  const id = req.params.id;
+  const parser = req.body;
+  const chain = chains.find(chain => chain.id === id);
+  if (chain) {
+    if (!chain.parsers) {
+      chain.parsers = [];
+    }
+    parser.id = uuid();
+    chain.parsers.push(parser);
+    res.status(200).send(parser);
+    return;
+  }
+  res.status(404).send();
+}
+
+function getParserTypes(req, res) {
+  return res.status(200).send(parserTypes);
 }
 
 module.exports = router;
