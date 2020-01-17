@@ -31,6 +31,15 @@ export function reducer(
         }
       };
     }
+    case chainPageActions.REMOVE_PARSER: {
+      return {
+        ...state,
+        details: {
+          ...state.details,
+          parsers: state.details.parsers.filter(p => p.id !== action.payload.id)
+        }
+      };
+    }
   }
   return state;
 }

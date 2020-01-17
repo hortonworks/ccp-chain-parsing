@@ -102,8 +102,8 @@ function deleteParserFromChain(req, res) {
   let chain = chains.find(chain => chain.id === id);
 
   if (chain) {
-    chains = chains.find(chain => chain.id === id).parsers.filter(p => p.id !== parser);
-    res.status(200).send(chains);
+    chain.parsers = chain.parsers.filter(p => p.id !== parser);
+    res.status(200).send();
     return;
   }
   res.status(404).send();

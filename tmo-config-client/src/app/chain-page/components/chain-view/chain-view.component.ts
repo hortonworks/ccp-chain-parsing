@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { ParserModel } from '../../chain-details.model';
 
@@ -10,10 +10,15 @@ import { ParserModel } from '../../chain-details.model';
 export class ChainViewComponent implements OnInit {
 
   @Input() parsers: ParserModel[];
+  @Output() removeParserEmitter = new EventEmitter<string>();
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  removeParser(id: string) {
+    this.removeParserEmitter.emit(id);
   }
 
 }
