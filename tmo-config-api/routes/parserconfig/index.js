@@ -103,7 +103,7 @@ function deleteParserFromChain(req, res) {
 
   if (chain) {
     chain.parsers = chain.parsers.filter(p => p.id !== parser);
-    res.status(200).send();
+    res.status(204).send();
     return;
   }
   res.status(404).send();
