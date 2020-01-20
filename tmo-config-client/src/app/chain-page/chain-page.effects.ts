@@ -49,7 +49,7 @@ export class ChainPageEffects {
           }),
           catchError((error: { message: string }) => {
             this.messageService.create('error', error.message);
-            return of(new fromActions.LoadChainDetailsFailAction(error));
+            return of(new fromActions.RemoveParserFailAction(error));
           })
         );
     })
