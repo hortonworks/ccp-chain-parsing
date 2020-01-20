@@ -38,7 +38,7 @@ export class RemoveParserSuccessAction implements Action {
 
 export class RemoveParserFailAction implements Action {
   readonly type = REMOVE_PARSER_FAIL;
-  constructor(public payload?) {}
+  constructor(public error: { message: string }) {}
 }
 
 export type ChainDetailsAction = LoadChainDetailsAction

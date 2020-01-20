@@ -47,7 +47,7 @@ describe('chain parser page: effects', () => {
     }));
 
     effects.removeParser$.subscribe(result => {
-      expect(result).toEqual(new fromActions.RemoveParserFailAction());
+      expect(result).toEqual(new fromActions.RemoveParserSuccessAction());
     });
 
     expect(removeParserSpy).toHaveBeenCalledWith('456123', '123');
