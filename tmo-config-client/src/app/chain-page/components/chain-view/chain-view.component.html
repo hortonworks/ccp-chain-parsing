@@ -1,6 +1,6 @@
 <div>
   <div *ngFor="let parser of parsers">
-    <nz-card class="chain-item" [nzBordered]="true" [nzTitle]="parser.name">
+    <nz-card class="chain-item" [nzBordered]="true" [nzTitle]="parser.name" [nzExtra]="extraTemplate">
       <nz-tabset nzTabPosition="top" nzType="line">
         <nz-tab nzTitle="Basics">
           Parser Class: {{ parser.name }}
@@ -20,5 +20,18 @@
         </nz-tab>
       </nz-tabset>
     </nz-card>
+    <ng-template #extraTemplate>
+      <button
+        nz-popconfirm
+        nzPopconfirmTitle="Are you sure delete this task?"
+        (nzOnConfirm)="removeParser(parser.id)"
+        nzPopconfirmPlacement="right"
+        nz-button
+        nzType="link"
+        data-qe-id="remove-parser"
+      >
+        Remove Parser
+      </button>
+    </ng-template>
   </div>
 </div>

@@ -15,22 +15,41 @@ export class ChainPageEffects {
     private actions$: Actions,
     private messageService: NzMessageService,
     private chainPageService: ChainPageService
-  ) { }
+  ) {}
 
   @Effect()
   loadChainDetails$: Observable<Action> = this.actions$.pipe(
     ofType(fromActions.LOAD_CHAIN_DETAILS),
     switchMap((action: fromActions.LoadChainDetailsAction) => {
-      return this.chainPageService.getParsers(
-        action.payload.id
-      )
+      return this.chainPageService.getParsers(action.payload.id).pipe(
+        map((details: ChainDetailsModel) => {
+          return new fromActions.LoadChainDetailsSuccessAction(details);
+        }),
+        catchError((error: { message: string }) => {
+          this.messageService.create('error', error.message);
+          return of(new fromActions.LoadChainDetailsFailAction(error));
+        })
+      );
+    })
+  );
+
+  @Effect()
+  removeParser$: Observable<Action> = this.actions$.pipe(
+    ofType(fromActions.REMOVE_PARSER),
+    switchMap((action: fromActions.RemoveParserAction) => {
+      return this.chainPageService
+        .removeParser(action.payload.id, action.payload.chainId)
         .pipe(
-          map((details: ChainDetailsModel) => {
-            return new fromActions.LoadChainDetailsSuccessAction(details);
+          map(() => {
+            this.messageService.create(
+              'success',
+              'Parser has been removed successfully.'
+            );
+            return new fromActions.RemoveParserSuccessAction();
           }),
           catchError((error: { message: string }) => {
             this.messageService.create('error', error.message);
-            return of(new fromActions.LoadChainDetailsFailAction(error));
+            return of(new fromActions.RemoveParserFailAction(error));
           })
         );
     })

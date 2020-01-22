@@ -2,7 +2,7 @@
   <a routerLink="new">Add new parser</a>
   <div nz-row>
     <div nz-col nzSpan="10">
-      <app-chain-view [parsers]="details.parsers"></app-chain-view>
+      <app-chain-view [parsers]="details.parsers" (removeParserEmitter)="removeParser($event)"></app-chain-view>
     </div>
     <div nz-col nzSpan="14"></div>
   </div>

@@ -32,4 +32,8 @@ export class ChainPageComponent implements OnInit {
     });
   }
 
+  removeParser(id: string) {
+    this.store.dispatch(new fromActions.RemoveParserAction({ id, chainId: this.details.id }));
+  }
+
 }

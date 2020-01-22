@@ -1,7 +1,10 @@
 import { Component, forwardRef, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
+
+import { ParserModel } from '../../chain-details.model';
 
 import { ChainViewComponent } from './chain-view.component';
 
@@ -35,10 +38,20 @@ class MockMonacoEditorComponent implements ControlValueAccessor {
 describe('ChainViewComponent', () => {
   let component: ChainViewComponent;
   let fixture: ComponentFixture<ChainViewComponent>;
+  const parsers: ParserModel[] = [
+    {
+      id: '123',
+      name: 'Syslog',
+      type: 'Grok',
+      config: {},
+      input: '',
+      outputs: ''
+    }
+  ];
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ NgZorroAntdModule ],
+      imports: [ NgZorroAntdModule, NoopAnimationsModule ],
       declarations: [ ChainViewComponent, MockMonacoEditorComponent ]
     })
     .compileComponents();
@@ -47,10 +60,23 @@ describe('ChainViewComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ChainViewComponent);
     component = fixture.componentInstance;
+    component.parsers = parsers;
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should emit an event when delete parser is clicked and confirmed', () => {
+    const deleteBtn = fixture.nativeElement.querySelector('[data-qe-id="remove-parser"]');
+    const removeParserEmitSpy = spyOn(component.removeParserEmitter, 'emit');
+
+    deleteBtn.click();
+    fixture.detectChanges();
+
+    const confirmBtn = document.querySelector('.ant-popover .ant-btn-primary') as HTMLElement;
+    confirmBtn.click();
+    expect(removeParserEmitSpy).toHaveBeenCalledWith('123');
   });
 });
