@@ -21,7 +21,7 @@ export class ChainListEffects {
   loadChains$: Observable<Action> = this.actions$.pipe(
     ofType(fromActions.LOAD_CHAINS),
     switchMap((action: fromActions.LoadChainsAction) => {
-      return this.chainListService.getChains()
+      return this.chainListService.getChains(action.param)
         .pipe(
           map((chains: ChainModel[]) => {
             return new fromActions.LoadChainsSuccessAction(chains);

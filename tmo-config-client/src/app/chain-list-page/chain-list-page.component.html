@@ -19,7 +19,7 @@
 </nz-modal>
 
 <nz-card nzTitle="Parser Chains" [nzExtra] = "AddButton">
-  <nz-table #basicTable [nzData]="chains$ | async">
+  <nz-table #basicTable [nzData]="chains$ | async" [nzShowPagination]="false">
     <thead>
       <tr>
         <th>Name</th>
@@ -50,4 +50,7 @@
       </tr>
     </tbody>
   </nz-table>
+  <div class="pagination-container">
+    <nz-pagination [nzPageIndex]="pageNumber" [nzTotal]="totalRecords" nzShowSizeChanger [nzPageSize]="10" (nzPageIndexChange)="setPageNumber($event)" (nzPageSizeChange)="setPageSize($event)"></nz-pagination>
+  </div>
 </nz-card>
