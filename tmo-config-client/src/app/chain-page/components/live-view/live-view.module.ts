@@ -4,6 +4,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 import { LiveViewComponent } from './live-view.component';
 import { SampleDataFormComponent } from './sample-data-form/sample-data-form.component';
@@ -14,8 +15,9 @@ import { SampleDataFormComponent } from './sample-data-form/sample-data-form.com
     CommonModule,
     NzTabsModule,
     NzFormModule,
-    NzButtonModule,
+    NzButtonModule, 
     NzRadioModule,
+    NzInputModule,
   ],
   exports: [ LiveViewComponent ]
 })

@@ -2,11 +2,22 @@
   <nz-form-item>
     <nz-form-label nzFor="sourceType">Type of sample data</nz-form-label>
     <nz-form-control>
-      <nz-radio-group name="sourceType" id="sourceType">
-        <label nz-radio-button nzValue="large">Text</label>
-        <label nz-radio-button nzValue="default">Kafka</label>
-        <label nz-radio-button nzValue="small">HDFS</label>
-      </nz-radio-group>
+      <nz-button-group>
+        <button nz-button nzType="default" nzType="primary">Text Input</button>
+        <button nz-button nzType="default" disabled>Kafka Stream</button>
+        <button nz-button nzType="default" disabled>HDFS File</button>
+      </nz-button-group>
     </nz-form-control>
-  </nz-form-item >
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label nzFor="sourceType">Sample data</nz-form-label>
+    <nz-form-control>
+      <textarea
+        nz-input
+        placeholder="Add sample data here..."
+        [nzAutosize]="{ minRows: 10, maxRows: 24 }"
+      ></textarea>
+    </nz-form-control>
+  </nz-form-item>
+  <button nz-button nzType="primary">Apply</button>
 </form>
