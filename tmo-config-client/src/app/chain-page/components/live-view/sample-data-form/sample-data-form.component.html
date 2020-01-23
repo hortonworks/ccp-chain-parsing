@@ -20,5 +20,10 @@
       ></textarea>
     </nz-form-control>
   </nz-form-item>
-  <button nz-button nzType="primary" (click)="onApply(sourceInput.value)">Apply</button>
+  <button 
+    nz-button 
+    nzType="primary" 
+    (click)="onApply(sourceInput.value)"
+    attr.data-qe-id="apply-button"
+    >Apply</button>
 </form>
