@@ -8,11 +8,16 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 
 import { LiveViewComponent } from './live-view.component';
 import { SampleDataFormComponent } from './sample-data-form/sample-data-form.component';
+import { StoreModule } from '@ngrx/store';
+import { reducer } from './live-view.reducers';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [ LiveViewComponent, SampleDataFormComponent ],
   imports: [
     CommonModule,
+    FormsModule,
+    StoreModule.forFeature('live-view', reducer),
     NzTabsModule,
     NzFormModule,
     NzButtonModule, 

@@ -13,11 +13,12 @@
     <nz-form-label nzFor="sourceType">Sample data</nz-form-label>
     <nz-form-control>
       <textarea
+        #sourceInput
         nz-input
         placeholder="Add sample data here..."
         [nzAutosize]="{ minRows: 10, maxRows: 24 }"
       ></textarea>
     </nz-form-control>
   </nz-form-item>
-  <button nz-button nzType="primary">Apply</button>
+  <button nz-button nzType="primary" (click)="onApply(sourceInput.value)">Apply</button>
 </form>
