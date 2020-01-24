@@ -12,7 +12,7 @@ import { LiveViewComponent } from './live-view.component';
 class MockSampleDataFormComponent {}
 
 
-fdescribe('LiveViewComponent', () => {
+describe('LiveViewComponent', () => {
   let component: LiveViewComponent;
   let fixture: ComponentFixture<LiveViewComponent>;
 

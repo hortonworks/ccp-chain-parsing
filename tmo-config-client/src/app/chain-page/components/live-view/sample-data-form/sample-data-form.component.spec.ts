@@ -1,17 +1,16 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NzButtonModule, NzFormModule, NzInputModule } from 'ng-zorro-antd';
 
+import { sampleDataChanged } from '../live-view.actions';
 import { initialState, LiveViewState } from '../live-view.reducers';
+import { SampleDataModel } from '../models/sample-data.model';
 
 import { SampleDataFormComponent } from './sample-data-form.component';
-import { Store } from '@ngrx/store';
-import { sampleDataChanged } from '../live-view.actions';
-import { SampleDataType, SampleDataModel } from '../models/sample-data.model';
-import { sample } from 'rxjs/operators';
 
-fdescribe('SampleDataFormComponent', () => {
+describe('SampleDataFormComponent', () => {
   let component: SampleDataFormComponent;
   let fixture: ComponentFixture<SampleDataFormComponent>;
 
