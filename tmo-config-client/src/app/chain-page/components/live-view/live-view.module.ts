@@ -11,6 +11,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { LiveViewComponent } from './live-view.component';
 import { reducer } from './live-view.reducers';
 import { SampleDataFormComponent } from './sample-data-form/sample-data-form.component';
+import { LiveViewService } from './services/live-view.service';
 
 @NgModule({
   declarations: [ LiveViewComponent, SampleDataFormComponent ],
@@ -23,6 +24,9 @@ import { SampleDataFormComponent } from './sample-data-form/sample-data-form.com
     NzButtonModule,
     NzRadioModule,
     NzInputModule,
+  ],
+  providers: [
+    LiveViewService
   ],
   exports: [ LiveViewComponent ]
 })
