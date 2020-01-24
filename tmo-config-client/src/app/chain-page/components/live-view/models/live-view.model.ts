@@ -1,5 +1,6 @@
-import { SampleDataModel } from './sample-data.model';
 import { ChainDetailsModel } from '../../../chain-details.model';
+
+import { SampleDataModel } from './sample-data.model';
 
 export class LiveViewResultModel {
   entries: EntryParsingResultModel[];

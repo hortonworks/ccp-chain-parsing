@@ -1,14 +1,27 @@
+import { Component } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { NzTabsModule } from 'ng-zorro-antd';
 
 import { LiveViewComponent } from './live-view.component';
 
-describe('LiveViewComponent', () => {
+
+@Component({
+  selector: 'app-sample-data-form',
+  template: ''
+})
+class MockSampleDataFormComponent {}
+
+
+fdescribe('LiveViewComponent', () => {
   let component: LiveViewComponent;
   let fixture: ComponentFixture<LiveViewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LiveViewComponent ]
+      imports: [
+        NzTabsModule,
+      ],
+      declarations: [ LiveViewComponent, MockSampleDataFormComponent ]
     })
     .compileComponents();
   }));

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { LiveViewState } from '../live-view.reducers';
+
 import { sampleDataChanged } from '../live-view.actions';
+import { LiveViewState } from '../live-view.reducers';
 import { SampleDataModel } from '../models/sample-data.model';
 
 @Component({

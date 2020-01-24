@@ -13,10 +13,15 @@ import * as fromReducers from './chain-page.reducers';
   selector: 'app-chain-view',
   template: ''
 })
-
 class MockChainViewComponent {
   @Input() parsers: ParserModel[];
 }
+
+@Component({
+  selector: 'app-live-view',
+  template: ''
+})
+class MockLiveViewComponent {}
 
 const fakeActivatedRoute = {
   params: of({})
@@ -34,7 +39,7 @@ describe('ChainPageComponent', () => {
           'chain-page': fromReducers.reducer
         })
       ],
-      declarations: [ChainPageComponent, MockChainViewComponent],
+      declarations: [ChainPageComponent, MockChainViewComponent, MockLiveViewComponent],
       providers: [
         { provide: ActivatedRoute, useFactory: () => fakeActivatedRoute }
       ]

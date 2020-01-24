@@ -3,7 +3,7 @@ import { LiveViewModel } from './models/live-view.model';
 
 export interface LiveViewState {
   isExecuting: boolean;
-  isLivewViewOn: boolean;
+  isLiveViewOn: boolean;
   error: string;
   isModelDirty: boolean;
   model: LiveViewModel;
@@ -11,11 +11,11 @@ export interface LiveViewState {
 
 export const initialState: LiveViewState = {
   isExecuting: false,
-  isLivewViewOn: true,
+  isLiveViewOn: true,
   error: '',
   isModelDirty: false,
   model: new LiveViewModel(),
-}
+};
 
 export function reducer(
   state: LiveViewState = initialState,

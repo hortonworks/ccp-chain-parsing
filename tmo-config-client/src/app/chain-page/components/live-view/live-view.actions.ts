@@ -1,4 +1,5 @@
 import { createAction, props, union } from '@ngrx/store';
+
 import { SampleDataModel } from './models/sample-data.model';
 
 export const sampleDataChanged = createAction(
