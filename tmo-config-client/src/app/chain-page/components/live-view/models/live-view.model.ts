@@ -7,8 +7,8 @@ export class LiveViewResultModel {
 }
 
 export class EntryParsingResultModel {
-  input: String;
-  output: String;
+  input: string;
+  output: string;
   log: { type: string, message: string };
 }
 

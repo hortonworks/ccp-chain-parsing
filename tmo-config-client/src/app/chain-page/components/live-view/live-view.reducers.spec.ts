@@ -14,7 +14,7 @@ describe('live-view.reducers', () => {
     sampleData.source = 'test input';
 
     const newState = reducer(initialState, sampleDataChanged({ sampleData }));
-    expect(newState.model.sampleData.source).toBe('test input');
+    expect(newState.liveViewModel.sampleData.source).toBe('test input');
   });
 
 });
