@@ -12,6 +12,8 @@ import { LiveViewComponent } from './live-view.component';
 import { reducer } from './live-view.reducers';
 import { SampleDataFormComponent } from './sample-data-form/sample-data-form.component';
 import { LiveViewService } from './services/live-view.service';
+import { EffectsModule } from '@ngrx/effects';
+import { LiveViewEffects } from './live-view.effects';
 
 @NgModule({
   declarations: [ LiveViewComponent, SampleDataFormComponent ],
@@ -19,6 +21,7 @@ import { LiveViewService } from './services/live-view.service';
     CommonModule,
     FormsModule,
     StoreModule.forFeature('live-view', reducer),
+    EffectsModule.forFeature([ LiveViewEffects ]),
     NzTabsModule,
     NzFormModule,
     NzButtonModule,

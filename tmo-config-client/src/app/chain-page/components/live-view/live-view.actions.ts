@@ -1,5 +1,7 @@
 import { createAction, props, union } from '@ngrx/store';
 
+import { ChainDetailsModel } from '../../chain-details.model';
+
 import { SampleDataModel } from './models/sample-data.model';
 
 export const sampleDataChanged = createAction(
@@ -7,6 +9,20 @@ export const sampleDataChanged = createAction(
   props<{ sampleData: SampleDataModel }>()
 );
 
-const actions = union({ sampleDataChanged });
+export const chainConfigChanged = createAction(
+  '[LiveView] Parser Chain Configuration Changed',
+  props<{ chainConfig: ChainDetailsModel }>()
+);
+
+export const refreshTick = createAction(
+  '[LiveView] Refresh Clock Ticked',
+  props<{ chainConfig: ChainDetailsModel }>()
+);
+
+const actions = union({
+  sampleDataChanged,
+  chainConfigChanged,
+  refreshTick
+});
 
 export type LiveViewActionsType = typeof actions;
