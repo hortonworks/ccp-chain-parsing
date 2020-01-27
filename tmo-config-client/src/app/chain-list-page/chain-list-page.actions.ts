@@ -18,7 +18,7 @@ export class NoopChainAction implements Action {
 }
 export class LoadChainsAction implements Action {
   readonly type = LOAD_CHAINS;
-  constructor() {}
+  constructor(public param: {page: number, pageSize: number}) {}
 }
 
 export class LoadChainsSuccessAction implements Action {

@@ -58,13 +58,13 @@ describe('ChainListPage: effects', () => {
     const spy = spyOn(service, 'getChains').and.callThrough();
 
     actions = new ReplaySubject(1);
-    actions.next(new fromActions.LoadChainsAction());
+    actions.next(new fromActions.LoadChainsAction({page: 1, pageSize: 10}));
 
     effects.loadChains$.subscribe(result => {
       expect(result).toEqual(new fromActions.LoadChainsSuccessAction(expected));
     });
 
-    expect(spy).toHaveBeenCalledWith();
+    expect(spy).toHaveBeenCalledWith({page: 1, pageSize: 10});
   });
 
   it('loadChains should return with an error when it fails and call ant`s message service', () => {
@@ -75,7 +75,7 @@ describe('ChainListPage: effects', () => {
     const spy = spyOn(msgService, 'create').and.callThrough();
 
     actions = new ReplaySubject(1);
-    actions.next(new fromActions.LoadChainsAction());
+    actions.next(new fromActions.LoadChainsAction({page: 1, pageSize: 10}));
 
     effects.loadChains$.subscribe(result => {
       expect(result).toEqual(new fromActions.LoadChainsFailAction(error));
