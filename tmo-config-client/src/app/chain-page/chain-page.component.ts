@@ -14,6 +14,7 @@ import { ChainPageState, getChainDetails } from './chain-page.reducers';
 export class ChainPageComponent implements OnInit {
 
   details: ChainDetailsModel;
+  breadcrumbs = [];
 
   constructor(
     private store: Store<ChainPageState>,
@@ -21,6 +22,7 @@ export class ChainPageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
     this.activatedRoute.params.subscribe((params) => {
       this.store.dispatch(new fromActions.LoadChainDetailsAction({
         id: params.id
@@ -29,11 +31,22 @@ export class ChainPageComponent implements OnInit {
 
     this.store.pipe(select(getChainDetails)).subscribe((details) => {
       this.details = details;
+      this.breadcrumbs = [this.details];
     });
   }
 
   removeParser(id: string) {
     this.store.dispatch(new fromActions.RemoveParserAction({ id, chainId: this.details.id }));
+  }
+
+  onChainLevelChange(chain: ChainDetailsModel) {
+    this.breadcrumbs.push(chain);
+  }
+
+  onBreadcrumbClick(event: Event, chain: ChainDetailsModel) {
+    event.preventDefault();
+    const index = this.breadcrumbs.indexOf(chain);
+    this.breadcrumbs = this.breadcrumbs.slice(0, index + 1);
   }
 
 }

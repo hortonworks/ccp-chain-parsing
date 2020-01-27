@@ -11,9 +11,12 @@ import { ChainPageComponent } from './chain-page.component';
 import { ChainPageEffects } from './chain-page.effects';
 import { reducer } from './chain-page.reducers';
 import { ChainViewComponent } from './components/chain-view/chain-view.component';
+import { ParserComponent } from './components/parser/parser.component';
+import { RouterComponent } from './components/router/router.component';
 
 @NgModule({
-  declarations: [ ChainPageComponent, ChainViewComponent ],
+  declarations: [ ChainPageComponent, ChainViewComponent, ParserComponent, RouterComponent ],
+  entryComponents: [ ChainViewComponent ],
   imports: [
     NgZorroAntdModule,
     CommonModule,

@@ -1,9 +1,24 @@
-<nz-card nzTitle="Parser Chain ({{ details.name }})">
-  <a routerLink="new">Add new parser</a>
+<nz-card [nzTitle]="breadcrumbsCardTitle">
+  <div class="add-parser">
+    <a routerLink="new">Add new parser</a>
+  </div>
   <div nz-row>
     <div nz-col nzSpan="10">
-      <app-chain-view [parsers]="details.parsers" (removeParserEmitter)="removeParser($event)"></app-chain-view>
+      <app-chain-view
+        [parsers]="(breadcrumbs && breadcrumbs[breadcrumbs.length - 1].parsers) || details.parsers"
+        (removeParserEmitter)="removeParser($event)"
+        (chainLevelChange)="onChainLevelChange($event)"
+      ></app-chain-view>
     </div>
     <div nz-col nzSpan="14"></div>
   </div>
 </nz-card>
+
+<ng-template class="breadcrumbs" #breadcrumbsCardTitle>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item *ngFor="let breadcrumb of breadcrumbs; index as i">
+      <a *ngIf="i < breadcrumbs.length - 1" href="#" (click)="onBreadcrumbClick($event, breadcrumb)">{{ breadcrumb.name }}</a>
+      <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>

@@ -5,6 +5,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 import { ParserModel } from '../../chain-details.model';
+import { ParserComponent } from '../parser/parser.component';
+import { RouterComponent } from '../router/router.component';
 
 import { ChainViewComponent } from './chain-view.component';
 
@@ -52,7 +54,12 @@ describe('ChainViewComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ NgZorroAntdModule, NoopAnimationsModule ],
-      declarations: [ ChainViewComponent, MockMonacoEditorComponent ]
+      declarations: [
+        ChainViewComponent,
+        MockMonacoEditorComponent,
+        ParserComponent,
+        RouterComponent
+      ]
     })
     .compileComponents();
   }));
