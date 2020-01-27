@@ -1,0 +1,32 @@
+<form nz-form>
+  <nz-form-item>
+    <nz-form-label nzFor="sourceType">Type of sample data</nz-form-label>
+    <nz-form-control>
+      <nz-button-group>
+        <button nz-button nzType="default" nzType="primary">Text Input</button>
+        <button nz-button nzType="default" disabled>Kafka Stream</button>
+        <button nz-button nzType="default" disabled>HDFS File</button>
+      </nz-button-group>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label nzFor="sourceType">Sample data</nz-form-label>
+    <nz-form-control>
+      <textarea
+        #sourceInput
+        data-qe-id="sample-input"
+        nz-input
+        placeholder="Add sample data here..."
+        [nzAutosize]="{ minRows: 10, maxRows: 24 }"
+      ></textarea>
+    </nz-form-control>
+  </nz-form-item>
+  <button
+    nz-button
+    nzType="primary"
+    type="button"
+    [attr.disabled]="!sourceInput.value ? true : null"
+    (click)="onApply(sourceInput.value)"
+    data-qe-id="apply-button"
+    >Apply</button>
+</form>

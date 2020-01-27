@@ -1,9 +1,11 @@
 <nz-card nzTitle="Parser Chain ({{ details.name }})">
   <a routerLink="new">Add new parser</a>
-  <div nz-row>
+  <div nz-row nzGutter="16">
     <div nz-col nzSpan="10">
       <app-chain-view [parsers]="details.parsers" (removeParserEmitter)="removeParser($event)"></app-chain-view>
     </div>
-    <div nz-col nzSpan="14"></div>
+    <div nz-col nzSpan="14">
+      <app-live-view></app-live-view>
+    </div>
   </div>
 </nz-card>

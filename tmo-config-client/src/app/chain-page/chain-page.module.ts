@@ -11,6 +11,7 @@ import { ChainPageComponent } from './chain-page.component';
 import { ChainPageEffects } from './chain-page.effects';
 import { reducer } from './chain-page.reducers';
 import { ChainViewComponent } from './components/chain-view/chain-view.component';
+import { LiveViewModule } from './components/live-view/live-view.module';
 
 @NgModule({
   declarations: [ ChainPageComponent, ChainViewComponent ],
@@ -23,6 +24,7 @@ import { ChainViewComponent } from './components/chain-view/chain-view.component
     StoreModule.forFeature('chain-page', reducer),
     EffectsModule.forFeature([ ChainPageEffects ]),
     MonacoEditorModule,
+    LiveViewModule,
   ],
   providers: [
     NzMessageService,
