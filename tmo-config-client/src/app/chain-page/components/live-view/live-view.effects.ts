@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action, Store, select } from '@ngrx/store';
 import { NzMessageService } from 'ng-zorro-antd';
-import { Observable, forkJoin, of } from 'rxjs';
+import { Observable, forkJoin, of, zip, combineLatest } from 'rxjs';
 import { debounceTime, map, switchMap, catchError } from 'rxjs/operators';
 
 
@@ -39,12 +39,11 @@ export class LiveViewEffects {
       executionTriggered.type,
     ),
     switchMap(() => {
-      return forkJoin({
-        sampleData: this.store.pipe(select(getSampleData)),
-        chainConfig: this.store.pipe(select(getChainConfig)),
-      });
-    }),
-    switchMap(({ sampleData, chainConfig }) => {
+      return combineLatest(
+        this.store.pipe(select(getSampleData)),
+        this.store.pipe(select(getChainConfig)),
+      )}),
+    switchMap(([ sampleData, chainConfig ]) => {
       return this.liveViewService.execute(sampleData, chainConfig).pipe(
         map(liveViewResult => liveViewRefreshedSuccessfully({ liveViewResult })),
         catchError(( error: { message: string }) => {
