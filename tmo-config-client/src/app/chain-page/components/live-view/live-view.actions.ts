@@ -3,6 +3,7 @@ import { createAction, props, union } from '@ngrx/store';
 import { ChainDetailsModel } from '../../chain-details.model';
 
 import { SampleDataModel } from './models/sample-data.model';
+import { LiveViewModel } from './models/live-view.model';
 
 export const sampleDataChanged = createAction(
   '[LiveView] Sample Data Changed',
@@ -14,15 +15,26 @@ export const chainConfigChanged = createAction(
   props<{ chainConfig: ChainDetailsModel }>()
 );
 
-export const refreshTick = createAction(
-  '[LiveView] Refresh Clock Ticked',
-  props<{ chainConfig: ChainDetailsModel }>()
+export const executionTriggered = createAction(
+  '[LiveView] Sample Data Parsing Triggered'
+);
+
+export const liveViewRefreshedSuccessfully = createAction(
+  '[LiveView] Live View Refreshed Successfully',
+  props<{ liveViewResult: LiveViewModel }>()
+);
+
+export const liveViewRefreshFailed = createAction(
+  '[LiveView] Live View Refresh Failed',
+  props<{ error: { message: string } }>()
 );
 
 const actions = union({
   sampleDataChanged,
   chainConfigChanged,
-  refreshTick
+  executionTriggered,
+  liveViewRefreshedSuccessfully,
+  liveViewRefreshFailed,
 });
 
 export type LiveViewActionsType = typeof actions;

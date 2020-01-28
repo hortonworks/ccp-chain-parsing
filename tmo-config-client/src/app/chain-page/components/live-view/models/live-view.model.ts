@@ -8,12 +8,19 @@ export class LiveViewResultModel {
 
 export class EntryParsingResultModel {
   input: string;
-  output: string;
+  output: {};
   log: { type: string, message: string };
 }
 
 export class LiveViewModel {
-  sampleData = new SampleDataModel();
-  chainConfig: ChainDetailsModel;
-  parsingResult: LiveViewResultModel;
+
+  sampleData: SampleDataModel;
+  parserChainConfig: ChainDetailsModel;
+  result: LiveViewResultModel;
+
+  constructor(sampleData = new SampleDataModel(), chainConfig?: ChainDetailsModel) {
+    this.sampleData = sampleData;
+    this.parserChainConfig = chainConfig;
+  }
+
 }
