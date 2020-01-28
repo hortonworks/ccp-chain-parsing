@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { NzMessageService } from 'ng-zorro-antd';
-import { Observable, interval, of, noop } from 'rxjs';
-import { switchMap, debounce, map, debounceTime, catchError } from 'rxjs/operators';
-import { chainConfigChanged, refreshTick, LiveViewActionsType } from './live-view.actions';
-import { ChainDetailsModel } from '../../chain-details.model';
+import { Observable } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
+
+
+import { chainConfigChanged, LiveViewActionsType, refreshTick } from './live-view.actions';
 
 export const LIVE_VIEW_DEBOUNCE_RATE = 1000;
 

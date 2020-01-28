@@ -4,8 +4,8 @@ import { select, Store } from '@ngrx/store';
 import { ChainDetailsModel } from '../../chain-details.model';
 import { getChainDetails } from '../../chain-page.reducers';
 
-import { LiveViewState } from './live-view.reducers';
 import { chainConfigChanged } from './live-view.actions';
+import { LiveViewState } from './live-view.reducers';
 
 @Component({
   selector: 'app-live-view',
