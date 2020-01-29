@@ -24,7 +24,7 @@ DELETE('/chains/:id/parsers/:parser', deleteParserFromChain);
 
 GET('/parser-types', getParserTypes);
 
-POST('/sampleparser/parsejobs', createParseJob);
+POST('/sampleparser/parsingjobs', createParseJob);
 
 function createParseJob(req, res) {
   const sources = req.body.sampleData.source.split('/n');
