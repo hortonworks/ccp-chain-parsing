@@ -6,6 +6,8 @@ import { getChainDetails } from '../../chain-page.reducers';
 
 import { chainConfigChanged } from './live-view.actions';
 import { LiveViewState } from './live-view.reducers';
+import { getExecutionStatus } from './live-view.selectors';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-live-view',
@@ -14,10 +16,14 @@ import { LiveViewState } from './live-view.reducers';
 })
 export class LiveViewComponent {
 
+  isExecuting$: Observable<boolean>;
+
   constructor(private store: Store<LiveViewState>) {
     this.store.pipe(select(getChainDetails)).subscribe((chainConfig: ChainDetailsModel) => {
       this.store.dispatch( chainConfigChanged({ chainConfig }));
     });
+
+    this.isExecuting$ = this.store.pipe(select(getExecutionStatus));
   }
 
 }

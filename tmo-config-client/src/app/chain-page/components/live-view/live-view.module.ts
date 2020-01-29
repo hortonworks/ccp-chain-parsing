@@ -8,6 +8,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 import { LiveViewComponent } from './live-view.component';
 import { LiveViewEffects } from './live-view.effects';
@@ -27,6 +28,7 @@ import { LiveViewService } from './services/live-view.service';
     NzButtonModule,
     NzRadioModule,
     NzInputModule,
+    NzSpinModule,
   ],
   providers: [
     LiveViewService
