@@ -1,4 +1,11 @@
-import { LiveViewActionsType, sampleDataChanged, chainConfigChanged, executionTriggered, liveViewRefreshedSuccessfully, liveViewRefreshFailed } from './live-view.actions';
+import { 
+  LiveViewActionsType, 
+  sampleDataChanged, 
+  chainConfigChanged, 
+  executionTriggered, 
+  liveViewRefreshedSuccessfully, 
+  liveViewRefreshFailed 
+} from './live-view.actions';
 import { LiveViewModel } from './models/live-view.model';
 import { SampleDataModel } from './models/sample-data.model';
 
@@ -56,6 +63,7 @@ export function reducer(
         ...state,
         isExecuting: false,
         isModelDirty: false,
+        liveViewModel: action.liveViewResult,
       };
     }
     case liveViewRefreshFailed.type: {
@@ -71,7 +79,5 @@ export function reducer(
   }
 }
 
-// TODO dirty on parser config chain
-// TODO trigger action on debounce timer to set isexecute
 // TODO spinner on execute
 // TODO toggle for on / off Separated ticket!
