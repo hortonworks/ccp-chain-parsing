@@ -51,6 +51,6 @@
     </tbody>
   </nz-table>
   <div class="pagination-container">
-    <nz-pagination [nzPageIndex]="pageNumber" [nzTotal]="totalRecords" nzShowSizeChanger [nzPageSize]="10" (nzPageIndexChange)="setPageNumber($event)" (nzPageSizeChange)="setPageSize($event)"></nz-pagination>
+    <nz-pagination [nzPageIndex]="pageNumber" [nzTotal]="totalRecords" nzShowSizeChanger [nzPageSize]="pageSize" (nzPageIndexChange)="setPageNumber($event)" (nzPageSizeChange)="setPageSize($event)"></nz-pagination>
   </div>
 </nz-card>
