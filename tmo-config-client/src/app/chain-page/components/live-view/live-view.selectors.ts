@@ -20,3 +20,8 @@ export const getSampleData = createSelector(
   getLiveViewState,
   (state: LiveViewState) => state.liveViewModel.sampleData
 );
+
+export const getExecutionStatus = createSelector(
+  getLiveViewState,
+  (state: LiveViewState) => state.isExecuting
+);
