@@ -32,7 +32,7 @@ function createParseJob(req, res) {
   let entries = sources.map(source => { return {
       input: source,
       output: {
-        Original_string: source
+        original_string: source
       },
       log: {}
     }
