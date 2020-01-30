@@ -20,6 +20,9 @@ export class LiveViewService {
   ) { }
 
   execute(sampleData: SampleDataModel, chainConfig: ChainDetailsModel): Observable<any> {
-    return this.http.post('/api/v1/parserconfig/sampleparser/parsingjobs', new LiveViewModel(sampleData, chainConfig)).pipe(delay(3000));
+    return this.http.post(
+      '/api/v1/parserconfig/sampleparser/parsingjobs',
+      new LiveViewModel(sampleData, chainConfig))
+      .pipe(delay(3000));
   }
 }

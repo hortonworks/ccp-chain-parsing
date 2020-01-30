@@ -3,7 +3,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action, Store, select } from '@ngrx/store';
 import { NzMessageService } from 'ng-zorro-antd';
 import { Observable, forkJoin, of, zip, combineLatest } from 'rxjs';
-import { debounceTime, map, switchMap, catchError } from 'rxjs/operators';
+import { debounceTime, map, switchMap, catchError, filter, tap, take } from 'rxjs/operators';
 
 
 import { chainConfigChanged, LiveViewActionsType, sampleDataChanged, liveViewRefreshedSuccessfully, liveViewRefreshFailed, executionTriggered } from './live-view.actions';
@@ -29,6 +29,7 @@ export class LiveViewEffects {
       chainConfigChanged.type,
       sampleDataChanged.type,
     ),
+    filter(action => action.type === sampleDataChanged.type && !!action.sampleData.source ),
     debounceTime(LIVE_VIEW_DEBOUNCE_RATE),
     map(() => executionTriggered()),
   );
@@ -42,7 +43,8 @@ export class LiveViewEffects {
       return combineLatest(
         this.store.pipe(select(getSampleData)),
         this.store.pipe(select(getChainConfig)),
-      )}),
+      ).pipe(take(1));
+    }),
     switchMap(([ sampleData, chainConfig ]) => {
       return this.liveViewService.execute(sampleData, chainConfig).pipe(
         map(liveViewResult => liveViewRefreshedSuccessfully({ liveViewResult })),
