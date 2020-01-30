@@ -11,5 +11,6 @@
     <app-sample-data-form></app-sample-data-form>
   </nz-tab>
   <nz-tab nzTitle="Result">
+    <app-live-view-result [results]="results$ | async"></app-live-view-result>
   </nz-tab>
 </nz-tabset>

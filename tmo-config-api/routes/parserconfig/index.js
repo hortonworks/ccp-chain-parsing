@@ -27,7 +27,7 @@ GET('/parser-types', getParserTypes);
 POST('/sampleparser/parsingjobs', createParseJob);
 
 function createParseJob(req, res) {
-  const sources = req.body.sampleData.source.split('/n');
+  const sources = req.body.sampleData.source.split('\n');
   const log = ['PASS', 'FAIL'];
   let entries = sources.map(source => { return {
       input: source,

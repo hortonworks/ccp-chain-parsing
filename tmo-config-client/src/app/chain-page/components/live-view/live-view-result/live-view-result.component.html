@@ -1,0 +1,19 @@
+<div *ngIf='results'>
+  <ul>
+    <div *ngFor="let entry of results.entries">
+      <li>
+        Input: {{ entry.input }}
+      </li>
+      <li>
+        Output:
+        <dl *ngFor="let item of entry.output | keyvalue">
+          <dt>{{ item.key }}</dt>
+          <dd>{{ item.value }}</dd>
+        </dl>
+      </li>
+      <li>
+        Log: {{ entry.log.message }}
+      </li>
+    </div>
+  </ul>
+</div>

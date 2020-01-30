@@ -38,7 +38,7 @@ export function reducer(
 
       const newSampleData = new SampleDataModel();
       newSampleData.type = action.sampleData.type;
-      newSampleData.source = action.sampleData.source;
+      newSampleData.source = JSON.parse(JSON.stringify(action.sampleData.source));
 
       const newLiveView = new LiveViewModel();
       newLiveView.sampleData = newSampleData;
