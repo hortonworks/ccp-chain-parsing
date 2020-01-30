@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+
 import { LiveViewResultModel } from '../models/live-view.model';
 
 @Component({
