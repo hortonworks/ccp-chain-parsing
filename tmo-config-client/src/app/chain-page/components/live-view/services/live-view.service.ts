@@ -1,13 +1,13 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { delay } from 'rxjs/operators';
+import { ChainDetailsModel } from 'src/app/chain-page/chain-details.model';
 
 import { LiveViewState } from '../live-view.reducers';
-import { ChainDetailsModel } from 'src/app/chain-page/chain-details.model';
-import { SampleDataModel } from '../models/sample-data.model';
-import { HttpClient } from '@angular/common/http';
 import { LiveViewModel } from '../models/live-view.model';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { SampleDataModel } from '../models/sample-data.model';
 
 @Injectable({
   providedIn: 'root'

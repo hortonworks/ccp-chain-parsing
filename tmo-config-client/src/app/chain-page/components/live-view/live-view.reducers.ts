@@ -1,10 +1,10 @@
-import { 
-  LiveViewActionsType, 
-  sampleDataChanged, 
-  chainConfigChanged, 
-  executionTriggered, 
-  liveViewRefreshedSuccessfully, 
-  liveViewRefreshFailed 
+import {
+  chainConfigChanged,
+  executionTriggered,
+  LiveViewActionsType,
+  liveViewRefreshedSuccessfully,
+  liveViewRefreshFailed,
+  sampleDataChanged
 } from './live-view.actions';
 import { LiveViewModel } from './models/live-view.model';
 import { SampleDataModel } from './models/sample-data.model';

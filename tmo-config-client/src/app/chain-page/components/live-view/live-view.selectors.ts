@@ -1,6 +1,7 @@
 import { createSelector } from '@ngrx/store';
 
 import { ChainPageState } from '../../chain-page.reducers';
+
 import { LiveViewState } from './live-view.reducers';
 
 function getChainPageState(state: any): ChainPageState {

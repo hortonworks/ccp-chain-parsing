@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Action, Store, select } from '@ngrx/store';
+import { Action, select, Store } from '@ngrx/store';
 import { NzMessageService } from 'ng-zorro-antd';
-import { Observable, forkJoin, of, zip, combineLatest } from 'rxjs';
-import { debounceTime, map, switchMap, catchError, filter, tap, take } from 'rxjs/operators';
+import { combineLatest, Observable, of } from 'rxjs';
+import { catchError, debounceTime, filter, map, switchMap, take } from 'rxjs/operators';
 
 
-import { chainConfigChanged, LiveViewActionsType, sampleDataChanged, liveViewRefreshedSuccessfully, liveViewRefreshFailed, executionTriggered } from './live-view.actions';
-import { LiveViewService } from './services/live-view.service';
-import { LiveViewModel } from './models/live-view.model';
-import { getChainConfig, getSampleData } from './live-view.selectors';
+import { chainConfigChanged, executionTriggered, LiveViewActionsType, liveViewRefreshedSuccessfully, liveViewRefreshFailed, sampleDataChanged } from './live-view.actions';
 import { LiveViewState } from './live-view.reducers';
+import { getChainConfig, getSampleData } from './live-view.selectors';
+import { LiveViewService } from './services/live-view.service';
 
 export const LIVE_VIEW_DEBOUNCE_RATE = 1000;
 
@@ -52,6 +51,6 @@ export class LiveViewEffects {
           this.messageService.create('error', error.message);
           return of(liveViewRefreshFailed({ error }));
         })
-      )})
+      ); })
   );
 }

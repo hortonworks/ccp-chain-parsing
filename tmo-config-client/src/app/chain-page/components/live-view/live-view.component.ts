@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { select, Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
 import { ChainDetailsModel } from '../../chain-details.model';
 import { getChainDetails } from '../../chain-page.reducers';
@@ -7,7 +8,6 @@ import { getChainDetails } from '../../chain-page.reducers';
 import { chainConfigChanged } from './live-view.actions';
 import { LiveViewState } from './live-view.reducers';
 import { getExecutionStatus } from './live-view.selectors';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-live-view',

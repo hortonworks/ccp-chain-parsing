@@ -2,8 +2,8 @@ import { createAction, props, union } from '@ngrx/store';
 
 import { ChainDetailsModel } from '../../chain-details.model';
 
-import { SampleDataModel } from './models/sample-data.model';
 import { LiveViewModel } from './models/live-view.model';
+import { SampleDataModel } from './models/sample-data.model';
 
 export const sampleDataChanged = createAction(
   '[LiveView] Sample Data Changed',
