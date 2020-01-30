@@ -15,10 +15,12 @@ import { LiveViewEffects } from './live-view.effects';
 import { reducer } from './live-view.reducers';
 import { SampleDataFormComponent } from './sample-data-form/sample-data-form.component';
 import { LiveViewService } from './services/live-view.service';
+import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 @NgModule({
   declarations: [ LiveViewComponent, SampleDataFormComponent ],
   imports: [
+    NgZorroAntdModule,
     CommonModule,
     FormsModule,
     StoreModule.forFeature('live-view', reducer),

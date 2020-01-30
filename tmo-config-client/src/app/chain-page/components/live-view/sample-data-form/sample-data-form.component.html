@@ -18,15 +18,10 @@
         nz-input
         placeholder="Add sample data here..."
         [nzAutosize]="{ minRows: 10, maxRows: 24 }"
+        [(ngModel)]="sampleData.source"
+        (ngModelChange)="onApply(sourceInput.value)"
+        name="sampleDataInput"
       ></textarea>
     </nz-form-control>
   </nz-form-item>
-  <button
-    nz-button
-    nzType="primary"
-    type="button"
-    [attr.disabled]="!sourceInput.value ? true : null"
-    (click)="onApply(sourceInput.value)"
-    data-qe-id="apply-button"
-    >Apply</button>
 </form>
