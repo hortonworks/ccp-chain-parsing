@@ -24,6 +24,51 @@ DELETE('/chains/:id/parsers/:parser', deleteParserFromChain);
 
 GET('/parser-types', getParserTypes);
 
+POST('/sampleparser/parsingjobs', createParseJob);
+
+function createParseJob(req, res) {
+  const sources = req.body.sampleData.source.split('/n');
+  const log = ['PASS', 'FAIL'];
+  let entries = sources.map(source => { return {
+      input: source,
+      output: {
+        original_string: source
+      },
+      log: {}
+    }
+  });
+
+
+  entries.map(entry => {
+    const asaTagRegex = /%ASA-\d\-\d*\b/g
+    const asaMessageRegex = /(?<=%ASA-\d\-\d*\:)(.*)/g
+    const syslogMessageRegex = /%ASA-\d\-\d*\:(.*)/g
+
+    entry.output.ASA_TAG = asaTagRegex.exec(entry.input)[0];
+    entry.output.ASA_message = asaMessageRegex.exec(entry.input)[0];
+    if (log[Math.floor(Math.random() * 2)] === 'PASS') {
+      entry.output.syslogMessage = syslogMessageRegex.exec(entry.input)[0];
+      entry.log = {
+        "type": "info",
+        "message": "Parsing Successful"
+      };
+    } else {
+      entry.log = {
+        "type": "error",
+        "message": "Parsing Failed"
+      };
+    }
+  });
+
+  let response = {
+    ...req.body,
+    result: {
+      entries
+    }
+  };
+  res.status(200).send(response);
+}
+
 function getChains(req, res) {
   res.status(200).send(chains);
 }
