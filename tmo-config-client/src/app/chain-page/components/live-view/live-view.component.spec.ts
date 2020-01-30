@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NzTabsModule } from 'ng-zorro-antd';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
 
 import { LiveViewComponent } from './live-view.component';
 
@@ -20,6 +22,10 @@ describe('LiveViewComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         NzTabsModule,
+        NzSpinModule,
+      ],
+      providers: [
+        provideMockStore({}),
       ],
       declarations: [ LiveViewComponent, MockSampleDataFormComponent ]
     })
