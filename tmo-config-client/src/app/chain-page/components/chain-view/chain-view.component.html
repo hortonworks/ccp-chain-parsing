@@ -1,17 +1,13 @@
 <div class="parser-chain">
-  <div *ngFor="let parser of parsers" class="parser-chain-item">
+  <div *ngFor="let parserId of parsers" class="parser-chain-item">
     <div class="chain-item">
-      <app-parser
-        *ngIf="parser.type !== 'Router'"
-        [parser]="parser"
-        (removeParser)="removeParser($event)"
-      ></app-parser>
-      <app-router
-        *ngIf="parser.type === 'Router'"
-        [parser]="parser"
-        (chainItemSelected)="onChainItemSelected($event)"
-        (removeParser)="removeParser($event)"
-      ></app-router>
+      <app-parser-composer
+        [parserId]="parserId"
+        [configForm]="configFormFields"
+        [outputsForm]="outputsFormFields"
+        (subchainSelect)="onChainSelected($event)"
+        (parserRemove)="onParserRemove($event)"
+      ></app-parser-composer>
     </div>
   </div>
 </div>

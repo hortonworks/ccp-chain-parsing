@@ -1,14 +1,26 @@
 <div class="parser">
   <nz-card class="chain-item" [nzBordered]="true" [nzTitle]="parser.name" [nzExtra]="extraTemplate">
-    <nz-tabset nzTabPosition="top" nzType="line">
+    <nz-tabset
+      nzTabPosition="top"
+      nzType="line"
+    >
       <nz-tab nzTitle="Basics">
-        Parser Class: {{ parser.name }}
+        <ul>
+          <li>Name: {{ parser.name }}</li>
+          <li>Type: {{ parser.type }}</li>
+        </ul>
       </nz-tab>
       <nz-tab nzTitle="Config">
-        Boo
+        <app-custom-form
+          *ngIf="areFormsReadyToRender && configForm != null"
+          [config]="configForm"
+        ></app-custom-form>
       </nz-tab>
       <nz-tab nzTitle="Outputs">
-        Outputs tab
+        <app-custom-form
+          *ngIf="areFormsReadyToRender && outputsForm != null"
+          [config]="outputsForm"
+        ></app-custom-form>
       </nz-tab>
       <nz-tab nzTitle="Advanced">
         Advanced tab

@@ -12,6 +12,10 @@ export class ChainPageService {
       private http: HttpClient
     ) {}
 
+    public getChain(id: string) {
+      return this.http.get(this.BASE_URL + `chains/${id}`);
+    }
+
     public getParsers(id: string) {
       return this.http.get(this.BASE_URL + `chains/${id}/parsers`);
     }

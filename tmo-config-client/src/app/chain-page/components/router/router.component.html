@@ -1,6 +1,9 @@
 <div class="parser">
   <nz-card class="chain-item" [nzBordered]="true" [nzTitle]="parser.name" [nzExtra]="extraTemplate">
-    <nz-tabset nzTabPosition="top" nzType="line">
+    <nz-tabset
+      nzTabPosition="top"
+      nzType="line"
+    >
       <nz-tab nzTitle="Basics">
         Parser Class: {{ parser.name }}
       </nz-tab>
@@ -10,31 +13,11 @@
             Matching field: {{ parser.config.matchingField }}
           </div>
           <div class="routes">
-            <nz-table [nzData]="parser.config.routes" [nzShowPagination]="false">
-              <thead>
-                <tr>
-                  <th>Match</th>
-                  <th>Parsers</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let route of parser.config.routes">
-                  <td>{{ route.matchingValue }}</td>
-                  <td>
-                    <div class="subchain">
-                      <a
-                        class="subchain-items"
-                        href="#"
-                        (click)="onSubchainItemClick($event, route.subchain)"
-                        title="{{ getParserNamesArray(route.subchain.parsers).join(' > ') }}"
-                      >
-                        {{ getParserNamesArray(route.subchain.parsers).join(' > ') }}
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </nz-table>
+            <app-route
+              *ngFor="let routeId of parser.config.routes"
+                [routeId]="routeId"
+                (chainClick)="onSubchainClick($event)"
+              ></app-route>
           </div>
         </div>
       </nz-tab>

@@ -5,7 +5,7 @@
   <div nz-row nzGutter="16">
     <div nz-col nzSpan="10">
       <app-chain-view
-        [parsers]="(breadcrumbs && breadcrumbs[breadcrumbs.length - 1].parsers) || details.parsers"
+        [parsers]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].parsers) || (details && details.parsers)"
         (removeParserEmitter)="removeParser($event)"
         (chainLevelChange)="onChainLevelChange($event)"
       ></app-chain-view>

@@ -8,6 +8,7 @@ export const LOAD_CHAIN_DETAILS_FAIL = '[Chain Details] load fail';
 export const REMOVE_PARSER = '[Chain Details] remove parser start';
 export const REMOVE_PARSER_SUCCESS = '[Chain Details] remove parser success';
 export const REMOVE_PARSER_FAIL = '[Chain Details] remove parser fail';
+export const UPDATE_PARSER = '[Chain Details] update parser';
 
 export class LoadChainDetailsAction implements Action {
   readonly type = LOAD_CHAIN_DETAILS;
@@ -17,6 +18,8 @@ export class LoadChainDetailsAction implements Action {
 export class LoadChainDetailsSuccessAction implements Action {
   readonly type = LOAD_CHAIN_DETAILS_SUCCESS;
   constructor(public payload: {
+    chains: any,
+    routes: any,
     parsers: ParserModel[]
   }) {}
 }
@@ -41,9 +44,15 @@ export class RemoveParserFailAction implements Action {
   constructor(public error: { message: string }) {}
 }
 
+export class UpdateParserAction implements Action {
+  readonly type = UPDATE_PARSER;
+  constructor(public payload: { parser: any }) {}
+}
+
 export type ChainDetailsAction = LoadChainDetailsAction
   | LoadChainDetailsSuccessAction
   | LoadChainDetailsFailAction
   | RemoveParserAction
   | RemoveParserSuccessAction
-  | RemoveParserFailAction;
+  | RemoveParserFailAction
+  | UpdateParserAction;

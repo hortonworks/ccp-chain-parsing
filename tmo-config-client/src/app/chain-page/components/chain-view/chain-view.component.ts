@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-import { ChainDetailsModel, ParserModel } from '../../chain-details.model';
+import { ParserModel } from '../../chain-details.model';
 
 @Component({
   selector: 'app-chain-view',
@@ -11,7 +11,20 @@ export class ChainViewComponent implements OnInit {
 
   @Input() parsers: ParserModel[];
   @Output() removeParserEmitter = new EventEmitter<string>();
-  @Output() chainLevelChange = new EventEmitter<ChainDetailsModel>();
+  @Output() chainLevelChange = new EventEmitter<string>();
+  @Output() parserChange = new EventEmitter<ParserModel>();
+
+  configFormFields = [{
+    id: '123',
+    name: 'config',
+    type: 'textarea',
+  }];
+
+  outputsFormFields = [{
+    id: '456',
+    name: 'outputs',
+    type: 'textarea',
+  }];
 
   constructor() { }
 
@@ -22,8 +35,16 @@ export class ChainViewComponent implements OnInit {
     this.removeParserEmitter.emit(id);
   }
 
-  onChainItemSelected(chain: ChainDetailsModel) {
-    this.chainLevelChange.emit(chain);
+  onChainSelected(chainId: string) {
+    this.chainLevelChange.emit(chainId);
+  }
+
+  onParserChange(parser: ParserModel) {
+    this.parserChange.emit(parser);
+  }
+
+  onParserRemove(parserId: string) {
+    this.removeParserEmitter.emit(parserId);
   }
 
 }

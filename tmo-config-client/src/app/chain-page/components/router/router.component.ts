@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-import { ChainDetailsModel, ParserModel } from '../../chain-details.model';
+import { ParserModel } from '../../chain-details.model';
 
 @Component({
   selector: 'app-router',
@@ -10,7 +10,7 @@ import { ChainDetailsModel, ParserModel } from '../../chain-details.model';
 export class RouterComponent implements OnInit {
 
   @Input() parser: ParserModel;
-  @Output() chainItemSelected = new EventEmitter<ChainDetailsModel>();
+  @Output() subchainSelect = new EventEmitter<string>();
   @Output() removeParser = new EventEmitter<string>();
 
   constructor() {
@@ -19,17 +19,11 @@ export class RouterComponent implements OnInit {
   ngOnInit() {
   }
 
-  onSubchainItemClick(event: Event, chain: ChainDetailsModel) {
-    event.preventDefault();
-    this.chainItemSelected.emit(chain);
+  onSubchainClick(chainId: string) {
+    this.subchainSelect.emit(chainId);
   }
 
   onRemoveParser(id: string) {
     this.removeParser.emit(id);
   }
-
-  getParserNamesArray(parsers: ParserModel[]): string[] {
-    return parsers.map(p => p.name);
-  }
-
 }
