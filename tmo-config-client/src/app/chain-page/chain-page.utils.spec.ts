@@ -6,7 +6,7 @@ import {
 } from './chain-page.utils';
 
 describe('Chain page utils: normalize', () => {
-  fit('should normalize the parser config', () => {
+  it('should normalize the parser config', () => {
     const parserConfig = {
       id: '1',
       name: 'chain 1',

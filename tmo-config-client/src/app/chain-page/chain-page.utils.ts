@@ -1,24 +1,3 @@
-// const chain = wrapper.details ? wrapper.details : wrapper.subchain ? wrapper.subchain : null;
-// const parsers = chain && chain.parsers ? [...chain.parsers] : [];
-// for (let i = 0; i < parsers.length; i++) {
-//   if (parsers[i].id === newParser.id) {
-//     parsers[i] = {
-//       ...parsers[i],
-//       newParser
-//     };
-//     const indexInBreadcrumbs = this.breadcrumbs.findIndex(ch => ch.id === chain.id);
-//     if (indexInBreadcrumbs > -1) {
-//       this.breadcrumbs[indexInBreadcrumbs].parsers = parsers;
-//     }
-//   } else if (parsers[i].config && parsers[i].config.routes) {
-//     for (const route of parsers[i].config.routes) {
-//       this.findAndUpdateParser(route, newParser);
-//     }
-//   }
-// }
-
-
-
 export function normalizeParserConfig(config, normalized?) {
   normalized = normalized || {
     parsers: {},
