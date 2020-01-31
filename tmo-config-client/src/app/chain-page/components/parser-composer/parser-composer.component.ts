@@ -4,6 +4,7 @@ import { select, Store } from '@ngrx/store';
 import { ChainPageState, getParser } from '../../chain-page.reducers';
 
 import * as fromActions from '../../chain-page.actions';
+import { ParserModel } from '../../chain-page.models';
 
 @Component({
   selector: 'app-parser-composer',
@@ -18,7 +19,7 @@ export class ParserComposerComponent implements OnInit {
   @Output() subchainSelect = new EventEmitter<string>();
   @Output() parserRemove = new EventEmitter<string>();
 
-  parser: any;
+  parser: ParserModel;
 
   constructor(
     private store: Store<ChainPageState>

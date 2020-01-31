@@ -1,11 +1,12 @@
 import { createSelector } from '@ngrx/store';
 
 import * as chainPageActions from './chain-page.actions';
+import { ParserChainModel, ParserModel, RouteModel } from './chain-page.models';
 
 export interface ChainPageState {
-  chains: any;
-  parsers: any;
-  routes: any;
+  chains: { [key: string]: ParserChainModel };
+  parsers: { [key: string]: ParserModel };
+  routes: { [key: string]: RouteModel };
   error: string;
 }
 
@@ -36,8 +37,8 @@ export function reducer(
           ...state.chains,
           [action.payload.chainId]: {
             ...state.chains[action.payload.chainId],
-            parsers: state.chains[action.payload.chainId].parsers
-              .filter(parserId => parserId !== action.payload.id)
+            parsers: (state.chains[action.payload.chainId].parsers as string[])
+              .filter((parserId: string) => parserId !== action.payload.id)
           }
         }
       };
@@ -64,28 +65,28 @@ function getChainPageState(state: any): ChainPageState {
 
 export const getChains = createSelector(
   getChainPageState,
-  (state: ChainPageState) => {
+  (state: ChainPageState): { [key: string]: ParserChainModel } => {
     return state.chains;
   }
 );
 
 export const getChain = createSelector(
   getChainPageState,
-  (state: ChainPageState, props) => {
-    return state.chains[props.id] || {};
+  (state, props): ParserChainModel => {
+    return state.chains[props.id];
   }
 );
 
 export const getParser = createSelector(
   getChainPageState,
-  (state, props) => {
+  (state, props): ParserModel => {
     return state.parsers[props.id];
   }
 );
 
 export const getRoute = createSelector(
   getChainPageState,
-  (state, props) => {
+  (state, props): RouteModel => {
     return state.routes[props.id];
   }
 );

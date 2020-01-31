@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { ParserModel } from './chain-details.model';
+import { ParserChainModel, ParserModel, PartialParserModel, RouteModel } from './chain-page.models';
 
 export const LOAD_CHAIN_DETAILS = '[Chain Details] load start';
 export const LOAD_CHAIN_DETAILS_SUCCESS = '[Chain Details] load success';
@@ -18,9 +18,9 @@ export class LoadChainDetailsAction implements Action {
 export class LoadChainDetailsSuccessAction implements Action {
   readonly type = LOAD_CHAIN_DETAILS_SUCCESS;
   constructor(public payload: {
-    chains: any,
-    routes: any,
-    parsers: ParserModel[]
+    chains: { [key: string]: ParserChainModel },
+    routes: { [key: string]: RouteModel },
+    parsers: { [key: string]: ParserModel }
   }) {}
 }
 
@@ -34,25 +34,13 @@ export class RemoveParserAction implements Action {
   constructor(public payload: { id: string, chainId: string }) {}
 }
 
-export class RemoveParserSuccessAction implements Action {
-  readonly type = REMOVE_PARSER_SUCCESS;
-  constructor(public payload?) {}
-}
-
-export class RemoveParserFailAction implements Action {
-  readonly type = REMOVE_PARSER_FAIL;
-  constructor(public error: { message: string }) {}
-}
-
 export class UpdateParserAction implements Action {
   readonly type = UPDATE_PARSER;
-  constructor(public payload: { parser: any }) {}
+  constructor(public payload: { parser: PartialParserModel }) {}
 }
 
 export type ChainDetailsAction = LoadChainDetailsAction
   | LoadChainDetailsSuccessAction
   | LoadChainDetailsFailAction
   | RemoveParserAction
-  | RemoveParserSuccessAction
-  | RemoveParserFailAction
   | UpdateParserAction;

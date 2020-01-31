@@ -1,6 +1,6 @@
 import { createSelector } from '@ngrx/store';
 
-import { ParserModel } from '../chain-page/chain-details.model';
+import { ParserModel } from '../chain-page/chain-page.models';
 
 import * as addParserActions from './chain-add-parser-page.actions';
 

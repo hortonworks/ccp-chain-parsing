@@ -4,7 +4,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 
-import { ParserModel } from '../../chain-details.model';
+import { ParserModel } from '../../chain-page.models';
 import { ParserComponent } from '../parser/parser.component';
 import { RouterComponent } from '../router/router.component';
 

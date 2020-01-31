@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
+import { ParserChainModel, RouteModel } from '../../chain-page.models';
 import { ChainPageState, getChain, getRoute } from '../../chain-page.reducers';
 
 @Component({
@@ -11,10 +12,10 @@ import { ChainPageState, getChain, getRoute } from '../../chain-page.reducers';
 export class RouteComponent implements OnInit {
 
   @Input() routeId: string;
-  @Input() subchain: any;
   @Output() chainClick = new EventEmitter<string>();
 
-  route: any;
+  subchain: ParserChainModel;
+  route: RouteModel;
 
   constructor(
     private store: Store<ChainPageState>
@@ -34,8 +35,8 @@ export class RouteComponent implements OnInit {
     });
   }
 
-  onChainClick(e, chainId: string) {
-    e.preventDefault();
+  onChainClick(event: Event, chainId: string) {
+    event.preventDefault();
     this.chainClick.emit(chainId);
   }
 }

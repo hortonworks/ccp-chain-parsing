@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-import { ParserModel } from '../../chain-details.model';
+import { ParserModel, PartialParserModel } from '../../chain-page.models';
 
 @Component({
   selector: 'app-chain-view',
@@ -12,7 +12,7 @@ export class ChainViewComponent implements OnInit {
   @Input() parsers: ParserModel[];
   @Output() removeParserEmitter = new EventEmitter<string>();
   @Output() chainLevelChange = new EventEmitter<string>();
-  @Output() parserChange = new EventEmitter<ParserModel>();
+  @Output() parserChange = new EventEmitter<PartialParserModel>();
 
   configFormFields = [{
     id: '123',
@@ -39,7 +39,7 @@ export class ChainViewComponent implements OnInit {
     this.chainLevelChange.emit(chainId);
   }
 
-  onParserChange(parser: ParserModel) {
+  onParserChange(parser: PartialParserModel) {
     this.parserChange.emit(parser);
   }
 

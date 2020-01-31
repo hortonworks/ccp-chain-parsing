@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 
-import { ChainDetailsModel, ParserModel } from '../chain-page/chain-details.model';
+import { ChainDetailsModel, ParserModel } from '../chain-page/chain-page.models';
 
 
 @Injectable({

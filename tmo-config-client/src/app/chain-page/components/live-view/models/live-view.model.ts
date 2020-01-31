@@ -1,4 +1,4 @@
-import { ChainDetailsModel } from '../../../chain-details.model';
+import { ChainDetailsModel } from '../../../chain-page.models';
 
 import { SampleDataModel } from './sample-data.model';
 

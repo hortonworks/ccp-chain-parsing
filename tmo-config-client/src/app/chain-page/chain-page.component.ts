@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 
-import { ChainDetailsModel } from './chain-details.model';
 import * as fromActions from './chain-page.actions';
+import { ParserChainModel } from './chain-page.models';
 import { ChainPageState, getChain } from './chain-page.reducers';
 
 @Component({
@@ -13,8 +13,8 @@ import { ChainPageState, getChain } from './chain-page.reducers';
 })
 export class ChainPageComponent implements OnInit {
 
-  details: ChainDetailsModel;
-  breadcrumbs = [];
+  chain: ParserChainModel;
+  breadcrumbs: ParserChainModel[] = [];
   chainId: string;
 
   constructor(
@@ -23,7 +23,6 @@ export class ChainPageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
     this.activatedRoute.params.subscribe((params) => {
       this.chainId = params.id;
       this.store.dispatch(new fromActions.LoadChainDetailsAction({
@@ -31,11 +30,11 @@ export class ChainPageComponent implements OnInit {
       }));
     });
 
-    this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain) => {
-      if (chain.parsers && chain.parsers.length > 0) {
-        this.details = chain;
+    this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain: ParserChainModel) => {
+      if (chain && chain.parsers && chain.parsers.length > 0) {
+        this.chain = chain;
 
-        this.breadcrumbs = this.breadcrumbs.length > 0 ? this.breadcrumbs : [this.details];
+        this.breadcrumbs = this.breadcrumbs.length > 0 ? this.breadcrumbs : [this.chain];
 
         const chainIndexInPath = this.breadcrumbs.length > 0
           ? this.breadcrumbs.findIndex(breadcrumb => chain.id === breadcrumb.id)
@@ -49,15 +48,18 @@ export class ChainPageComponent implements OnInit {
   }
 
   removeParser(id: string) {
+    const chainId = this.breadcrumbs.length > 0
+      ? this.breadcrumbs[this.breadcrumbs.length - 1].id
+      : this.chainId;
     this.store.dispatch(new fromActions.RemoveParserAction({
       id,
-      chainId: this.breadcrumbs.length > 0 ? this.breadcrumbs[this.breadcrumbs.length - 1].id : this.chainId
+      chainId
     }));
   }
 
   onChainLevelChange(chainId: string) {
-    this.store.pipe(select(getChain, { id: chainId })).subscribe((chain) => {
-      const breadcrumbIndex = this.breadcrumbs.findIndex(b => b.id === chain.id);
+    this.store.pipe(select(getChain, { id: chainId })).subscribe((chain: ParserChainModel) => {
+      const breadcrumbIndex = this.breadcrumbs.findIndex((breadcrumb) => breadcrumb.id === chain.id);
       if (breadcrumbIndex > -1) {
         this.breadcrumbs[breadcrumbIndex] = chain;
       } else {
@@ -66,9 +68,9 @@ export class ChainPageComponent implements OnInit {
     });
   }
 
-  onBreadcrumbClick(event: Event, chain: ChainDetailsModel) {
+  onBreadcrumbClick(event: Event, chain: ParserChainModel) {
     event.preventDefault();
-    const index = this.breadcrumbs.findIndex((ch) => ch.id === chain.id);
+    const index = this.breadcrumbs.findIndex((breadcrumb: ParserChainModel) => breadcrumb.id === chain.id);
     this.breadcrumbs = this.breadcrumbs.slice(0, index + 1);
   }
 }

@@ -1,11 +1,11 @@
-<nz-card [nzTitle]="breadcrumbsCardTitle">
+<nz-card *ngIf="chain" [nzTitle]="breadcrumbsCardTitle">
   <div class="add-parser">
     <a routerLink="new">Add new parser</a>
   </div>
   <div nz-row nzGutter="16">
     <div nz-col nzSpan="10">
       <app-chain-view
-        [parsers]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].parsers) || (details && details.parsers)"
+        [parsers]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].parsers) || (chain && chain.parsers)"
         (removeParserEmitter)="removeParser($event)"
         (chainLevelChange)="onChainLevelChange($event)"
       ></app-chain-view>

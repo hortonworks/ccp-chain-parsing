@@ -3,7 +3,7 @@ import { debounce } from 'debounce';
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-import { ParserModel } from '../../chain-details.model';
+import { ParserModel } from '../../chain-page.models';
 import { CustomFormConfig } from '../custom-form/custom-form.component';
 
 @Component({
@@ -20,8 +20,6 @@ export class ParserComponent implements OnInit {
   @Output() parserChange = new EventEmitter<any>();
 
   areFormsReadyToRender = false;
-
-  constructor() {}
 
   ngOnInit() {
 

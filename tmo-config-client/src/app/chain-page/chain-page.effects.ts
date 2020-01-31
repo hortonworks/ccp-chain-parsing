@@ -6,8 +6,8 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { ChainPageService } from './../services/chain-page.service';
-import { ChainDetailsModel } from './chain-details.model';
 import * as fromActions from './chain-page.actions';
+import { ChainDetailsModel } from './chain-page.models';
 import { normalizeParserConfig } from './chain-page.utils';
 
 @Injectable()
