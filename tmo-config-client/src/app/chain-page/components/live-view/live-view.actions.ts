@@ -16,7 +16,8 @@ export const chainConfigChanged = createAction(
 );
 
 export const executionTriggered = createAction(
-  '[LiveView] Sample Data Parsing Triggered'
+  '[LiveView] Sample Data Parsing Triggered',
+  props<{ sampleData: SampleDataModel, chainConfig: ChainDetailsModel }>()
 );
 
 export const liveViewRefreshedSuccessfully = createAction(
