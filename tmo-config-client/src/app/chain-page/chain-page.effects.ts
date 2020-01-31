@@ -39,26 +39,4 @@ export class ChainPageEffects {
       );
     })
   );
-
-  @Effect()
-  removeParser$: Observable<Action> = this.actions$.pipe(
-    ofType(fromActions.REMOVE_PARSER),
-    switchMap((action: fromActions.RemoveParserAction) => {
-      return this.chainPageService
-        .removeParser(action.payload.id, action.payload.chainId)
-        .pipe(
-          map(() => {
-            this.messageService.create(
-              'success',
-              'Parser has been removed successfully.'
-            );
-            return new fromActions.RemoveParserSuccessAction();
-          }),
-          catchError((error: { message: string }) => {
-            this.messageService.create('error', error.message);
-            return of(new fromActions.RemoveParserFailAction(error));
-          })
-        );
-    })
-  );
 }

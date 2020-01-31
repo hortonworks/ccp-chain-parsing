@@ -20,8 +20,4 @@ export class ChainPageService {
       return this.http.get(this.BASE_URL + `chains/${id}/parsers`);
     }
 
-    public removeParser(id: string, chainId: string) {
-      return this.http.delete(this.BASE_URL + `chains/${chainId}/parsers/${id}`);
-    }
-
 }

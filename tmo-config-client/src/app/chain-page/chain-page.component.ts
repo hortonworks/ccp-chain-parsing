@@ -57,7 +57,12 @@ export class ChainPageComponent implements OnInit {
 
   onChainLevelChange(chainId: string) {
     this.store.pipe(select(getChain, { id: chainId })).subscribe((chain) => {
-      this.breadcrumbs.push(chain);
+      const breadcrumbIndex = this.breadcrumbs.findIndex(b => b.id === chain.id);
+      if (breadcrumbIndex > -1) {
+        this.breadcrumbs[breadcrumbIndex] = chain;
+      } else {
+        this.breadcrumbs.push(chain);
+      }
     });
   }
 
