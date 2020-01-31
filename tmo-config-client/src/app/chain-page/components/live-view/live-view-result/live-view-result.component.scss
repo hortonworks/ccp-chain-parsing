@@ -1,13 +1,45 @@
 .ant-card {
-  color: white;
+  color: grey;
   margin-bottom: 1em;
 
+  .ant-card-body {
+    padding: 0;
+  }
+   
+  .ant-row{
+    div {
+      padding: 0.2em;
+    }
+
+    &.input {
+      background-color: aliceblue;
+      border-bottom: 1px solid grey;
+    }
+    &.output {
+      border-bottom: 1px solid grey;
+      
+      .fieldName {
+        font-weight: bold;
+      }
+    }
+    &.log {
+      background-color: #EEEEEE;
+    }
+  }
+
   &.error {
-    background-color: var(--warning);
+    border-left: 4px solid var(--warning);
+
+    .log .message {
+      color: red;
+    }
   }
 
   &.info {
-    background-color: var(--cldr-slate);
+    border-left: 4px solid var(--cldr-slate);
   }
 
+  .label {
+    font-weight: bold;
+  }
 }
