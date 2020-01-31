@@ -1,6 +1,6 @@
 <div *ngIf='results'>
   <ul>
-    <div *ngFor="let entry of results.entries">
+    <nz-card *ngFor="let entry of results.entries" [ngClass]="entry.log.type">
       <li>
         Input: {{ entry.input }}
       </li>
@@ -14,6 +14,6 @@
       <li>
         Log: {{ entry.log.message }}
       </li>
-    </div>
+    </nz-card>
   </ul>
 </div>

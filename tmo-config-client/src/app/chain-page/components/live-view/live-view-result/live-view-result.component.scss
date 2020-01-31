@@ -1,0 +1,13 @@
+.ant-card {
+  color: white;
+  margin-bottom: 1em;
+
+  &.error {
+    background-color: var(--warning);
+  }
+
+  &.info {
+    background-color: var(--cldr-slate);
+  }
+
+}
