@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
-import deepFreeze from 'deep-freeze';
 import { NzMessageService } from 'ng-zorro-antd';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
@@ -25,7 +24,6 @@ export class ChainPageEffects {
     switchMap((action: fromActions.LoadChainDetailsAction) => {
       return this.chainPageService.getChain(action.payload.id).pipe(
         map((chain: ChainDetailsModel) => {
-          deepFreeze(chain);
           const normalizedParserConfig = normalizeParserConfig(chain);
           return new fromActions.LoadChainDetailsSuccessAction(
             normalizedParserConfig
