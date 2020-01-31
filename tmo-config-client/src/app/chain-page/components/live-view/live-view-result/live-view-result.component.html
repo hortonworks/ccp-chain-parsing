@@ -1,5 +1,5 @@
 <div *ngIf='results'>
-  <nz-card *ngFor="let entry of results.entries" [ngClass]="entry.log.type">
+  <nz-card *ngFor="let entry of results.entries" [ngClass]="entry.log.type" [nzBodyStyle]="{ padding: 0 }">
     <div nz-row class="input">
       <div nz-col nzSpan="2" class="label">Input</div>
       <div nz-col nzSpan="22">{{ entry.input }}</div>

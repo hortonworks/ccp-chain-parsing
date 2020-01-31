@@ -5,10 +5,12 @@
   .ant-card-body {
     padding: 0;
   }
-   
-  .ant-row{
+
+  .ant-row {
+    padding: .5em 1em;
+
     div {
-      padding: 0.2em;
+      padding: 0 .2em .4em .2em;
     }
 
     &.input {
@@ -17,7 +19,7 @@
     }
     &.output {
       border-bottom: 1px solid grey;
-      
+
       .fieldName {
         font-weight: bold;
       }
