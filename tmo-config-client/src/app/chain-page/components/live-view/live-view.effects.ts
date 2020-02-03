@@ -44,6 +44,7 @@ export class LiveViewEffects {
         this.store.pipe(select(getChainConfig)),
       ).pipe(take(1));
     }),
+    // TODO merge fix from the rendering branch
     switchMap(([ sampleData, chainConfig ]) => {
       return this.liveViewService.execute(sampleData, chainConfig).pipe(
         map(liveViewResult => liveViewRefreshedSuccessfully({ liveViewResult })),

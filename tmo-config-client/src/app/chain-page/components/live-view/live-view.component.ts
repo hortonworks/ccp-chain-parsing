@@ -3,11 +3,10 @@ import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
 import { ChainDetailsModel } from '../../chain-details.model';
-import { getChainDetails } from '../../chain-page.reducers';
 
 import { chainConfigChanged } from './live-view.actions';
 import { LiveViewState } from './live-view.reducers';
-import { getExecutionStatus } from './live-view.selectors';
+import { getExecutionStatus, getChainConfig } from './live-view.selectors';
 
 @Component({
   selector: 'app-live-view',
@@ -19,7 +18,7 @@ export class LiveViewComponent {
   isExecuting$: Observable<boolean>;
 
   constructor(private store: Store<LiveViewState>) {
-    this.store.pipe(select(getChainDetails)).subscribe((chainConfig: ChainDetailsModel) => {
+    this.store.pipe(select(getChainConfig)).subscribe((chainConfig: ChainDetailsModel) => {
       this.store.dispatch( chainConfigChanged({ chainConfig }));
     });
 

@@ -78,6 +78,3 @@ export function reducer(
     }
   }
 }
-
-// TODO spinner on execute
-// TODO toggle for on / off Separated ticket!

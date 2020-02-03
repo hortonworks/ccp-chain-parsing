@@ -6,7 +6,7 @@ import { SampleDataModel } from './models/sample-data.model';
 describe('live-view.reducers', () => {
 
   it('should handle default case', () => {
-    expect(reducer(undefined, { type: undefined } as LiveViewActionsType)).toBe(initialState);
+    expect(reducer(initialState, { type: undefined } as LiveViewActionsType)).toBe(initialState);
   });
 
   it('should update sample data on sampleDataChanged action', () => {

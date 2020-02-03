@@ -5,6 +5,8 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 
 import { LiveViewComponent } from './live-view.component';
+import { ChainPageState } from '../../chain-page.reducers';
+import { LiveViewState } from './live-view.reducers';
 
 
 @Component({
@@ -13,10 +15,20 @@ import { LiveViewComponent } from './live-view.component';
 })
 class MockSampleDataFormComponent {}
 
-
 describe('LiveViewComponent', () => {
   let component: LiveViewComponent;
   let fixture: ComponentFixture<LiveViewComponent>;
+
+  let store: MockStore<{ 
+    'chain-page': ChainPageState, 
+    'live-view': LiveViewState 
+  }>;
+  const initialState = { 
+    'chain-page': {
+      details: {}
+    }, 
+    'live-view': {} 
+  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -25,7 +37,7 @@ describe('LiveViewComponent', () => {
         NzSpinModule,
       ],
       providers: [
-        provideMockStore({}),
+        provideMockStore({ initialState }),
       ],
       declarations: [ LiveViewComponent, MockSampleDataFormComponent ]
     })
