@@ -1,4 +1,10 @@
-import { sampleDataChanged, chainConfigChanged, executionTriggered, liveViewRefreshedSuccessfully, liveViewRefreshFailed } from './live-view.actions';
+import {
+  chainConfigChanged,
+  executionTriggered,
+  liveViewRefreshedSuccessfully,
+  liveViewRefreshFailed,
+  sampleDataChanged
+} from './live-view.actions';
 import { LiveViewActionsType } from './live-view.actions';
 import { initialState, reducer } from './live-view.reducers';
 import { SampleDataModel } from './models/sample-data.model';
@@ -11,13 +17,13 @@ fdescribe('live-view.reducers', () => {
     parsers: []
   };
 
-  const testLiveViewState = { 
-    sampleData: new SampleDataModel(), 
+  const testLiveViewState = {
+    sampleData: new SampleDataModel(),
     parserChainConfig: testConfigState,
     result: {
       entries: []
     },
-  }
+  };
 
   it('should handle default case', () => {
     expect(reducer(undefined, { type: undefined } as LiveViewActionsType)).toBe(initialState);

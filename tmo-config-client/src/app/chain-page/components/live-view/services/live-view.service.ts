@@ -1,11 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { ChainDetailsModel } from 'src/app/chain-page/chain-details.model';
 
-import { LiveViewState } from '../live-view.reducers';
 import { LiveViewModel } from '../models/live-view.model';
 import { SampleDataModel } from '../models/sample-data.model';
 
@@ -16,7 +14,6 @@ export class LiveViewService {
 
   constructor(
     private http: HttpClient,
-    private store: Store<LiveViewState>
   ) { }
 
   execute(sampleData: SampleDataModel, chainConfig: ChainDetailsModel): Observable<any> {

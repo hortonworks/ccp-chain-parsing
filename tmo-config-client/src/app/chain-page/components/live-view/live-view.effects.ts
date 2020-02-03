@@ -6,7 +6,14 @@ import { combineLatest, Observable, of } from 'rxjs';
 import { catchError, debounceTime, filter, map, switchMap, take } from 'rxjs/operators';
 
 
-import { chainConfigChanged, executionTriggered, LiveViewActionsType, liveViewRefreshedSuccessfully, liveViewRefreshFailed, sampleDataChanged } from './live-view.actions';
+import {
+  chainConfigChanged,
+  executionTriggered,
+  LiveViewActionsType,
+  liveViewRefreshedSuccessfully,
+  liveViewRefreshFailed,
+  sampleDataChanged
+} from './live-view.actions';
 import { LiveViewState } from './live-view.reducers';
 import { getChainConfig, getSampleData } from './live-view.selectors';
 import { LiveViewService } from './services/live-view.service';
@@ -28,13 +35,12 @@ export class LiveViewEffects {
       chainConfigChanged.type,
       sampleDataChanged.type,
     ),
-    // filter(action => action.type === sampleDataChanged.type && !!action.sampleData.source ),
     debounceTime(LIVE_VIEW_DEBOUNCE_RATE),
     switchMap(() => {
-      return combineLatest(
+      return combineLatest([
         this.store.pipe(select(getSampleData)),
         this.store.pipe(select(getChainConfig)),
-      ).pipe(take(1));
+      ]).pipe(take(1));
     }),
     filter(([ sampleData, chainConfig ]) => !!sampleData.source),
     map(([ sampleData, chainConfig ]) => executionTriggered({ sampleData, chainConfig })),

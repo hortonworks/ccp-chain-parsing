@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import { NzTabsModule } from 'ng-zorro-antd';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
 
 import { LiveViewComponent } from './live-view.component';
-import { ChainPageState } from '../../chain-page.reducers';
-import { LiveViewState } from './live-view.reducers';
-
 
 @Component({
   selector: 'app-sample-data-form',
@@ -19,15 +16,11 @@ describe('LiveViewComponent', () => {
   let component: LiveViewComponent;
   let fixture: ComponentFixture<LiveViewComponent>;
 
-  let store: MockStore<{ 
-    'chain-page': ChainPageState, 
-    'live-view': LiveViewState 
-  }>;
-  const initialState = { 
+  const initialState = {
     'chain-page': {
       details: {}
-    }, 
-    'live-view': {} 
+    },
+    'live-view': {}
   };
 
   beforeEach(async(() => {

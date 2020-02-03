@@ -6,7 +6,7 @@ import { ChainDetailsModel } from '../../chain-details.model';
 
 import { chainConfigChanged } from './live-view.actions';
 import { LiveViewState } from './live-view.reducers';
-import { getExecutionStatus, getChainConfig } from './live-view.selectors';
+import { getChainConfig, getExecutionStatus } from './live-view.selectors';
 
 @Component({
   selector: 'app-live-view',
