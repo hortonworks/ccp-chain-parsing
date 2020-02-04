@@ -1,21 +1,15 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { Store } from '@ngrx/store';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NzButtonModule, NzFormModule, NzInputModule } from 'ng-zorro-antd';
 
-import { sampleDataChanged } from '../live-view.actions';
-import { initialState, LiveViewState } from '../live-view.reducers';
-import { SampleDataModel } from '../models/sample-data.model';
+import { SampleDataType } from '../models/sample-data.model';
 
 import { SampleDataFormComponent } from './sample-data-form.component';
 
 describe('SampleDataFormComponent', () => {
   let component: SampleDataFormComponent;
   let fixture: ComponentFixture<SampleDataFormComponent>;
-
-  let store: MockStore<LiveViewState>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -26,19 +20,19 @@ describe('SampleDataFormComponent', () => {
         NzInputModule,
       ],
       declarations: [ SampleDataFormComponent ],
-      providers: [
-        provideMockStore({ initialState })
-      ]
     })
     .compileComponents();
-
-    store = TestBed.get(Store);
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SampleDataFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    component.sampleData = {
+      type: SampleDataType.MANUAL,
+      source: '',
+    };
   });
 
   it('should create', () => {
@@ -47,17 +41,17 @@ describe('SampleDataFormComponent', () => {
 
   it('should dispatch change action', () => {
     const sampleDataInput = fixture.debugElement.query(By.css('[data-qe-id="sample-input"]')).nativeElement;
-    spyOn(store, 'dispatch');
+    const expected = {
+      type: SampleDataType.MANUAL,
+      source: 'test sample data',
+    };
+
+    component.sampleDataChange.subscribe(sampleData => {
+      expect(sampleData).toEqual(expected);
+    });
 
     sampleDataInput.value = 'test sample data';
     sampleDataInput.dispatchEvent(new Event('input'));
     fixture.detectChanges();
-
-    const sampleData = new SampleDataModel();
-    sampleData.source = 'test sample data';
-
-    expect(store.dispatch).toHaveBeenCalledWith(
-      sampleDataChanged({ sampleData })
-    );
   });
 });

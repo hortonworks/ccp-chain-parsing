@@ -1,15 +1,13 @@
 import {
-  chainConfigChanged,
   executionTriggered,
   liveViewRefreshedSuccessfully,
   liveViewRefreshFailed,
-  sampleDataChanged
 } from './live-view.actions';
 import { LiveViewActionsType } from './live-view.actions';
 import { initialState, reducer } from './live-view.reducers';
-import { SampleDataModel } from './models/sample-data.model';
+import { SampleDataType } from './models/sample-data.model';
 
-fdescribe('live-view.reducers', () => {
+describe('live-view.reducers', () => {
 
   const testConfigState = {
     id: '123',
@@ -18,8 +16,10 @@ fdescribe('live-view.reducers', () => {
   };
 
   const testLiveViewState = {
-    sampleData: new SampleDataModel(),
-    parserChainConfig: testConfigState,
+    sampleData: {
+      type: SampleDataType.MANUAL,
+      source: '',
+    },
     result: {
       entries: []
     },
@@ -29,47 +29,47 @@ fdescribe('live-view.reducers', () => {
     expect(reducer(undefined, { type: undefined } as LiveViewActionsType)).toBe(initialState);
   });
 
-  it('should update sample data on sampleDataChanged action', () => {
-    const sampleData = new SampleDataModel();
-    sampleData.source = 'test input';
-
-    const newState = reducer(initialState, sampleDataChanged({ sampleData }));
-    expect(newState.liveViewModel.sampleData.source).toBe('test input');
-  });
-
-  it('should update isModelDirty on chainConfigChanged action', () => {
-    const newState = reducer(initialState, chainConfigChanged({ chainConfig: testConfigState }));
-    expect(newState.isModelDirty).toBe(true);
-  });
-
   it('should update isExecuting on executionTriggered action', () => {
-    const newState = reducer(initialState, executionTriggered());
+    const newState = reducer(initialState, executionTriggered({ sampleData: testLiveViewState.sampleData, chainConfig: testConfigState }));
+    expect(newState.isExecuting).toBe(true);
+  });
+
+  it('should update sampleData on executionTriggered action', () => {
+    const newState = reducer(initialState, executionTriggered({ sampleData: testLiveViewState.sampleData, chainConfig: testConfigState }));
     expect(newState.isExecuting).toBe(true);
   });
 
   it('should update isExecuting on liveViewRefreshedSuccessfully action', () => {
-    const newState = reducer(initialState, liveViewRefreshedSuccessfully({ liveViewResult: testLiveViewState }));
+    const newState = reducer(initialState, liveViewRefreshedSuccessfully({ liveViewResult: {
+      ...testLiveViewState,
+      chainConfig: testConfigState,
+    } }));
     expect(newState.isExecuting).toBe(false);
   });
 
-  it('should update isModelDirty on liveViewRefreshedSuccessfully action', () => {
-    const newState = reducer(initialState, liveViewRefreshedSuccessfully({ liveViewResult: testLiveViewState }));
-    expect(newState.isModelDirty).toBe(false);
-  });
+  it('should update result on liveViewRefreshedSuccessfully action', () => {
+    const result = {
+      entries: [
+        {
+          input: 'input result',
+          output: 'output result',
+          log: { type: '', message: 'log result'},
+        }
+      ]
+    };
 
-  it('should update liveViewModel on liveViewRefreshedSuccessfully action', () => {
-    const newState = reducer(initialState, liveViewRefreshedSuccessfully({ liveViewResult: testLiveViewState }));
-    expect(newState.liveViewModel).toBe(testLiveViewState);
+    const newState = reducer(initialState, liveViewRefreshedSuccessfully({ liveViewResult: {
+      ...testLiveViewState,
+      chainConfig: testConfigState,
+      result,
+    } }));
+
+    expect(newState.result).toEqual(result);
   });
 
   it('should update isExecuting on liveViewRefreshFailed action', () => {
     const newState = reducer(initialState, liveViewRefreshFailed({ error: { message: 'ups' } }));
     expect(newState.isExecuting).toBe(false);
-  });
-
-  it('should update isModelDirty on liveViewRefreshFailed action', () => {
-    const newState = reducer(initialState, liveViewRefreshFailed({ error: { message: 'ups' } }));
-    expect(newState.isModelDirty).toBe(true);
   });
 
 });

@@ -5,7 +5,7 @@ import {
   liveViewRefreshFailed,
 } from './live-view.actions';
 import { LiveViewResultModel } from './models/live-view.model';
-import { SampleDataModel } from './models/sample-data.model';
+import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 
 export interface LiveViewState {
   isExecuting: boolean;
@@ -15,7 +15,10 @@ export interface LiveViewState {
 
 export const initialState: LiveViewState = {
   isExecuting: false,
-  sampleData: new SampleDataModel(),
+  sampleData: {
+    type: SampleDataType.MANUAL,
+    source: '',
+  },
   result: {
     entries: []
   },

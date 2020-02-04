@@ -4,7 +4,7 @@ export enum SampleDataType {
     HDFS = 'hdfs'
 }
 
-export class SampleDataModel {
-    type = SampleDataType.MANUAL;
+export interface SampleDataModel {
+    type: SampleDataType;
     source: string;
 }
