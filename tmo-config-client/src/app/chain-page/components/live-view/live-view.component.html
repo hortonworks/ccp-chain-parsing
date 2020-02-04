@@ -8,7 +8,10 @@
 </div>
 <nz-tabset>
   <nz-tab nzTitle="Sample Data">
-    <app-sample-data-form [sampleData]="sampleData$ | async" (sampleDataChange)="sampleDataChange$.next($event)" ></app-sample-data-form>
+    <app-sample-data-form
+      [sampleData]="sampleData$ | async"
+      (sampleDataChange)="sampleDataChange$.next($event)"
+      ></app-sample-data-form>
   </nz-tab>
   <nz-tab nzTitle="Result">
   </nz-tab>
