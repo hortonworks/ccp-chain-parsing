@@ -1,9 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { LiveViewService } from './live-view.service';
-import { HttpClient } from '@angular/common/http';
 import { SampleDataType } from '../models/sample-data.model';
+
+import { LiveViewService } from './live-view.service';
 
 describe('LiveViewService', () => {
   let service: LiveViewService;

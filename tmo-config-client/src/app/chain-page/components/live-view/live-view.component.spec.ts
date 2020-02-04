@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { Store } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NzTabsModule } from 'ng-zorro-antd';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
+import { executionTriggered } from './live-view.actions';
 import { LiveViewComponent } from './live-view.component';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
-import { Store } from '@ngrx/store';
-import { executionTriggered } from './live-view.actions';
 
 @Component({
   selector: 'app-sample-data-form',
@@ -26,7 +26,7 @@ describe('LiveViewComponent', () => {
       details: {}
     },
     'live-view': {}
-  }>
+  }>;
 
   const initialState = {
     'chain-page': {
@@ -88,7 +88,7 @@ describe('LiveViewComponent', () => {
     component.sampleDataChange$.next(testSampleData);
     mockStore.setState({
       ...initialState,
-      "chain-page": {
+      'chain-page': {
         details: {
           id: '123',
           name: 'abcdefg',
@@ -121,7 +121,7 @@ describe('LiveViewComponent', () => {
     component.sampleDataChange$.next(testSampleData);
     mockStore.setState({
       ...initialState,
-      "chain-page": {
+      'chain-page': {
         details: {
           id: '123',
           name: 'abcdefg',
