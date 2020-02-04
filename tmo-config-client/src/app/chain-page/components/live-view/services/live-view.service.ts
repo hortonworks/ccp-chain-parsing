@@ -16,10 +16,10 @@ export class LiveViewService {
     private http: HttpClient,
   ) { }
 
-  execute(sampleData: SampleDataModel, chainConfig: ChainDetailsModel): Observable<any> {
-    return this.http.post(
+  execute(sampleData: SampleDataModel, chainConfig: ChainDetailsModel): Observable<LiveViewModel> {
+    return this.http.post<LiveViewModel>(
       '/api/v1/parserconfig/sampleparser/parsingjobs',
-      new LiveViewModel(sampleData, chainConfig))
+      { sampleData, chainConfig } as LiveViewModel)
       .pipe(delay(3000));
   }
 }
