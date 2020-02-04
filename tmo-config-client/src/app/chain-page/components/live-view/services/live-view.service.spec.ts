@@ -1,21 +1,43 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideMockStore } from '@ngrx/store/testing';
 
 import { LiveViewService } from './live-view.service';
+import { HttpClient } from '@angular/common/http';
+import { SampleDataType } from '../models/sample-data.model';
 
 describe('LiveViewService', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    imports: [
-      HttpClientTestingModule,
-    ],
-    providers: [
-      provideMockStore({}),
-    ],
-  }));
+  let service: LiveViewService;
+  let http: HttpClient;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule,
+      ],
+    });
+
+    service = TestBed.get(LiveViewService);
+    http = TestBed.get(HttpClient);
+  });
 
   it('should be created', () => {
-    const service: LiveViewService = TestBed.get(LiveViewService);
     expect(service).toBeTruthy();
+  });
+
+  it('should call proper endpoint with params', () => {
+    spyOn(http, 'post');
+
+    service.execute(
+      { type: SampleDataType.MANUAL, source: 'test sample input' },
+      { id: '456', name: 'gdf', parsers: [] }
+    );
+
+    expect(http.post).toHaveBeenCalledWith(
+      service.SAMPLE_PARSER_URL,
+      {
+        sampleData: { type: SampleDataType.MANUAL, source: 'test sample input' },
+        chainConfig: { id: '456', name: 'gdf', parsers: [] }
+      }
+    );
   });
 });
