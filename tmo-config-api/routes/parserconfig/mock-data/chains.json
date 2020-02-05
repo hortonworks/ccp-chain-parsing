@@ -6,12 +6,12 @@
   },
   {
     "id": "58302658",
-    "name": "Dummy Chain B",
+    "name": "Dummy Chain C",
     "parsers": [{"id":"123","name":"Syslog","type":"Grok","config":{},"input":"","outputs":""},{"id":"456","name":"Asa","type":"Grok","config":{},"input":"","outputs":""},{"id":"789","name":"Bro","type":"Grok","config":{},"input":"","outputs":""}]
   },
   {
     "id": "12905884",
-    "name": "Dummy Chain C",
+    "name": "Dummy Chain B",
     "parsers": [{"id":"123","name":"Syslog","type":"Grok","config":{},"input":"","outputs":""},{"id":"456","name":"Asa","type":"Grok","config":{},"input":"","outputs":""},{"id":"789","name":"Bro","type":"Grok","config":{},"input":"","outputs":""}]
   }
 ]
