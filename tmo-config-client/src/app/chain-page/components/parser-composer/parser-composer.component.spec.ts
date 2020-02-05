@@ -1,6 +1,28 @@
+import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { StoreModule } from '@ngrx/store';
 
 import { ParserComposerComponent } from './parser-composer.component';
+
+@Component({
+  selector: 'app-parser',
+  template: ''
+})
+class MockParserComponent {
+  @Input() dirty = false;
+  @Input() parser;
+  @Input() configForm;
+  @Input() outputsForm;
+}
+
+@Component({
+  selector: 'app-router',
+  template: ''
+})
+class MockRouterComponent {
+  @Input() dirty;
+  @Input() parser;
+}
 
 describe('ParserComposerComponent', () => {
   let component: ParserComposerComponent;
@@ -8,7 +30,16 @@ describe('ParserComposerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ParserComposerComponent ]
+      imports: [
+        StoreModule.forRoot({
+          'chain-page': () => {}
+        })
+      ],
+      declarations: [
+        ParserComposerComponent,
+        MockParserComponent,
+        MockRouterComponent
+      ]
     })
     .compileComponents();
   }));

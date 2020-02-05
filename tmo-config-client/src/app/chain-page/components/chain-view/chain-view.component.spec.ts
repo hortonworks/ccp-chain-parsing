@@ -1,40 +1,24 @@
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 import { ParserModel } from '../../chain-page.models';
-import { ParserComponent } from '../parser/parser.component';
-import { RouterComponent } from '../router/router.component';
 
 import { ChainViewComponent } from './chain-view.component';
 
-
 @Component({
-  // tslint:disable-next-line:component-selector
-  selector: 'ngx-monaco-editor',
-  template: '<input>',
-  providers: [{
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => MockMonacoEditorComponent),
-    multi: true
-  }]
+  selector: 'app-parser-composer',
+  template: ''
 })
-
-class MockMonacoEditorComponent implements ControlValueAccessor {
-  @Input() options: any;
-
-  writeValue = () => {};
-  propagateChange = (_: any) => {};
-  onTouched = () => {};
-  registerOnChange(fn: any): void {
-    this.propagateChange = fn;
-  }
-
-  registerOnTouched(fn: any): void {
-    this.onTouched = fn;
-  }
+class MockParserComposerComponent {
+  @Input() parsers: ParserModel[];
+  @Input() dirtyParsers;
+  @Input() parserId;
+  @Input() dirty;
+  @Input() configForm;
+  @Input() outputsForm;
 }
 
 describe('ChainViewComponent', () => {
@@ -53,12 +37,14 @@ describe('ChainViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ NgZorroAntdModule, NoopAnimationsModule ],
+      imports: [
+        NgZorroAntdModule,
+        NoopAnimationsModule,
+        ReactiveFormsModule,
+      ],
       declarations: [
         ChainViewComponent,
-        MockMonacoEditorComponent,
-        ParserComponent,
-        RouterComponent
+        MockParserComposerComponent,
       ]
     })
     .compileComponents();
@@ -73,17 +59,5 @@ describe('ChainViewComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should emit an event when delete parser is clicked and confirmed', () => {
-    const deleteBtn = fixture.nativeElement.querySelector('[data-qe-id="remove-parser"]');
-    const removeParserEmitSpy = spyOn(component.removeParserEmitter, 'emit');
-
-    deleteBtn.click();
-    fixture.detectChanges();
-
-    const confirmBtn = document.querySelector('.ant-popover .ant-btn-primary') as HTMLElement;
-    confirmBtn.click();
-    expect(removeParserEmitSpy).toHaveBeenCalledWith('123');
   });
 });

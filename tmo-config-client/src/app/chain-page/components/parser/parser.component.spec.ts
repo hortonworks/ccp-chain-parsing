@@ -1,8 +1,17 @@
+import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 import { ParserComponent } from './parser.component';
+
+@Component({
+  selector: 'app-custom-form',
+  template: '',
+})
+export class MockCustomFormComponent {
+  @Input() config = [];
+}
 
 describe('ParserComponent', () => {
   let component: ParserComponent;
@@ -21,7 +30,10 @@ describe('ParserComponent', () => {
           }
         }),
       ],
-      declarations: [ ParserComponent ],
+      declarations: [
+        ParserComponent,
+        MockCustomFormComponent,
+      ],
     })
     .compileComponents();
   }));

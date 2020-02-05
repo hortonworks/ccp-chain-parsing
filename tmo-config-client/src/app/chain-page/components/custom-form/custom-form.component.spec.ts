@@ -1,4 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 import { CustomFormComponent } from './custom-form.component';
 
@@ -8,7 +10,13 @@ describe('CustomFormComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CustomFormComponent ]
+      imports: [
+        ReactiveFormsModule,
+        NgZorroAntdModule
+      ],
+      declarations: [
+        CustomFormComponent
+      ]
     })
     .compileComponents();
   }));

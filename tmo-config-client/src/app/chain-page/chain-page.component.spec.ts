@@ -15,6 +15,7 @@ import * as fromReducers from './chain-page.reducers';
 })
 class MockChainViewComponent {
   @Input() parsers: ParserModel[];
+  @Input() dirtyParsers;
 }
 
 @Component({

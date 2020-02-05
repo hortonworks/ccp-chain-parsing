@@ -1,8 +1,16 @@
+import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
-import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 import { RouterComponent } from './router.component';
+
+@Component({
+  selector: 'app-route',
+  template: ''
+})
+export class MockRouteComponent {
+  @Input() routeId;
+}
 
 describe('RouterComponent', () => {
   let component: RouterComponent;
@@ -12,16 +20,11 @@ describe('RouterComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         NgZorroAntdModule,
-        MonacoEditorModule.forRoot({
-          onMonacoLoad() {
-            monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-              validate: true,
-              schemas: []
-            });
-          }
-        }),
       ],
-      declarations: [ RouterComponent ]
+      declarations: [
+        MockRouteComponent,
+        RouterComponent
+      ]
     })
     .compileComponents();
   }));
