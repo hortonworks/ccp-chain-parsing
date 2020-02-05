@@ -3,10 +3,12 @@
     <div class="chain-item">
       <app-parser-composer
         [parserId]="parserId"
+        [dirty]="(dirtyParsers || []).includes(parserId)"
         [configForm]="configFormFields"
         [outputsForm]="outputsFormFields"
         (subchainSelect)="onChainSelected($event)"
         (parserRemove)="onParserRemove($event)"
+        (parserChange)="onParserChange($event)"
       ></app-parser-composer>
     </div>
   </div>

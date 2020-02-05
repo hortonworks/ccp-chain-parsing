@@ -9,6 +9,7 @@ import { ParserModel } from '../../chain-page.models';
 })
 export class RouterComponent {
 
+  @Input() dirty = false;
   @Input() parser: ParserModel;
   @Output() subchainSelect = new EventEmitter<string>();
   @Output() removeParser = new EventEmitter<string>();

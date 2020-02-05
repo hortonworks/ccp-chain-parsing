@@ -59,7 +59,7 @@ export function reducer(
   return state;
 }
 
-function getChainPageState(state: any): ChainPageState {
+export function getChainPageState(state: any): ChainPageState {
   return state['chain-page'];
 }
 

@@ -1,19 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { NzMessageService } from 'ng-zorro-antd';
 import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { ChainPageService } from './../services/chain-page.service';
 import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel } from './chain-page.models';
-import { normalizeParserConfig } from './chain-page.utils';
+import { getChainPageState } from './chain-page.reducers';
+import { denormalizeParserConfig, normalizeParserConfig } from './chain-page.utils';
 
 @Injectable()
 export class ChainPageEffects {
   constructor(
     private actions$: Actions,
+    private store$: Store<any>,
     private messageService: NzMessageService,
     private chainPageService: ChainPageService
   ) {}
@@ -33,6 +35,26 @@ export class ChainPageEffects {
           throw error;
           this.messageService.create('error', error.message);
           return of(new fromActions.LoadChainDetailsFailAction(error));
+        })
+      );
+    })
+  );
+
+  @Effect()
+  saveParserConfig$: Observable<Action> = this.actions$.pipe(
+    ofType(fromActions.SAVE_PARSER_CONFIG),
+    withLatestFrom(this.store$.select(getChainPageState)),
+    switchMap(([action, state]) => {
+      const chainId = (action as fromActions.SaveParserConfigAction).payload.chainId;
+      const config = denormalizeParserConfig(state.chains[chainId], state);
+      return this.chainPageService.saveParserConfig(chainId, config).pipe(
+        map(() => {
+          return new fromActions.SaveParserConfigSuccessAction();
+        }),
+        catchError((error: { message: string }) => {
+          throw error;
+          this.messageService.create('error', error.message);
+          return of(new fromActions.SaveParserConfigFailAction(error));
         })
       );
     })

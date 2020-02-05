@@ -10,6 +10,7 @@ import { ParserModel, PartialParserModel } from '../../chain-page.models';
 export class ChainViewComponent implements OnInit {
 
   @Input() parsers: ParserModel[];
+  @Input() dirtyParsers: string[];
   @Output() removeParserEmitter = new EventEmitter<string>();
   @Output() chainLevelChange = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<PartialParserModel>();

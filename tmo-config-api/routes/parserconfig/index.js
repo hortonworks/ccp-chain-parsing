@@ -60,13 +60,15 @@ function createChain(req, res) {
 
 function updateChain(req, res) {
   const id = req.params.id;
-  chains.map(chain => {
-    if (chain.id === id) {
-      chain.name = req.query.name;
-      res.status(204).send(chain);
-      return;
-    }
-  });
+  const chainIndex = chains.findIndex(chain => chain.id === id);
+  if (chainIndex > -1) {
+    chains[chainIndex] = {
+      ...chains[chainIndex],
+      ...req.body
+    };
+    res.status(204).send();
+    return;
+  }
   res.status(404).send();
 }
 

@@ -4,7 +4,7 @@ import { select, Store } from '@ngrx/store';
 import { ChainPageState, getParser } from '../../chain-page.reducers';
 
 import * as fromActions from '../../chain-page.actions';
-import { ParserModel } from '../../chain-page.models';
+import { ParserModel, PartialParserModel } from '../../chain-page.models';
 
 @Component({
   selector: 'app-parser-composer',
@@ -13,11 +13,13 @@ import { ParserModel } from '../../chain-page.models';
 })
 export class ParserComposerComponent implements OnInit {
 
+  @Input() dirty = false;
   @Input() parserId: string;
   @Input() configForm: any;
   @Input() outputsForm: any;
   @Output() subchainSelect = new EventEmitter<string>();
   @Output() parserRemove = new EventEmitter<string>();
+  @Output() parserChange = new EventEmitter<PartialParserModel>();
 
   parser: ParserModel;
 
@@ -43,6 +45,7 @@ export class ParserComposerComponent implements OnInit {
         parser: partialParser
       })
     );
+    this.parserChange.emit(partialParser);
   }
 
   onRemoveParser(parserId: string) {

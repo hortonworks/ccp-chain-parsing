@@ -37,16 +37,16 @@ export function reducer(
   return state;
 }
 
-function getChainPageState(state: any): AddParserPageState {
+function getChainAddParserPageState(state: any): AddParserPageState {
   return state['chain-add-parser-page'];
 }
 
 export const getParserTypes = createSelector(
-  getChainPageState,
+  getChainAddParserPageState,
   (state: AddParserPageState) => state.parserTypes
 );
 
 export const getParsers = createSelector(
-  getChainPageState,
+  getChainAddParserPageState,
   (state: AddParserPageState) => state.parsers
 );

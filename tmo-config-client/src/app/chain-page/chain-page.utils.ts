@@ -36,12 +36,16 @@ export function denormalizeParserConfig(chain, config) {
   };
   if (denormalized.parsers) {
     denormalized.parsers = chain.parsers.map((parserId) => {
-      const parser = config.parsers[parserId];
+      const parser = {
+        ...config.parsers[parserId]
+      };
       if (parser.type === 'Router') {
         parser.config = {
           ...parser.config,
           routes: parser.config.routes.map((routeId) => {
-            const route = config.routes[routeId];
+            const route = {
+              ...config.routes[routeId]
+            };
             const subchainId = route.subchain;
             if (subchainId) {
               const subchain = config.chains[subchainId];

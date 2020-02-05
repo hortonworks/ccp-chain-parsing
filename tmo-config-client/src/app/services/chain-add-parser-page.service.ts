@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 
-import { ChainDetailsModel, ParserModel } from '../chain-page/chain-page.models';
+import { ParserModel } from '../chain-page/chain-page.models';
 
 
 @Injectable({
@@ -27,8 +27,8 @@ export class AddParserPageService {
   public getParsers(chainId: string) {
     return this.http.get(this.BASE_URL + `chains/${chainId}/parsers`)
       .pipe(
-        map((chainDetails: ChainDetailsModel) => {
-          return chainDetails.parsers;
+        map((parsers: ParserModel[]) => {
+          return parsers;
         })
       );
   }
