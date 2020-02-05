@@ -136,6 +136,22 @@ describe('ChainListPageComponent', () => {
     expect(store.dispatch).toHaveBeenCalledWith(action);
   });
 
+  it('should change the sort order to descending', () => {
+    component.sortDescription$.next({key: 'name', value: 'descend'});
+    fixture.detectChanges();
+    component.chainDataSorted$.subscribe(
+      data => expect(data[0].name).toBe('Chain 3')
+    );
+  });
+
+  it('should change the sort order to ascending', () => {
+    component.sortDescription$.next({key: 'name', value: 'ascend'});
+    fixture.detectChanges();
+    component.chainDataSorted$.subscribe(
+      data => expect(data[0].name).toBe('Chain 1')
+    );
+  });
+
   it('should call the pushValue function', () => {
     const addBtn = fixture.nativeElement.querySelector('[data-qe-id="add-chain-btn"]');
     addBtn.click();
@@ -175,5 +191,30 @@ describe('ChainListPageComponent', () => {
     const action = new fromActions.CreateChainAction({name: 'New Chain'});
 
     expect(store.dispatch).toHaveBeenCalledWith(action);
+  });
+
+  it('should call setPageNumber', () => {
+    spyOn(component, 'setPageNumber').and.callThrough();
+    spyOn(component, 'setPagination');
+    const navigationButton = fixture.debugElement.queryAll(By.css('.ant-pagination-item'))[2].nativeElement;
+    navigationButton.click();
+    expect(component.setPageNumber).toHaveBeenCalledWith(3);
+    expect(component.setPagination).toHaveBeenCalled();
+  });
+
+  it('should call setPageSize', () => {
+    spyOn(component, 'setPageSize').and.callThrough();
+    spyOn(component, 'setPagination');
+    const pageSizeSelector: HTMLSelectElement = fixture.debugElement.query(
+      By.css('nz-select')
+    ).nativeElement;
+    pageSizeSelector.click();
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('ul.ant-select-dropdown-menu li:nth-child(2)')).nativeElement.click();
+    pageSizeSelector.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(component.setPageSize).toHaveBeenCalledWith(20);
+    expect(component.setPagination).toHaveBeenCalled();
   });
 });
