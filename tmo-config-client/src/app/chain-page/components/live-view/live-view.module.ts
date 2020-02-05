@@ -19,7 +19,11 @@ import { SampleDataFormComponent } from './sample-data-form/sample-data-form.com
 import { LiveViewService } from './services/live-view.service';
 
 @NgModule({
-  declarations: [ LiveViewComponent, SampleDataFormComponent, LiveViewResultComponent ],
+  declarations: [
+    LiveViewComponent,
+    SampleDataFormComponent,
+    LiveViewResultComponent,
+  ],
   imports: [
     NgZorroAntdModule,
     CommonModule,

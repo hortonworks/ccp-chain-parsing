@@ -11,7 +11,6 @@ describe('LiveViewResultComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ LiveViewResultComponent ],
       imports: [ NzCardModule ],
-
     })
     .compileComponents();
   }));
