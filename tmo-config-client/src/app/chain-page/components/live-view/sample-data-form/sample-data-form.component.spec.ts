@@ -1,12 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { Store } from '@ngrx/store';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NzButtonModule, NzFormModule, NzInputModule } from 'ng-zorro-antd';
 
-import { sampleDataChanged } from '../live-view.actions';
-import { initialState, LiveViewState } from '../live-view.reducers';
-import { SampleDataModel } from '../models/sample-data.model';
+import { SampleDataType } from '../models/sample-data.model';
 
 import { SampleDataFormComponent } from './sample-data-form.component';
 
@@ -14,59 +11,47 @@ describe('SampleDataFormComponent', () => {
   let component: SampleDataFormComponent;
   let fixture: ComponentFixture<SampleDataFormComponent>;
 
-  let store: MockStore<LiveViewState>;
-
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
+        FormsModule,
         NzFormModule,
         NzButtonModule,
         NzInputModule,
       ],
       declarations: [ SampleDataFormComponent ],
-      providers: [
-        provideMockStore({ initialState })
-      ]
     })
     .compileComponents();
-
-    store = TestBed.get(Store);
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SampleDataFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    component.sampleData = {
+      type: SampleDataType.MANUAL,
+      source: '',
+    };
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('apply should be disabled if no sample data', () => {
-    const applyBtn = fixture.debugElement.query(By.css('[data-qe-id="apply-button"]')).nativeElement;
-    expect(applyBtn.disabled).toBeTruthy();
-
-    fixture.debugElement.query(By.css('[data-qe-id="sample-input"]')).nativeElement.value = 'test sample data';
-    fixture.detectChanges();
-    expect(applyBtn.disabled).toBeFalsy();
-
-    fixture.debugElement.query(By.css('[data-qe-id="sample-input"]')).nativeElement.value = '';
-    fixture.detectChanges();
-    expect(applyBtn.disabled).toBeTruthy();
-  });
-
   it('should dispatch change action', () => {
-    spyOn(store, 'dispatch');
-    fixture.debugElement.query(By.css('[data-qe-id="sample-input"]')).nativeElement.value = 'test sample data';
+    const sampleDataInput = fixture.debugElement.query(By.css('[data-qe-id="sample-input"]')).nativeElement;
+    const expected = {
+      type: SampleDataType.MANUAL,
+      source: 'test sample data',
+    };
+
+    component.sampleDataChange.subscribe(sampleData => {
+      expect(sampleData).toEqual(expected);
+    });
+
+    sampleDataInput.value = 'test sample data';
+    sampleDataInput.dispatchEvent(new Event('input'));
     fixture.detectChanges();
-    fixture.debugElement.query(By.css('[data-qe-id="apply-button"]')).nativeElement.click();
-
-    const sampleData = new SampleDataModel();
-    sampleData.source = 'test sample data';
-
-    expect(store.dispatch).toHaveBeenCalledWith(
-      sampleDataChanged({ sampleData })
-    );
   });
 });

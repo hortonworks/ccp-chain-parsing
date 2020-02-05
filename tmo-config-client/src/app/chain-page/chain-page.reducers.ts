@@ -2,6 +2,7 @@ import { createSelector } from '@ngrx/store';
 
 import * as chainPageActions from './chain-page.actions';
 import { ParserChainModel, ParserModel, RouteModel } from './chain-page.models';
+import { denormalizeParserConfig } from './chain-page.utils';
 
 export interface ChainPageState {
   chains: { [key: string]: ParserChainModel };
@@ -88,5 +89,13 @@ export const getRoute = createSelector(
   getChainPageState,
   (state, props): RouteModel => {
     return state.routes[props.id];
+  }
+);
+
+export const getChainDetails = createSelector(
+  getChainPageState,
+  (state, props) => {
+    const mainChain = state.chains[props.chainId];
+    return denormalizeParserConfig(mainChain, state);
   }
 );

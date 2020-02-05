@@ -1,8 +1,5 @@
-import { Component } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { sampleDataChanged } from '../live-view.actions';
-import { LiveViewState } from '../live-view.reducers';
 import { SampleDataModel } from '../models/sample-data.model';
 
 @Component({
@@ -12,13 +9,14 @@ import { SampleDataModel } from '../models/sample-data.model';
 })
 export class SampleDataFormComponent {
 
-  sampleData = new SampleDataModel();
+  @Input() sampleData: SampleDataModel;
+  @Output() sampleDataChange = new EventEmitter<SampleDataModel>();
 
-  constructor(private store: Store<LiveViewState>) {}
-
-  onApply(sampleData: string) {
-    this.sampleData.source = sampleData;
-    this.store.dispatch(sampleDataChanged({ sampleData: this.sampleData }));
+  onApply(sampleDataInput: string) {
+    this.sampleDataChange.emit({
+      ...this.sampleData,
+      source: sampleDataInput
+    });
   }
 
 }

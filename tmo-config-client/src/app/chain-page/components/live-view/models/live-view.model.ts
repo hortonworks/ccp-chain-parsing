@@ -1,19 +1,17 @@
-import { ChainDetailsModel } from '../../../chain-page.models';
-
 import { SampleDataModel } from './sample-data.model';
 
-export class LiveViewResultModel {
+export interface LiveViewResultModel {
   entries: EntryParsingResultModel[];
 }
 
-export class EntryParsingResultModel {
+export interface EntryParsingResultModel {
   input: string;
-  output: string;
+  output: {};
   log: { type: string, message: string };
 }
 
-export class LiveViewModel {
-  sampleData = new SampleDataModel();
-  chainConfig: ChainDetailsModel;
-  parsingResult: LiveViewResultModel;
+export interface LiveViewModel {
+  sampleData: SampleDataModel;
+  chainConfig: {};
+  result?: LiveViewResultModel;
 }

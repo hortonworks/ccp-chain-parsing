@@ -1,21 +1,27 @@
-import { LiveViewActionsType, sampleDataChanged } from './live-view.actions';
-import { LiveViewModel } from './models/live-view.model';
-import { SampleDataModel } from './models/sample-data.model';
+import {
+  executionTriggered,
+  LiveViewActionsType,
+  liveViewRefreshedSuccessfully,
+  liveViewRefreshFailed,
+} from './live-view.actions';
+import { LiveViewResultModel } from './models/live-view.model';
+import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 
 export interface LiveViewState {
   isExecuting: boolean;
-  isLiveViewOn: boolean;
-  error: string;
-  isModelDirty: boolean;
-  liveViewModel: LiveViewModel;
+  sampleData: SampleDataModel;
+  result: LiveViewResultModel;
 }
 
 export const initialState: LiveViewState = {
   isExecuting: false,
-  isLiveViewOn: true,
-  error: '',
-  isModelDirty: false,
-  liveViewModel: new LiveViewModel(),
+  sampleData: {
+    type: SampleDataType.MANUAL,
+    source: '',
+  },
+  result: {
+    entries: []
+  },
 };
 
 export function reducer(
@@ -23,21 +29,25 @@ export function reducer(
   action: LiveViewActionsType
 ): LiveViewState {
   switch (action.type) {
-    case sampleDataChanged.type: {
-      const newState = {
+    case executionTriggered.type: {
+      return {
         ...state,
-        isModelDirty: true,
+        sampleData: action.sampleData,
+        isExecuting: true,
       };
-
-      const newSampleData = new SampleDataModel();
-      newSampleData.type = action.sampleData.type;
-      newSampleData.source = action.sampleData.source;
-
-      const newLiveView = new LiveViewModel();
-      newLiveView.sampleData = newSampleData;
-
-      newState.liveViewModel = newLiveView;
-      return newState;
+    }
+    case liveViewRefreshedSuccessfully.type: {
+      return {
+        ...state,
+        isExecuting: false,
+        result: action.liveViewResult.result,
+      };
+    }
+    case liveViewRefreshFailed.type: {
+      return {
+        ...state,
+        isExecuting: false,
+      };
     }
     default: {
       return state;
