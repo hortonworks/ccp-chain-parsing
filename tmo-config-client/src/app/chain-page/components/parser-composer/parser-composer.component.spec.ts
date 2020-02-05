@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { StoreModule } from '@ngrx/store';
 
+import * as fromReducers from '../../chain-page.reducers';
+
 import { ParserComposerComponent } from './parser-composer.component';
 
 @Component({
@@ -32,7 +34,7 @@ describe('ParserComposerComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         StoreModule.forRoot({
-          'chain-page': () => {}
+          'chain-page': fromReducers.reducer
         })
       ],
       declarations: [
