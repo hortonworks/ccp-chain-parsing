@@ -13,13 +13,12 @@
     <nz-form-label nzFor="sourceType">Sample data</nz-form-label>
     <nz-form-control>
       <textarea
-        #sourceInput
+        #sampleDataInput
         data-qe-id="sample-input"
         nz-input
         placeholder="Add sample data here..."
         [nzAutosize]="{ minRows: 10, maxRows: 44 }"
-        [(ngModel)]="sampleData.source"
-        (ngModelChange)="onApply(sourceInput.value)"
+        (input)="onApply(sampleDataInput.value)"
         name="sampleDataInput"
       ></textarea>
     </nz-form-control>

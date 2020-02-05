@@ -19,12 +19,12 @@ export const getChainConfig = createSelector(
 
 export const getSampleData = createSelector(
   getLiveViewState,
-  (state: LiveViewState) => state.liveViewModel.sampleData
+  (state: LiveViewState) => state.sampleData
 );
 
 export const getResults = createSelector(
   getLiveViewState,
-  (state: LiveViewState) => state.liveViewModel.result
+  (state: LiveViewState) => state.result
 );
 
 export const getExecutionStatus = createSelector(

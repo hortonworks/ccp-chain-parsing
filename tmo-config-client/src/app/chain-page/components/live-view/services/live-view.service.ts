@@ -1,11 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { delay } from 'rxjs/operators';
 import { ChainDetailsModel } from 'src/app/chain-page/chain-details.model';
 
-import { LiveViewState } from '../live-view.reducers';
 import { LiveViewModel } from '../models/live-view.model';
 import { SampleDataModel } from '../models/sample-data.model';
 
@@ -14,15 +11,15 @@ import { SampleDataModel } from '../models/sample-data.model';
 })
 export class LiveViewService {
 
+  readonly SAMPLE_PARSER_URL = '/api/v1/parserconfig/sampleparser/parsingjobs';
+
   constructor(
     private http: HttpClient,
-    private store: Store<LiveViewState>
   ) { }
 
-  execute(sampleData: SampleDataModel, chainConfig: ChainDetailsModel): Observable<any> {
-    return this.http.post(
-      '/api/v1/parserconfig/sampleparser/parsingjobs',
-      new LiveViewModel(sampleData, chainConfig))
-      .pipe(delay(3000));
+  execute(sampleData: SampleDataModel, chainConfig: ChainDetailsModel): Observable<LiveViewModel> {
+    return this.http.post<LiveViewModel>(
+      this.SAMPLE_PARSER_URL,
+      { sampleData, chainConfig } as LiveViewModel);
   }
 }
