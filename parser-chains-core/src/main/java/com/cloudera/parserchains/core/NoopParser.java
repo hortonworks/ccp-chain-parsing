@@ -1,11 +1,5 @@
 package com.cloudera.parserchains.core;
 
-import com.cloudera.parserchains.core.ConfigName;
-import com.cloudera.parserchains.core.ConfigValue;
-import com.cloudera.parserchains.core.FieldName;
-import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.Parser;
-
 import java.util.Collections;
 import java.util.List;
 
