@@ -4,9 +4,11 @@ import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NzTabsModule } from 'ng-zorro-antd';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { Subject } from 'rxjs';
 
 import { executionTriggered } from './live-view.actions';
 import { LiveViewComponent } from './live-view.component';
+import { LiveViewState } from './live-view.reducers';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 
 @Component({
@@ -21,22 +23,15 @@ describe('LiveViewComponent', () => {
   let component: LiveViewComponent;
   let fixture: ComponentFixture<LiveViewComponent>;
 
-  let mockStore: MockStore<{
-    'chain-page': {
-      details: {}
-    },
-    'live-view': {}
-  }>;
+  let mockStore: MockStore<LiveViewState>;
 
-  const initialState = {
-    'chain-page': {
-      details: {}
-    },
-    'live-view': {
+  const initialState = { 'live-view': {
       sampleData: {
         type: SampleDataType.MANUAL,
         source: '',
-      }
+      },
+      isExecuting: false,
+      result: undefined,
     }
   };
 
@@ -65,6 +60,7 @@ describe('LiveViewComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LiveViewComponent);
     component = fixture.componentInstance;
+    component.chainConfig$ = new Subject<{}>();
     fixture.detectChanges();
   });
 
@@ -74,6 +70,7 @@ describe('LiveViewComponent', () => {
 
   it('should react on sampleData change', fakeAsync(() => {
     component.sampleDataChange$.next(testSampleData);
+    (component.chainConfig$ as Subject<{}>).next({});
 
     tick(component.LIVE_VIEW_DEBOUNCE_RATE);
 
@@ -86,22 +83,13 @@ describe('LiveViewComponent', () => {
 
   it('should react on chain config change', fakeAsync(() => {
     component.sampleDataChange$.next(testSampleData);
-    mockStore.setState({
-      ...initialState,
-      'chain-page': {
-        details: {
-          id: '123',
-          name: 'abcdefg',
-          parsers: [],
-        }
-      }
-    });
+    (component.chainConfig$ as Subject<{}>).next({});
 
     tick(component.LIVE_VIEW_DEBOUNCE_RATE);
 
     expect(mockStore.dispatch).toHaveBeenCalledWith({
       sampleData: testSampleData,
-      chainConfig: { id: '123', name: 'abcdefg', parsers: [] },
+      chainConfig: {},
       type: executionTriggered.type
     });
   }));
@@ -119,16 +107,7 @@ describe('LiveViewComponent', () => {
 
   it('should hold back (debounce) executeTriggered', fakeAsync(() => {
     component.sampleDataChange$.next(testSampleData);
-    mockStore.setState({
-      ...initialState,
-      'chain-page': {
-        details: {
-          id: '123',
-          name: 'abcdefg',
-          parsers: [],
-        }
-      }
-    });
+    (component.chainConfig$ as Subject<{}>).next({});
 
     tick(component.LIVE_VIEW_DEBOUNCE_RATE / 2);
 
