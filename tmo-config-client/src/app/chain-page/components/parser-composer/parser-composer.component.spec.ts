@@ -15,6 +15,7 @@ class MockParserComponent {
   @Input() parser;
   @Input() configForm;
   @Input() outputsForm;
+  @Input() metaDataForm;
 }
 
 @Component({

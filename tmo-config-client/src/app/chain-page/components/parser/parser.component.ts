@@ -15,6 +15,7 @@ export class ParserComponent implements OnInit, OnChanges {
 
   @Input() dirty = false;
   @Input() parser: ParserModel;
+  @Input() metaDataForm: CustomFormConfig[];
   @Input() configForm: CustomFormConfig[];
   @Input() outputsForm: CustomFormConfig[];
   @Output() removeParser = new EventEmitter<string>();
@@ -26,9 +27,11 @@ export class ParserComponent implements OnInit, OnChanges {
 
     this.configForm = this.setFormFieldValues(this.configForm);
     this.outputsForm = this.setFormFieldValues(this.outputsForm);
+    this.metaDataForm = this.setFormFieldValues(this.metaDataForm);
 
     this.configForm = this.addFormFieldListeners(this.configForm);
     this.outputsForm = this.addFormFieldListeners(this.outputsForm);
+    this.metaDataForm = this.addFormFieldListeners(this.metaDataForm);
 
     setTimeout(() => {
       this.areFormsReadyToRender = true;
@@ -44,6 +47,9 @@ export class ParserComponent implements OnInit, OnChanges {
           }
           if (key === 'outputs') {
             this.outputsForm = this.updateFormValues(key, this.outputsForm);
+          }
+          if (['name', 'key'].includes(key)) {
+            this.metaDataForm = this.updateFormValues(key, this.metaDataForm);
           }
         }
       });
