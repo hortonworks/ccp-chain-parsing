@@ -20,6 +20,7 @@ describe('live-view.reducers', () => {
       type: SampleDataType.MANUAL,
       source: '',
     },
+    isExecuting: false,
     result: {
       entries: []
     },
