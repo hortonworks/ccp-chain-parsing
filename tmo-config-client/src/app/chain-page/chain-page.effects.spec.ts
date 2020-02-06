@@ -82,7 +82,7 @@ describe('chain parser page: effects', () => {
   });
 
   it('load should receive the parser config and normalize it', () => {
-    service.getChain = (): Observable<any> => of({
+    service.getChain = () => of({
       id: '123',
       name: 'main chain',
       parsers: [{
@@ -157,7 +157,7 @@ describe('chain parser page: effects', () => {
   });
 
   it('save should send the denormalized parser config', () => {
-    service.saveParserConfig = (): Observable<any> => of();
+    service.saveParserConfig = () => of();
 
     const saveParserConfigSpy = spyOn(service, 'saveParserConfig').and.callThrough();
 
