@@ -24,7 +24,6 @@ export class ParserComponent implements OnInit, OnChanges {
   areFormsReadyToRender = false;
 
   ngOnInit() {
-
     this.configForm = this.setFormFieldValues(this.configForm);
     this.outputsForm = this.setFormFieldValues(this.outputsForm);
     this.metaDataForm = this.setFormFieldValues(this.metaDataForm);
@@ -48,7 +47,7 @@ export class ParserComponent implements OnInit, OnChanges {
           if (key === 'outputs') {
             this.outputsForm = this.updateFormValues(key, this.outputsForm);
           }
-          if (['name', 'key'].includes(key)) {
+          if (['name', 'type'].includes(key)) {
             this.metaDataForm = this.updateFormValues(key, this.metaDataForm);
           }
         }

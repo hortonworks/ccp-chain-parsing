@@ -47,6 +47,9 @@ export class ChainViewComponent implements OnInit {
     }, {
       id: 'bar',
       name: 'Bar'
+    }, {
+      id: 'Router',
+      name: 'Router'
     }]
   }];
 

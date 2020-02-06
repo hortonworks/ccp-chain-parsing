@@ -5,7 +5,10 @@
       nzType="line"
     >
       <nz-tab nzTitle="Basics">
-        Parser Class: {{ parser.name }}
+        <app-custom-form
+          *ngIf="areFormsReadyToRender && metaDataForm != null"
+          [config]="metaDataForm"
+        ></app-custom-form>
       </nz-tab>
       <nz-tab nzTitle="Config">
         <div class="router-config" *ngIf="parser.config && parser.config.routes">

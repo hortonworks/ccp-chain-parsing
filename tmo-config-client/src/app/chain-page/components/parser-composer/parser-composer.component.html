@@ -13,7 +13,9 @@
     *ngIf="parser.type === 'Router'"
     [parser]="parser"
     [dirty]="dirty"
+    [metaDataForm]="metaDataForm"
     (subchainSelect)="onSubchainSelect($event)"
+    (parserChange)="onParserChange($event)"
     (removeParser)="onRemoveParser($event)"
   ></app-router>
 </div>
