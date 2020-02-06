@@ -35,9 +35,9 @@ public class ParserInfo {
         }
     }
 
-    final String name;
-    final String description;
-    final Class<Parser> parserClass;
+    private final String name;
+    private final String description;
+    private final Class<Parser> parserClass;
 
     public static Builder builder() {
         return new Builder();
