@@ -4,12 +4,12 @@ import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NzTabsModule } from 'ng-zorro-antd';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { Subject } from 'rxjs';
 
 import { executionTriggered } from './live-view.actions';
 import { LiveViewComponent } from './live-view.component';
-import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 import { LiveViewState } from './live-view.reducers';
-import { of, Subject } from 'rxjs';
+import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 
 @Component({
   selector: 'app-sample-data-form',

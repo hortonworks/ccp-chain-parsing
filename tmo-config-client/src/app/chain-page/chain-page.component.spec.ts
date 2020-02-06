@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { StoreModule } from '@ngrx/store';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { ParserModel } from './chain-details.model';
 import { ChainPageComponent } from './chain-page.component';

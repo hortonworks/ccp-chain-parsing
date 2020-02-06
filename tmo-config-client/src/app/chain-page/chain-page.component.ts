@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
 import { ChainDetailsModel } from './chain-details.model';
 import * as fromActions from './chain-page.actions';
 import { ChainPageState, getChainDetails } from './chain-page.reducers';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-chain-page',
