@@ -1,5 +1,3 @@
-import cloneDeep from 'clone-deep';
-
 import {
   denormalizeParserConfig as denormalize,
   normalizeParserConfig as normalize
@@ -65,10 +63,8 @@ describe('Chain page utils: normalize', () => {
         }
       }]
     };
-    const original = cloneDeep(parserConfig);
-    const normalized = normalize(parserConfig);
 
-    expect(original).toEqual(parserConfig); // just to make sure I didn't mutate the input
+    const normalized = normalize(parserConfig);
 
     expect(normalized).toEqual({
       routes: {

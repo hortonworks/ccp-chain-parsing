@@ -1,5 +1,5 @@
-import cloneDeep from 'clone-deep';
 import { debounce } from 'debounce';
+import produce from 'immer';
 
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 
@@ -24,11 +24,11 @@ export class ParserComponent implements OnInit, OnChanges {
 
   ngOnInit() {
 
-    this.configForm = this.setFormFieldValues(cloneDeep(this.configForm));
-    this.outputsForm = this.setFormFieldValues(cloneDeep(this.outputsForm));
+    this.configForm = this.setFormFieldValues(this.configForm);
+    this.outputsForm = this.setFormFieldValues(this.outputsForm);
 
-    this.configForm = this.addFormFieldListeners(cloneDeep(this.configForm));
-    this.outputsForm = this.addFormFieldListeners(cloneDeep(this.outputsForm));
+    this.configForm = this.addFormFieldListeners(this.configForm);
+    this.outputsForm = this.addFormFieldListeners(this.outputsForm);
 
     setTimeout(() => {
       this.areFormsReadyToRender = true;
@@ -51,41 +51,36 @@ export class ParserComponent implements OnInit, OnChanges {
   }
 
   updateFormValues(key, fields = []) {
-    return fields.map(field => {
-      if (field.name === key) {
-        return {
-          ...field,
-          value: this.parser[key]
-        };
-      }
-      return field;
+    return produce(fields, (draft) => {
+      draft.forEach(field => {
+        if (field.name === key) {
+          field.value = this.parser[key];
+        }
+      });
     });
   }
 
   setFormFieldValues(fields = []) {
-    return fields.map(field => {
-      if (this.parser[field.name] !== undefined) {
-        return {
-          ...field,
-          value: this.parser[field.name]
-        };
-      }
-      return field;
+    return produce(fields, (draft) => {
+      draft.forEach(field => {
+        if (this.parser[field.name] !== undefined) {
+          field.value = this.parser[field.name];
+        }
+      });
     });
   }
 
   addFormFieldListeners(fields = []) {
-    return fields.map(field => {
-      return {
-        ...field,
-        onChange: debounce((formFieldData) => {
+    return produce(fields, (draft) => {
+      draft.forEach(field => {
+        field.onChange = debounce((formFieldData) => {
           this.dirty = true;
           this.parserChange.emit({
             id: this.parser.id,
             [formFieldData.name]: formFieldData.value
           });
-        }, 400)
-      };
+        }, 400);
+      });
     });
   }
 
