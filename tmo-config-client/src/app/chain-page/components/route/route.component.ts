@@ -22,7 +22,6 @@ export class RouteComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
     this.store.pipe(select(getRoute, {
       id: this.routeId
     })).subscribe((route) => {
