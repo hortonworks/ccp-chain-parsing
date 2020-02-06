@@ -5,6 +5,7 @@ import { select, Store } from '@ngrx/store';
 import { ChainDetailsModel } from './chain-details.model';
 import * as fromActions from './chain-page.actions';
 import { ChainPageState, getChainDetails } from './chain-page.reducers';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-chain-page',
@@ -14,6 +15,7 @@ import { ChainPageState, getChainDetails } from './chain-page.reducers';
 export class ChainPageComponent implements OnInit {
 
   details: ChainDetailsModel;
+  chainConfig$: Observable<ChainDetailsModel>;
 
   constructor(
     private store: Store<ChainPageState>,
@@ -27,7 +29,8 @@ export class ChainPageComponent implements OnInit {
       }));
     });
 
-    this.store.pipe(select(getChainDetails)).subscribe((details) => {
+    this.chainConfig$ = this.store.pipe(select(getChainDetails));
+    this.chainConfig$.subscribe((details) => {
       this.details = details;
     });
   }
