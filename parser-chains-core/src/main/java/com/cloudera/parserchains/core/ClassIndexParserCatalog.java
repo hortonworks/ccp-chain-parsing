@@ -11,6 +11,9 @@ import java.util.List;
  * A {@link ParserCatalog} that builds a catalog of parsers using a class index
  * compiled at build time.
  *
+ * <p>A parser must be marked using the {@link MessageParser} annotation
+ * so that the parser is discoverable using this class.
+ *
  * https://github.com/atteo/classindex
  */
 public class ClassIndexParserCatalog implements ParserCatalog {
