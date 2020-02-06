@@ -5,7 +5,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { StoreModule } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
-import { Observable, of, ReplaySubject } from 'rxjs';
+import { of, ReplaySubject } from 'rxjs';
 
 import { ChainPageService } from '../services/chain-page.service';
 
