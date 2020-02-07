@@ -60,7 +60,11 @@ describe('LiveViewComponent', () => {
       providers: [
         provideMockStore({ initialState }),
       ],
-      declarations: [ LiveViewComponent, MockSampleDataFormComponent, MockLiveViewResultComponent ]
+      declarations: [
+        LiveViewComponent,
+        MockSampleDataFormComponent,
+        MockLiveViewResultComponent,
+      ]
     })
     .compileComponents();
 

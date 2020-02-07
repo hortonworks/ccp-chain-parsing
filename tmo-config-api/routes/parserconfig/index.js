@@ -66,7 +66,10 @@ function createParseJob(req, res) {
       entries
     }
   };
-  res.status(200).send(response);
+
+  setTimeout(() => {
+    res.status(200).send(response);
+  }, 1000);
 }
 
 function getChains(req, res) {
