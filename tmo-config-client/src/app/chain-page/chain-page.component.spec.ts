@@ -3,10 +3,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { StoreModule } from '@ngrx/store';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { ParserModel } from './chain-details.model';
 import { ChainPageComponent } from './chain-page.component';
+import { ParserModel } from './chain-page.models';
 import * as fromReducers from './chain-page.reducers';
 
 @Component({
@@ -15,13 +15,16 @@ import * as fromReducers from './chain-page.reducers';
 })
 class MockChainViewComponent {
   @Input() parsers: ParserModel[];
+  @Input() dirtyParsers;
 }
 
 @Component({
   selector: 'app-live-view',
   template: ''
 })
-class MockLiveViewComponent {}
+class MockLiveViewComponent {
+  @Input() chainConfig$: Observable<{}>;
+}
 
 const fakeActivatedRoute = {
   params: of({})

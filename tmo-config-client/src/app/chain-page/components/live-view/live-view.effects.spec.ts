@@ -4,15 +4,13 @@ import { Action } from '@ngrx/store';
 import { NzMessageService } from 'ng-zorro-antd';
 import { of, Subject, throwError } from 'rxjs';
 
-import { ChainDetailsModel } from '../../chain-details.model';
-
 import { executionTriggered, liveViewRefreshedSuccessfully, liveViewRefreshFailed } from './live-view.actions';
 import { LiveViewEffects } from './live-view.effects';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 import { LiveViewService } from './services/live-view.service';
 
 class MockLiveViewService {
-  execute(sampleData: SampleDataModel, chainConfig: ChainDetailsModel) {
+  execute(sampleData: SampleDataModel, chainConfig: {}) {
     return new Subject();
   }
 }

@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 
-import { ParserModel } from '../chain-page/chain-details.model';
+import { ParserModel } from '../chain-page/chain-page.models';
 
 import * as fromActions from './chain-add-parser-page.actions';
 import { AddParserPageState, getParsers, getParserTypes } from './chain-add-parser-page.reducers';

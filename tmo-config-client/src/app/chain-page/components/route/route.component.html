@@ -1,0 +1,15 @@
+<div class="route" *ngIf="route">
+  <div class="route-matching-value">{{ route.matchingValue }}</div>
+  <div>
+    <div class="route-subchain">
+      <a
+        class="subchain-items"
+        href="#"
+        (click)="onChainClick($event, route.subchain)"
+        title="{{ subchain.name }}"
+      >
+        {{ subchain.name }}
+      </a>
+    </div>
+  </div>
+</div>

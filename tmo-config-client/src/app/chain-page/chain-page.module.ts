@@ -11,10 +11,24 @@ import { ChainPageComponent } from './chain-page.component';
 import { ChainPageEffects } from './chain-page.effects';
 import { reducer } from './chain-page.reducers';
 import { ChainViewComponent } from './components/chain-view/chain-view.component';
+import { CustomFormComponent } from './components/custom-form/custom-form.component';
 import { LiveViewModule } from './components/live-view/live-view.module';
+import { ParserComposerComponent } from './components/parser-composer/parser-composer.component';
+import { ParserComponent } from './components/parser/parser.component';
+import { RouteComponent } from './components/route/route.component';
+import { RouterComponent } from './components/router/router.component';
 
 @NgModule({
-  declarations: [ ChainPageComponent, ChainViewComponent ],
+  declarations: [
+    ChainPageComponent,
+    ChainViewComponent,
+    ParserComponent,
+    RouterComponent,
+    CustomFormComponent,
+    ParserComposerComponent,
+    RouteComponent
+  ],
+  entryComponents: [ ChainViewComponent ],
   imports: [
     NgZorroAntdModule,
     CommonModule,

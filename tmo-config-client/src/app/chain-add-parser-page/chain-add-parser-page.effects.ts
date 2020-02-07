@@ -6,7 +6,7 @@ import { NzMessageService } from 'ng-zorro-antd';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { ParserModel } from '../chain-page/chain-details.model';
+import { ParserModel } from '../chain-page/chain-page.models';
 import { AddParserPageService } from '../services/chain-add-parser-page.service';
 
 import * as fromActions from './chain-add-parser-page.actions';

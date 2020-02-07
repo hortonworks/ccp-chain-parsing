@@ -2,31 +2,77 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { StoreModule } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
-import { Observable, of, ReplaySubject } from 'rxjs';
+import { of, ReplaySubject } from 'rxjs';
 
 import { ChainPageService } from '../services/chain-page.service';
 
 import * as fromActions from './chain-page.actions';
 import { ChainPageEffects } from './chain-page.effects';
+import * as fromReducers from './chain-page.reducers';
 
 export class MockService {}
 
 describe('chain parser page: effects', () => {
-  let effects: ChainPageEffects;
   let actions: ReplaySubject<any>;
+  let effects: ChainPageEffects;
   let service: ChainPageService;
+
+  const initialState = {
+    'chain-page': {
+      chains: {
+        123: {
+          id: '123',
+          name: 'main chain',
+          parsers: ['123']
+        },
+        456: {
+          id: '456',
+          name: 'some chain',
+          parsers: ['456']
+        }
+      },
+      parsers: {
+        123: {
+          id: '123',
+          name: 'some parser',
+          type: 'Router',
+          config: {
+            routes: ['123']
+          }
+        },
+        456: {
+          id: '456',
+          name: 'some other parser',
+          type: 'grok'
+        }
+      },
+      routes: {
+        123: {
+          id: '123',
+          name: 'some route',
+          subchain: '456'
+        }
+      }
+    }
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
         NgZorroAntdModule,
         RouterTestingModule,
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        StoreModule.forRoot({
+          'chain-page': fromReducers.reducer
+        })
       ],
       providers: [
         ChainPageEffects,
         provideMockActions(() => actions),
+        provideMockStore({ initialState }),
         { provide: ChainPageService, useClass: MockService },
       ]
     });
@@ -35,21 +81,118 @@ describe('chain parser page: effects', () => {
     service = TestBed.get(ChainPageService);
   });
 
-  it('remove parser should call the service and return with a message on success', () => {
-    service.removeParser = (): Observable<any> => of();
+  it('load should receive the parser config and normalize it', () => {
+    service.getChain = () => of({
+      id: '123',
+      name: 'main chain',
+      parsers: [{
+        id: '123',
+        name: 'some parser',
+        type: 'Router',
+        config: {
+          routes: [{
+            id: '123',
+            name: 'some route',
+            subchain: {
+              id: '456',
+              name: 'some chain',
+              parsers: [{
+                id: '456',
+                name: 'some other parser',
+                type: 'grok'
+              }]
+            }
+          }]
+        }
+      }]
+    });
 
-    const removeParserSpy = spyOn(service, 'removeParser').and.callThrough();
+    const getChainSpy = spyOn(service, 'getChain').and.callThrough();
 
     actions = new ReplaySubject(1);
-    actions.next(new fromActions.RemoveParserAction({
-      id: '456123',
+    actions.next(new fromActions.LoadChainDetailsAction({
+      id: '123'
+    }));
+
+    effects.loadChainDetails$.subscribe(result => {
+      expect(result).toEqual(new fromActions.LoadChainDetailsSuccessAction({
+        chains: {
+          123: {
+            id: '123',
+            name: 'main chain',
+            parsers: ['123']
+          },
+          456: {
+            id: '456',
+            name: 'some chain',
+            parsers: ['456']
+          }
+        },
+        parsers: {
+          123: {
+            id: '123',
+            name: 'some parser',
+            type: 'Router',
+            config: {
+              routes: ['123']
+            }
+          },
+          456: {
+            id: '456',
+            name: 'some other parser',
+            type: 'grok'
+          }
+        },
+        routes: {
+          123: {
+            id: '123',
+            name: 'some route',
+            subchain: '456'
+          }
+        }
+      }));
+    });
+
+    expect(getChainSpy).toHaveBeenCalledWith('123');
+  });
+
+  it('save should send the denormalized parser config', () => {
+    service.saveParserConfig = () => of();
+
+    const saveParserConfigSpy = spyOn(service, 'saveParserConfig').and.callThrough();
+
+    actions = new ReplaySubject(1);
+    actions.next(new fromActions.SaveParserConfigAction({
       chainId: '123'
     }));
 
-    effects.removeParser$.subscribe(result => {
-      expect(result).toEqual(new fromActions.RemoveParserSuccessAction());
+    effects.saveParserConfig$.subscribe(result => {
+      expect(result).toEqual(new fromActions.SaveParserConfigSuccessAction());
     });
 
-    expect(removeParserSpy).toHaveBeenCalledWith('456123', '123');
+    expect(saveParserConfigSpy).toHaveBeenCalledWith('123', {
+      id: '123',
+      name: 'main chain',
+      parsers: [{
+        id: '123',
+        name: 'some parser',
+        type: 'Router',
+        config: {
+          routes: [{
+            id: '123',
+            name: 'some route',
+            subchain: {
+              id: '456',
+              name: 'some chain',
+              parsers: [{
+                id: '456',
+                name: 'some other parser',
+                type: 'grok'
+              }]
+            }
+          }]
+        }
+      }]
+    });
   });
 });
