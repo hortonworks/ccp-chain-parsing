@@ -5,8 +5,8 @@ import { StoreModule } from '@ngrx/store';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { Observable, of } from 'rxjs';
 
-import { ParserModel } from './chain-details.model';
 import { ChainPageComponent } from './chain-page.component';
+import { ParserModel } from './chain-page.models';
 import * as fromReducers from './chain-page.reducers';
 
 @Component({
@@ -15,6 +15,7 @@ import * as fromReducers from './chain-page.reducers';
 })
 class MockChainViewComponent {
   @Input() parsers: ParserModel[];
+  @Input() dirtyParsers;
 }
 
 @Component({

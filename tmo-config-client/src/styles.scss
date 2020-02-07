@@ -125,3 +125,9 @@
 .ant-select-selection {
   border:1px solid var(--input-border-color);
 }
+
+.parser-chain .ant-card-head-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

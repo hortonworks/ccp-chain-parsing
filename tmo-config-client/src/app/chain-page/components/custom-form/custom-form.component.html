@@ -1,0 +1,16 @@
+<div class="custom-form">
+  <form nz-form [formGroup]="formGroup">
+    <nz-form-item *ngFor="let formConfig of config; trackBy: trackByFn">
+      <nz-form-control *ngIf="formConfig.type === 'textarea'">
+        <textarea
+          rows="4"
+          nz-input
+          formControlName="{{ formConfig.name }}"
+          (keyup)="onChange($event, formConfig)"
+        >
+          {{ formConfig.value }}
+        </textarea>
+      </nz-form-control>
+    </nz-form-item >
+  </form>
+</div>

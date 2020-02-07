@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NzTabsModule } from 'ng-zorro-antd';
@@ -45,6 +46,7 @@ describe('LiveViewComponent', () => {
       imports: [
         NzTabsModule,
         NzSpinModule,
+        RouterTestingModule
       ],
       providers: [
         provideMockStore({ initialState }),
