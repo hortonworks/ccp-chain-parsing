@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { ParserModel } from '../chain-page/chain-details.model';
+import { ParserModel } from '../chain-page/chain-page.models';
 
 export const ADD_PARSER = '[Chain Add Parser] add start';
 export const ADD_PARSER_SUCCESS = '[Chain Add Parser] add success';

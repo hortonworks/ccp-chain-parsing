@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 import { LiveViewResultComponent } from './live-view-result.component';
 
@@ -8,6 +9,9 @@ describe('LiveViewResultComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [
+        NgZorroAntdModule,
+      ],
       declarations: [ LiveViewResultComponent ]
     })
     .compileComponents();

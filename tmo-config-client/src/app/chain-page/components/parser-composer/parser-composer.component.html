@@ -1,0 +1,18 @@
+<div *ngIf="parser" class="parser-container">
+  <app-parser
+    *ngIf="parser.type !== 'Router'"
+    [parser]="parser"
+    [dirty]="dirty"
+    [configForm]="configForm"
+    [outputsForm]="outputsForm"
+    (parserChange)="onParserChange($event)"
+    (removeParser)="onRemoveParser($event)"
+  ></app-parser>
+  <app-router
+    *ngIf="parser.type === 'Router'"
+    [parser]="parser"
+    [dirty]="dirty"
+    (subchainSelect)="onSubchainSelect($event)"
+    (removeParser)="onRemoveParser($event)"
+  ></app-router>
+</div>

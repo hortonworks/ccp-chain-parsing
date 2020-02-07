@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { LiveViewResultModel } from '../models/live-view.model';
 
@@ -7,12 +7,6 @@ import { LiveViewResultModel } from '../models/live-view.model';
   templateUrl: './live-view-result.component.html',
   styleUrls: ['./live-view-result.component.scss']
 })
-export class LiveViewResultComponent implements OnInit {
+export class LiveViewResultComponent {
   @Input() results: LiveViewResultModel;
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
 }

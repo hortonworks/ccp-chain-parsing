@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { ChainDetailsModel } from '../chain-page/chain-page.models';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -12,12 +14,15 @@ export class ChainPageService {
       private http: HttpClient
     ) {}
 
+    public getChain(id: string) {
+      return this.http.get(this.BASE_URL + `chains/${id}`);
+    }
+
     public getParsers(id: string) {
       return this.http.get(this.BASE_URL + `chains/${id}/parsers`);
     }
 
-    public removeParser(id: string, chainId: string) {
-      return this.http.delete(this.BASE_URL + `chains/${chainId}/parsers/${id}`);
+    public saveParserConfig(chainId: string, config: ChainDetailsModel) {
+      return this.http.put(this.BASE_URL + `chains/${chainId}`, config);
     }
-
 }

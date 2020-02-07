@@ -1,37 +1,15 @@
-<div>
-  <div *ngFor="let parser of parsers">
-    <nz-card class="chain-item" [nzBordered]="true" [nzTitle]="parser.name" [nzExtra]="extraTemplate">
-      <nz-tabset nzTabPosition="top" nzType="line">
-        <nz-tab nzTitle="Basics">
-          Parser Class: {{ parser.name }}
-        </nz-tab>
-        <nz-tab nzTitle="Config">
-          Config tab
-        </nz-tab>
-        <nz-tab nzTitle="Outputs">
-          Outputs tab
-        </nz-tab>
-        <nz-tab nzTitle="Advanced">
-          Advanced tab
-          <ngx-monaco-editor
-            class="advanced-editor"
-            [options]="{}"
-          ></ngx-monaco-editor>
-        </nz-tab>
-      </nz-tabset>
-    </nz-card>
-    <ng-template #extraTemplate>
-      <button
-        nz-popconfirm
-        nzPopconfirmTitle="Are you sure delete this task?"
-        (nzOnConfirm)="removeParser(parser.id)"
-        nzPopconfirmPlacement="right"
-        nz-button
-        nzType="link"
-        data-qe-id="remove-parser"
-      >
-        Remove Parser
-      </button>
-    </ng-template>
+<div class="parser-chain">
+  <div *ngFor="let parserId of parsers" class="parser-chain-item">
+    <div class="chain-item">
+      <app-parser-composer
+        [parserId]="parserId"
+        [dirty]="(dirtyParsers || []).includes(parserId)"
+        [configForm]="configFormFields"
+        [outputsForm]="outputsFormFields"
+        (subchainSelect)="onChainSelected($event)"
+        (parserRemove)="onParserRemove($event)"
+        (parserChange)="onParserChange($event)"
+      ></app-parser-composer>
+    </div>
   </div>
 </div>
