@@ -6,3 +6,16 @@
 .chain-actions button {
   margin-left: 10px;
 }
+
+.chain-edit-btn {
+  background:transparent;
+  border: 0;
+  opacity: 0.6;
+
+  .anticon-edit {
+    margin:0px !important;
+  }
+}
+.chain-edit-btn:hover {
+  opacity: 1;
+}

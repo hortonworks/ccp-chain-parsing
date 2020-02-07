@@ -31,7 +31,8 @@
   </nz-breadcrumb>
   <div class="chain-name">
     <span *ngIf="(!editMode)">
-      Parser Chain ({{ chain.name }}) <button (click)="toggleEditMode()" data-qe-id="chain-name-edit-btn"><i nz-icon nzType="edit" nzTheme="fill"></i></button>
+      Parser Chain <span (dblclick)="toggleEditMode()">({{ chain.name }})</span> <button (click)="toggleEditMode()" data-qe-id="chain-name-edit-btn" nz-button
+      nzType="default" class="chain-edit-btn"><i nz-icon nzType="edit" nzTheme="fill"></i></button>
     </span>
     <span *ngIf="(editMode)">
       Parser Chain
