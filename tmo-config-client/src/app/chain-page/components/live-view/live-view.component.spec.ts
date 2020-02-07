@@ -1,15 +1,15 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NzTabsModule } from 'ng-zorro-antd';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { of } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import { executionTriggered } from './live-view.actions';
 import { LiveViewComponent } from './live-view.component';
+import { LiveViewState } from './live-view.reducers';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 
 @Component({
@@ -24,28 +24,15 @@ describe('LiveViewComponent', () => {
   let component: LiveViewComponent;
   let fixture: ComponentFixture<LiveViewComponent>;
 
-  let mockStore: MockStore<{
-    'chain-page': {
-      chains: {},
-      parsers: {},
-      routes: {},
-      error: ''
-    },
-    'live-view': {}
-  }>;
+  let mockStore: MockStore<LiveViewState>;
 
-  const initialState = {
-    'chain-page': {
-      chains: {},
-      parsers: {},
-      routes: {},
-      error: ''
-    },
-    'live-view': {
+  const initialState = { 'live-view': {
       sampleData: {
         type: SampleDataType.MANUAL,
         source: '',
-      }
+      },
+      isExecuting: false,
+      result: undefined,
     }
   };
 
@@ -63,9 +50,6 @@ describe('LiveViewComponent', () => {
       ],
       providers: [
         provideMockStore({ initialState }),
-        { provide: ActivatedRoute, useValue: {
-          params: of({ id: '123' })
-        }}
       ],
       declarations: [ LiveViewComponent, MockSampleDataFormComponent ]
     })
@@ -78,6 +62,7 @@ describe('LiveViewComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LiveViewComponent);
     component = fixture.componentInstance;
+    component.chainConfig$ = new Subject<{}>();
     fixture.detectChanges();
   });
 
@@ -87,6 +72,7 @@ describe('LiveViewComponent', () => {
 
   it('should react on sampleData change', fakeAsync(() => {
     component.sampleDataChange$.next(testSampleData);
+    (component.chainConfig$ as Subject<{}>).next({});
 
     tick(component.LIVE_VIEW_DEBOUNCE_RATE);
 
@@ -99,41 +85,13 @@ describe('LiveViewComponent', () => {
 
   it('should react on chain config change', fakeAsync(() => {
     component.sampleDataChange$.next(testSampleData);
-    mockStore.setState({
-      ...initialState,
-      'chain-page': {
-        chains: {
-          123: {
-            id: '123',
-            name: 'main chain',
-            parsers: ['123']
-          }
-        },
-        parsers: {
-          123: {
-            id: '123',
-            name: 'some parser',
-            type: 'grok'
-          }
-        },
-        routes: {},
-        error: ''
-      }
-    });
+    (component.chainConfig$ as Subject<{}>).next({});
 
     tick(component.LIVE_VIEW_DEBOUNCE_RATE);
 
     expect(mockStore.dispatch).toHaveBeenCalledWith({
       sampleData: testSampleData,
-      chainConfig: {
-        id: '123',
-        name: 'main chain',
-        parsers: [{
-          id: '123',
-          name: 'some parser',
-          type: 'grok'
-        }]
-      },
+      chainConfig: {},
       type: executionTriggered.type
     });
   }));
@@ -151,15 +109,7 @@ describe('LiveViewComponent', () => {
 
   it('should hold back (debounce) executeTriggered', fakeAsync(() => {
     component.sampleDataChange$.next(testSampleData);
-    mockStore.setState({
-      ...initialState,
-      'chain-page': {
-        chains: {},
-        parsers: {},
-        routes: {},
-        error: ''
-      }
-    });
+    (component.chainConfig$ as Subject<{}>).next({});
 
     tick(component.LIVE_VIEW_DEBOUNCE_RATE / 2);
 

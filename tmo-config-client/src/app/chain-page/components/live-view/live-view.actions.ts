@@ -1,13 +1,11 @@
 import { createAction, props, union } from '@ngrx/store';
 
-import { ChainDetailsModel } from '../../chain-page.models';
-
 import { LiveViewModel } from './models/live-view.model';
 import { SampleDataModel } from './models/sample-data.model';
 
 export const executionTriggered = createAction(
   '[LiveView] Sample Data Parsing Triggered',
-  props<{ sampleData: SampleDataModel, chainConfig: ChainDetailsModel }>()
+  props<{ sampleData: SampleDataModel, chainConfig: {} }>()
 );
 
 export const liveViewRefreshedSuccessfully = createAction(

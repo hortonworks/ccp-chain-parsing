@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ChainDetailsModel } from 'src/app/chain-page/chain-page.models';
 
 import { LiveViewModel } from '../models/live-view.model';
 import { SampleDataModel } from '../models/sample-data.model';
@@ -17,7 +16,7 @@ export class LiveViewService {
     private http: HttpClient,
   ) { }
 
-  execute(sampleData: SampleDataModel, chainConfig: ChainDetailsModel): Observable<LiveViewModel> {
+  execute(sampleData: SampleDataModel, chainConfig: {}): Observable<LiveViewModel> {
     return this.http.post<LiveViewModel>(
       this.SAMPLE_PARSER_URL,
       { sampleData, chainConfig } as LiveViewModel);

@@ -1,10 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
-
-import { getChainDetails } from '../../chain-page.reducers';
 
 import { executionTriggered } from './live-view.actions';
 import { LiveViewState } from './live-view.reducers';
@@ -16,9 +13,10 @@ import { SampleDataModel } from './models/sample-data.model';
   templateUrl: './live-view.component.html',
   styleUrls: ['./live-view.component.scss']
 })
-export class LiveViewComponent implements OnDestroy {
-  readonly LIVE_VIEW_DEBOUNCE_RATE = 1000;
+export class LiveViewComponent implements AfterViewInit, OnDestroy {
+  @Input() chainConfig$: Observable<{}>;
 
+  readonly LIVE_VIEW_DEBOUNCE_RATE = 1000;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   isExecuting$: Observable<boolean>;
@@ -26,19 +24,19 @@ export class LiveViewComponent implements OnDestroy {
 
   sampleDataChange$ = new Subject<SampleDataModel>();
 
-  constructor(private store: Store<LiveViewState>, private activatedRoute: ActivatedRoute) {
+  constructor(private store: Store<LiveViewState>) {
     this.isExecuting$ = this.store.pipe(select(getExecutionStatus));
     this.sampleData$ = this.store.pipe(select(getSampleData));
-
-    this.activatedRoute.params.subscribe((params) => {
-      this.subscribeToRelevantChanges(params.id);
-    });
   }
 
-  private subscribeToRelevantChanges(chainId: string) {
+  ngAfterViewInit() {
+    this.subscribeToRelevantChanges();
+  }
+
+  private subscribeToRelevantChanges() {
     combineLatest([
       this.sampleDataChange$,
-      this.store.pipe(select(getChainDetails, { chainId })),
+      this.chainConfig$,
     ]).pipe(
       debounceTime(this.LIVE_VIEW_DEBOUNCE_RATE),
       filter(([ sampleData ]) => !!sampleData.source),

@@ -8,8 +8,8 @@ import { take } from 'rxjs/operators';
 import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
-import { ParserChainModel, PartialParserModel } from './chain-page.models';
-import { ChainPageState, getChain } from './chain-page.reducers';
+import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
+import { ChainPageState, getChain, getChainDetails } from './chain-page.reducers';
 
 class DirtyChain {
   id: string;
@@ -31,6 +31,7 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
   chainId: string;
   dirty = false;
   dirtyChains: { [key: string]: DirtyChain } = {};
+  chainConfig$: Observable<ChainDetailsModel>;
 
   constructor(
     private store: Store<ChainPageState>,
@@ -61,6 +62,8 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
         }
       }
     });
+
+    this.chainConfig$ = this.store.pipe(select(getChainDetails, { chainId: this.chainId }));
   }
 
   removeParser(id: string) {
