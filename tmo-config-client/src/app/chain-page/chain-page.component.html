@@ -29,6 +29,15 @@
       <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>
     </nz-breadcrumb-item>
   </nz-breadcrumb>
+  <div class="chain-name">
+    <span *ngIf="(!editMode)">
+      Parser Chain ({{ chain.name }}) <button (click)="toggleEditMode()" data-qe-id="chain-name-edit-btn"><i nz-icon nzType="edit" nzTheme="fill"></i></button>
+    </span>
+    <span *ngIf="(editMode)">
+      Parser Chain
+      <input #chainNameInput type="text" value ="{{ chain.name }}" (keyup.enter)="updateChainName()" (blur)="updateChainName()" data-qe-id="chain-name-field">
+    </span>
+  </div>
   <div class="chain-actions">
     <button nz-button nzType="default" type="button" (click)="onResetChanges($event)" [disabled]="!dirty">
       Reset
