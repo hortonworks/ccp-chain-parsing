@@ -11,6 +11,11 @@ export const getSampleData = createSelector(
   (state: LiveViewState) => state.sampleData
 );
 
+export const getResults = createSelector(
+  getLiveViewState,
+  (state: LiveViewState) => state.result
+);
+
 export const getExecutionStatus = createSelector(
   getLiveViewState,
   (state: LiveViewState) => state.isExecuting

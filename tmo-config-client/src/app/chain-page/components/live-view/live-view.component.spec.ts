@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { executionTriggered } from './live-view.actions';
 import { LiveViewComponent } from './live-view.component';
 import { LiveViewState } from './live-view.reducers';
+import { LiveViewResultModel } from './models/live-view.model';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 
 @Component({
@@ -18,6 +19,14 @@ import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 })
 class MockSampleDataFormComponent {
   @Input() sampleData: SampleDataModel;
+}
+
+@Component({
+  selector: 'app-live-view-result',
+  template: ''
+})
+class MockLiveViewResultComponent {
+  @Input() results: LiveViewResultModel;
 }
 
 describe('LiveViewComponent', () => {
@@ -51,7 +60,11 @@ describe('LiveViewComponent', () => {
       providers: [
         provideMockStore({ initialState }),
       ],
-      declarations: [ LiveViewComponent, MockSampleDataFormComponent ]
+      declarations: [
+        LiveViewComponent,
+        MockSampleDataFormComponent,
+        MockLiveViewResultComponent,
+      ]
     })
     .compileComponents();
 
