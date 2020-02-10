@@ -1,7 +1,9 @@
+require('dotenv').config();
+
 var path = require("path");
 const html = path.join(__dirname, "../dist/tmo-parser-chaining/");
 
-const port = 4200;
+const port = process.env.PORT || 4200;
 
 // Express
 const bodyParser = require("body-parser");

@@ -48,3 +48,6 @@ Thumbs.db
 # Cypress related
 cypress/videos
 cypress/screenshots
+
+# Node Env File
+.env
