@@ -1,4 +1,6 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 let path = require("path");
 const HTML = path.join(__dirname, "../dist/tmo-parser-chaining/");
