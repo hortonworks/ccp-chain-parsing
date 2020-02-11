@@ -1,18 +1,18 @@
 let path = require("path");
-const HTML = path.join(__dirname, "../dist/tmo-parser-chaining/");
-const PORT = process.env.PORT || 4200;
-const BODY_PARSER = require("body-parser");
-const COMPRESSION = require("compression");
-const EXPRESS = require("express");
+const html = path.join(__dirname, "../dist/tmo-parser-chaining/");
+const port = process.env.PORT || 4200;
+const bodyParser = require("body-parser");
+const compression = require("compression");
+const express = require("express");
 
-let app = EXPRESS();
+let app = express();
 app
-  .use(COMPRESSION())
-  .use(BODY_PARSER.json())
-  .use(EXPRESS.static(HTML))
+  .use(compression())
+  .use(bodyParser.json())
+  .use(express.static(html))
   .use(function(req, res) {
-    res.sendFile(HTML + "index.html");
+    res.sendFile(html + "index.html");
   })
-  .listen(PORT, function() {
-    console.log("Parser Configuration UI is listening on port " + PORT);
+  .listen(port, function() {
+    console.log("Parser Configuration UI is listening on port " + port);
   });
