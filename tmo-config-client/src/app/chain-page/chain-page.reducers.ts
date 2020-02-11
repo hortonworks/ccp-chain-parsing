@@ -34,6 +34,10 @@ export function reducer(
     case chainPageActions.REMOVE_PARSER: {
       return {
         ...state,
+        parsers: {
+          ...state.parsers,
+          [action.payload.id]: undefined
+        },
         chains: {
           ...state.chains,
           [action.payload.chainId]: {

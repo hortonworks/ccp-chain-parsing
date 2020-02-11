@@ -74,6 +74,7 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
       id,
       chainId
     }));
+    this.dirty = true;
   }
 
   onParserChange(changedParser: PartialParserModel) {

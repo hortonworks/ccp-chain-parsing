@@ -5,9 +5,7 @@ import { ParserChainModel, ParserModel, PartialParserModel, RouteModel } from '.
 export const LOAD_CHAIN_DETAILS = '[Chain Details] load start';
 export const LOAD_CHAIN_DETAILS_SUCCESS = '[Chain Details] load success';
 export const LOAD_CHAIN_DETAILS_FAIL = '[Chain Details] load fail';
-export const REMOVE_PARSER = '[Chain Details] remove parser start';
-export const REMOVE_PARSER_SUCCESS = '[Chain Details] remove parser success';
-export const REMOVE_PARSER_FAIL = '[Chain Details] remove parser fail';
+export const REMOVE_PARSER = '[Chain Details] remove parser';
 export const UPDATE_PARSER = '[Chain Details] update parser';
 export const SAVE_PARSER_CONFIG = '[Chain Details] save parser config';
 export const SAVE_PARSER_CONFIG_SUCCESS = '[Chain Details] save parser config success';

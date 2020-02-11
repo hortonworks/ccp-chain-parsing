@@ -57,14 +57,7 @@ describe('chain-page: reducers', () => {
           input: '',
           outputs: ''
         },
-        456: {
-          id: '456',
-          name: 'Asa',
-          type: 'Grok',
-          config: {},
-          input: '',
-          outputs: ''
-        }
+        456: undefined
       },
       routes: {},
       error: ''
