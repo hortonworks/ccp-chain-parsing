@@ -1,12 +1,9 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.ConfigValue;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -70,12 +67,5 @@ public class TimestampParserTest {
 
         // no errors
         assertFalse(output.getError().isPresent());
-    }
-
-    @Test
-    void configureTimestampField() {
-        TimestampParser parser = new TimestampParser();
-        parser.configure(TimestampParser.outputFieldConfig, Arrays.asList(ConfigValue.of("processing_time")));
-        assertEquals(FieldName.of("processing_time"), parser.getOutputField());
     }
 }

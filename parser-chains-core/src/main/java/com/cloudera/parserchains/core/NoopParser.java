@@ -19,15 +19,4 @@ public class NoopParser implements Parser {
         // do nothing
         return Collections.emptyList();
     }
-
-    @Override
-    public List<ConfigName> validConfigurations() {
-        // do nothing
-        return Collections.emptyList();
-    }
-
-    @Override
-    public void configure(ConfigName configName, List<ConfigValue> configValues) {
-        // do nothing
-    }
 }

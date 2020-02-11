@@ -1,7 +1,5 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.ConfigName;
-import com.cloudera.parserchains.core.ConfigValue;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
@@ -24,8 +22,6 @@ public class TimestampParser implements Parser {
             return System.currentTimeMillis();
         }
     }
-
-    public static final ConfigName outputFieldConfig = ConfigName.of("timestampField", false);
 
     private FieldName outputField;
     private Clock clock;
@@ -50,23 +46,6 @@ public class TimestampParser implements Parser {
         return Arrays.asList(outputField);
     }
 
-    @Override
-    public List<ConfigName> validConfigurations() {
-        return Arrays.asList(outputFieldConfig);
-    }
-
-    @Override
-    public void configure(ConfigName configName, List<ConfigValue> configValues) {
-        if(outputFieldConfig.equals(configName)) {
-            requireN(outputFieldConfig, configValues, 1);
-            FieldName fieldName = FieldName.of(configValues.get(0).getValue());
-            withOutputField(fieldName);
-
-        } else {
-            throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", configName));
-        }
-    }
-
     /**
      * @param fieldName The name of the field added to each message.
      */
@@ -85,12 +64,5 @@ public class TimestampParser implements Parser {
 
     public FieldName getOutputField() {
         return outputField;
-    }
-
-    private void requireN(ConfigName configName, List<ConfigValue> configValues, int count) {
-        if(configValues.size() != count) {
-            String msg = "For '%s' expected %d value(s), but got %d; ";
-            throw new IllegalArgumentException(String.format(msg, configName.getName(), count, configValues.size()));
-        }
     }
 }

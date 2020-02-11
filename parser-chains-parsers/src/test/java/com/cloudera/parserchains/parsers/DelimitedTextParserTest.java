@@ -1,17 +1,11 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.ConfigValue;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Regex;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -184,58 +178,5 @@ public class DelimitedTextParserTest {
         // expect an error
         assertTrue(output.getError().isPresent());
     }
-
-    @Test
-    void configureInputField() {
-        DelimitedTextParser parser = new DelimitedTextParser();
-        parser.configure(DelimitedTextParser.inputConfig, Arrays.asList(ConfigValue.of("original_string")));
-        assertEquals(FieldName.of("original_string"), parser.getInputField());
-    }
-
-    @Test
-    void configureOutputFields() {
-        DelimitedTextParser parser = new DelimitedTextParser();
-        parser.configure(DelimitedTextParser.outputConfig, Arrays.asList(ConfigValue.of("label", "first"), ConfigValue.of("index", "0")));
-        parser.configure(DelimitedTextParser.outputConfig, Arrays.asList(ConfigValue.of("label", "second"), ConfigValue.of("index", "1")));
-        parser.configure(DelimitedTextParser.outputConfig, Arrays.asList(ConfigValue.of("label", "third"), ConfigValue.of("index", "2")));
-
-        List<DelimitedTextParser.OutputField> outputFields = parser.getOutputFields();
-        assertEquals(3, outputFields.size());
-
-        // first output field
-        assertEquals(FieldName.of("first"), outputFields.get(0).fieldName);
-        assertEquals(0, outputFields.get(0).index);
-
-        // second output field
-        assertEquals(FieldName.of("second"), outputFields.get(1).fieldName);
-        assertEquals(1, outputFields.get(1).index);
-
-        // third output field
-        assertEquals(FieldName.of("third"), outputFields.get(2).fieldName);
-        assertEquals(2, outputFields.get(2).index);
-    }
-
-    @Test
-    void configureDelimiter() {
-        DelimitedTextParser parser = new DelimitedTextParser();
-        parser.configure(DelimitedTextParser.delimiterConfig, Arrays.asList(ConfigValue.of("|")));
-        assertEquals(Regex.of("|"), parser.getDelimiter());
-    }
-
-    @Test
-    void configureTrim() {
-        DelimitedTextParser parser = new DelimitedTextParser();
-        parser.configure(DelimitedTextParser.trimConfig, Arrays.asList(ConfigValue.of("false")));
-        assertFalse(parser.isTrimWhitespace());
-    }
-
-    @Test
-    void validConfigurations() {
-        DelimitedTextParser parser = new DelimitedTextParser();
-        assertThat(parser.validConfigurations(), Matchers.hasItems(
-                        DelimitedTextParser.inputConfig,
-                        DelimitedTextParser.outputConfig,
-                        DelimitedTextParser.delimiterConfig,
-                        DelimitedTextParser.trimConfig));
-    }
 }
+

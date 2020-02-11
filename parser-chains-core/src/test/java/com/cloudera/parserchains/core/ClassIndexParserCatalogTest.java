@@ -23,17 +23,6 @@ public class ClassIndexParserCatalogTest {
             // do nothing
             return null;
         }
-
-        @Override
-        public List<ConfigName> validConfigurations() {
-            // do nothing
-            return null;
-        }
-
-        @Override
-        public void configure(ConfigName configName, List<ConfigValue> configValues) {
-            // do nothing
-        }
     }
 
     @Test

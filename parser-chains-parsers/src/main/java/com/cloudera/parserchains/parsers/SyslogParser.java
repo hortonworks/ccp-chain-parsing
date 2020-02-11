@@ -1,7 +1,5 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.ConfigName;
-import com.cloudera.parserchains.core.ConfigValue;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
@@ -10,6 +8,7 @@ import com.cloudera.parserchains.core.Parser;
 import com.github.palindromicity.syslog.SyslogParserBuilder;
 import com.github.palindromicity.syslog.SyslogSpecification;
 import com.github.palindromicity.syslog.dsl.ParseException;
+import com.github.palindromicity.syslog.dsl.SyslogFieldKeys;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,12 +17,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static com.cloudera.parserchains.parsers.ParserUtils.requireN;
 
 @MessageParser(name="Syslog", description="Parses Syslog according to RFC 3164 and 5424.")
 public class SyslogParser implements Parser {
-    public static final ConfigName inputFieldConfig = ConfigName.of("inputField", false);
-    public static final ConfigName specConfig = ConfigName.of("specification", false);
 
     private FieldName inputField;
     private SyslogSpecification specification;
@@ -74,29 +70,29 @@ public class SyslogParser implements Parser {
 
     @Override
     public List<FieldName> outputFields() {
-        // TODO implement me
-        return Collections.emptyList();
-    }
+        if(SyslogSpecification.RFC_3164.equals(specification)) {
+            return Arrays.asList(
+                    FieldName.of(SyslogFieldKeys.MESSAGE.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_HOSTNAME.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_PRI.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_PRI_SEVERITY.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_PRI_FACILITY.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_TIMESTAMP.getField()));
 
-    @Override
-    public List<ConfigName> validConfigurations() {
-        return Arrays.asList(inputFieldConfig, specConfig);
-    }
-
-    @Override
-    public void configure(ConfigName configName, List<ConfigValue> configValues) {
-        if(inputFieldConfig.equals(configName)) {
-            requireN(inputFieldConfig, configValues, 1);
-            String inputFieldArg = configValues.get(0).getValue();
-            withInputField(FieldName.of(inputFieldArg));
-
-        } else if(specConfig.equals(configName)) {
-            requireN(specConfig, configValues, 1);
-            String specArg = configValues.get(0).getValue();
-            withSpecification(SyslogSpecification.valueOf(specArg));
-
+        } else if (SyslogSpecification.RFC_5424.equals(specification)) {
+            return Arrays.asList(
+                    FieldName.of(SyslogFieldKeys.MESSAGE.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_APPNAME.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_HOSTNAME.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_PRI.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_PRI_SEVERITY.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_PRI_FACILITY.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_PROCID.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_TIMESTAMP.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_MSGID.getField()),
+                    FieldName.of(SyslogFieldKeys.HEADER_VERSION.getField()));
         } else {
-            throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", configName));
+            throw new IllegalArgumentException("Unexpected specification: " + specification);
         }
     }
 }
