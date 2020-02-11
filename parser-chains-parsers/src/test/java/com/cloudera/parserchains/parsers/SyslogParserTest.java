@@ -6,6 +6,22 @@ import com.cloudera.parserchains.core.Message;
 import com.github.palindromicity.syslog.SyslogSpecification;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_APPNAME;
+import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_HOSTNAME;
+import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_MSGID;
+import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_PRI;
+import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_PRI_FACILITY;
+import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_PRI_SEVERITY;
+import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_PROCID;
+import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_TIMESTAMP;
+import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_VERSION;
+import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.MESSAGE;
+import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.STRUCTURED_BASE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,21 +44,21 @@ public class SyslogParserTest {
                 .parse(input);
         Message expected = Message.builder()
                 .withFields(input)
-                .addField(FieldName.of("syslog.header.pri"), FieldValue.of("14"))
-                .addField(FieldName.of("syslog.header.version"), FieldValue.of("1"))
-                .addField(FieldName.of("syslog.header.appName"), FieldValue.of("d0602076-b14a-4c55-852a-981e7afeed38"))
-                .addField(FieldName.of("syslog.header.procId"), FieldValue.of("DEA"))
-                .addField(FieldName.of("syslog.header.timestamp"), FieldValue.of("2014-06-20T09:14:07+00:00"))
-                .addField(FieldName.of("syslog.header.facility"), FieldValue.of("1"))
-                .addField(FieldName.of("syslog.header.hostName"), FieldValue.of("loggregator"))
-                .addField(FieldName.of("syslog.header.severity"), FieldValue.of("6"))
-                .addField(FieldName.of("syslog.header.msgId"), FieldValue.of("MSG-01"))
-                .addField(FieldName.of("syslog.structuredData.exampleSDID@32473.iut"), FieldValue.of("3"))
-                .addField(FieldName.of("syslog.structuredData.exampleSDID@32473.eventID"), FieldValue.of("1011"))
-                .addField(FieldName.of("syslog.structuredData.exampleSDID@32473.eventSource"), FieldValue.of("Application"))
-                .addField(FieldName.of("syslog.structuredData.exampleSDID@32480.iut"), FieldValue.of("4"))
-                .addField(FieldName.of("syslog.structuredData.exampleSDID@32480.eventID"), FieldValue.of("2022"))
-                .addField(FieldName.of("syslog.structuredData.exampleSDID@32480.eventSource"), FieldValue.of("Other Application"))
+                .addField(FieldName.of(HEADER_PRI.getField()), FieldValue.of("14"))
+                .addField(FieldName.of(HEADER_VERSION.getField()), FieldValue.of("1"))
+                .addField(FieldName.of(HEADER_APPNAME.getField()), FieldValue.of("d0602076-b14a-4c55-852a-981e7afeed38"))
+                .addField(FieldName.of(HEADER_PROCID.getField()), FieldValue.of("DEA"))
+                .addField(FieldName.of(HEADER_TIMESTAMP.getField()), FieldValue.of("2014-06-20T09:14:07+00:00"))
+                .addField(FieldName.of(HEADER_PRI_FACILITY.getField()), FieldValue.of("1"))
+                .addField(FieldName.of(HEADER_HOSTNAME.getField()), FieldValue.of("loggregator"))
+                .addField(FieldName.of(HEADER_PRI_SEVERITY.getField()), FieldValue.of("6"))
+                .addField(FieldName.of(HEADER_MSGID.getField()), FieldValue.of("MSG-01"))
+                .addField(FieldName.of(STRUCTURED_BASE.getField() + ".exampleSDID@32473.iut"), FieldValue.of("3"))
+                .addField(FieldName.of(STRUCTURED_BASE.getField() + ".exampleSDID@32473.eventID"), FieldValue.of("1011"))
+                .addField(FieldName.of(STRUCTURED_BASE.getField() + ".exampleSDID@32473.eventSource"), FieldValue.of("Application"))
+                .addField(FieldName.of(STRUCTURED_BASE.getField() + ".exampleSDID@32480.iut"), FieldValue.of("4"))
+                .addField(FieldName.of(STRUCTURED_BASE.getField() + ".exampleSDID@32480.eventID"), FieldValue.of("2022"))
+                .addField(FieldName.of(STRUCTURED_BASE.getField() + ".exampleSDID@32480.eventSource"), FieldValue.of("Other Application"))
                 .addField(FieldName.of("syslog.message"), FieldValue.of("Removing instance"))
                 .build();
         assertEquals(expected, output);
@@ -62,12 +78,12 @@ public class SyslogParserTest {
                 .parse(input);
         Message expected = Message.builder()
                 .withFields(input)
-                .addField(FieldName.of("syslog.header.pri"), FieldValue.of("181"))
-                .addField(FieldName.of("syslog.header.severity"), FieldValue.of("5"))
-                .addField(FieldName.of("syslog.header.timestamp"), FieldValue.of("2018-09-14T00:54:09+00:00"))
-                .addField(FieldName.of("syslog.header.facility"), FieldValue.of("22"))
-                .addField(FieldName.of("syslog.header.hostName"), FieldValue.of("lzpqrst-admin.in.mycompany.com.lg"))
-                .addField(FieldName.of("syslog.message"), FieldValue.of("CISE_RADIUS_Accounting 0018032501 1 0 2018-09-14 10:54:09.095 +10:00"))
+                .addField(FieldName.of(HEADER_PRI.getField()), FieldValue.of("181"))
+                .addField(FieldName.of(HEADER_PRI_SEVERITY.getField()), FieldValue.of("5"))
+                .addField(FieldName.of(HEADER_TIMESTAMP.getField()), FieldValue.of("2018-09-14T00:54:09+00:00"))
+                .addField(FieldName.of(HEADER_PRI_FACILITY.getField()), FieldValue.of("22"))
+                .addField(FieldName.of(HEADER_HOSTNAME.getField()), FieldValue.of("lzpqrst-admin.in.mycompany.com.lg"))
+                .addField(FieldName.of(MESSAGE.getField()), FieldValue.of("CISE_RADIUS_Accounting 0018032501 1 0 2018-09-14 10:54:09.095 +10:00"))
                 .build();
         assertEquals(expected, output);
     }
@@ -90,5 +106,43 @@ public class SyslogParserTest {
     void inputFieldNotDefined() {
         Message input = Message.builder().build();
         assertThrows(IllegalStateException.class, () -> new SyslogParser().parse(input));
+    }
+
+    @Test
+    void outputFields_RFC_3164() {
+        SyslogParser parser = new SyslogParser()
+                .withInputField(FieldName.of("original_string"))
+                .withSpecification(SyslogSpecification.RFC_3164);
+
+        // parse the message
+        Message input = Message.builder()
+                .addField(FieldName.of("original_string"), FieldValue.of(SYSLOG_3164))
+                .build();
+        Message output = parser.parse(input);
+        List<FieldName> actualFields = new ArrayList<>(output.getFields().keySet());
+
+        // ensure the message contains ALL of the declared output fields
+        for(FieldName outputField: parser.outputFields()) {
+            assertThat(actualFields, hasItem(outputField));
+        }
+    }
+
+    @Test
+    void outputFields_RFC_5424() {
+        SyslogParser parser = new SyslogParser()
+                .withInputField(FieldName.of("original_string"))
+                .withSpecification(SyslogSpecification.RFC_5424);
+
+        // parse the message
+        Message input = Message.builder()
+                .addField(FieldName.of("original_string"), FieldValue.of(SYSLOG_5424))
+                .build();
+        Message output = parser.parse(input);
+        List<FieldName> actualFields = new ArrayList<>(output.getFields().keySet());
+
+        // ensure the message contains ALL of the declared output fields
+        for(FieldName outputField: parser.outputFields()) {
+            assertThat(actualFields, hasItem(outputField));
+        }
     }
 }
