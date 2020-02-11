@@ -80,7 +80,7 @@ ChainLink chain = new ChainBuilder()
 Parses a `Message` by executing a parser chain. Returns a list of messages, one `Message` for each `Parser` in the parser chain. 
 ```
 List<Message> results = new ChainRunner()
-    .run(message, chain);
+    .run("one,two,three,four", chain);
 ```
 
 The last element in the resulting list is the final, fully parsed message.

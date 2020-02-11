@@ -8,17 +8,39 @@ import java.util.Optional;
  * Parses a {@link Message} using a parser chain.
  */
 public class ChainRunner {
+    private FieldName inputField;
+
+    public ChainRunner() {
+        inputField = FieldName.of("original_input");
+    }
 
     /**
-     * Parses a message using a parser chain.
-     * @param message The message to parse.
+     * @param inputField The name of the field that is initialized with
+     *                   the raw input. Defaults to "original_input".
+     */
+    public ChainRunner withInputField(FieldName inputField) {
+        this.inputField = inputField;
+        return this;
+    }
+
+    public FieldName getInputField() {
+        return inputField;
+    }
+
+    /**
+     * Parses raw input using a parser chain.
+     * @param toParse The input to parse.
      * @param chain The parser chain that parses each message.
      * @return
      */
-    public List<Message> run(Message message, ChainLink chain) {
+    public List<Message> run(String toParse, ChainLink chain) {
+        // create the initial message
+        Message message = Message.builder()
+                .addField(inputField, FieldValue.of(toParse))
+                .build();
+
         List<Message> results = new ArrayList<>();
         results.add(message);
-
         Optional<ChainLink> nextLink = Optional.of(chain);
         do {
             // parse the message
