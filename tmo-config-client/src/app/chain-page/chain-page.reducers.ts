@@ -63,7 +63,7 @@ export function reducer(
           ...state.chains,
           [action.payload.chain.id]: {
             ...state.chains[action.payload.chain.id],
-            ...(action.payload.chain as ParserChainModel)
+            ...action.payload.chain
           }
         }
       };

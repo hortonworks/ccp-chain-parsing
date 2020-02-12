@@ -122,6 +122,33 @@ describe('chain-page: reducers', () => {
     });
   });
 
+  it('should update the given chain name', () => {
+    const state = {
+      parsers: null,
+      chains: {
+        456: {
+          id: '456',
+          name: 'old',
+          parsers: []
+        }
+      },
+      routes: null,
+      error: ''
+    };
+    const newState = fromReducers.reducer(state, new fromActions.UpdateChainAction({
+      chain: {
+        id: '456',
+        name: 'new',
+        parsers: []
+      }
+    }));
+    expect(newState.chains['456']).toEqual({
+      id: '456',
+      name: 'new',
+      parsers: []
+    });
+  });
+
   it('should return with the desired parser', () => {
     const desiredParser = {
       id: '456',
