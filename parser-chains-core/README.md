@@ -36,9 +36,6 @@ Message output = Message.builder()
     .build();
 ```
 
-By convention, the first `Message` passed into a parser chain should define the field `original_string` with the input that needs parsed.  That being said, there is nothing in the API that requires or enforces this convention.
-
-
 ### ChainBuilder
 
 Provides a fluent API for the construction of a parser chain.  This abstracts and simplifies the construction of parser chains, hiding an implementation which composes many `ChainLink` and `Parser` objects into a single parser chain.  In this sense, it is optional.
