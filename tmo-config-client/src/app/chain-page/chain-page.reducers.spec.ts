@@ -32,6 +32,7 @@ describe('chain-page: reducers', () => {
           outputs: ''
         }
       },
+      dirty: false,
       routes: {},
       error: ''
     };
@@ -59,6 +60,7 @@ describe('chain-page: reducers', () => {
         }
       },
       routes: {},
+      dirty: false,
       error: ''
     });
   });
@@ -68,6 +70,7 @@ describe('chain-page: reducers', () => {
       chains: null,
       parsers: null,
       routes: null,
+      dirty: false,
       error: ''
     };
     const chains = {};
@@ -96,6 +99,7 @@ describe('chain-page: reducers', () => {
         }
       },
       routes: null,
+      dirty: false,
       error: ''
     };
     const newState = fromReducers.reducer(state, new fromActions.UpdateParserAction({
@@ -174,5 +178,19 @@ describe('chain-page: reducers', () => {
     };
     const route = fromReducers.getRoute(state, { id: '456' });
     expect(route).toBe(desiredRoute);
+  });
+
+  it('should set dirty', () => {
+    const state = {
+      chains: null,
+      parsers: null,
+      routes: null,
+      dirty: false,
+      error: ''
+    };
+    const newState = fromReducers.reducer(state, new fromActions.SetDirtyAction({
+      dirty: true
+    }));
+    expect(newState.dirty).toBe(true);
   });
 });
