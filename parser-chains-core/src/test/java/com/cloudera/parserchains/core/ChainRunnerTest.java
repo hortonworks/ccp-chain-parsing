@@ -31,11 +31,11 @@ public class ChainRunnerTest {
     void runChain() {
         // parser1 runs successfully and does not modify the message
         Parser parser1 = mock(Parser.class);
-        when(parser1.parse(any(Message.class))).thenAnswer(msg -> msg);
+        when(parser1.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
 
         // parser2 runs successfully and does not modify the message
         Parser parser2 = mock(Parser.class);
-        when(parser2.parse(any(Message.class))).thenAnswer(msg -> msg);
+        when(parser2.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
 
         ChainLink chain = new ChainBuilder()
                 .then(parser1)
@@ -61,7 +61,7 @@ public class ChainRunnerTest {
     void changeInputFieldName() {
         // parser1 runs successfully and does not modify the message
         Parser parser1 = mock(Parser.class);
-        when(parser1.parse(Mockito.any(Message.class))).thenAnswer(msg -> msg);
+        when(parser1.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
 
         ChainLink chain = new ChainBuilder()
                 .then(parser1)
@@ -90,7 +90,7 @@ public class ChainRunnerTest {
 
         // parser1 does not modify the message
         Parser parser1 = mock(Parser.class);
-        when(parser1.parse(any(Message.class))).thenAnswer(msg -> msg);
+        when(parser1.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
 
         // parser2 will error out
         Parser parser2 = mock(Parser.class);
@@ -98,7 +98,7 @@ public class ChainRunnerTest {
 
         // parser3 does not modify the message
         Parser parser3 = Mockito.mock(Parser.class);
-        when(parser3.parse(any(Message.class))).thenAnswer(msg -> msg);
+        when(parser3.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
 
         ChainLink chain = new ChainBuilder()
                 .then(parser1)
