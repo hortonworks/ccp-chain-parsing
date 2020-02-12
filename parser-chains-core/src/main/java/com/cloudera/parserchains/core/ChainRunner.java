@@ -11,7 +11,7 @@ public class ChainRunner {
     private FieldName inputField;
 
     public ChainRunner() {
-        inputField = FieldName.of("original_input");
+        inputField = FieldName.of("original_string");
     }
 
     /**
