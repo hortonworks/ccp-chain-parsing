@@ -1,5 +1,5 @@
 <div class="parser-chain">
-  <div *ngFor="let parserId of parsers" class="parser-chain-item">
+  <div *ngFor="let parserId of parsers; trackBy: trackByFn" class="parser-chain-item">
     <div class="chain-item">
       <app-parser-composer
         [parserId]="parserId"

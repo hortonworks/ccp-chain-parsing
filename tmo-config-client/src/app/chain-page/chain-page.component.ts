@@ -9,7 +9,7 @@ import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
-import { ChainPageState, getChain, getChainDetails } from './chain-page.reducers';
+import { ChainPageState, getChain, getChainDetails, isDirty } from './chain-page.reducers';
 
 class DirtyChain {
   id: string;
@@ -64,6 +64,10 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
     });
 
     this.chainConfig$ = this.store.pipe(select(getChainDetails, { chainId: this.chainId }));
+
+    this.store.pipe(select(isDirty)).subscribe((dirty) => {
+      this.dirty = dirty;
+    });
   }
 
   removeParser(id: string) {
@@ -74,10 +78,15 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
       id,
       chainId
     }));
+    this.store.dispatch(new fromActions.SetDirtyAction({
+      dirty: true
+    }));
   }
 
   onParserChange(changedParser: PartialParserModel) {
-    this.dirty = true;
+    this.store.dispatch(new fromActions.SetDirtyAction({
+      dirty: true
+    }));
     if (this.breadcrumbs.length > 0) {
       this.breadcrumbs.forEach((chain: ParserChainModel) => {
         if (chain.parsers && chain.parsers.length > 0) {
@@ -141,7 +150,9 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
       nzOkType: 'danger',
       nzCancelText: 'Cancel',
       nzOnOk: () => {
-        this.dirty = false;
+        this.store.dispatch(new fromActions.SetDirtyAction({
+          dirty: false
+        }));
         Object.keys(this.dirtyChains).forEach(chainId => {
           this.dirtyChains[chainId].parsers = [];
         });
@@ -160,7 +171,9 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
       nzOkType: 'primary',
       nzCancelText: 'Cancel',
       nzOnOk: () => {
-        this.dirty = false;
+        this.store.dispatch(new fromActions.SetDirtyAction({
+          dirty: false
+        }));
         Object.keys(this.dirtyChains).forEach(chainId => {
           this.dirtyChains[chainId].parsers = [];
         });

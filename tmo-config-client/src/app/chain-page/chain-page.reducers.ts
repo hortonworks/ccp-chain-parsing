@@ -8,6 +8,7 @@ export interface ChainPageState {
   chains: { [key: string]: ParserChainModel };
   parsers: { [key: string]: ParserModel };
   routes: { [key: string]: RouteModel };
+  dirty: boolean;
   error: string;
 }
 
@@ -15,6 +16,7 @@ export const initialState: ChainPageState = {
   chains: {},
   parsers: {},
   routes: {},
+  dirty: false,
   error: '',
 };
 
@@ -32,8 +34,11 @@ export function reducer(
       };
     }
     case chainPageActions.REMOVE_PARSER: {
+      const parsers = { ...state.parsers };
+      delete parsers[action.payload.id];
       return {
         ...state,
+        parsers,
         chains: {
           ...state.chains,
           [action.payload.chainId]: {
@@ -54,6 +59,12 @@ export function reducer(
             ...action.payload.parser
           }
         }
+      };
+    }
+    case chainPageActions.SET_DIRTY: {
+      return {
+        ...state,
+        dirty: action.payload.dirty
       };
     }
   }
@@ -98,4 +109,9 @@ export const getChainDetails = createSelector(
     const mainChain = state.chains[props.chainId];
     return denormalizeParserConfig(mainChain, state);
   }
+);
+
+export const isDirty = createSelector(
+  getChainPageState,
+  (state) => state.dirty
 );
