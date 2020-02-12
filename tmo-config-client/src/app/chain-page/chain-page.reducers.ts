@@ -32,12 +32,11 @@ export function reducer(
       };
     }
     case chainPageActions.REMOVE_PARSER: {
+      const parsers = { ...state.parsers };
+      delete parsers[action.payload.id];
       return {
         ...state,
-        parsers: {
-          ...state.parsers,
-          [action.payload.id]: undefined
-        },
+        parsers,
         chains: {
           ...state.chains,
           [action.payload.chainId]: {

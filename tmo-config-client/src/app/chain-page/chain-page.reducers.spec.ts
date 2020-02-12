@@ -56,8 +56,7 @@ describe('chain-page: reducers', () => {
           config: {},
           input: '',
           outputs: ''
-        },
-        456: undefined
+        }
       },
       routes: {},
       error: ''
