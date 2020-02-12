@@ -48,4 +48,8 @@ export class ChainViewComponent implements OnInit {
     this.removeParserEmitter.emit(parserId);
   }
 
+  trackByFn(index: number, parserId: string): string {
+    return parserId;
+  }
+
 }
