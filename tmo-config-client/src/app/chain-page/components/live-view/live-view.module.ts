@@ -10,6 +10,8 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 import { LiveViewResultComponent } from './live-view-result/live-view-result.component';
 import { LiveViewComponent } from './live-view.component';
@@ -25,6 +27,7 @@ import { LiveViewService } from './services/live-view.service';
     LiveViewResultComponent,
   ],
   imports: [
+    // FIXME: with having this imported grid layout works but no ng submodule import needed
     NgZorroAntdModule,
     CommonModule,
     FormsModule,
@@ -36,6 +39,8 @@ import { LiveViewService } from './services/live-view.service';
     NzRadioModule,
     NzInputModule,
     NzSpinModule,
+    NzSwitchModule,
+    NzCardModule,
   ],
   providers: [
     LiveViewService

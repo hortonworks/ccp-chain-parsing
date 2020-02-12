@@ -11,25 +11,6 @@
   background: var(--card-head-bg);
 }
 
-
-// Switch
-
-.ant-switch {
-  background-color: var(--primary);
-
-  &:after {
-    background-color: var(--switch-button);
-  }
-}
-
-.ant-switch-checked {
-  background-color: white;
-
-  &:after {
-    background-color: var(--switch-button);
-  }
-}
-
 // Table
 
 .ant-table-placeholder {

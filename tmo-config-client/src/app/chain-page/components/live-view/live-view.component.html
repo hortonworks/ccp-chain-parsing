@@ -1,6 +1,17 @@
 <div nz-row>
   <div nz-col nzSpan="22">
-    <h3>Live View</h3>
+    <div nz-row>
+      <div nz-col nzSpan="23">
+        <h3>Live View</h3>
+      </div>
+      <div nz-col nzSpan="1">
+        <nz-switch [ngModel]="false" 
+              nzCheckedChildren="On" 
+              nzUnCheckedChildren="Off"
+        ></nz-switch>
+      </div>
+    </div>
+    
   </div>
   <div nz-col nzSpan="2" class="live-view-toolbar">
     <nz-spin *ngIf="isExecuting$ | async" nzSimple></nz-spin>
