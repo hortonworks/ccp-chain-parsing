@@ -6,6 +6,8 @@ export interface CustomFormConfig {
   name: string;
   type: string;
   value?: string;
+  label?: string;
+  options?: { id: string, name: string }[];
   onChange?: (config) => {};
 }
 
@@ -32,19 +34,36 @@ export class CustomFormComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.config && changes.config.previousValue) {
       changes.config.previousValue.forEach((fieldConfig, i) => {
-        this.formGroup.patchValue({
-          [fieldConfig.name]: changes.config.currentValue[i].value
-        });
+        const previousValue = changes.config.previousValue[i].value;
+        const currentValue = changes.config.currentValue[i].value;
+        const control = this.formGroup.get(fieldConfig.name);
+        if (previousValue !== currentValue && control.value !== currentValue) {
+          this.formGroup.removeControl(fieldConfig.name);
+          this.formGroup.setControl(fieldConfig.name, new FormControl(currentValue));
+        }
       });
     }
   }
 
-  onChange(event: Event, config: CustomFormConfig) {
+  onChange(event: any, config: CustomFormConfig) {
     if (typeof config.onChange === 'function') {
-      config.onChange({
-        ...config,
-        value: (event.currentTarget as HTMLFormElement).value
-      });
+      switch (config.type) {
+        case 'textarea':
+        case 'text': {
+          config.onChange({
+            ...config,
+            value: (event.currentTarget as HTMLFormElement).value
+          });
+          break;
+        }
+        case 'select': {
+          config.onChange({
+            ...config,
+            value: event
+          });
+        }
+      }
+
     }
   }
 

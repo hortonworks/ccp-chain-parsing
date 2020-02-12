@@ -1,8 +1,21 @@
 <div class="custom-form">
   <form nz-form [formGroup]="formGroup">
     <nz-form-item *ngFor="let formConfig of config; trackBy: trackByFn">
-      <nz-form-control *ngIf="formConfig.type === 'textarea'">
+      <nz-form-label *ngIf="formConfig.label != null" [nzSm]="6" [nzXs]="24" [nzFor]="formConfig.id">
+        {{ formConfig.label }}
+      </nz-form-label>
+
+      <nz-form-control *ngIf="formConfig.type === 'text'" [nzSm]="14" [nzXs]="24">
+        <input
+          id="{{ formConfig.id }}"
+          nz-input
+          formControlName="{{ formConfig.name }}"
+          (keyup)="onChange($event, formConfig)"
+        />
+      </nz-form-control>
+      <nz-form-control *ngIf="formConfig.type === 'textarea'" [nzSm]="14" [nzXs]="24">
         <textarea
+          id="{{ formConfig.id }}"
           rows="4"
           nz-input
           formControlName="{{ formConfig.name }}"
@@ -10,6 +23,17 @@
         >
           {{ formConfig.value }}
         </textarea>
+      </nz-form-control>
+      <nz-form-control *ngIf="formConfig.type === 'select'" [nzSm]="14" [nzXs]="24">
+        <nz-select
+          id="{{ formConfig.id }}"
+          formControlName="{{ formConfig.name }}"
+          nzAllowClear
+          nzPlaceHolder="Choose a parser type"
+          (ngModelChange)="onChange($event, formConfig)"
+        >
+          <nz-option *ngFor="let option of formConfig.options" [nzValue]="option.id" [nzLabel]="option.name"></nz-option>
+        </nz-select>
       </nz-form-control>
     </nz-form-item >
   </form>

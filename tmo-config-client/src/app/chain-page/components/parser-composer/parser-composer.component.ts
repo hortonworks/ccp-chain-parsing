@@ -5,6 +5,7 @@ import { ChainPageState, getParser } from '../../chain-page.reducers';
 
 import * as fromActions from '../../chain-page.actions';
 import { ParserModel, PartialParserModel } from '../../chain-page.models';
+import { CustomFormConfig } from '../custom-form/custom-form.component';
 
 @Component({
   selector: 'app-parser-composer',
@@ -15,8 +16,9 @@ export class ParserComposerComponent implements OnInit {
 
   @Input() dirty = false;
   @Input() parserId: string;
-  @Input() configForm: any;
-  @Input() outputsForm: any;
+  @Input() configForm: CustomFormConfig[];
+  @Input() outputsForm: CustomFormConfig[];
+  @Input() metaDataForm: CustomFormConfig[];
   @Output() subchainSelect = new EventEmitter<string>();
   @Output() parserRemove = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<PartialParserModel>();
