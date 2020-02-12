@@ -2,7 +2,6 @@ package com.cloudera.parserchains.parsers;
 
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.MessageParser;
 import com.cloudera.parserchains.core.Parser;
 
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.Map;
 /**
  * A parser that can rename message fields.
  */
-@MessageParser(name="Rename Field(s)", description="Renames a message field.")
 public class RenameFieldParser implements Parser {
     private Map<FieldName, FieldName> fieldsToRename;
 

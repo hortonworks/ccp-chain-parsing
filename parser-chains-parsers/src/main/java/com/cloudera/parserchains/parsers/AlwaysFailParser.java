@@ -2,7 +2,6 @@ package com.cloudera.parserchains.parsers;
 
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.MessageParser;
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.RouterLink;
 
@@ -16,7 +15,6 @@ import java.util.Objects;
  * <p>This can be used with a {@link RouterLink}
  * to flag when unexpected conditions are encountered in the data.
  */
-@MessageParser(name="Error", description = "A parser that always fails to indicate an error condition.")
 public class AlwaysFailParser implements Parser {
     private Throwable error;
 

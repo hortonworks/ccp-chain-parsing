@@ -2,7 +2,6 @@ package com.cloudera.parserchains.parsers;
 
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.MessageParser;
 import com.cloudera.parserchains.core.Parser;
 
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.List;
 /**
  * A parser which can remove fields from a message.
  */
-@MessageParser(name="Remove Field(s)", description="Removes a message field.")
 public class RemoveFieldParser implements Parser {
     private List<FieldName> fieldsToRemove;
 
