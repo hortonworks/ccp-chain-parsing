@@ -129,6 +129,7 @@ describe('chain-page: reducers', () => {
         }
       },
       routes: null,
+      dirty: false,
       error: ''
     };
     const newState = fromReducers.reducer(state, new fromActions.UpdateChainAction({
