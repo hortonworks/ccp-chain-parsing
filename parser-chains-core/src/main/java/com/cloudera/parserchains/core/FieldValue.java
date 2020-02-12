@@ -1,6 +1,5 @@
 package com.cloudera.parserchains.core;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -19,7 +18,7 @@ public class FieldValue {
      * Instead use {@link FieldValue#of(String)}.
      */
     private FieldValue(String value) {
-        if(!StringUtils.isAsciiPrintable(value) || value.length() > MAX_LENGTH) {
+        if(value == null || value.length() > MAX_LENGTH) {
             throw new IllegalArgumentException("Invalid field value.");
         }
         this.value = value;
