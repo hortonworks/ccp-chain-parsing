@@ -1,5 +1,7 @@
 import { createSelector } from '@ngrx/store';
 
+import * as addParserActions from '../chain-add-parser-page/chain-add-parser-page.actions';
+
 import * as chainPageActions from './chain-page.actions';
 import { ParserChainModel, ParserModel, RouteModel } from './chain-page.models';
 import { denormalizeParserConfig } from './chain-page.utils';
@@ -22,7 +24,7 @@ export const initialState: ChainPageState = {
 
 export function reducer(
   state: ChainPageState = initialState,
-  action: chainPageActions.ChainDetailsAction
+  action: chainPageActions.ChainDetailsAction | addParserActions.ParserAction
 ): ChainPageState {
   switch (action.type) {
     case chainPageActions.LOAD_CHAIN_DETAILS_SUCCESS: {
@@ -65,6 +67,25 @@ export function reducer(
       return {
         ...state,
         dirty: action.payload.dirty
+      };
+    }
+    case addParserActions.ADD_PARSER: {
+      return {
+        ...state,
+        parsers: {
+          ...state.parsers,
+          [action.payload.parser.id]: action.payload.parser
+        },
+        chains: {
+          ...state.chains,
+          [action.payload.chainId]: {
+            ...state.chains[action.payload.chainId],
+            parsers: [
+              ...(state.chains[action.payload.chainId].parsers as string[]),
+              action.payload.parser.id
+            ]
+          }
+        }
       };
     }
   }

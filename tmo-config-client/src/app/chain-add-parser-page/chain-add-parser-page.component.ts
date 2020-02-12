@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 
+import * as fromChainPageActions from '../chain-page/chain-page.actions';
 import { ParserModel } from '../chain-page/chain-page.models';
 
 import * as fromActions from './chain-add-parser-page.actions';
@@ -23,6 +24,7 @@ export class ChainAddParserPageComponent implements OnInit {
     private fb: FormBuilder,
     private store: Store<AddParserPageState>,
     private activatedRoute: ActivatedRoute,
+    private router: Router
   ) {}
 
   get name() {
@@ -41,8 +43,17 @@ export class ChainAddParserPageComponent implements OnInit {
   addParser() {
     this.store.dispatch(new fromActions.AddParserAction({
       chainId: this.chainId,
-      parser: this.addParserForm.value
+      parser: {
+        ...this.addParserForm.value,
+        id: String(Date.now()),
+      }
     }));
+
+    this.store.dispatch(new fromChainPageActions.SetDirtyAction({
+      dirty: true
+    }));
+
+    this.router.navigateByUrl(`/parserconfig/chains/${this.chainId}`);
   }
 
   ngOnInit() {

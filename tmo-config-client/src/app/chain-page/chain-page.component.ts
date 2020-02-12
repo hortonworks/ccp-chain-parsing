@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable, Observer } from 'rxjs';
+import { Observable, Observer, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
@@ -24,7 +24,7 @@ class DirtyChain {
   templateUrl: './chain-page.component.html',
   styleUrls: ['./chain-page.component.scss']
 })
-export class ChainPageComponent implements OnInit, DeactivatePreventer {
+export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePreventer {
 
   chain: ParserChainModel;
   breadcrumbs: ParserChainModel[] = [];
@@ -32,6 +32,7 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
   dirty = false;
   dirtyChains: { [key: string]: DirtyChain } = {};
   chainConfig$: Observable<ChainDetailsModel>;
+  getChainSubscription: Subscription;
 
   constructor(
     private store: Store<ChainPageState>,
@@ -42,13 +43,14 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
   ngOnInit() {
     this.activatedRoute.params.subscribe((params) => {
       this.chainId = params.id;
-      this.store.dispatch(new fromActions.LoadChainDetailsAction({
-        id: params.id
-      }));
     });
 
-    this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain: ParserChainModel) => {
-      if (chain && chain.parsers && chain.parsers.length > 0) {
+    this.getChainSubscription = this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain: ParserChainModel) => {
+      if (!chain) {
+        this.store.dispatch(new fromActions.LoadChainDetailsAction({
+          id: this.chainId
+        }));
+      } else if (chain && chain.parsers && chain.parsers.length > 0) {
         this.chain = chain;
 
         this.breadcrumbs = this.breadcrumbs.length > 0 ? this.breadcrumbs : [this.chain];
@@ -180,5 +182,11 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
         this.store.dispatch(new fromActions.SaveParserConfigAction({ chainId: this.chainId }));
       }
     });
+  }
+
+  ngOnDestroy() {
+    if (this.getChainSubscription) {
+      this.getChainSubscription.unsubscribe();
+    }
   }
 }
