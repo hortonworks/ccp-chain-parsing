@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { NzModalService } from 'ng-zorro-antd';
@@ -32,6 +32,8 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
   dirty = false;
   dirtyChains: { [key: string]: DirtyChain } = {};
   chainConfig$: Observable<ChainDetailsModel>;
+  editMode = false;
+  @ViewChild('chainNameInput', { static: false }) chainNameInput: ElementRef;
 
   constructor(
     private store: Store<ChainPageState>,
@@ -180,5 +182,30 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
         this.store.dispatch(new fromActions.SaveParserConfigAction({ chainId: this.chainId }));
       }
     });
+  }
+
+  updateChainName() {
+    const newName: string = (this.chainNameInput.nativeElement.value || '').trim();
+    if (newName !== this.chain.name) {
+      this.store.dispatch(new fromActions.UpdateChainAction({
+        chain: {
+          name: newName,
+          id: this.chain.id
+        }
+      }));
+      this.store.dispatch(new fromActions.SetDirtyAction({
+        dirty: true
+      }));
+    }
+    this.toggleEditMode();
+  }
+
+  toggleEditMode() {
+    this.editMode = !this.editMode;
+    if (this.editMode) {
+      setTimeout(() => {
+        this.chainNameInput.nativeElement.focus();
+      }, 0);
+    }
   }
 }
