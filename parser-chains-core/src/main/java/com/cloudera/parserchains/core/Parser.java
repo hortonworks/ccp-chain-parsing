@@ -5,9 +5,6 @@ import java.util.List;
 /**
  * Parses a {@link Message}.
  *
- * <p>Implementers of this interface should also mark their implementation using
- * the {@link MessageParser} annotation so that the parser is discoverable
- * using a {@link ParserCatalog}.
  */
 public interface Parser {
 
