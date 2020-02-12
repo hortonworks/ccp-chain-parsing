@@ -16,11 +16,6 @@
             <version>3.0.1</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
-        </dependency>
-        <dependency>
             <groupId>org.atteo.classindex</groupId>
             <artifactId>classindex</artifactId>
             <version>3.4</version>
