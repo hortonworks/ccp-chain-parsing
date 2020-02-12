@@ -68,7 +68,7 @@ describe('ChainPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should change display the textbox for chain name update', () => {
+  it('should display the textbox for updating the chain name', () => {
     component.editMode = false;
     fixture.detectChanges();
     const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
