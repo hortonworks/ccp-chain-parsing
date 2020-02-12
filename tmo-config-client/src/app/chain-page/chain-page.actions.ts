@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { ParserChainModel, ParserModel, PartialChainModel, PartialParserModel, RouteModel } from './chain-page.models';
+import { ParserChainModel, ParserModel, PartialParserChainModel, PartialParserModel, RouteModel } from './chain-page.models';
 
 export const LOAD_CHAIN_DETAILS = '[Chain Details] load start';
 export const LOAD_CHAIN_DETAILS_SUCCESS = '[Chain Details] load success';
@@ -60,7 +60,7 @@ export class SaveParserConfigFailAction implements Action {
 
 export class UpdateChainAction implements Action {
   readonly type = UPDATE_CHAIN;
-  constructor(public payload: { chain: PartialChainModel }) {}
+  constructor(public payload: { chain: PartialParserChainModel }) {}
 }
 
 export type ChainDetailsAction = LoadChainDetailsAction

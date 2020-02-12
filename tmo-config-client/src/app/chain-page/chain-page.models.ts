@@ -4,7 +4,7 @@ export interface ParserChainModel {
   parsers: string[] | ParserModel[];
 }
 
-export interface PartialChainModel {
+export interface PartialParserChainModel {
   id?: string;
   name?: string;
   parsers?: string[] | ParserModel[];
