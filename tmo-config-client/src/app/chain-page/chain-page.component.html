@@ -31,11 +31,10 @@
   </nz-breadcrumb>
   <div class="chain-name">
     <span *ngIf="(!editMode)">
-      Parser Chain <span (dblclick)="toggleEditMode()">({{ chain.name }})</span> <button (click)="toggleEditMode()" data-qe-id="chain-name-edit-btn" nz-button
+      <span (dblclick)="toggleEditMode()">{{ chain.name }}</span> <button (click)="toggleEditMode()" data-qe-id="chain-name-edit-btn" nz-button
       nzType="default" class="chain-edit-btn"><i nz-icon nzType="edit" nzTheme="fill"></i></button>
     </span>
     <span *ngIf="(editMode)">
-      Parser Chain
       <input #chainNameInput type="text" value ="{{ chain.name }}" (keyup.enter)="updateChainName()" (blur)="updateChainName()" data-qe-id="chain-name-field">
     </span>
   </div>
