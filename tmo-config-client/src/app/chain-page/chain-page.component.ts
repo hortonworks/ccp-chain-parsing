@@ -1,8 +1,8 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { NzModalService } from 'ng-zorro-antd';
-import { Observable, Observer } from 'rxjs';
+import { Observable, Observer, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
@@ -24,7 +24,7 @@ class DirtyChain {
   templateUrl: './chain-page.component.html',
   styleUrls: ['./chain-page.component.scss']
 })
-export class ChainPageComponent implements OnInit, DeactivatePreventer {
+export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePreventer {
 
   chain: ParserChainModel;
   breadcrumbs: ParserChainModel[] = [];
@@ -33,6 +33,7 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
   dirtyChains: { [key: string]: DirtyChain } = {};
   chainConfig$: Observable<ChainDetailsModel>;
   chainIdBeingEdited: string;
+  getChainsSubscription: Subscription;
   @ViewChild('chainNameInput', { static: false }) chainNameInput: ElementRef;
 
   constructor(
@@ -49,24 +50,20 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
       }));
     });
 
-    this.store.pipe(select(getChains)).subscribe((chains) => {
-      if (this.breadcrumbs) {
-        this.breadcrumbs = this.breadcrumbs.map(breadcrumb => {
-          return chains[breadcrumb.id];
-        });
-      }
+    this.getChainsSubscription = this.store.pipe(select(getChains)).subscribe((chains) => {
+      this.breadcrumbs = this.breadcrumbs.map(breadcrumb => {
+        return chains[breadcrumb.id];
+      });
     });
 
     this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain: ParserChainModel) => {
       if (chain && chain.parsers && chain.parsers.length > 0) {
         this.chain = chain;
-
         this.breadcrumbs = this.breadcrumbs.length > 0 ? this.breadcrumbs : [this.chain];
 
         const chainIndexInPath = this.breadcrumbs.length > 0
           ? this.breadcrumbs.findIndex(breadcrumb => chain.id === breadcrumb.id)
           : null;
-
         if (chainIndexInPath > -1) {
           this.breadcrumbs[chainIndexInPath] = chain;
         }
@@ -118,6 +115,7 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
     this.store.pipe(select(getChain, { id: chainId })).pipe(take(1)).subscribe((chain: ParserChainModel) => {
       const breadcrumbIndex = this.breadcrumbs.findIndex((breadcrumb) => breadcrumb.id === chain.id);
       if (breadcrumbIndex > -1) {
+
         this.breadcrumbs[breadcrumbIndex] = chain;
       } else {
         this.breadcrumbs.push(chain);
@@ -231,6 +229,13 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
       this.store.dispatch(new fromActions.SetDirtyAction({
         dirty: true
       }));
+    }
+  }
+
+  ngOnDestroy() {
+    this.breadcrumbs = [];
+    if (this.getChainsSubscription) {
+      this.getChainsSubscription.unsubscribe();
     }
   }
 }
