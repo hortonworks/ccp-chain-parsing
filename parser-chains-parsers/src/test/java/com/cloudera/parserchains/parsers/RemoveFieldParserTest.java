@@ -22,7 +22,6 @@ public class RemoveFieldParserTest {
                 .removeField(FieldName.of("field2"))
                 .parse(input);
 
-        // validate
         assertFalse(output.getField(FieldName.of("field1")).isPresent(), 
             "Expected 'field1' to have been removed.");
         assertFalse(output.getField(FieldName.of("field2")).isPresent(), 
@@ -41,7 +40,6 @@ public class RemoveFieldParserTest {
         Message output = new RemoveFieldParser()
                 .parse(input);
 
-        // ensure the fields were removed
         assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get(),
             "Expected 'field1' to remain.");
         assertEquals(FieldValue.of("value2"), output.getField(FieldName.of("field2")).get(),
