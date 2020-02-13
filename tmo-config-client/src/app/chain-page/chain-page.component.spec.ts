@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { IconDefinition } from '@ant-design/icons-angular';
 import { EditFill } from '@ant-design/icons-angular/icons';
@@ -43,7 +44,8 @@ describe('ChainPageComponent', () => {
         NgZorroAntdModule,
         StoreModule.forRoot({
           'chain-page': fromReducers.reducer
-        })
+        }),
+        NoopAnimationsModule,
       ],
       declarations: [ChainPageComponent, MockChainViewComponent, MockLiveViewComponent],
       providers: [
@@ -68,32 +70,33 @@ describe('ChainPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display the textbox for updating the chain name', () => {
-    component.editMode = false;
+  it('should display the popconfirm textbox for updating the chain name', () => {
     fixture.detectChanges();
     const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
     editBtn.click();
+    expect(editBtn).toBeTruthy();
     fixture.detectChanges();
-    const nameField = fixture.nativeElement.querySelector('[data-qe-id="chain-name-field"]');
+
+    const nameField = document.querySelector('[data-qe-id="chain-name-field"]');
     expect(nameField).toBeTruthy();
-    expect(component.editMode).toBe(true);
   });
 
   it('should call the updateChainName()', () => {
-    spyOn(component, 'updateChainName').and.callThrough();
-    spyOn(component, 'toggleEditMode').and.callThrough();
-    component.editMode = false;
+    spyOn(component, 'updateChainName');
     fixture.detectChanges();
     const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
     editBtn.click();
     fixture.detectChanges();
 
-    const nameField = fixture.nativeElement.querySelector('[data-qe-id="chain-name-field"]');
+    const nameField: HTMLInputElement = document.querySelector('[data-qe-id="chain-name-field"]');
     nameField.value = 'hello';
     nameField.dispatchEvent(new Event('input'));
     fixture.detectChanges();
-    nameField.dispatchEvent(new Event('blur'));
+
+    const event: Event = new KeyboardEvent('keyup', {key: 'Enter'});
+    nameField.dispatchEvent(event);
+    fixture.detectChanges();
     expect(component.updateChainName).toHaveBeenCalled();
-    expect(component.toggleEditMode).toHaveBeenCalled();
   });
+
 });
