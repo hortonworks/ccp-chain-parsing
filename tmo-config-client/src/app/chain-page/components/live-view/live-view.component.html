@@ -4,7 +4,9 @@
   </div>
   <div nz-col nzSpan="2" class="live-view-toolbar">
     <nz-spin *ngIf="isExecuting$ | async" nzSimple></nz-spin>
-    <nz-switch [ngModel]="false"
+    <nz-switch
+      [ngModel]="isLiveViewOn$ | async"
+      (ngModelChange)="featureToggleChange$.next($event)"
       nzCheckedChildren="On"
       nzUnCheckedChildren="Off"
       ></nz-switch>
