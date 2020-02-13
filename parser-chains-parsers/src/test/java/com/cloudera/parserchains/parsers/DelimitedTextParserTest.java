@@ -29,16 +29,16 @@ public class DelimitedTextParserTest {
                 .withOutputField(FieldName.of("third"), 2)
                 .parse(input);
 
-        // input field should still exist
-        assertEquals(csvToParse, output.getField(FieldName.of("input")).get());
-
-        // new output fields
-        assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("first")).get());
-        assertEquals(FieldValue.of("value2"), output.getField(FieldName.of("second")).get());
-        assertEquals(FieldValue.of("value3"), output.getField(FieldName.of("third")).get());
-
-        // no errors
-        assertFalse(output.getError().isPresent());
+        assertEquals(csvToParse, output.getField(FieldName.of("input")).get(),
+            "Expected the 'input' field to remain in the output message.");
+        assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("first")).get(),
+            "Expected the 'first' field to have been added to the message.");
+        assertEquals(FieldValue.of("value2"), output.getField(FieldName.of("second")).get(),
+            "Expected the 'second' field to have been added to the message.");
+        assertEquals(FieldValue.of("value3"), output.getField(FieldName.of("third")).get(),
+            "Expected the 'third' field to have been added to the message.");
+        assertFalse(output.getError().isPresent(),
+            "Expected no parsing errors.");
     }
 
     @Test
@@ -57,16 +57,16 @@ public class DelimitedTextParserTest {
                 .withOutputField(FieldName.of("third"), 2)
                 .parse(input);
 
-        // input field should still exist
-        assertEquals(tsvToParse, output.getField(FieldName.of("input")).get());
-
-        // new output fields
-        assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("first")).get());
-        assertEquals(FieldValue.of("value2"), output.getField(FieldName.of("second")).get());
-        assertEquals(FieldValue.of("value3"), output.getField(FieldName.of("third")).get());
-
-        // no errors
-        assertFalse(output.getError().isPresent());
+        assertEquals(tsvToParse, output.getField(FieldName.of("input")).get(),
+            "Expected the 'input' field to remain in the output message.");
+        assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("first")).get(),
+            "Expected the 'first' field to have been added to the message.");
+        assertEquals(FieldValue.of("value2"), output.getField(FieldName.of("second")).get(),
+            "Expected the 'second' field to have been added to the message.");
+        assertEquals(FieldValue.of("value3"), output.getField(FieldName.of("third")).get(),
+            "Expected the 'third' field to have been added to the message.");
+        assertFalse(output.getError().isPresent(),
+            "Expected no parsing errors.");
     }
 
     @Test
@@ -81,8 +81,8 @@ public class DelimitedTextParserTest {
                 .withOutputField(FieldName.of("first"), 0)
                 .parse(input);
 
-        // expect an error
-        assertTrue(output.getError().isPresent());
+        assertTrue(output.getError().isPresent(),
+            "Expected a parsing error because there is no 'input' field to parse.");
     }
 
     @Test
@@ -100,11 +100,10 @@ public class DelimitedTextParserTest {
                 .withOutputField(FieldName.of("first"), index)
                 .parse(input);
 
-        // input field should still exist
-        assertEquals(csvToParse, output.getField(FieldName.of("input")).get());
-
-        // expect an error
-        assertTrue(output.getError().isPresent());
+        assertEquals(csvToParse, output.getField(FieldName.of("input")).get(),
+            "Expected the 'input' field to remain in the output message.");
+        assertTrue(output.getError().isPresent(),
+            "Expected a parsing error because column '10' does not exist in the data.");
     }
 
     @Test
@@ -124,11 +123,10 @@ public class DelimitedTextParserTest {
                 .withOutputField(FieldName.of("third"), 2)
                 .parse(input);
 
-        // input field should still exist
-        assertEquals(csvToParse, output.getField(FieldName.of("input")).get());
-
-        // expect an error
-        assertTrue(output.getError().isPresent());
+        assertEquals(csvToParse, output.getField(FieldName.of("input")).get(),
+            "Expected the 'input' field to remain in the output message.");
+        assertTrue(output.getError().isPresent(),
+            "Expected a parsing error because the input field is empty.");
     }
 
     @Test
@@ -148,22 +146,23 @@ public class DelimitedTextParserTest {
                 .withOutputField(FieldName.of("third"), 2)
                 .parse(input);
 
-        // input field should still exist
-        assertEquals(csvToParse, output.getField(FieldName.of("input")).get());
-
-        // new output fields
-        assertEquals(FieldValue.of(" value1"), output.getField(FieldName.of("first")).get());
-        assertEquals(FieldValue.of(" value2"), output.getField(FieldName.of("second")).get());
-        assertEquals(FieldValue.of(" value3"), output.getField(FieldName.of("third")).get());
-
-        // no errors
-        assertFalse(output.getError().isPresent());
+        assertEquals(csvToParse, output.getField(FieldName.of("input")).get(),
+            "Expected the 'input' field to remain in the output message.");
+        assertEquals(FieldValue.of(" value1"), output.getField(FieldName.of("first")).get(),
+            "Expected the 'first' field to have been added to the message.");
+        assertEquals(FieldValue.of(" value2"), output.getField(FieldName.of("second")).get(),
+            "Expected the 'second' field to have been added to the message.");
+        assertEquals(FieldValue.of(" value3"), output.getField(FieldName.of("third")).get(),
+            "Expected the 'third' field to have been added to the message.");
+        assertFalse(output.getError().isPresent(),
+            "Expected no parsing errors.");
     }
 
     @Test
     void inputFieldNotDefined() {
         Message input = Message.builder().build();
-        assertThrows(IllegalStateException.class, () -> new DelimitedTextParser().parse(input));
+        assertThrows(IllegalStateException.class, () -> new DelimitedTextParser().parse(input),
+            "Expected parsing error because no input field has been defined.");
     }
 
     @Test
@@ -174,9 +173,8 @@ public class DelimitedTextParserTest {
                 .withInputField(FieldName.of("input"))
                 .withDelimiter(Regex.of(","))
                 .parse(input);
-
-        // expect an error
-        assertTrue(output.getError().isPresent());
+        assertTrue(output.getError().isPresent(),
+            "Expected parsing error because no output field(s) have been defined");
     }
 }
 

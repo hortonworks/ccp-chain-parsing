@@ -96,10 +96,10 @@ public class SyslogParserTest {
         Message output = new SyslogParser()
                 .withInputField(FieldName.of("original_string"))
                 .parse(input);
-
-        // expect an error to be reported and the same fields
-        assertTrue(output.getError().isPresent());
-        assertEquals(input.getFields(), output.getFields());
+        assertTrue(output.getError().isPresent(),
+            "Expected a parsing error to have occurred.");
+        assertEquals(input.getFields(), output.getFields(),
+            "Expected the same input fields to be available on the output message.");
     }
 
     @Test
@@ -119,11 +119,12 @@ public class SyslogParserTest {
                 .addField(FieldName.of("original_string"), FieldValue.of(SYSLOG_3164))
                 .build();
         Message output = parser.parse(input);
-        List<FieldName> actualFields = new ArrayList<>(output.getFields().keySet());
 
-        // ensure the message contains ALL of the declared output fields
+        // validate
+        List<FieldName> actualFields = new ArrayList<>(output.getFields().keySet());
         for(FieldName outputField: parser.outputFields()) {
-            assertThat(actualFields, hasItem(outputField));
+            assertThat("The output is missing one of the declared output fields.",
+                actualFields, hasItem(outputField));
         }
     }
 
@@ -138,11 +139,12 @@ public class SyslogParserTest {
                 .addField(FieldName.of("original_string"), FieldValue.of(SYSLOG_5424))
                 .build();
         Message output = parser.parse(input);
-        List<FieldName> actualFields = new ArrayList<>(output.getFields().keySet());
 
-        // ensure the message contains ALL of the declared output fields
+        // validate
+        List<FieldName> actualFields = new ArrayList<>(output.getFields().keySet());
         for(FieldName outputField: parser.outputFields()) {
-            assertThat(actualFields, hasItem(outputField));
+            assertThat("The message is missing one of the declared output fields.", 
+                actualFields, hasItem(outputField));
         }
     }
 }

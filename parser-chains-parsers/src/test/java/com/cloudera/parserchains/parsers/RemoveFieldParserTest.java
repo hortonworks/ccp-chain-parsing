@@ -22,10 +22,13 @@ public class RemoveFieldParserTest {
                 .removeField(FieldName.of("field2"))
                 .parse(input);
 
-        // ensure the fields were removed
-        assertFalse(output.getField(FieldName.of("field1")).isPresent());
-        assertFalse(output.getField(FieldName.of("field2")).isPresent());
-        assertEquals(FieldValue.of("value3"), output.getField(FieldName.of("field3")).get());
+        // validate
+        assertFalse(output.getField(FieldName.of("field1")).isPresent(), 
+            "Expected 'field1' to have been removed.");
+        assertFalse(output.getField(FieldName.of("field2")).isPresent(), 
+            "Expected 'field2' to have been removed.");
+        assertEquals(FieldValue.of("value3"), output.getField(FieldName.of("field3")).get(), 
+            "Expected 'field3' to remain.");
     }
 
     @Test
@@ -39,8 +42,11 @@ public class RemoveFieldParserTest {
                 .parse(input);
 
         // ensure the fields were removed
-        assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get());
-        assertEquals(FieldValue.of("value2"), output.getField(FieldName.of("field2")).get());
-        assertEquals(FieldValue.of("value3"), output.getField(FieldName.of("field3")).get());
+        assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get(),
+            "Expected 'field1' to remain.");
+        assertEquals(FieldValue.of("value2"), output.getField(FieldName.of("field2")).get(),
+            "Expected 'field2' to remain.");
+        assertEquals(FieldValue.of("value3"), output.getField(FieldName.of("field3")).get(),
+            "Expected 'field3' to remain.");
     }
 }

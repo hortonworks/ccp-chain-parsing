@@ -28,14 +28,15 @@ public class ChainBuilderTest {
                 .then(secondParser)
                 .head();
 
-        // validate the first link
-        assertEquals(firstParser, head.getParser());
-        assertTrue(head.getNext(message).isPresent());
-
-        // validate the second link
+        assertEquals(firstParser, head.getParser(), 
+            "Expected the first parser to be at the head of the chain.");
+        assertTrue(head.getNext(message).isPresent(),
+            "Expected the first parser to link to the second parser.");
         ChainLink next = head.getNext(message).get();
-        assertEquals(secondParser, next.getParser());
-        assertFalse(next.getNext(message).isPresent());
+        assertEquals(secondParser, next.getParser(), 
+            "Expected the second parser to be next in the chain.");
+        assertFalse(next.getNext(message).isPresent(), 
+            "Expected the second parser to be last in the chain.");
     }
 
     @Test
@@ -46,13 +47,13 @@ public class ChainBuilderTest {
                 .thenMatch(Regex.of("[0-9]+"), secondParser)
                 .head();
 
-        // validate the first link
-        assertEquals(firstParser, head.getParser());
-        assertTrue(head.getNext(message).isPresent());
-
-        // validate the router
+        assertEquals(firstParser, head.getParser(), 
+            "Expected the first parser to be at the head of the chain.");
+        assertTrue(head.getNext(message).isPresent(),
+            "Expected the first parser to link to the router.");
         ChainLink next = head.getNext(message).get();
-        assertTrue(next instanceof RouterLink);
+        assertTrue(next instanceof RouterLink, 
+            "Expected the next parser to be a router.");
     }
 
     @Test
@@ -61,7 +62,8 @@ public class ChainBuilderTest {
                 .routeBy(FieldName.of("timestamp"))
                 .thenMatch(Regex.of("[0-9]+"), secondParser)
                 .head();
-        assertTrue(head instanceof RouterLink);
+        assertTrue(head instanceof RouterLink,
+            "Expected a router to be at the head of the chain.");
     }
 
     @Test
@@ -69,44 +71,44 @@ public class ChainBuilderTest {
         ChainLink subChain = new ChainBuilder()
                 .then(secondParser)
                 .head();
-
         ChainLink mainChain = new ChainBuilder()
                 .then(firstParser)
                 .routeBy(FieldName.of("timestamp"))
                 .thenMatch(Regex.of("[0-9]+"), subChain)
                 .head();
 
-        // validate the main chain
-        assertEquals(firstParser, mainChain.getParser());
-        assertTrue(mainChain.getNext(message).isPresent());
-
-        // validate the router
+        assertEquals(firstParser, mainChain.getParser(), 
+            "Expected the first parser to be at the head of the main chain.");
+        assertTrue(mainChain.getNext(message).isPresent(),
+            "Expected the first parser to link to a router.");
         ChainLink next = mainChain.getNext(message).get();
-        assertTrue(next instanceof RouterLink);
+        assertTrue(next instanceof RouterLink, 
+            "Expected the next parser to be a router.");
     }
 
     @Test
     void noChain() {
         assertThrows(NullPointerException.class,
-                () -> new ChainBuilder().head());
+                () -> new ChainBuilder().head(),
+                "No chain was defined before calling head().");
     }
 
     @Test
     void onlyRoutesAfterRouteBy() {
-        // after calling `routeBy` all subsequent calls must define a route
         assertThrows(IllegalStateException.class,
                 () -> new ChainBuilder()
                         .routeBy(FieldName.of("timestamp"))
                         .then(secondParser)
-                        .head());
+                        .head(),
+                "After calling 'routeBy' all subsequent calls must define a route.");
     }
 
     @Test
     void noRoutesBeforeRouteBy() {
-        // cannot define a route before calling `routeBy`
         assertThrows(IllegalStateException.class,
                 () -> new ChainBuilder()
                         .thenMatch(Regex.of("[0-9]+"), secondParser)
-                        .head());
+                        .head(), 
+                "Cannot define a route before calling 'routeBy'.");
     }
 }

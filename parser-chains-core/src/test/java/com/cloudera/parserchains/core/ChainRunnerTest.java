@@ -50,11 +50,10 @@ public class ChainRunnerTest {
         Message expectedMessage = Message.builder()
                 .addField(runner.getInputField(), FieldValue.of(inputToParse))
                 .build();
-
-        // 1 original input + 1 from parser1 + 1 from parser2 = 3
-        assertEquals(3, results.size());
         verify(parser1, times(1)).parse(eq(expectedMessage));
         verify(parser2, times(1)).parse(eq(expectedMessage));
+        assertEquals(3, results.size(), 
+            "Expected 3 = 1 original input + 1 from parser1 + 1 from parser2.");
     }
 
     @Test
@@ -113,8 +112,7 @@ public class ChainRunnerTest {
         verify(parser1, times(1)).parse(eq(expectedMessage));
         verify(parser2, times(1)).parse(eq(expectedMessage));
         verify(parser3, never()).parse(any());
-
-        // 1 original message, good message from parser1, error message from parser2, parser3 not executed
-        assertEquals(3, results.size());
+        assertEquals(3, results.size(),
+            "Expected 3 = 1 original + 1 from parser1 + 1 error from parser2 + 0 from parser3 (it was not executed).");
     }
 }

@@ -36,14 +36,14 @@ public class TimestampParserTest {
                 .withOutputField(timestampField)
                 .parse(input);
 
-        // expect a new timestamp field to have been added
-        assertEquals(FieldValue.of(Long.toString(time)), output.getField(timestampField).get());
+        assertEquals(FieldValue.of(Long.toString(time)), output.getField(timestampField).get(), 
+            "Expected a timestamp to have been added to the message.");
 
-        // expect the same input fields on the output side
-        assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get());
+        assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get(),
+            "Expected the same input fields to be available on the output message.");
 
-        // no errors
-        assertFalse(output.getError().isPresent());
+        assertFalse(output.getError().isPresent(),
+            "Expected no errors to have occurred.");
     }
 
     @Test
@@ -58,14 +58,14 @@ public class TimestampParserTest {
                 .withClock(new FixedClock(time))
                 .parse(input);
 
-        // expect a new timestamp field to have been added using the default name
         FieldName defaultFieldName = parser.getOutputField();
-        assertEquals(FieldValue.of(Long.toString(time)), output.getField(defaultFieldName).get());
+        assertEquals(FieldValue.of(Long.toString(time)), output.getField(defaultFieldName).get(), 
+            "Expected a timestamp to have been added using the default field name.");
 
-        // expect the same input fields on the output side
-        assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get());
+        assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get(),
+            "Expected the same input fields to be available on the output message.");
 
-        // no errors
-        assertFalse(output.getError().isPresent());
+        assertFalse(output.getError().isPresent(),
+            "Expected no errors to have occurred.");
     }
 }

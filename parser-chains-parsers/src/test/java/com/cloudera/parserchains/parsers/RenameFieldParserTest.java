@@ -38,6 +38,6 @@ public class RenameFieldParserTest {
                 .parse(input);
 
         // the output should not have changed from the input
-        assertEquals(input, output);
+        assertEquals(input, output, "The output fields should be the same as the input");
     }
 }
