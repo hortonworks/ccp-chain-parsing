@@ -68,7 +68,8 @@ public class ChainBuilder {
      * Used to build the middle of a chain. In the middle of the chain, a head has 
      * already been defined.
      * 
-     * <p>In this state either a parser or a router can be added.
+     * <p>Either a parser or router can be added in the middle of a chain. The methods
+     * available reflect this.
      */
     public static class MiddleOfChainBuilder {
         private ChainLink head;
@@ -97,14 +98,11 @@ public class ChainBuilder {
 
         /**
          * Adds a router to the chain.
-         * 
          * <p>After adding a router to the chain, no other parsers can be added
          * without defining a route.
-         * 
          * @param routeBy The field used to route messages.
          */
         public EndOfChainBuilder routeBy(FieldName routeBy) {
-            // transition to route building state
             return new EndOfChainBuilder(head, lastLink, routeBy);
         }
 
@@ -120,7 +118,7 @@ public class ChainBuilder {
     /**
      * Used to build the end of a parser chain. Adding a router leads us to the end of a chain.
      * 
-     * <p>After a router, only routes can be defined.
+     * <p>After a router, only routes can be added to a parser chain.
      */
     public static class EndOfChainBuilder {
         private RouterLink router;
