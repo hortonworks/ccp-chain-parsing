@@ -43,6 +43,7 @@ function createParseJob(req, res) {
     const asaTagRegex = /%ASA-\d\-\d*\b/g
     const asaMessageRegex = /(?<=%ASA-\d\-\d*\:)(.*)/g
     const syslogMessageRegex = /%ASA-\d\-\d*\:(.*)/g
+    const parsers = req.body.chainConfig.parsers
 
     entry.output.ASA_TAG = asaTagRegex.exec(entry.input)[0];
     entry.output.ASA_message = asaMessageRegex.exec(entry.input)[0];
@@ -53,9 +54,12 @@ function createParseJob(req, res) {
         "message": "Parsing Successful"
       };
     } else {
+      parsers
+      failedParser = parsers[Math.floor(Math.random() * parsers.length)];
       entry.log = {
         "type": "error",
-        "message": "Parsing Failed"
+        "message": `Parsing Failed: ${failedParser.name} parser unable to parse.`,
+        "failedParser": failedParser.id
       };
     }
   });

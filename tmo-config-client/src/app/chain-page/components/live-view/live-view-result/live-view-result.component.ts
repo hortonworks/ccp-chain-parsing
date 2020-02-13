@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { LiveViewResultModel } from '../models/live-view.model';
 
@@ -9,4 +9,11 @@ import { LiveViewResultModel } from '../models/live-view.model';
 })
 export class LiveViewResultComponent {
   @Input() results: LiveViewResultModel;
+  @Output() failedParser = new EventEmitter<string>();
+
+  constructor() { }
+
+  seeFailedParser(failedParser) {
+    this.failedParser.emit(failedParser);
+  }
 }

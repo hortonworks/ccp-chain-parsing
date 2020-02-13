@@ -9,6 +9,7 @@ export interface ChainPageState {
   parsers: { [key: string]: ParserModel };
   routes: { [key: string]: RouteModel };
   error: string;
+  parserToBeInvestigated: string;
 }
 
 export const initialState: ChainPageState = {
@@ -16,6 +17,7 @@ export const initialState: ChainPageState = {
   parsers: {},
   routes: {},
   error: '',
+  parserToBeInvestigated: '',
 };
 
 export function reducer(
@@ -54,6 +56,12 @@ export function reducer(
             ...action.payload.parser
           }
         }
+      };
+    }
+    case chainPageActions.LOAD_FAILED_PARSER: {
+      return {
+        ...state,
+        parserToBeInvestigated: action.payload.id
       };
     }
   }
@@ -97,5 +105,12 @@ export const getChainDetails = createSelector(
   (state, props) => {
     const mainChain = state.chains[props.chainId];
     return denormalizeParserConfig(mainChain, state);
+  }
+);
+
+export const getParserToBeInvestigated = createSelector(
+  getChainPageState,
+  (state) => {
+    return state.parserToBeInvestigated;
   }
 );

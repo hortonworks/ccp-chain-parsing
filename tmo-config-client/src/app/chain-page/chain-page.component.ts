@@ -9,7 +9,7 @@ import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
-import { ChainPageState, getChain, getChainDetails } from './chain-page.reducers';
+import { ChainPageState, getChain, getChainDetails, getParserToBeInvestigated } from './chain-page.reducers';
 
 class DirtyChain {
   id: string;
@@ -32,6 +32,7 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
   dirty = false;
   dirtyChains: { [key: string]: DirtyChain } = {};
   chainConfig$: Observable<ChainDetailsModel>;
+  parserToBeInvestigated$: string[];
 
   constructor(
     private store: Store<ChainPageState>,
@@ -64,6 +65,26 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
     });
 
     this.chainConfig$ = this.store.pipe(select(getChainDetails, { chainId: this.chainId }));
+    this.store.pipe(select(getParserToBeInvestigated)).subscribe((id: string) => {
+      this.parserToBeInvestigated$ = id === '' ? [] : [id];
+      this.getParsers();
+    });
+  }
+
+  getParsers() {
+    if (this.parserToBeInvestigated$.length !== 0) {
+      return this.parserToBeInvestigated$;
+    } else {
+      return (
+        (this.breadcrumbs.length > 0 &&
+          this.breadcrumbs[this.breadcrumbs.length - 1].parsers) ||
+        (this.chain && this.chain.parsers)
+      );
+    }
+  }
+
+  exitFailedParserEditView() {
+    this.store.dispatch(new fromActions.LoadFailedParser({ id: '' }));
   }
 
   removeParser(id: string) {
@@ -148,6 +169,7 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
         this.store.dispatch(new fromActions.LoadChainDetailsAction({
           id: this.chainId
         }));
+        this.store.dispatch(new fromActions.LoadFailedParser({ id: '' }));
       }
     });
   }
@@ -165,6 +187,7 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
           this.dirtyChains[chainId].parsers = [];
         });
         this.store.dispatch(new fromActions.SaveParserConfigAction({ chainId: this.chainId }));
+        this.store.dispatch(new fromActions.LoadFailedParser({ id: '' }));
       }
     });
   }

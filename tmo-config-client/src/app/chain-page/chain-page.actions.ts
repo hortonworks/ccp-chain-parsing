@@ -12,6 +12,9 @@ export const UPDATE_PARSER = '[Chain Details] update parser';
 export const SAVE_PARSER_CONFIG = '[Chain Details] save parser config';
 export const SAVE_PARSER_CONFIG_SUCCESS = '[Chain Details] save parser config success';
 export const SAVE_PARSER_CONFIG_FAIL = '[Chain Details] save parser config fail';
+export const LOAD_FAILED_PARSER = '[Chain Details] load failed parser';
+// export const LOAD_FAILED_PARSER_SUCCESS = '[Chain Details] load failed parser success';
+// export const LOAD_FAILED_PARSER_FAIL = '[Chain Details] load failed parser fail';
 
 export class LoadChainDetailsAction implements Action {
   readonly type = LOAD_CHAIN_DETAILS;
@@ -57,6 +60,11 @@ export class SaveParserConfigFailAction implements Action {
   constructor(public error: { message: string }) {}
 }
 
+export class LoadFailedParser implements Action {
+  readonly type = LOAD_FAILED_PARSER;
+  constructor(public payload: { id: string }) {}
+}
+
 export type ChainDetailsAction = LoadChainDetailsAction
   | LoadChainDetailsSuccessAction
   | LoadChainDetailsFailAction
@@ -64,4 +72,5 @@ export type ChainDetailsAction = LoadChainDetailsAction
   | UpdateParserAction
   | SaveParserConfigAction
   | SaveParserConfigFailAction
-  | SaveParserConfigFailAction;
+  | SaveParserConfigFailAction
+  | LoadFailedParser;

@@ -7,7 +7,11 @@ export interface LiveViewResultModel {
 export interface EntryParsingResultModel {
   input: string;
   output: {};
-  log: { type: string, message: string };
+  log: {
+    type: string;
+    message: string;
+    failedParser?: string;
+  };
 }
 
 export interface LiveViewModel {

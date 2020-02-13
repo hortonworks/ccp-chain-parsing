@@ -4,13 +4,15 @@
   </div>
   <div nz-row nzGutter="16">
     <div nz-col nzSpan="10">
+      <div *ngIf="">test</div>
       <app-chain-view
-        [parsers]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].parsers) || (chain && chain.parsers)"
+        [parsers]="getParsers()"
         [dirtyParsers]="(dirtyChains[(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].id) || (chain && chain.id)] || { parsers: [] }).parsers"
         (removeParserEmitter)="removeParser($event)"
         (chainLevelChange)="onChainLevelChange($event)"
         (parserChange)="onParserChange($event)"
       ></app-chain-view>
+
     </div>
     <div nz-col nzSpan="14">
       <app-live-view [chainConfig$]="chainConfig$"></app-live-view>
@@ -20,13 +22,18 @@
 
 <ng-template #breadcrumbsCardTitle>
   <nz-breadcrumb>
-    <nz-breadcrumb-item *ngFor="let breadcrumb of breadcrumbs; index as i">
-      <span *ngIf="dirtyChains[breadcrumb.id] && dirtyChains[breadcrumb.id].parsers.length > 0">
-        <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#f00'"></i>
-        ({{ dirtyChains[breadcrumb.id].parsers.length }})
-      </span>
-      <a *ngIf="i < breadcrumbs.length - 1" href="#" (click)="onBreadcrumbClick($event, breadcrumb)">{{ breadcrumb.name }}</a>
-      <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>
+    <ng-container *ngIf="!this.parserToBeInvestigated$.length">
+      <nz-breadcrumb-item *ngFor="let breadcrumb of breadcrumbs; index as i">
+        <span *ngIf="dirtyChains[breadcrumb.id] && dirtyChains[breadcrumb.id].parsers.length > 0">
+          <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#f00'"></i>
+          ({{ dirtyChains[breadcrumb.id].parsers.length }})
+        </span>
+        <a *ngIf="i < breadcrumbs.length - 1" href="#" (click)="onBreadcrumbClick($event, breadcrumb)">{{ breadcrumb.name }}</a>
+        <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>
+      </nz-breadcrumb-item>
+    </ng-container>
+    <nz-breadcrumb-item *ngIf="this.parserToBeInvestigated$.length" (click)="exitFailedParserEditView()">
+        Back to previous view
     </nz-breadcrumb-item>
   </nz-breadcrumb>
   <div class="chain-actions">
