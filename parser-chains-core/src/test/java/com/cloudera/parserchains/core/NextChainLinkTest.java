@@ -12,7 +12,7 @@ public class NextChainLinkTest {
     void nextLink() {
         NextChainLink next = new NextChainLink(new NoopParser());
         NextChainLink previous = new NextChainLink(new NoopParser())
-                .withNext(next);
+                .setNext(next);
         assertEquals(next, previous.getNext(message).get());
     }
 

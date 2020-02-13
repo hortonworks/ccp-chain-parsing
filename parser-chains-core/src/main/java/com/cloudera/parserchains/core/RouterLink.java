@@ -14,9 +14,9 @@ public class RouterLink implements ChainLink {
     /**
      * Defines one route that a {@link Message} may take.
      */
-    private static class Route {
-        private final Regex regex;
-        private final ChainLink next;
+    static class Route {
+        final Regex regex;
+        final ChainLink next;
 
         public Route(Regex regex, ChainLink next) {
             this.regex = Objects.requireNonNull(regex);
@@ -50,7 +50,7 @@ public class RouterLink implements ChainLink {
         return this;
     }
 
-    public List<Route> getRoutes() {
+    List<Route> getRoutes() {
         return routes;
     }
 

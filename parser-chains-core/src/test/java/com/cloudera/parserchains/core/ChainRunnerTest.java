@@ -37,7 +37,7 @@ public class ChainRunnerTest {
         Parser parser2 = mock(Parser.class);
         when(parser2.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        ChainLink chain = new ChainBuilder()
+        ChainLink chain = ChainBuilder.init()
                 .then(parser1)
                 .then(parser2)
                 .head();
@@ -62,7 +62,7 @@ public class ChainRunnerTest {
         Parser parser1 = mock(Parser.class);
         when(parser1.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        ChainLink chain = new ChainBuilder()
+        ChainLink chain = ChainBuilder.init()
                 .then(parser1)
                 .head();
 
@@ -99,7 +99,7 @@ public class ChainRunnerTest {
         Parser parser3 = Mockito.mock(Parser.class);
         when(parser3.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        ChainLink chain = new ChainBuilder()
+        ChainLink chain = ChainBuilder.init()
                 .then(parser1)
                 .then(parser2)
                 .then(parser3)

@@ -1,5 +1,6 @@
 package com.cloudera.parserchains.core;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -10,7 +11,7 @@ public class NextChainLink implements ChainLink {
     private Optional<ChainLink> next;
 
     public NextChainLink(Parser parser) {
-        this.parser = parser;
+        this.parser = Objects.requireNonNull(parser);
         this.next = Optional.empty();
     }
 
@@ -28,7 +29,7 @@ public class NextChainLink implements ChainLink {
         return next;
     }
 
-    public NextChainLink withNext(ChainLink next) {
+    public NextChainLink setNext(ChainLink next) {
         this.next = Optional.of(next);
         return this;
     }
