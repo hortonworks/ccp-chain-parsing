@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FieldNameTest {
-    static String name = "syslog.structuredData.exampleSDID@32480.iut";
+    private static final String name = "syslog.structuredData.exampleSDID@32480.iut";
 
     @Test
     void valid() {
