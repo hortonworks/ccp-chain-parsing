@@ -6,11 +6,12 @@ import java.util.Objects;
  * Provides a fluent API for the construction of a parser chain.
  *
  * <code>
- * ChainLink chain = new ChainBuilder()
+ * ChainLink chain = ChainBuilder.init()
  *     .then(csvParser)
  *     .routeBy(routerField)
  *     .thenMatch(Regex.of("%ASA-6-302021:"), subChain)
  *     .thenMatch(Regex.of("%ASA-9-302041:"), anotherParser)
+ *     .thenDefault(error)
  *     .head();
  * </code>
  */
