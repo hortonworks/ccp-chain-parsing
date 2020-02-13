@@ -5,6 +5,14 @@ import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { RouterComponent } from './router.component';
 
 @Component({
+  selector: 'app-custom-form',
+  template: '',
+})
+export class MockCustomFormComponent {
+  @Input() config = [];
+}
+
+@Component({
   selector: 'app-route',
   template: ''
 })
@@ -23,6 +31,7 @@ describe('RouterComponent', () => {
       ],
       declarations: [
         MockRouteComponent,
+        MockCustomFormComponent,
         RouterComponent
       ]
     })

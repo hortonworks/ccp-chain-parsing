@@ -4,6 +4,12 @@ export interface ParserChainModel {
   parsers: string[] | ParserModel[];
 }
 
+export interface PartialParserChainModel {
+  id?: string;
+  name?: string;
+  parsers?: string[] | ParserModel[];
+}
+
 export interface RouteModel {
   id: string;
   name: string;

@@ -63,6 +63,18 @@ export function reducer(
         }
       };
     }
+    case chainPageActions.UPDATE_CHAIN: {
+      return {
+        ...state,
+        chains: {
+          ...state.chains,
+          [action.payload.chain.id]: {
+            ...state.chains[action.payload.chain.id],
+            ...action.payload.chain
+          }
+        }
+      };
+    }
     case chainPageActions.SET_DIRTY: {
       return {
         ...state,

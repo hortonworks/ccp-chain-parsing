@@ -19,6 +19,7 @@ class MockParserComposerComponent {
   @Input() dirty;
   @Input() configForm;
   @Input() outputsForm;
+  @Input() metaDataForm;
 }
 
 describe('ChainViewComponent', () => {

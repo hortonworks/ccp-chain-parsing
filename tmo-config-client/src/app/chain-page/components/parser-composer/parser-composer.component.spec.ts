@@ -15,16 +15,14 @@ class MockParserComponent {
   @Input() parser;
   @Input() configForm;
   @Input() outputsForm;
+  @Input() metaDataForm;
 }
 
 @Component({
   selector: 'app-router',
   template: ''
 })
-class MockRouterComponent {
-  @Input() dirty;
-  @Input() parser;
-}
+class MockRouterComponent extends MockParserComponent {}
 
 describe('ParserComposerComponent', () => {
   let component: ParserComposerComponent;

@@ -6,6 +6,7 @@
         [dirty]="(dirtyParsers || []).includes(parserId)"
         [configForm]="configFormFields"
         [outputsForm]="outputsFormFields"
+        [metaDataForm]="metaDataForm"
         (subchainSelect)="onChainSelected($event)"
         (parserRemove)="onParserRemove($event)"
         (parserChange)="onParserChange($event)"
