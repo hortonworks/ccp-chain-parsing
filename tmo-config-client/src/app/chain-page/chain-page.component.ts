@@ -9,7 +9,7 @@ import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
-import { ChainPageState, getChain, getChainDetails, isDirty } from './chain-page.reducers';
+import { ChainPageState, getChain, getChainDetails, getChains, isDirty } from './chain-page.reducers';
 
 class DirtyChain {
   id: string;
@@ -32,7 +32,7 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
   dirty = false;
   dirtyChains: { [key: string]: DirtyChain } = {};
   chainConfig$: Observable<ChainDetailsModel>;
-  editMode = false;
+  chainIdBeingEdited: string;
   @ViewChild('chainNameInput', { static: false }) chainNameInput: ElementRef;
 
   constructor(
@@ -47,6 +47,14 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
       this.store.dispatch(new fromActions.LoadChainDetailsAction({
         id: params.id
       }));
+    });
+
+    this.store.pipe(select(getChains)).subscribe((chains) => {
+      if (this.breadcrumbs) {
+        this.breadcrumbs = this.breadcrumbs.map(breadcrumb => {
+          return chains[breadcrumb.id];
+        });
+      }
     });
 
     this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain: ParserChainModel) => {
@@ -123,6 +131,33 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
     this.breadcrumbs = this.breadcrumbs.slice(0, index + 1);
   }
 
+  onBreadcrumbEditClick(event: Event, chain: ParserChainModel) {
+    event.preventDefault();
+    this.chainIdBeingEdited = chain.id;
+    setTimeout(() => {
+      this.chainNameInput.nativeElement.focus();
+    });
+  }
+
+  onBreadcrumbEditDone(event: Event, chain: ParserChainModel) {
+    this.chainIdBeingEdited = '';
+    const value = ((event.target as HTMLInputElement).value || '').trim();
+    if (value !== chain.name) {
+      this.store.dispatch(new fromActions.UpdateChainAction({
+        chain: {
+          id: chain.id,
+          name: value
+        }
+      }));
+      this.store.dispatch(new fromActions.SetDirtyAction({
+        dirty: true
+      }));
+      if (!this.dirtyChains[chain.id]) {
+        this.dirtyChains[chain.id] = new DirtyChain(chain.id);
+      }
+    }
+  }
+
   canDeactivate(): Observable<boolean> {
     const allow = (o: Observer<boolean>) => { o.next(true); o.complete(); };
     const deny  = (o: Observer<boolean>) => { o.next(false); o.complete(); };
@@ -156,7 +191,7 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
           dirty: false
         }));
         Object.keys(this.dirtyChains).forEach(chainId => {
-          this.dirtyChains[chainId].parsers = [];
+          delete this.dirtyChains[chainId];
         });
         this.store.dispatch(new fromActions.LoadChainDetailsAction({
           id: this.chainId
@@ -177,7 +212,7 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
           dirty: false
         }));
         Object.keys(this.dirtyChains).forEach(chainId => {
-          this.dirtyChains[chainId].parsers = [];
+          delete this.dirtyChains[chainId];
         });
         this.store.dispatch(new fromActions.SaveParserConfigAction({ chainId: this.chainId }));
       }
@@ -196,16 +231,6 @@ export class ChainPageComponent implements OnInit, DeactivatePreventer {
       this.store.dispatch(new fromActions.SetDirtyAction({
         dirty: true
       }));
-    }
-    this.toggleEditMode();
-  }
-
-  toggleEditMode() {
-    this.editMode = !this.editMode;
-    if (this.editMode) {
-      setTimeout(() => {
-        this.chainNameInput.nativeElement.focus();
-      }, 0);
     }
   }
 }

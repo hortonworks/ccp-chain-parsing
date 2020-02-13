@@ -67,33 +67,4 @@ describe('ChainPageComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should display the textbox for updating the chain name', () => {
-    component.editMode = false;
-    fixture.detectChanges();
-    const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
-    editBtn.click();
-    fixture.detectChanges();
-    const nameField = fixture.nativeElement.querySelector('[data-qe-id="chain-name-field"]');
-    expect(nameField).toBeTruthy();
-    expect(component.editMode).toBe(true);
-  });
-
-  it('should call the updateChainName()', () => {
-    spyOn(component, 'updateChainName').and.callThrough();
-    spyOn(component, 'toggleEditMode').and.callThrough();
-    component.editMode = false;
-    fixture.detectChanges();
-    const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
-    editBtn.click();
-    fixture.detectChanges();
-
-    const nameField = fixture.nativeElement.querySelector('[data-qe-id="chain-name-field"]');
-    nameField.value = 'hello';
-    nameField.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-    nameField.dispatchEvent(new Event('blur'));
-    expect(component.updateChainName).toHaveBeenCalled();
-    expect(component.toggleEditMode).toHaveBeenCalled();
-  });
 });
