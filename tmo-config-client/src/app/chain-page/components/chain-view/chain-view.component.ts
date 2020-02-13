@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { ParserModel, PartialParserModel } from '../../chain-page.models';
+import { CustomFormConfig } from '../custom-form/custom-form.component';
 
 @Component({
   selector: 'app-chain-view',
@@ -15,16 +16,41 @@ export class ChainViewComponent implements OnInit {
   @Output() chainLevelChange = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<PartialParserModel>();
 
-  configFormFields = [{
+  configFormFields: CustomFormConfig[] = [{
     id: '123',
     name: 'config',
     type: 'textarea',
   }];
 
-  outputsFormFields = [{
+  outputsFormFields: CustomFormConfig[] = [{
     id: '456',
     name: 'outputs',
     type: 'textarea',
+  }];
+
+  metaDataForm: CustomFormConfig[] = [{
+    id: 'name',
+    name: 'name',
+    type: 'text',
+    label: 'Name'
+  }, {
+    id: 'type',
+    name: 'type',
+    type: 'select',
+    label: 'Type',
+    options: [{
+      id: 'Grok',
+      name: 'Grok'
+    }, {
+      id: 'foo',
+      name: 'Foo'
+    }, {
+      id: 'bar',
+      name: 'Bar'
+    }, {
+      id: 'Router',
+      name: 'Router'
+    }]
   }];
 
   constructor() { }
