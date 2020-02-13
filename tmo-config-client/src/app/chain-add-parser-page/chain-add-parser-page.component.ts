@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
+import uuidv1 from 'uuid/v1';
 
 import * as fromChainPageActions from '../chain-page/chain-page.actions';
 import { ParserModel } from '../chain-page/chain-page.models';
@@ -45,7 +46,7 @@ export class ChainAddParserPageComponent implements OnInit {
       chainId: this.chainId,
       parser: {
         ...this.addParserForm.value,
-        id: String(Date.now()),
+        id: uuidv1(),
       }
     }));
 
