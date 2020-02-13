@@ -24,6 +24,9 @@ public class ChainBuilder {
         // not for public use
     }
 
+    /**
+     * Call this method first to begin constructing a parser chain.
+     */
     public static HeadOfChainBuilder init() {
         return new HeadOfChainBuilder();
     }
