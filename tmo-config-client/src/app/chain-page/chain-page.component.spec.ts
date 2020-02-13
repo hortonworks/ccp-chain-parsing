@@ -5,9 +5,11 @@ import { ActivatedRoute } from '@angular/router';
 import { IconDefinition } from '@ant-design/icons-angular';
 import { EditFill } from '@ant-design/icons-angular/icons';
 import { StoreModule } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 import { Observable, of } from 'rxjs';
 
+import * as fromActions from './chain-page.actions';
 import { ChainPageComponent } from './chain-page.component';
 import { ParserModel } from './chain-page.models';
 import * as fromReducers from './chain-page.reducers';
@@ -37,6 +39,7 @@ const fakeActivatedRoute = {
 describe('ChainPageComponent', () => {
   let component: ChainPageComponent;
   let fixture: ComponentFixture<ChainPageComponent>;
+  let store: Store<ChainPageComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -56,6 +59,7 @@ describe('ChainPageComponent', () => {
   }));
 
   beforeEach(() => {
+    store = TestBed.get(Store);
     fixture = TestBed.createComponent(ChainPageComponent);
     component = fixture.componentInstance;
     component.chain = {
@@ -97,6 +101,29 @@ describe('ChainPageComponent', () => {
     nameField.dispatchEvent(event);
     fixture.detectChanges();
     expect(component.updateChainName).toHaveBeenCalled();
+  });
+
+  it('updateChainName() will call the action', () => {
+    spyOn(store, 'dispatch');
+
+    fixture.detectChanges();
+    const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
+    editBtn.click();
+    fixture.detectChanges();
+
+    const nameField: HTMLInputElement = document.querySelector('[data-qe-id="chain-name-field"]');
+    nameField.value = 'hello';
+    nameField.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const event: Event = new KeyboardEvent('keyup', {key: 'Enter'});
+    nameField.dispatchEvent(event);
+    fixture.detectChanges();
+
+    const actionUpdate = new fromActions.UpdateChainAction({chain: {id: '1', name: 'hello'}});
+    const actionDirty = new fromActions.SetDirtyAction({dirty: true});
+    expect(store.dispatch).toHaveBeenCalledWith(actionUpdate);
+    expect(store.dispatch).toHaveBeenCalledWith(actionDirty);
   });
 
 });
