@@ -38,10 +38,8 @@ public class TimestampParserTest {
 
         assertEquals(FieldValue.of(Long.toString(time)), output.getField(timestampField).get(), 
             "Expected a timestamp to have been added to the message.");
-
         assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get(),
             "Expected the same input fields to be available on the output message.");
-
         assertFalse(output.getError().isPresent(),
             "Expected no errors to have occurred.");
     }
@@ -61,10 +59,8 @@ public class TimestampParserTest {
         FieldName defaultFieldName = parser.getOutputField();
         assertEquals(FieldValue.of(Long.toString(time)), output.getField(defaultFieldName).get(), 
             "Expected a timestamp to have been added using the default field name.");
-
         assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get(),
             "Expected the same input fields to be available on the output message.");
-
         assertFalse(output.getError().isPresent(),
             "Expected no errors to have occurred.");
     }
