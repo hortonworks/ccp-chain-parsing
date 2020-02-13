@@ -2,7 +2,7 @@
 
 server:
   servlet:
-    context-path: /parser-config
+    context-path: /
   tomcat:
     accesslog:
       enabled: true

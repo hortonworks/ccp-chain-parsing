@@ -9,6 +9,23 @@ java -jar target/service-core-1.0-SNAPSHOT.jar
 java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n -jar target/service-core-1.0-SNAPSHOT.jar
 ```
 
+#### Accessing the REST service
+
+*Swagger*
+Default http://localhost:8080/swagger-ui.html
+
+*HTTP endpoints*
+The api root is `api/v1/parserconfig`
+curl -X GET "http://localhost:3000/api/v1/parserconfig/chains" -H "accept: */*"
+
+#### Other options
+server.port - set the REST service's port
+config.path - this is where the rest application will store the parser chain configurations. An ID generator file also resides here. Don't modify it unless you know what you're doing!
+server.servlet.context-path - you can change the application context root path here. e.g. setting the value to "parser-config" would change the access endpoint to look like http://localhost:3000/parser-config/swagger-ui.html
+```bash
+java -jar target/service-core-1.0-SNAPSHOT.jar --server.port=3000 --config.path=/tmp/config --server.servlet.context-path="/parser-config"
+```
+
 ### Production Deployment
 
 Spring Boot Actuator has been added for production-ready features such as: HTTP endpoints or JMX to monitor the application. Auditing, health, and metrics gathering can also be automatically applied to the application.
@@ -33,6 +50,8 @@ Project structure
 `@SpringBootApplication` is a meta-annotation that pulls in component scanning, auto-configuration, and property support.
 
 #### Logging
+
+Logging is done with Log4j2 - https://logging.apache.org/log4j/2.x/
 
 Modifying log level
 By default, logging is set to a nice and quiet WARN level in the application.yml file packaged with the application. This can be changed via passing a property on the CLI, e.g.

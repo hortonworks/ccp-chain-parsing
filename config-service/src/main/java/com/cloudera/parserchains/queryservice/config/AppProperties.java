@@ -21,6 +21,9 @@ package com.cloudera.parserchains.queryservice.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
+/**
+ * Application properties should be in lowercase!
+ */
 public class AppProperties {
 
   private enum Options implements ConfigOption<String, Environment> {
@@ -40,7 +43,7 @@ public class AppProperties {
     }
 
     private String normalizeProperty(String name) {
-      return name.replace('_', '.');
+      return name.replace('_', '.').toLowerCase();
     }
   }
 

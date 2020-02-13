@@ -54,6 +54,8 @@ public class FileBasedParserConfigServiceTest {
     service = new FileBasedParserConfigService(idGenerator);
     String tempDirPrefix = this.getClass().getName();
     configPath = Files.createTempDirectory(tempDirPrefix);
+    // this will verify we fail gracefully on bad files or files that are not config files, e.g. idgenerator file
+    Files.write(configPath.resolve("idgenerator"), "4".getBytes());
   }
 
   @Test
@@ -66,7 +68,7 @@ public class FileBasedParserConfigServiceTest {
   }
 
   @Test
-  public void findAll_returns_all_existing_parser_chain() throws IOException {
+  public void findAll_returns_all_existing_parser_chains() throws IOException {
     List<String> names = Arrays.asList("chain1", "chain2", "chain3", "chain4", "chain5");
     for (String name : names) {
       ParserChain chain = new ParserChain().setName(name);

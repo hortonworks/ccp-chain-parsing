@@ -18,6 +18,9 @@
 
 package com.cloudera.parserchains.queryservice.config;
 
+import com.cloudera.parserchains.queryservice.common.utils.IDGenerator;
+import com.cloudera.parserchains.queryservice.common.utils.UniqueIDGenerator;
+import java.nio.file.Paths;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,6 +33,11 @@ public class MainConfiguration {
   @Bean
   public AppProperties appProperties() {
     return new AppProperties();
+  }
+
+  @Bean
+  public IDGenerator<Long> idGenerator(AppProperties appProperties) {
+    return new UniqueIDGenerator(Paths.get(appProperties.getConfigPath()));
   }
 
 //  @Bean

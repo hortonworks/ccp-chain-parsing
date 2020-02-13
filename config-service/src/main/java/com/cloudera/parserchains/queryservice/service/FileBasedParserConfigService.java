@@ -23,20 +23,39 @@ import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.ParserChain;
 import com.cloudera.parserchains.queryservice.model.ParserChainSummary;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FileBasedParserConfigService implements ParserConfigService {
 
+  private static final Logger LOG = LogManager.getLogger(MethodHandles.lookup().lookupClass());
+
   @Autowired
   private IDGenerator<Long> idGenerator;
+
+  /**
+   * Only return json files.
+   */
+  private DirectoryStream.Filter<Path> fileFilter = new DirectoryStream.Filter<Path>() {
+    @Override
+    public boolean accept(Path entry) throws IOException {
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.json");
+      // can't compare only the entry bc the globbing won't cross directory boundaries. We only care about the filename here, anyhow.
+      return matcher.matches(entry.getFileName());
+    }
+  };
 
   @Autowired
   public FileBasedParserConfigService(IDGenerator<Long> idGenerator) {
@@ -45,11 +64,20 @@ public class FileBasedParserConfigService implements ParserConfigService {
 
   @Override
   public List<ParserChainSummary> findAll(Path path) throws IOException {
+    if (!Files.exists(path)) {
+      Files.createDirectories(path);
+    }
     List<ParserChainSummary> summaries = new ArrayList<>();
-    try (DirectoryStream<Path> files = Files.newDirectoryStream(path)) {
+    try (DirectoryStream<Path> files = Files.newDirectoryStream(path, fileFilter)) {
       for (Path file : files) {
-        ParserChain chain = JSONUtils.INSTANCE.load(file.toFile(), ParserChain.class);
-        summaries.add(new ParserChainSummary(chain));
+        try {
+          ParserChain chain = JSONUtils.INSTANCE.load(file.toFile(), ParserChain.class);
+          summaries.add(new ParserChainSummary(chain));
+        } catch (IOException ioe) {
+          LOG.warn(
+              "Found a file in the config directory that was unable to be deserialized as a parser chain: '{}'",
+              file, ioe);
+        }
       }
     }
     return summaries;
@@ -57,7 +85,10 @@ public class FileBasedParserConfigService implements ParserConfigService {
 
   @Override
   public ParserChain create(ParserChain chain, Path path) throws IOException {
-    chain.setId(Long.toString(idGenerator.incrementAndGet()));
+    String newId = Long.toString(idGenerator.incrementAndGet());
+    LOG.debug("Generating new ID='{}' for parser chain with name='{}'", () -> newId,
+        chain::getName);
+    chain.setId(newId);
     writeChain(chain, path);
     return chain;
   }
