@@ -17,6 +17,7 @@ export class ParserComponent implements OnInit, OnChanges {
   @Input() parser: ParserModel;
   @Input() configForm: CustomFormConfig[];
   @Input() outputsForm: CustomFormConfig[];
+  @Input() investigated = false;
   @Output() removeParser = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<any>();
 

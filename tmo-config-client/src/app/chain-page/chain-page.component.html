@@ -32,8 +32,8 @@
         <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>
       </nz-breadcrumb-item>
     </ng-container>
-    <nz-breadcrumb-item *ngIf="this.parserToBeInvestigated$.length" (click)="exitFailedParserEditView()">
-        Back to previous view
+    <nz-breadcrumb-item *ngIf="this.parserToBeInvestigated$.length" (click)="exitFailedParserEditView()" class="error-breadcrumb">
+      <i nz-icon nzType="left" nzTheme="outline"></i>Back to previous view
     </nz-breadcrumb-item>
   </nz-breadcrumb>
   <div class="chain-actions">

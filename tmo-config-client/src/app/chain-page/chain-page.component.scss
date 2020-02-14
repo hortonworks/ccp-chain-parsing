@@ -6,3 +6,11 @@
 .chain-actions button {
   margin-left: 10px;
 }
+
+.error-breadcrumb {
+  color: var(--warning);
+
+  &:hover {
+    cursor: pointer;
+  }
+}

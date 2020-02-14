@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
-import { ChainPageState, getParser } from '../../chain-page.reducers';
+import { ChainPageState, getParser, getParserToBeInvestigated } from '../../chain-page.reducers';
 
 import * as fromActions from '../../chain-page.actions';
 import { ParserModel, PartialParserModel } from '../../chain-page.models';
@@ -22,6 +22,7 @@ export class ParserComposerComponent implements OnInit {
   @Output() parserChange = new EventEmitter<PartialParserModel>();
 
   parser: ParserModel;
+  investigated = false;
 
   constructor(
     private store: Store<ChainPageState>
@@ -33,6 +34,16 @@ export class ParserComposerComponent implements OnInit {
     })).subscribe((parser) => {
       this.parser = parser;
     });
+
+    this.store
+      .pipe(select(getParserToBeInvestigated))
+      .subscribe((id: string) => {
+        if (id.length) {
+          this.investigated = true;
+        } else {
+          this.investigated = false;
+        }
+      });
   }
 
   onSubchainSelect(chainId: string) {
