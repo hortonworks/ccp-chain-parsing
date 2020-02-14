@@ -4,7 +4,6 @@
       <app-parser-composer
         [parserId]="parserId"
         [dirty]="(dirtyParsers || []).includes(parserId)"
-        [configForm]="configFormFields"
         [outputsForm]="outputsFormFields"
         [metaDataForm]="metaDataForm"
         (subchainSelect)="onChainSelected($event)"

@@ -5,6 +5,7 @@ import * as addParserActions from '../chain-add-parser-page/chain-add-parser-pag
 import * as chainPageActions from './chain-page.actions';
 import { ParserChainModel, ParserModel, RouteModel } from './chain-page.models';
 import { denormalizeParserConfig } from './chain-page.utils';
+import { CustomFormConfig } from './components/custom-form/custom-form.component';
 
 export interface ChainPageState {
   chains: { [key: string]: ParserChainModel };
@@ -12,6 +13,7 @@ export interface ChainPageState {
   routes: { [key: string]: RouteModel };
   dirty: boolean;
   error: string;
+  formConfigs?: { [key: string]: CustomFormConfig[] };
 }
 
 export const initialState: ChainPageState = {
@@ -20,6 +22,7 @@ export const initialState: ChainPageState = {
   routes: {},
   dirty: false,
   error: '',
+  formConfigs: {}
 };
 
 export function reducer(
@@ -100,6 +103,21 @@ export function reducer(
         }
       };
     }
+    case chainPageActions.GET_FORM_CONFIG_SUCCESS: {
+      return {
+        ...state,
+        formConfigs: {
+          ...(state.formConfigs || {}),
+          [action.payload.parserType]: action.payload.formConfig
+        }
+      };
+    }
+    case chainPageActions.GET_FORM_CONFIGS_SUCCESS: {
+      return {
+        ...state,
+        formConfigs: action.payload.formConfigs
+      };
+    }
   }
   return state;
 }
@@ -147,4 +165,14 @@ export const getChainDetails = createSelector(
 export const isDirty = createSelector(
   getChainPageState,
   (state) => state.dirty
+);
+
+export const getFormConfigByType = createSelector(
+  getChainPageState,
+  (state, props) => (state.formConfigs || {})[props.type]
+);
+
+export const getFormConfigs = createSelector(
+  getChainPageState,
+  (state) => state.formConfigs
 );

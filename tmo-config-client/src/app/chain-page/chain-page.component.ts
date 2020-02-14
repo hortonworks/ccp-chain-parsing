@@ -9,7 +9,8 @@ import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
-import { ChainPageState, getChain, getChainDetails, isDirty } from './chain-page.reducers';
+import { ChainPageState, getChain, getChainDetails, getFormConfigs, isDirty } from './chain-page.reducers';
+import { CustomFormConfig } from './components/custom-form/custom-form.component';
 
 class DirtyChain {
   id: string;
@@ -35,6 +36,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   getChainSubscription: Subscription;
   editMode = false;
   @ViewChild('chainNameInput', { static: false }) chainNameInput: ElementRef;
+  formConfigs: { [key: string]: CustomFormConfig[] };
 
   constructor(
     private store: Store<ChainPageState>,
@@ -52,7 +54,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         this.store.dispatch(new fromActions.LoadChainDetailsAction({
           id: this.chainId
         }));
-      } else if (chain && chain.parsers && chain.parsers.length > 0) {
+      } else {
         this.chain = chain;
 
         this.breadcrumbs = this.breadcrumbs.length > 0 ? this.breadcrumbs : [this.chain];
@@ -71,6 +73,12 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
 
     this.store.pipe(select(isDirty)).subscribe((dirty) => {
       this.dirty = dirty;
+    });
+
+    this.store.dispatch(new fromActions.GetFormConfigsAction());
+
+    this.store.pipe(select(getFormConfigs)).subscribe(formConfigs => {
+      this.formConfigs = formConfigs;
     });
   }
 

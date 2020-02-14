@@ -5,10 +5,15 @@ export interface CustomFormConfig {
   id: string;
   name: string;
   type: string;
+  path?: string;
   value?: string;
   label?: string;
   options?: { id: string, name: string }[];
   onChange?: (config) => {};
+  required?: boolean;
+  description?: string;
+  placeholder?: string;
+  defaultValue?: string;
 }
 
 @Component({

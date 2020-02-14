@@ -47,6 +47,9 @@ export class ChainAddParserPageComponent implements OnInit {
       parser: {
         ...this.addParserForm.value,
         id: uuidv1(),
+        config: {},
+        outputs: {},
+        advanced: {}
       }
     }));
 

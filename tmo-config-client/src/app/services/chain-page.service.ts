@@ -25,4 +25,12 @@ export class ChainPageService {
     public saveParserConfig(chainId: string, config: ChainDetailsModel) {
       return this.http.put(this.BASE_URL + `chains/${chainId}`, config);
     }
+
+    public getFormConfig(type: string) {
+      return this.http.get(this.BASE_URL + `parser-form-configuration/${type}`);
+    }
+
+    public getFormConfigs() {
+      return this.http.get(this.BASE_URL + `parser-form-configuration`);
+    }
 }

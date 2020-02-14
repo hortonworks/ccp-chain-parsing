@@ -1,0 +1,141 @@
+{
+  "Syslog":[
+    {
+      "id":"inputField",
+      "name":"inputField",
+      "type":"text",
+      "label":"Input field",
+      "description":"The name of the input field to parse.",
+      "required":true,
+      "path":"config"
+    },
+    {
+      "id":"specification",
+      "name":"specification",
+      "type":"select",
+      "label":"Specification",
+      "description":"The Syslog specification; RFC_5424 or RFC_3164. Defaults to RFC_5424",
+      "value":"RFC_5424",
+      "defaultValue":"RFC_5424",
+      "path":"config",
+      "options":[
+        {
+          "id":"RFC_5424",
+          "name":"RFC_5424"
+        },
+        {
+          "id":"RFC_3164",
+          "name":"RFC_3164"
+        }
+      ]
+    }
+  ],
+  "RenameField":[
+    {
+      "id":"renameFrom",
+      "name":"renameFrom",
+      "type":"text",
+      "label":"From",
+      "value":"",
+      "description":"The name(s) of field(s) to rename from",
+      "required":true,
+      "path":"config"
+    },
+    {
+      "id":"renameTo",
+      "name":"renameTo",
+      "type":"text",
+      "label":"To",
+      "value":"",
+      "description":"The name(s) of field(s) to rename to",
+      "required":true,
+      "path":"config"
+    }
+  ],
+  "RemoveField":[
+    {
+      "id":"fieldToRemove",
+      "name":"fieldToRemove",
+      "type":"text",
+      "label":"Field name",
+      "value":"",
+      "description":"The name(s) of fields to remove from the message",
+      "required":true,
+      "path":"config"
+    }
+  ],
+  "Timestamp":[
+    {
+      "id":"timestampField",
+      "name":"timestampField",
+      "type":"text",
+      "label":"Timestamp field",
+      "value":"timestamp",
+      "defaultValue":"timestamp",
+      "description":"The name of the field that will contain the timestamp. Defaults to ‘timestamp’",
+      "path":"config"
+    }
+  ],
+  "DelimitedText":[
+    {
+      "id":"inputField",
+      "name":"inputField",
+      "type":"text",
+      "label":"Input field",
+      "description":"The name of the input field to parse.",
+      "required":true,
+      "path":"config"
+    },
+    {
+      "id":"outputFieldName",
+      "name":"outputFieldName",
+      "type":"text",
+      "label":"Output field name",
+      "description":"",
+      "required":true,
+      "path":"config"
+    },
+    {
+      "id":"outputFieldIndex",
+      "name":"outputFieldIndex",
+      "type":"text",
+      "label":"Output field index",
+      "description":"",
+      "required":true,
+      "path":"config"
+    },
+    {
+      "id":"delimiter",
+      "name":"delimiter",
+      "type":"text",
+      "label":"Delimiter",
+      "description":"A regular expression used to split the text. Defaults to comma",
+      "value":",",
+      "defaultValue":",",
+      "required":false,
+      "path":"config"
+    },
+    {
+      "id":"trim",
+      "name":"trim",
+      "type":"text",
+      "label":"Trim",
+      "description":"Trim whitespace from each value. Defaults to true",
+      "value":"true",
+      "defaultValue":"true",
+      "required":false,
+      "path":"config"
+    }
+  ],
+  "Error":[
+    {
+      "id":"error",
+      "name":"error",
+      "type":"text",
+      "label":"Error message",
+      "value":"",
+      "description":"The error message thrown",
+      "path":"config"
+    }
+  ]
+}
