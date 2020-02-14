@@ -20,38 +20,39 @@
 
 <ng-template #breadcrumbsCardTitle>
   <nz-breadcrumb>
-    <nz-breadcrumb-item *ngFor="let breadcrumb of breadcrumbs; index as i">
-      <span *ngIf="dirtyChains[breadcrumb.id] && dirtyChains[breadcrumb.id].parsers.length > 0">
-        <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#f00'"></i>
-        ({{ dirtyChains[breadcrumb.id].parsers.length }})
+    <nz-breadcrumb-item class="breadcrumb-item" *ngFor="let breadcrumb of breadcrumbs; index as i">
+      <span *ngIf="!!dirtyChains[breadcrumb.id]">
+        <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#f00'" nz-tooltip nzTooltipTitle="Save the changes"></i>&nbsp;
       </span>
-      <a *ngIf="i < breadcrumbs.length - 1" href="#" (click)="onBreadcrumbClick($event, breadcrumb)">{{ breadcrumb.name }}</a>
-      <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>
-    </nz-breadcrumb-item>
-  </nz-breadcrumb>
-  <div class="chain-name">
-    <span>
-      {{chain.name}}
-      <button
+      <span>
+        <a *ngIf="i < breadcrumbs.length - 1" href="#" (click)="onBreadcrumbClick($event, breadcrumb)">{{ breadcrumb.name }}</a>
+        <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>&nbsp;
+        <a
+        class="edit-chain"
+        href="#"
+        (click)="onBreadcrumbEditClick($event, breadcrumb)"
         data-qe-id="chain-name-edit-btn"
         nz-button
         nz-popconfirm
         [nzPopconfirmTitle]="inputChainNameContent"
         nzPopconfirmPlacement="bottom"
-        (nzOnConfirm)="updateChainName()"
+        (nzOnConfirm)="onBreadcrumbEditDone(breadcrumb)"
         [nzVisible]="isNameChangePopconfirmVisible"
         nzType="default" class="chain-edit-btn"
-        nzOkText="Confirm"
-        (click)="onEditChainNameClick($event)"
-      ><i nz-icon nzType="edit" nzTheme="fill"></i></button>
-    </span>
-    <ng-template #inputChainNameContent>
-      <div>
-        <span>Edit Chain Name: </span>
-        <input nz-input #chainNameInput type="text" placeholder="Enter Chain Name" value ="{{ chain.name }}" (keyup.enter)="updateChainName()" data-qe-id="chain-name-field">
-      </div>
-    </ng-template>
-  </div>
+        nzOkText="Set"
+        ><i nz-icon nzType="edit" nzTheme="fill"></i></a>
+      </span>
+      <ng-template #inputChainNameContent>
+        <div>
+          <span>Set Chain Name</span>
+          <input nz-input #chainNameInput type="text" placeholder="Enter Chain Name" value ="{{ breadcrumb.name }}" (keyup.enter)="onBreadcrumbEditDone(breadcrumb)" data-qe-id="chain-name-field">
+        </div>
+      </ng-template>
+      <!-- <span *ngIf="chainIdBeingEdited == breadcrumb.id">
+        <input #chainNameInput type="text" [value]="breadcrumb.name" (keyup.enter)="onBreadcrumbEditDone($event, breadcrumb)" (blur)="onBreadcrumbEditDone($event, breadcrumb)" />
+      </span> -->
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
   <div class="chain-actions">
     <button nz-button nzType="default" type="button" (click)="onResetChanges($event)" [disabled]="!dirty">
       Reset

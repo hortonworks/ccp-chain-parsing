@@ -19,3 +19,11 @@
 .chain-edit-btn:hover {
   opacity: 1;
 }
+
+.edit-chain {
+  visibility: hidden;
+}
+
+.breadcrumb-item:hover .edit-chain {
+  visibility: visible;
+}
