@@ -7,23 +7,14 @@
   margin-left: 10px;
 }
 
+
+
+.custom-form-group {
+  margin: 5px auto !important;
+  text-align:right;
+}
+
 .chain-edit-btn {
   background:transparent;
-  border: 0;
-  opacity: 0.6;
-
-  .anticon-edit {
-    margin:0px !important;
-  }
-}
-.chain-edit-btn:hover {
-  opacity: 1;
-}
-
-.edit-chain {
-  visibility: hidden;
-}
-
-.breadcrumb-item:hover .edit-chain {
-  visibility: visible;
+  border:0px;
 }

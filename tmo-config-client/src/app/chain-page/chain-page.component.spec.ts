@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { IconDefinition } from '@ant-design/icons-angular';
@@ -49,6 +50,7 @@ describe('ChainPageComponent', () => {
           'chain-page': fromReducers.reducer
         }),
         NoopAnimationsModule,
+        ReactiveFormsModule,
       ],
       declarations: [ChainPageComponent, MockChainViewComponent, MockLiveViewComponent],
       providers: [
@@ -85,9 +87,9 @@ describe('ChainPageComponent', () => {
     expect(nameField).toBeTruthy();
   });
 
-  it('should call the updateChainName()', () => {
-    spyOn(component, 'updateChainName');
-    fixture.detectChanges();
+  it('should call the onBreadcrumbEditDone()', () => {
+    spyOn(component, 'onBreadcrumbEditDone');
+
     const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
     editBtn.click();
     fixture.detectChanges();
@@ -97,16 +99,16 @@ describe('ChainPageComponent', () => {
     nameField.dispatchEvent(new Event('input'));
     fixture.detectChanges();
 
-    const event: Event = new KeyboardEvent('keyup', {key: 'Enter'});
-    nameField.dispatchEvent(event);
+    const submitBtn: HTMLButtonElement = document.querySelector('[data-qe-id="edit-chain-name-submit-btn"]');
+    submitBtn.click();
     fixture.detectChanges();
-    expect(component.updateChainName).toHaveBeenCalled();
+
+    expect(component.onBreadcrumbEditDone).toHaveBeenCalled();
   });
 
-  it('updateChainName() will call the action', () => {
+  it('onBreadcrumbEditDone() will call the UpdateChain and SetDirty Actions', () => {
     spyOn(store, 'dispatch');
 
-    fixture.detectChanges();
     const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
     editBtn.click();
     fixture.detectChanges();
@@ -116,12 +118,13 @@ describe('ChainPageComponent', () => {
     nameField.dispatchEvent(new Event('input'));
     fixture.detectChanges();
 
-    const event: Event = new KeyboardEvent('keyup', {key: 'Enter'});
-    nameField.dispatchEvent(event);
+    const submitBtn: HTMLButtonElement = document.querySelector('[data-qe-id="edit-chain-name-submit-btn"]');
+    submitBtn.click();
     fixture.detectChanges();
 
     const actionUpdate = new fromActions.UpdateChainAction({chain: {id: '1', name: 'hello'}});
     const actionDirty = new fromActions.SetDirtyAction({dirty: true});
+
     expect(store.dispatch).toHaveBeenCalledWith(actionUpdate);
     expect(store.dispatch).toHaveBeenCalledWith(actionDirty);
   });

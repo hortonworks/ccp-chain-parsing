@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
-import { NzModalService, NzPopconfirmComponent } from 'ng-zorro-antd';
+import { NzModalService } from 'ng-zorro-antd';
 import { Observable, Observer, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -34,14 +35,14 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   chainConfig$: Observable<ChainDetailsModel>;
   chainIdBeingEdited: string;
   getChainsSubscription: Subscription;
+  popOverVisible = false;
   @ViewChild('chainNameInput', { static: false }) chainNameInput: ElementRef;
-  @ViewChild(NzPopconfirmComponent, { static: false }) foo: NzPopconfirmComponent;
-  isNameChangePopconfirmVisible = false;
-
+  editChainNameForm: FormGroup;
   constructor(
     private store: Store<ChainPageState>,
     private activatedRoute: ActivatedRoute,
     private modal: NzModalService,
+    private fb: FormBuilder,
   ) { }
 
   ngOnInit() {
@@ -76,6 +77,10 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
 
     this.store.pipe(select(isDirty)).subscribe((dirty) => {
       this.dirty = dirty;
+    });
+
+    this.editChainNameForm = this.fb.group({
+      name: new FormControl(null, [Validators.required, Validators.minLength(3)])
     });
   }
 
@@ -133,14 +138,14 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
 
   onBreadcrumbEditClick(event: Event, chain: ParserChainModel) {
     event.preventDefault();
-    this.chainIdBeingEdited = chain.id;
+    this.editChainNameForm.get('name').setValue(chain.name);
     setTimeout(() => {
       this.chainNameInput.nativeElement.focus();
     });
   }
 
   onBreadcrumbEditDone(chain: ParserChainModel) {
-    this.chainIdBeingEdited = '';
+    this.popOverVisible = false;
     const value = ((this.chainNameInput.nativeElement as HTMLInputElement).value || '').trim();
     if (value !== chain.name) {
       this.store.dispatch(new fromActions.UpdateChainAction({
@@ -156,6 +161,10 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         this.dirtyChains[chain.id] = new DirtyChain(chain.id);
       }
     }
+  }
+
+  onBreadcrumbEditCancel() {
+    this.popOverVisible = false;
   }
 
   canDeactivate(): Observable<boolean> {
@@ -217,26 +226,6 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         this.store.dispatch(new fromActions.SaveParserConfigAction({ chainId: this.chainId }));
       }
     });
-  }
-
-  onEditChainNameClick() {
-    this.isNameChangePopconfirmVisible = true;
-  }
-
-  updateChainName() {
-    this.isNameChangePopconfirmVisible = false;
-    const newName: string = (this.chainNameInput.nativeElement.value || '').trim();
-    if (newName !== this.chain.name) {
-      this.store.dispatch(new fromActions.UpdateChainAction({
-        chain: {
-          name: newName,
-          id: this.chain.id
-        }
-      }));
-      this.store.dispatch(new fromActions.SetDirtyAction({
-        dirty: true
-      }));
-    }
   }
 
   ngOnDestroy() {
