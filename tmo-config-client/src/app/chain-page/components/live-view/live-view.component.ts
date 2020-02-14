@@ -17,7 +17,7 @@ import {
   getSampleData,
 } from './live-view.selectors';
 import { LiveViewResultModel } from './models/live-view.model';
-import { SampleDataModel } from './models/sample-data.model';
+import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 
 @Component({
   selector: 'app-live-view',
@@ -44,6 +44,10 @@ export class LiveViewComponent implements AfterViewInit, OnDestroy {
     this.isLiveViewOn$ = this.store.pipe(select(getIsLiveViewOn));
   }
 
+  ngOnInit() {
+    this.store.dispatch(liveViewInitialized());
+  }
+
   ngAfterViewInit() {
     this.subscribeToRelevantChanges();
   }
@@ -55,7 +59,9 @@ export class LiveViewComponent implements AfterViewInit, OnDestroy {
       this.featureToggleChange$,
     ]).pipe(
       debounceTime(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE),
-      filter(([ sampleData, chainConfig, isLiveViewOn ]) => isLiveViewOn && !!sampleData.source),
+      filter(([ sampleData, chainConfig, isLiveViewOn ]) => {
+        return isLiveViewOn && !!sampleData.source
+      }),
       takeUntil(this.unsubscribe$)
     ).subscribe(([ sampleData, chainConfig ]) => {
       this.store.dispatch(executionTriggered({ sampleData, chainConfig }));
@@ -65,21 +71,8 @@ export class LiveViewComponent implements AfterViewInit, OnDestroy {
         takeUntil(this.unsubscribe$),
         filter(value => value !== null),
       ).subscribe(value => {
-      localStorage.setItem(LiveViewConsts.FEATURE_TOGGLE_STORAGE_KEY, value.toString());
       this.store.dispatch(onOffToggleChanged({ value }));
     });
-
-    this.sampleDataChange$.pipe(
-        takeUntil(this.unsubscribe$),
-        filter(value => value !== null),
-        switchMap(() => {
-          return this.store.pipe(select(getSampleData));
-        })
-      ).subscribe(value => {
-        localStorage.setItem(LiveViewConsts.SAMPLE_DATA_STORAGE_KEY, JSON.stringify(value));
-      });
-
-    this.store.dispatch(liveViewInitialized());
   }
 
   ngOnDestroy(): void {

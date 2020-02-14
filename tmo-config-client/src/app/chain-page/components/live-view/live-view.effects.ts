@@ -3,7 +3,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { NzMessageService } from 'ng-zorro-antd';
 import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap, filter } from 'rxjs/operators';
 
 import {
   executionTriggered,
@@ -13,6 +13,7 @@ import {
   liveViewRefreshFailed,
   onOffToggleRestored,
   sampleDataRestored,
+  onOffToggleChanged,
 } from './live-view.actions';
 import { LiveViewConsts } from './live-view.consts';
 import { LiveViewService } from './services/live-view.service';
@@ -38,6 +39,26 @@ export class LiveViewEffects {
           return of(liveViewRefreshFailed({ error }));
         })
       );
+    })
+  );
+
+  @Effect({ dispatch: false})
+  persistingSapmleData$ = this.actions$.pipe(
+    ofType(
+      executionTriggered.type,
+    ),
+    tap(({ sampleData }) => {
+      localStorage.setItem(LiveViewConsts.SAMPLE_DATA_STORAGE_KEY, JSON.stringify(sampleData));
+    })
+  );
+
+  @Effect({ dispatch: false})
+  persistingOnOffToggle$ = this.actions$.pipe(
+    ofType(
+      onOffToggleChanged.type,
+    ),
+    tap(({ value }) => {
+      localStorage.setItem(LiveViewConsts.FEATURE_TOGGLE_STORAGE_KEY, JSON.stringify(value));
     })
   );
 

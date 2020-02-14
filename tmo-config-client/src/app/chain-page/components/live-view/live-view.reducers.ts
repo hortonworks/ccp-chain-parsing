@@ -61,12 +61,16 @@ export function reducer(
       };
     }
     case onOffToggleRestored.type: {
+      if (action.value === null) return state;
+
       return {
         ...state,
         isLiveViewOn: action.value
       };
     }
     case sampleDataRestored.type: {
+      if (action.sampleData === null) return state;
+
       return {
         ...state,
         sampleData: action.sampleData
