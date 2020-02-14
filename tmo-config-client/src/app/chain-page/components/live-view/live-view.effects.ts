@@ -47,8 +47,8 @@ export class LiveViewEffects {
       liveViewInitialized.type,
     ),
     switchMap(() => {
-      const value = JSON.parse(localStorage.getItem(LiveViewConsts.SAMPLE_DATA_STORAGE_KEY));
-      return of(sampleDataRestored(value));
+      const sampleData = JSON.parse(localStorage.getItem(LiveViewConsts.SAMPLE_DATA_STORAGE_KEY));
+      return of(sampleDataRestored({ sampleData }));
     })
   );
 
@@ -59,7 +59,7 @@ export class LiveViewEffects {
     ),
     switchMap(() => {
       const value = JSON.parse(localStorage.getItem(LiveViewConsts.FEATURE_TOGGLE_STORAGE_KEY));
-      return of(onOffToggleRestored(value));
+      return of(onOffToggleRestored({ value }));
     })
   );
 }

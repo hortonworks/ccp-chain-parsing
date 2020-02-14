@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { debounceTime, filter, takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, takeUntil, switchMap } from 'rxjs/operators';
 
 import {
   executionTriggered,
@@ -72,6 +72,9 @@ export class LiveViewComponent implements AfterViewInit, OnDestroy {
     this.sampleDataChange$.pipe(
         takeUntil(this.unsubscribe$),
         filter(value => value !== null),
+        switchMap(() => {
+          return this.store.pipe(select(getSampleData));
+        })
       ).subscribe(value => {
         localStorage.setItem(LiveViewConsts.SAMPLE_DATA_STORAGE_KEY, JSON.stringify(value));
       });

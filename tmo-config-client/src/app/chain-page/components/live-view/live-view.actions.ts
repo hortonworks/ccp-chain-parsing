@@ -34,7 +34,7 @@ export const sampleDataRestored = createAction(
 
 export const onOffToggleRestored = createAction(
   '[LiveView] On/Off Toggle Restored',
-  props<{ sampleData: SampleDataModel }>()
+  props<{ value: boolean }>()
 );
 
 const actions = union({

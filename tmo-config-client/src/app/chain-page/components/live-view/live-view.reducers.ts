@@ -4,6 +4,8 @@ import {
   liveViewRefreshedSuccessfully,
   liveViewRefreshFailed,
   onOffToggleChanged,
+  onOffToggleRestored,
+  sampleDataRestored,
 } from './live-view.actions';
 import { LiveViewResultModel } from './models/live-view.model';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
@@ -58,10 +60,16 @@ export function reducer(
         isExecuting: false,
       };
     }
-    case onOffToggleChanged.type: {
+    case onOffToggleRestored.type: {
       return {
         ...state,
         isLiveViewOn: action.value
+      };
+    }
+    case sampleDataRestored.type: {
+      return {
+        ...state,
+        sampleData: action.sampleData
       };
     }
     default: {
