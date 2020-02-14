@@ -18,14 +18,18 @@
 
 package com.cloudera.parserchains.queryservice.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ParserChain {
 
   private String id;
   private String name;
+  private List<Parser> parsers;
 
   public ParserChain() {
+    parsers = new ArrayList<>();
   }
 
   public String getId() {
@@ -44,6 +48,14 @@ public class ParserChain {
   public ParserChain setName(String name) {
     this.name = name;
     return this;
+  }
+
+  public List<Parser> getParsers() {
+    return parsers;
+  }
+
+  public void setParsers(List<Parser> parsers) {
+    this.parsers = parsers;
   }
 
   @Override

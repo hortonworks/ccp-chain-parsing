@@ -19,10 +19,10 @@
 package com.cloudera.parserchains.queryservice.controller;
 
 import com.cloudera.parserchains.queryservice.common.ApplicationConstants;
+import com.cloudera.parserchains.queryservice.config.AppProperties;
 import com.cloudera.parserchains.queryservice.model.ParserChain;
 import com.cloudera.parserchains.queryservice.model.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ParserConfigService;
-import com.cloudera.parserchains.queryservice.config.AppProperties;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
