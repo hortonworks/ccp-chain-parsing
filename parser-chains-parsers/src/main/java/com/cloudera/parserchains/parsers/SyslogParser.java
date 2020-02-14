@@ -3,6 +3,7 @@ package com.cloudera.parserchains.parsers;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
+import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.Parser;
 import com.github.palindromicity.syslog.SyslogParserBuilder;
 import com.github.palindromicity.syslog.SyslogSpecification;
@@ -16,6 +17,9 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 
+@MessageParser(
+    name="Syslog",
+    description="Parses Syslog according to RFC 3164 and 5424.")
 public class SyslogParser implements Parser {
 
     private FieldName inputField;

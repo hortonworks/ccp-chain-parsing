@@ -3,6 +3,7 @@ package com.cloudera.parserchains.parsers;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
+import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.Parser;
 
 import java.util.Arrays;
@@ -13,6 +14,9 @@ import java.util.Objects;
  * A parser that adds the current system time as a field to the message. Useful for
  * tracking the time when a message was parsed.
  */
+@MessageParser(
+    name="Timestamp",
+    description="Adds a timestamp to a message. Can be used to mark processing time.")
 public class TimestampParser implements Parser {
 
     public static class Clock {
