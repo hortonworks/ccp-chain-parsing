@@ -14,6 +14,7 @@ import {
   onOffToggleRestored,
   sampleDataRestored,
   onOffToggleChanged,
+  sampleDataInputChanged,
 } from './live-view.actions';
 import { LiveViewConsts } from './live-view.consts';
 import { LiveViewService } from './services/live-view.service';
@@ -45,7 +46,7 @@ export class LiveViewEffects {
   @Effect({ dispatch: false})
   persistingSapmleData$ = this.actions$.pipe(
     ofType(
-      executionTriggered.type,
+      sampleDataInputChanged.type,
     ),
     tap(({ sampleData }) => {
       localStorage.setItem(LiveViewConsts.SAMPLE_DATA_STORAGE_KEY, JSON.stringify(sampleData));

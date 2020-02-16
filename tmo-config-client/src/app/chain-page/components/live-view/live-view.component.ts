@@ -7,6 +7,7 @@ import {
   executionTriggered,
   liveViewInitialized,
   onOffToggleChanged,
+  sampleDataInputChanged,
 } from './live-view.actions';
 import { LiveViewConsts } from './live-view.consts';
 import { LiveViewState } from './live-view.reducers';
@@ -54,14 +55,12 @@ export class LiveViewComponent implements AfterViewInit, OnDestroy {
 
   private subscribeToRelevantChanges() {
     combineLatest([
-      this.sampleDataChange$,
+      this.sampleData$,
       this.chainConfig$,
-      this.featureToggleChange$,
+      this.isLiveViewOn$,
     ]).pipe(
       debounceTime(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE),
-      filter(([ sampleData, chainConfig, isLiveViewOn ]) => {
-        return isLiveViewOn && !!sampleData.source
-      }),
+      filter(([ sampleData, chainConfig, isLiveViewOn ]) => isLiveViewOn && !!sampleData.source),
       takeUntil(this.unsubscribe$)
     ).subscribe(([ sampleData, chainConfig ]) => {
       this.store.dispatch(executionTriggered({ sampleData, chainConfig }));
@@ -72,6 +71,13 @@ export class LiveViewComponent implements AfterViewInit, OnDestroy {
         filter(value => value !== null),
       ).subscribe(value => {
       this.store.dispatch(onOffToggleChanged({ value }));
+    });
+
+    this.sampleDataChange$.pipe(
+      takeUntil(this.unsubscribe$),
+      filter(sampleData => sampleData !== null),
+    ).subscribe(sampleData => {
+      this.store.dispatch(sampleDataInputChanged({ sampleData }));
     });
   }
 

@@ -22,6 +22,11 @@ export const liveViewRefreshFailed = createAction(
   props<{ error: { message: string } }>()
 );
 
+export const sampleDataInputChanged = createAction(
+  '[LiveView] Sample Data Input Changed',
+  props<{ sampleData: SampleDataModel }>()
+);
+
 export const onOffToggleChanged = createAction(
   '[LiveView] On/Off Toggle Changed',
   props<{ value: boolean }>()
@@ -43,6 +48,7 @@ const actions = union({
   liveViewRefreshedSuccessfully,
   liveViewRefreshFailed,
   onOffToggleChanged,
+  sampleDataInputChanged,
   onOffToggleRestored,
   sampleDataRestored,
 });

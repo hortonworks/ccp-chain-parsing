@@ -6,6 +6,7 @@ import {
   onOffToggleChanged,
   onOffToggleRestored,
   sampleDataRestored,
+  sampleDataInputChanged,
 } from './live-view.actions';
 import { LiveViewResultModel } from './models/live-view.model';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
@@ -34,12 +35,6 @@ export function reducer(
   action: LiveViewActionsType
 ): LiveViewState {
   switch (action.type) {
-    case onOffToggleChanged.type: {
-      return {
-        ...state,
-        isLiveViewOn: action.value,
-      };
-    }
     case executionTriggered.type: {
       return {
         ...state,
@@ -60,12 +55,24 @@ export function reducer(
         isExecuting: false,
       };
     }
+    case onOffToggleChanged.type: {
+      return {
+        ...state,
+        isLiveViewOn: action.value,
+      };
+    }
     case onOffToggleRestored.type: {
       if (action.value === null) return state;
 
       return {
         ...state,
         isLiveViewOn: action.value
+      };
+    }
+    case sampleDataInputChanged.type: {
+      return {
+        ...state,
+        sampleData: action.sampleData,
       };
     }
     case sampleDataRestored.type: {
