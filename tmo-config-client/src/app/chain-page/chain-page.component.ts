@@ -146,7 +146,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
 
   onBreadcrumbEditDone(chain: ParserChainModel) {
     this.popOverVisible = false;
-    const value = ((this.chainNameInput.nativeElement as HTMLInputElement).value || '').trim();
+    const value = (this.editChainNameForm.get('name').value || '').trim();
     if (value !== chain.name) {
       this.store.dispatch(new fromActions.UpdateChainAction({
         chain: {
