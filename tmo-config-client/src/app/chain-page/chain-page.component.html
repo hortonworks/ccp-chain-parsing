@@ -24,7 +24,6 @@
       <div nz-col nzSpan="1">
         <a
           class="chain-edit-btn"
-          href="#"
           (click)="onChainNameEditClick($event, chain)"
           data-qe-id="chain-name-edit-btn"
           nz-button
@@ -43,6 +42,7 @@
             <form [formGroup]="editChainNameForm" (ngSubmit) = "onBreadcrumbEditDone(chain)">
               <div class="custom-form-group">
                 <input
+                  autofocus
                   formControlName="name"
                   required
                   nz-input

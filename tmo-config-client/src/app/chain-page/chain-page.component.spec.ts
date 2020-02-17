@@ -148,12 +148,12 @@ describe('ChainPageComponent', () => {
     fixture.detectChanges();
 
     // commented codes are giving console errors on run
-    // const submitBtn: HTMLButtonElement = document.querySelector('[data-qe-id="edit-chain-name-submit-btn"]');
-    // submitBtn.click();
-    // fixture.detectChanges();
+    const submitBtn: HTMLButtonElement = document.querySelector('[data-qe-id="edit-chain-name-submit-btn"]');
+    submitBtn.click();
+    fixture.detectChanges();
 
     // using the function call instead of button click
-    component.onBreadcrumbEditDone(component.chain);
+    // component.onBreadcrumbEditDone(component.chain);
     // expect(component.onBreadcrumbEditDone).toHaveBeenCalled();
 
     const actionUpdate = new fromActions.UpdateChainAction({chain: {id: '1', name: 'new_name'}});
