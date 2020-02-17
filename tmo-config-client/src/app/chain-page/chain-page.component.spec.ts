@@ -136,7 +136,6 @@ describe('ChainPageComponent', () => {
 
   it('onBreadcrumbEditDone() will call the UpdateChain and SetDirty Actions', () => {
     spyOn(store, 'dispatch');
-    // spyOn(component, 'onBreadcrumbEditDone').and.callThrough();
 
     const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
     editBtn.click();
@@ -147,14 +146,9 @@ describe('ChainPageComponent', () => {
     nameField.dispatchEvent(new Event('input'));
     fixture.detectChanges();
 
-    // commented codes are giving console errors on run
     const submitBtn: HTMLButtonElement = document.querySelector('[data-qe-id="edit-chain-name-submit-btn"]');
     submitBtn.click();
     fixture.detectChanges();
-
-    // using the function call instead of button click
-    // component.onBreadcrumbEditDone(component.chain);
-    // expect(component.onBreadcrumbEditDone).toHaveBeenCalled();
 
     const actionUpdate = new fromActions.UpdateChainAction({chain: {id: '1', name: 'new_name'}});
     const actionDirty = new fromActions.SetDirtyAction({dirty: true});
