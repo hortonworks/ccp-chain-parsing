@@ -136,7 +136,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     this.breadcrumbs = this.breadcrumbs.slice(0, index + 1);
   }
 
-  onBreadcrumbEditClick(event: Event, chain: ParserChainModel) {
+  onChainNameEditClick(event: Event, chain: ParserChainModel) {
     event.preventDefault();
     this.editChainNameForm.get('name').setValue(chain.name);
     setTimeout(() => {
