@@ -44,7 +44,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   ) { }
 
   get dirty() {
-    return this.dirtyParsers.length || this.dirtyParsers;
+    return this.dirtyParsers.length || this.dirtyParsers.length;
   }
 
   ngOnInit() {
