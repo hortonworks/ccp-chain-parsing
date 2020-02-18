@@ -122,6 +122,13 @@ export function reducer(
         }
       };
     }
+    case chainPageActions.SAVE_PARSER_CONFIG: {
+      return {
+        ...state,
+        dirtyChains: [],
+        dirtyParsers: []
+      };
+    }
   }
   return state;
 }

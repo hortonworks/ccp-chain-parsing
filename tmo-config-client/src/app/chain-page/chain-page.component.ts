@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { NzModalService } from 'ng-zorro-antd';
@@ -9,7 +10,7 @@ import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
-import { ChainPageState, getChain, getChainDetails, getDirtyStatus } from './chain-page.reducers';
+import { ChainPageState, getChain, getChainDetails, getChains, getDirtyStatus } from './chain-page.reducers';
 
 @Component({
   selector: 'app-chain-page',
@@ -25,15 +26,19 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   dirtyParsers: string[] = [];
   chainConfig$: Observable<ChainDetailsModel>;
   getChainSubscription: Subscription;
-  editMode = false;
-  @ViewChild('chainNameInput', { static: false }) chainNameInput: ElementRef;
   forceDeactivate = false;
+  chainIdBeingEdited: string;
+  getChainsSubscription: Subscription;
+  popOverVisible = false;
+  @ViewChild('chainNameInput', { static: false }) chainNameInput: ElementRef;
+  editChainNameForm: FormGroup;
 
   constructor(
     private store: Store<ChainPageState>,
     private activatedRoute: ActivatedRoute,
     private modal: NzModalService,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder
   ) { }
 
   get dirty() {
@@ -45,6 +50,12 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
       this.chainId = params.id;
     });
 
+    this.getChainsSubscription = this.store.pipe(select(getChains)).subscribe((chains) => {
+      this.breadcrumbs = this.breadcrumbs.map(breadcrumb => {
+        return chains[breadcrumb.id];
+      });
+    });
+
     this.getChainSubscription = this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain: ParserChainModel) => {
       if (!chain) {
         this.store.dispatch(new fromActions.LoadChainDetailsAction({
@@ -52,13 +63,11 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         }));
       } else if (chain && chain.parsers && chain.parsers.length > 0) {
         this.chain = chain;
-
         this.breadcrumbs = this.breadcrumbs.length > 0 ? this.breadcrumbs : [this.chain];
 
         const chainIndexInPath = this.breadcrumbs.length > 0
           ? this.breadcrumbs.findIndex(breadcrumb => chain.id === breadcrumb.id)
           : null;
-
         if (chainIndexInPath > -1) {
           this.breadcrumbs[chainIndexInPath] = chain;
         }
@@ -79,6 +88,10 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         }
       }
     });
+
+    this.editChainNameForm = this.fb.group({
+      name: new FormControl(null, [Validators.required, Validators.minLength(3)])
+    });
   }
 
   removeParser(id: string) {
@@ -98,6 +111,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     this.store.pipe(select(getChain, { id: chainId })).pipe(take(1)).subscribe((chain: ParserChainModel) => {
       const breadcrumbIndex = this.breadcrumbs.findIndex((breadcrumb) => breadcrumb.id === chain.id);
       if (breadcrumbIndex > -1) {
+
         this.breadcrumbs[breadcrumbIndex] = chain;
       } else {
         this.breadcrumbs.push(chain);
@@ -109,6 +123,28 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     event.preventDefault();
     const index = this.breadcrumbs.findIndex((breadcrumb: ParserChainModel) => breadcrumb.id === chain.id);
     this.breadcrumbs = this.breadcrumbs.slice(0, index + 1);
+  }
+
+  onChainNameEditClick(event: Event, chain: ParserChainModel) {
+    event.preventDefault();
+    this.editChainNameForm.get('name').setValue(chain.name);
+  }
+
+  onChainNameEditDone(chain: ParserChainModel) {
+    this.popOverVisible = false;
+    const value = (this.editChainNameForm.get('name').value || '').trim();
+    if (value !== chain.name) {
+      this.store.dispatch(new fromActions.UpdateChainAction({
+        chain: {
+          id: chain.id,
+          name: value
+        }
+      }));
+    }
+  }
+
+  onChainNameEditCancel() {
+    this.popOverVisible = false;
   }
 
   canDeactivate(): Observable<boolean> {
@@ -162,30 +198,12 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   }
 
   ngOnDestroy() {
+    this.breadcrumbs = [];
+    if (this.getChainsSubscription) {
+      this.getChainsSubscription.unsubscribe();
+    }
     if (this.getChainSubscription) {
       this.getChainSubscription.unsubscribe();
-    }
-  }
-
-  updateChainName() {
-    const newName: string = (this.chainNameInput.nativeElement.value || '').trim();
-    if (newName !== this.chain.name) {
-      this.store.dispatch(new fromActions.UpdateChainAction({
-        chain: {
-          name: newName,
-          id: this.chain.id
-        }
-      }));
-    }
-    this.toggleEditMode();
-  }
-
-  toggleEditMode() {
-    this.editMode = !this.editMode;
-    if (this.editMode) {
-      setTimeout(() => {
-        this.chainNameInput.nativeElement.focus();
-      }, 0);
     }
   }
 }
