@@ -1,6 +1,6 @@
 import { createSelector } from '@ngrx/store';
 
-import { ParserModel } from '../chain-page/chain-details.model';
+import { ParserModel } from '../chain-page/chain-page.models';
 
 import * as addParserActions from './chain-add-parser-page.actions';
 
@@ -37,16 +37,16 @@ export function reducer(
   return state;
 }
 
-function getChainPageState(state: any): AddParserPageState {
+function getChainAddParserPageState(state: any): AddParserPageState {
   return state['chain-add-parser-page'];
 }
 
 export const getParserTypes = createSelector(
-  getChainPageState,
+  getChainAddParserPageState,
   (state: AddParserPageState) => state.parserTypes
 );
 
 export const getParsers = createSelector(
-  getChainPageState,
+  getChainAddParserPageState,
   (state: AddParserPageState) => state.parsers
 );

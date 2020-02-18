@@ -11,6 +11,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
+import { LiveViewResultComponent } from './live-view-result/live-view-result.component';
 import { LiveViewComponent } from './live-view.component';
 import { LiveViewEffects } from './live-view.effects';
 import { reducer } from './live-view.reducers';
@@ -18,7 +19,11 @@ import { SampleDataFormComponent } from './sample-data-form/sample-data-form.com
 import { LiveViewService } from './services/live-view.service';
 
 @NgModule({
-  declarations: [ LiveViewComponent, SampleDataFormComponent ],
+  declarations: [
+    LiveViewComponent,
+    SampleDataFormComponent,
+    LiveViewResultComponent,
+  ],
   imports: [
     NgZorroAntdModule,
     CommonModule,

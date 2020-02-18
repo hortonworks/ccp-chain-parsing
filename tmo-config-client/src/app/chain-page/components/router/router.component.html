@@ -1,0 +1,48 @@
+<div class="parser">
+  <nz-card class="chain-item" [nzBordered]="true" [nzTitle]="parser.name" [nzExtra]="extraTemplate">
+    <nz-tabset
+      nzTabPosition="top"
+      nzType="line"
+    >
+      <nz-tab nzTitle="Basics">
+        <app-custom-form
+          *ngIf="areFormsReadyToRender && metaDataForm != null"
+          [config]="metaDataForm"
+        ></app-custom-form>
+      </nz-tab>
+      <nz-tab nzTitle="Config">
+        <div class="router-config" *ngIf="parser.config && parser.config.routes">
+          <div class="matching-field">
+            Matching field: {{ parser.config.matchingField }}
+          </div>
+          <div class="routes">
+            <app-route
+              *ngFor="let routeId of parser.config.routes"
+                [routeId]="routeId"
+                (chainClick)="onSubchainClick($event)"
+              ></app-route>
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Outputs">
+        Outputs tab
+      </nz-tab>
+      <nz-tab nzTitle="Advanced">
+        Advanced tab
+      </nz-tab>
+    </nz-tabset>
+  </nz-card>
+  <ng-template #extraTemplate>
+    <button
+      nz-popconfirm
+      nzPopconfirmTitle="Are you sure delete this task?"
+      (nzOnConfirm)="onRemoveParser(parser.id)"
+      nzPopconfirmPlacement="right"
+      nz-button
+      nzType="link"
+      data-qe-id="remove-parser"
+    >
+      Remove Parser
+    </button>
+  </ng-template>
+</div>

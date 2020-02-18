@@ -1,0 +1,21 @@
+<div *ngIf="parser" class="parser-container">
+  <app-parser
+    *ngIf="parser.type !== 'Router'"
+    [parser]="parser"
+    [dirty]="dirty"
+    [configForm]="configForm"
+    [outputsForm]="outputsForm"
+    [metaDataForm]="metaDataForm"
+    (parserChange)="onParserChange($event)"
+    (removeParser)="onRemoveParser($event)"
+  ></app-parser>
+  <app-router
+    *ngIf="parser.type === 'Router'"
+    [parser]="parser"
+    [dirty]="dirty"
+    [metaDataForm]="metaDataForm"
+    (subchainSelect)="onSubchainSelect($event)"
+    (parserChange)="onParserChange($event)"
+    (removeParser)="onRemoveParser($event)"
+  ></app-router>
+</div>

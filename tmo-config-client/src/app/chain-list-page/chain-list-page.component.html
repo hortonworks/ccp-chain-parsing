@@ -18,11 +18,11 @@
   </form>
 </nz-modal>
 
-<nz-card nzTitle="Parser Chains" [nzExtra] = "AddButton">
-  <nz-table #basicTable [nzData]="chains$ | async" [nzShowPagination]="false">
-    <thead>
+<nz-card nzTitle="Parser Chains" [nzExtra]="AddButton">
+  <nz-table #basicTable [nzData]="chainDataSorted$ | async" [nzShowPagination]="false">
+    <thead (nzSortChange)="sortDescription$.next($event)">
       <tr>
-        <th>Name</th>
+        <th nzShowSort nzSortKey="name">Name</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -51,6 +51,6 @@
     </tbody>
   </nz-table>
   <div class="pagination-container">
-    <nz-pagination [nzPageIndex]="pageNumber" [nzTotal]="totalRecords" nzShowSizeChanger [nzPageSize]="10" (nzPageIndexChange)="setPageNumber($event)" (nzPageSizeChange)="setPageSize($event)"></nz-pagination>
+    <nz-pagination [nzPageIndex]="pageNumber" [nzTotal]="totalRecords" nzShowSizeChanger [nzPageSize]="pageSize" (nzPageIndexChange)="setPageNumber($event)" (nzPageSizeChange)="setPageSize($event)"></nz-pagination>
   </div>
 </nz-card>

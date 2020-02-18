@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { LoadChainsAction } from './chain-list-page.actions';
 import * as fromActions from './chain-list-page.actions';
@@ -27,7 +28,8 @@ export class ChainListPageComponent implements OnInit {
   pageSize: number;
   chains$: Observable<ChainModel[]>;
   totalRecords = 200;
-
+  chainDataSorted$: Observable<ChainModel[]>;
+  sortDescription$: BehaviorSubject<{key: string, value: string}> = new BehaviorSubject({ key: 'name', value: '' });
   constructor(
     private store: Store<ChainListPageState>,
     private fb: FormBuilder,
@@ -42,7 +44,15 @@ export class ChainListPageComponent implements OnInit {
       store.dispatch(new LoadChainsAction({page: this.pageNumber, pageSize: this.pageSize}));
       this.chains$ = store.pipe(select(getChains));
     });
+
+    this.chainDataSorted$ = combineLatest([
+      this.chains$,
+      this.sortDescription$
+    ]).pipe(
+      switchMap(([ chains, sortDescription ]) => this.sortTable(chains, sortDescription))
+    );
   }
+
 
   newChainForm: FormGroup;
 
@@ -85,10 +95,25 @@ export class ChainListPageComponent implements OnInit {
     });
   }
 
+  sortTable(data, sortDescription): Observable<[]> {
+    const sortValue = sortDescription.value;
+    const newData = data.slice().sort((a, b): number => {
+      const first = a.name.toLowerCase();
+      const second = b.name.toLowerCase();
+      if (sortValue === 'ascend') {
+        return (first < second) ? -1 : 1;
+      } else if (sortValue === 'descend') {
+        return (first < second) ? 1 : -1;
+      } else {
+        return 0;
+      }
+    });
+    return of(newData);
+  }
+
   ngOnInit() {
     this.newChainForm = this.fb.group({
       chainName: new FormControl('', [Validators.required, Validators.minLength(3)]),
     });
   }
-
 }

@@ -5,16 +5,15 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IconDefinition } from '@ant-design/icons-angular';
 import { DeleteFill, RightSquareFill } from '@ant-design/icons-angular/icons';
-import { EffectsModule } from '@ngrx/effects';
-import { Store, StoreModule } from '@ngrx/store';
+import { Store } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 import { of } from 'rxjs';
 
 import { ChainListPageService } from './../services/chain-list-page.service';
 import * as fromActions from './chain-list-page.actions';
 import { ChainListPageComponent } from './chain-list-page.component';
-import { ChainListEffects } from './chain-list-page.effects';
-import * as fromReducers from './chain-list-page.reducers';
+import { ChainModel } from './chain.model';
 
 const icons: IconDefinition[] = [DeleteFill, RightSquareFill];
 
@@ -45,7 +44,26 @@ describe('ChainListPageComponent', () => {
   let component: ChainListPageComponent;
   let fixture: ComponentFixture<ChainListPageComponent>;
   let service: ChainListPageService;
-  let store: Store<fromReducers.ChainListPageState>;
+
+  let store: MockStore<{
+    'chain-list-page': {
+      loading: boolean;
+      error: string;
+      items: ChainModel[];
+    }
+  }>;
+
+  const initialState = {
+    'chain-list-page': {
+      loading: false,
+      error: '',
+      items: [
+        { id: 'id1', name: 'Chain 1' },
+        { id: 'id2', name: 'Chain 2' },
+        { id: 'id3', name: 'Chain 3' }
+      ]
+    }
+  };
 
   function clickOkOnPopConfirm() {
     (document.querySelector(
@@ -67,13 +85,10 @@ describe('ChainListPageComponent', () => {
         ReactiveFormsModule,
         RouterTestingModule,
         NoopAnimationsModule,
-        StoreModule.forRoot({
-          'chain-list-page': fromReducers.reducer
-        }),
-        EffectsModule.forRoot([ChainListEffects])
       ],
       declarations: [ChainListPageComponent],
       providers: [
+        provideMockStore({ initialState }),
         {
           provide: ChainListPageService,
           useClass: FakeChainListPageService
@@ -96,11 +111,7 @@ describe('ChainListPageComponent', () => {
   });
 
   it('should show up confimation when user click the delete button', () => {
-    component.chains$ = of([
-      { id: 'id1', name: 'Chain 1' },
-      { id: 'id2', name: 'Chain 2' },
-      { id: 'id3', name: 'Chain 3' }
-    ]);
+
     fixture.detectChanges();
 
     const indexOfSecondDeleteBtn = 1;
@@ -112,11 +123,6 @@ describe('ChainListPageComponent', () => {
 
   it('should dispatch an action to delete the chain', () => {
     spyOn(store, 'dispatch').and.callThrough();
-    component.chains$ = of([
-      { id: 'id1', name: 'Chain 1' },
-      { id: 'id2', name: 'Chain 2' },
-      { id: 'id3', name: 'Chain 3' }
-    ]);
     fixture.detectChanges();
     const index = 0;
     clickDeleteBtnOnIndex(index);
@@ -128,6 +134,22 @@ describe('ChainListPageComponent', () => {
 
     fixture.detectChanges();
     expect(store.dispatch).toHaveBeenCalledWith(action);
+  });
+
+  it('should change the sort order to descending', () => {
+    component.sortDescription$.next({key: 'name', value: 'descend'});
+    fixture.detectChanges();
+    component.chainDataSorted$.subscribe(
+      data => expect(data[0].name).toBe('Chain 3')
+    );
+  });
+
+  it('should change the sort order to ascending', () => {
+    component.sortDescription$.next({key: 'name', value: 'ascend'});
+    fixture.detectChanges();
+    component.chainDataSorted$.subscribe(
+      data => expect(data[0].name).toBe('Chain 1')
+    );
   });
 
   it('should call the pushValue function', () => {
@@ -169,5 +191,30 @@ describe('ChainListPageComponent', () => {
     const action = new fromActions.CreateChainAction({name: 'New Chain'});
 
     expect(store.dispatch).toHaveBeenCalledWith(action);
+  });
+
+  it('should call setPageNumber', () => {
+    spyOn(component, 'setPageNumber').and.callThrough();
+    spyOn(component, 'setPagination');
+    const navigationButton = fixture.debugElement.queryAll(By.css('.ant-pagination-item'))[2].nativeElement;
+    navigationButton.click();
+    expect(component.setPageNumber).toHaveBeenCalledWith(3);
+    expect(component.setPagination).toHaveBeenCalled();
+  });
+
+  it('should call setPageSize', () => {
+    spyOn(component, 'setPageSize').and.callThrough();
+    spyOn(component, 'setPagination');
+    const pageSizeSelector: HTMLSelectElement = fixture.debugElement.query(
+      By.css('nz-select')
+    ).nativeElement;
+    pageSizeSelector.click();
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('ul.ant-select-dropdown-menu li:nth-child(2)')).nativeElement.click();
+    pageSizeSelector.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(component.setPageSize).toHaveBeenCalledWith(20);
+    expect(component.setPagination).toHaveBeenCalled();
   });
 });

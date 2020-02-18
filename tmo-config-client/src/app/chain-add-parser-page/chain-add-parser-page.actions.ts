@@ -1,10 +1,8 @@
 import { Action } from '@ngrx/store';
 
-import { ParserModel } from '../chain-page/chain-details.model';
+import { ParserModel } from '../chain-page/chain-page.models';
 
-export const ADD_PARSER = '[Chain Add Parser] add start';
-export const ADD_PARSER_SUCCESS = '[Chain Add Parser] add success';
-export const ADD_PARSER_FAIL = '[Chain Add Parser] add fail';
+export const ADD_PARSER = '[Chain Add Parser] add parser';
 export const GET_PARSER_TYPES = '[Chain Add Parser] get parser types';
 export const GET_PARSER_TYPES_SUCCESS = '[Chain Add Parser] get parser types success';
 export const GET_PARSER_TYPES_FAIL = '[Chain Add Parser] get parser types fail';
@@ -23,19 +21,6 @@ export class AddParserAction implements Action {
     chainId: string,
     parser: ParserModel
   }) {}
-}
-
-export class AddParserSuccessAction implements Action {
-  readonly type = ADD_PARSER_SUCCESS;
-  constructor(public payload: {
-    chainId: string,
-    parser: ParserModel
-  }) {}
-}
-
-export class AddParserFailAction implements Action {
-  readonly type = ADD_PARSER_FAIL;
-  constructor(public error: { message: string }) {}
 }
 
 export class GetParserTypesAction implements Action {
@@ -69,8 +54,6 @@ export class GetParsersFailAction implements Action {
 }
 
 export type ParserAction = AddParserAction
-  | AddParserSuccessAction
-  | AddParserFailAction
   | GetParserTypesAction
   | GetParserTypesSuccessAction
   | GetParserTypesFailAction
