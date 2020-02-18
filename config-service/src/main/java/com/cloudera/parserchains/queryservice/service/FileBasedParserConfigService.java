@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,20 +68,34 @@ public class FileBasedParserConfigService implements ParserConfigService {
     if (!Files.exists(path)) {
       Files.createDirectories(path);
     }
+    List<Path> inputs = getFilesSorted(path);
     List<ParserChainSummary> summaries = new ArrayList<>();
-    try (DirectoryStream<Path> files = Files.newDirectoryStream(path, fileFilter)) {
-      for (Path file : files) {
-        try {
-          ParserChain chain = JSONUtils.INSTANCE.load(file.toFile(), ParserChain.class);
-          summaries.add(new ParserChainSummary(chain));
-        } catch (IOException ioe) {
-          LOG.warn(
-              "Found a file in the config directory that was unable to be deserialized as a parser chain: '{}'",
-              file, ioe);
-        }
+    for (Path file : inputs) {
+      try {
+        ParserChain chain = JSONUtils.INSTANCE.load(file.toFile(), ParserChain.class);
+        summaries.add(new ParserChainSummary(chain));
+      } catch (IOException ioe) {
+        LOG.warn(
+            "Found a file in the config directory that was unable to be deserialized as a parser chain: '{}'",
+            file, ioe);
       }
     }
     return summaries;
+  }
+
+  private List<Path> getFilesSorted(Path path) throws IOException {
+    List<Path> inputs = new ArrayList<>();
+    try (DirectoryStream<Path> files = Files.newDirectoryStream(path, fileFilter)) {
+      for (Path file : files) {
+        inputs.add(file);
+      }
+    }
+    sortByName(inputs);
+    return inputs;
+  }
+
+  private void sortByName(List<Path> paths) {
+    paths.sort(Comparator.comparing(p -> p.getFileName().toString()));
   }
 
   @Override
