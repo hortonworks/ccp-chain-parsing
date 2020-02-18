@@ -1,8 +1,0 @@
-com.cloudera.parserchains.queryservice
-com.cloudera.parserchains.queryservice.common
-com.cloudera.parserchains.queryservice.common.utils
-com.cloudera.parserchains.queryservice.config
-com.cloudera.parserchains.queryservice.controller
-com.cloudera.parserchains.queryservice.hack
-com.cloudera.parserchains.queryservice.model
-com.cloudera.parserchains.queryservice.service
