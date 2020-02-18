@@ -1,6 +1,6 @@
 <div *ngIf="parser" class="parser-container">
   <app-parser
-    *ngIf="parser.type !== 'Router' && configForm"
+    *ngIf="parser.type !== 'Router'"
     [parser]="parser"
     [dirty]="dirty"
     [configForm]="configForm"

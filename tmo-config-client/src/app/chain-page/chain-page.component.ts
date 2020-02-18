@@ -10,9 +10,8 @@ import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
-import { CustomFormConfig } from './components/custom-form/custom-form.component';
 
-import { ChainPageState, getChain, getChainDetails, getChains, getDirtyStatus, getFormConfigs } from './chain-page.reducers';
+import { ChainPageState, getChain, getChainDetails, getChains, getDirtyStatus } from './chain-page.reducers';
 
 
 @Component({
@@ -34,7 +33,6 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   getChainsSubscription: Subscription;
   popOverVisible = false;
   @ViewChild('chainNameInput', { static: false }) chainNameInput: ElementRef;
-  formConfigs: { [key: string]: CustomFormConfig[] };
   editChainNameForm: FormGroup;
 
   constructor(
@@ -98,10 +96,6 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     });
 
     this.store.dispatch(new fromActions.GetFormConfigsAction());
-
-    this.store.pipe(select(getFormConfigs)).subscribe(formConfigs => {
-      this.formConfigs = formConfigs;
-    });
   }
 
   removeParser(id: string) {

@@ -58,7 +58,7 @@ export class ChainAddParserPageComponent implements OnInit {
   ngOnInit() {
     this.addParserForm = this.fb.group({
       name: new FormControl('', [Validators.required, Validators.minLength(3)]),
-      type: new FormControl(null, [Validators.required])
+      type: new FormControl(null)
     });
 
     this.activatedRoute.params.subscribe((params) => {
