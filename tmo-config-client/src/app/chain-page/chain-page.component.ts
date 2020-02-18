@@ -141,7 +141,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     this.editChainNameForm.get('name').setValue(chain.name);
   }
 
-  onBreadcrumbEditDone(chain: ParserChainModel) {
+  onChainNameEditDone(chain: ParserChainModel) {
     this.popOverVisible = false;
     const value = (this.editChainNameForm.get('name').value || '').trim();
     if (value !== chain.name) {
@@ -160,7 +160,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     }
   }
 
-  onBreadcrumbEditCancel() {
+  onChainNameEditCancel() {
     this.popOverVisible = false;
   }
 

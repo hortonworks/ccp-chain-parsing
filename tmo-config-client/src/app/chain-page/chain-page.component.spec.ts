@@ -101,7 +101,7 @@ describe('ChainPageComponent', () => {
     expect(submitBtn.disabled).toBe(true);
   });
 
-  it('should enable the chain name set btn if input length < 3', () => {
+  it('should enable the chain name set btn if input length > 3', () => {
     const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
     editBtn.click();
     fixture.detectChanges();
@@ -115,8 +115,8 @@ describe('ChainPageComponent', () => {
     expect(submitBtn.disabled).toBe(false);
   });
 
-  it('should call the onBreadcrumbEditDone()', () => {
-    spyOn(component, 'onBreadcrumbEditDone');
+  it('should call the onChainNameEditDone()', () => {
+    spyOn(component, 'onChainNameEditDone');
 
     const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
     editBtn.click();
@@ -131,10 +131,10 @@ describe('ChainPageComponent', () => {
     submitBtn.click();
     fixture.detectChanges();
 
-    expect(component.onBreadcrumbEditDone).toHaveBeenCalled();
+    expect(component.onChainNameEditDone).toHaveBeenCalled();
   });
 
-  it('onBreadcrumbEditDone() will call the UpdateChain and SetDirty Actions', () => {
+  it('onChainNameEditDone() will call the UpdateChain and SetDirty Actions', () => {
     spyOn(store, 'dispatch');
 
     const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
