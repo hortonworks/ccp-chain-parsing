@@ -3,7 +3,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { NzMessageService } from 'ng-zorro-antd';
 import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap, filter } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import {
   executionTriggered,
@@ -11,10 +11,10 @@ import {
   liveViewInitialized,
   liveViewRefreshedSuccessfully,
   liveViewRefreshFailed,
-  onOffToggleRestored,
-  sampleDataRestored,
   onOffToggleChanged,
+  onOffToggleRestored,
   sampleDataInputChanged,
+  sampleDataRestored,
 } from './live-view.actions';
 import { LiveViewConsts } from './live-view.consts';
 import { LiveViewService } from './services/live-view.service';

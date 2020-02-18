@@ -1,24 +1,24 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { NzTabsModule, NzSwitchModule } from 'ng-zorro-antd';
+import { NzSwitchModule, NzTabsModule } from 'ng-zorro-antd';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { Subject } from 'rxjs';
 
 import {
-  sampleDataInputChanged,
   executionTriggered,
   liveViewInitialized,
-  onOffToggleChanged
+  onOffToggleChanged,
+  sampleDataInputChanged
 } from './live-view.actions';
 import { LiveViewComponent } from './live-view.component';
+import { LiveViewConsts } from './live-view.consts';
 import { LiveViewState } from './live-view.reducers';
 import { LiveViewResultModel } from './models/live-view.model';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
-import { LiveViewConsts } from './live-view.consts';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-sample-data-form',
@@ -112,7 +112,7 @@ describe('LiveViewComponent', () => {
 
   it('should react on chain config change', fakeAsync(() => {
     mockStore.setState({ 'live-view': {
-      ...initialState["live-view"],
+      ...initialState['live-view'],
       sampleData: testSampleData,
     }});
     fixture.detectChanges();
@@ -140,7 +140,7 @@ describe('LiveViewComponent', () => {
 
   it('should hold back (debounce) executeTriggered', fakeAsync(() => {
     mockStore.setState({ 'live-view': {
-      ...initialState["live-view"],
+      ...initialState['live-view'],
       sampleData: testSampleData,
     }});
 
@@ -170,7 +170,7 @@ describe('LiveViewComponent', () => {
       value: true,
       type: onOffToggleChanged.type
     });
-  })
+  });
 
   it('should unsubscribe on destroy', fakeAsync(() => {
     component.ngOnDestroy();

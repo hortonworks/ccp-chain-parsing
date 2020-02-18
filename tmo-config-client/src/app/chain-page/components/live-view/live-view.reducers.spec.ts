@@ -3,8 +3,8 @@ import {
   liveViewRefreshedSuccessfully,
   liveViewRefreshFailed,
   onOffToggleChanged,
-  sampleDataInputChanged,
   onOffToggleRestored,
+  sampleDataInputChanged,
   sampleDataRestored,
 } from './live-view.actions';
 import { LiveViewActionsType } from './live-view.actions';

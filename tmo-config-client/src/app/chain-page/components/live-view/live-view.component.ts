@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { debounceTime, filter, takeUntil, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, filter, takeUntil, tap } from 'rxjs/operators';
 
 import {
   executionTriggered,
@@ -18,7 +18,7 @@ import {
   getSampleData,
 } from './live-view.selectors';
 import { LiveViewResultModel } from './models/live-view.model';
-import { SampleDataModel, SampleDataType } from './models/sample-data.model';
+import { SampleDataModel } from './models/sample-data.model';
 
 @Component({
   selector: 'app-live-view',
