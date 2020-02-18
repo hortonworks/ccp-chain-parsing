@@ -7,7 +7,12 @@ import { NzTabsModule, NzSwitchModule } from 'ng-zorro-antd';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { Subject } from 'rxjs';
 
-import { executionTriggered } from './live-view.actions';
+import {
+  sampleDataInputChanged,
+  executionTriggered,
+  liveViewInitialized,
+  onOffToggleChanged
+} from './live-view.actions';
 import { LiveViewComponent } from './live-view.component';
 import { LiveViewState } from './live-view.reducers';
 import { LiveViewResultModel } from './models/live-view.model';
@@ -35,7 +40,7 @@ describe('LiveViewComponent', () => {
   let component: LiveViewComponent;
   let fixture: ComponentFixture<LiveViewComponent>;
 
-  let mockStore: MockStore<LiveViewState>;
+  let mockStore: MockStore<{ 'live-view': LiveViewState }>;
 
   const initialState = { 'live-view': {
       sampleData: {
@@ -88,23 +93,31 @@ describe('LiveViewComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should dispatch liveViewInitialized on init', () => {
+    expect(mockStore.dispatch).toHaveBeenCalledWith({
+      type: liveViewInitialized.type
+    });
+  });
+
   it('should react on sampleData change', fakeAsync(() => {
     component.sampleDataChange$.next(testSampleData);
-    (component.chainConfig$ as Subject<{}>).next({});
 
     tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE);
 
     expect(mockStore.dispatch).toHaveBeenCalledWith({
       sampleData: testSampleData,
-      chainConfig: {},
-      type: executionTriggered.type
+      type: sampleDataInputChanged.type
     });
   }));
 
   it('should react on chain config change', fakeAsync(() => {
-    component.sampleDataChange$.next(testSampleData);
-    (component.chainConfig$ as Subject<{}>).next({});
+    mockStore.setState({ 'live-view': {
+      ...initialState["live-view"],
+      sampleData: testSampleData,
+    }});
+    fixture.detectChanges();
 
+    (component.chainConfig$ as Subject<{}>).next({});
     tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE);
 
     expect(mockStore.dispatch).toHaveBeenCalledWith({
@@ -115,28 +128,49 @@ describe('LiveViewComponent', () => {
   }));
 
   it('should filter out events without sample data input', fakeAsync(() => {
-    component.sampleDataChange$.next({
-      type: SampleDataType.MANUAL,
-      source: '',
-    });
-
+    (component.chainConfig$ as Subject<{}>).next({});
     tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE);
 
-    expect(mockStore.dispatch).not.toHaveBeenCalled();
+    expect(mockStore.dispatch).not.toHaveBeenCalledWith({
+      sampleData: testSampleData,
+      chainConfig: {},
+      type: executionTriggered.type
+    });
   }));
 
   it('should hold back (debounce) executeTriggered', fakeAsync(() => {
-    component.sampleDataChange$.next(testSampleData);
+    mockStore.setState({ 'live-view': {
+      ...initialState["live-view"],
+      sampleData: testSampleData,
+    }});
+
     (component.chainConfig$ as Subject<{}>).next({});
 
     tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE / 2);
 
-    expect(mockStore.dispatch).not.toHaveBeenCalled();
+    expect(mockStore.dispatch).not.toHaveBeenCalledWith({
+      sampleData: testSampleData,
+      chainConfig: {},
+      type: executionTriggered.type
+    });
 
     tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE / 2);
 
-    expect(mockStore.dispatch).toHaveBeenCalled();
+    expect(mockStore.dispatch).toHaveBeenCalledWith({
+      sampleData: testSampleData,
+      chainConfig: {},
+      type: executionTriggered.type
+    });
   }));
+
+  it('should trigger onOffToggleChanged if toggle change', () => {
+    component.featureToggleChange$.next(true);
+
+    expect(mockStore.dispatch).toHaveBeenCalledWith({
+      value: true,
+      type: onOffToggleChanged.type
+    });
+  })
 
   it('should unsubscribe on destroy', fakeAsync(() => {
     component.ngOnDestroy();
@@ -144,6 +178,10 @@ describe('LiveViewComponent', () => {
 
     tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE);
 
-    expect(mockStore.dispatch).not.toHaveBeenCalled();
+    expect(mockStore.dispatch).not.toHaveBeenCalledWith({
+      sampleData: testSampleData,
+      chainConfig: {},
+      type: executionTriggered.type
+    });
   }));
 });
