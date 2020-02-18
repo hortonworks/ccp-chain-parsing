@@ -11,7 +11,6 @@ export const SAVE_PARSER_CONFIG = '[Chain Details] save parser config';
 export const SAVE_PARSER_CONFIG_SUCCESS = '[Chain Details] save parser config success';
 export const SAVE_PARSER_CONFIG_FAIL = '[Chain Details] save parser config fail';
 export const UPDATE_CHAIN = '[Chain Details] update chain';
-export const SET_DIRTY = '[Chain Details] set dirty';
 
 export class LoadChainDetailsAction implements Action {
   readonly type = LOAD_CHAIN_DETAILS;
@@ -39,7 +38,10 @@ export class RemoveParserAction implements Action {
 
 export class UpdateParserAction implements Action {
   readonly type = UPDATE_PARSER;
-  constructor(public payload: { parser: PartialParserModel }) {}
+  constructor(public payload: {
+    chainId: string,
+    parser: PartialParserModel
+  }) {}
 }
 
 export class SaveParserConfigAction implements Action {
@@ -61,10 +63,6 @@ export class UpdateChainAction implements Action {
   readonly type = UPDATE_CHAIN;
   constructor(public payload: { chain: PartialParserChainModel }) {}
 }
-export class SetDirtyAction implements Action {
-  readonly type = SET_DIRTY;
-  constructor(public payload: { dirty: boolean }) {}
-}
 
 export type ChainDetailsAction = LoadChainDetailsAction
   | LoadChainDetailsSuccessAction
@@ -74,5 +72,4 @@ export type ChainDetailsAction = LoadChainDetailsAction
   | SaveParserConfigAction
   | SaveParserConfigFailAction
   | SaveParserConfigFailAction
-  | UpdateChainAction
-  | SetDirtyAction;
+  | UpdateChainAction;

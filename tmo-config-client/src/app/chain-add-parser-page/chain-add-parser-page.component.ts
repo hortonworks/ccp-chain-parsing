@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import uuidv1 from 'uuid/v1';
 
-import * as fromChainPageActions from '../chain-page/chain-page.actions';
 import { ParserModel } from '../chain-page/chain-page.models';
 
 import * as fromActions from './chain-add-parser-page.actions';
@@ -48,10 +47,6 @@ export class ChainAddParserPageComponent implements OnInit {
         ...this.addParserForm.value,
         id: uuidv1(),
       }
-    }));
-
-    this.store.dispatch(new fromChainPageActions.SetDirtyAction({
-      dirty: true
     }));
 
     this.router.navigateByUrl(`/parserconfig/chains/${this.chainId}`);

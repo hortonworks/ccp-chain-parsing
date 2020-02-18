@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IconDefinition } from '@ant-design/icons-angular';
 import { EditFill } from '@ant-design/icons-angular/icons';
 import { StoreModule } from '@ngrx/store';
@@ -19,6 +19,7 @@ const icons: IconDefinition[] = [EditFill];
 class MockChainViewComponent {
   @Input() parsers: ParserModel[];
   @Input() dirtyParsers;
+  @Input() chainId;
 }
 
 @Component({
@@ -48,6 +49,7 @@ describe('ChainPageComponent', () => {
       declarations: [ChainPageComponent, MockChainViewComponent, MockLiveViewComponent],
       providers: [
         { provide: ActivatedRoute, useFactory: () => fakeActivatedRoute },
+        { provide: Router, useValue: { events: of({}) } },
         { provide: NZ_ICONS, useValue: icons }
       ]
     }).compileComponents();

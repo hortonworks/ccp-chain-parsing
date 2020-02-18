@@ -16,6 +16,7 @@ export class ParserComposerComponent implements OnInit {
 
   @Input() dirty = false;
   @Input() parserId: string;
+  @Input() chainId: string;
   @Input() configForm: CustomFormConfig[];
   @Input() outputsForm: CustomFormConfig[];
   @Input() metaDataForm: CustomFormConfig[];
@@ -44,6 +45,7 @@ export class ParserComposerComponent implements OnInit {
   onParserChange(partialParser) {
     this.store.dispatch(
       new fromActions.UpdateParserAction({
+        chainId: this.chainId,
         parser: partialParser
       })
     );
