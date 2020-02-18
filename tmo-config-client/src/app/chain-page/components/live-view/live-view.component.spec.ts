@@ -3,7 +3,7 @@ import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core
 import { RouterTestingModule } from '@angular/router/testing';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { NzTabsModule } from 'ng-zorro-antd';
+import { NzTabsModule, NzSwitchModule } from 'ng-zorro-antd';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { Subject } from 'rxjs';
 
@@ -12,6 +12,8 @@ import { LiveViewComponent } from './live-view.component';
 import { LiveViewState } from './live-view.reducers';
 import { LiveViewResultModel } from './models/live-view.model';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
+import { LiveViewConsts } from './live-view.consts';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-sample-data-form',
@@ -40,6 +42,7 @@ describe('LiveViewComponent', () => {
         type: SampleDataType.MANUAL,
         source: '',
       },
+      isLiveViewOn: true,
       isExecuting: false,
       result: undefined,
     }
@@ -55,6 +58,8 @@ describe('LiveViewComponent', () => {
       imports: [
         NzTabsModule,
         NzSpinModule,
+        NzSwitchModule,
+        FormsModule,
         RouterTestingModule
       ],
       providers: [
@@ -87,7 +92,7 @@ describe('LiveViewComponent', () => {
     component.sampleDataChange$.next(testSampleData);
     (component.chainConfig$ as Subject<{}>).next({});
 
-    tick(component.LIVE_VIEW_DEBOUNCE_RATE);
+    tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE);
 
     expect(mockStore.dispatch).toHaveBeenCalledWith({
       sampleData: testSampleData,
@@ -100,7 +105,7 @@ describe('LiveViewComponent', () => {
     component.sampleDataChange$.next(testSampleData);
     (component.chainConfig$ as Subject<{}>).next({});
 
-    tick(component.LIVE_VIEW_DEBOUNCE_RATE);
+    tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE);
 
     expect(mockStore.dispatch).toHaveBeenCalledWith({
       sampleData: testSampleData,
@@ -115,7 +120,7 @@ describe('LiveViewComponent', () => {
       source: '',
     });
 
-    tick(component.LIVE_VIEW_DEBOUNCE_RATE);
+    tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE);
 
     expect(mockStore.dispatch).not.toHaveBeenCalled();
   }));
@@ -124,11 +129,11 @@ describe('LiveViewComponent', () => {
     component.sampleDataChange$.next(testSampleData);
     (component.chainConfig$ as Subject<{}>).next({});
 
-    tick(component.LIVE_VIEW_DEBOUNCE_RATE / 2);
+    tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE / 2);
 
     expect(mockStore.dispatch).not.toHaveBeenCalled();
 
-    tick(component.LIVE_VIEW_DEBOUNCE_RATE / 2);
+    tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE / 2);
 
     expect(mockStore.dispatch).toHaveBeenCalled();
   }));
@@ -137,7 +142,7 @@ describe('LiveViewComponent', () => {
     component.ngOnDestroy();
     component.sampleDataChange$.next(testSampleData);
 
-    tick(component.LIVE_VIEW_DEBOUNCE_RATE);
+    tick(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE);
 
     expect(mockStore.dispatch).not.toHaveBeenCalled();
   }));
