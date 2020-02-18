@@ -1,6 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { Observable, of, ReplaySubject } from 'rxjs';
@@ -21,7 +20,6 @@ describe('chain add parser page: effects', () => {
     TestBed.configureTestingModule({
       imports: [
         NgZorroAntdModule,
-        RouterTestingModule,
         HttpClientTestingModule
       ],
       providers: [
@@ -33,37 +31,6 @@ describe('chain add parser page: effects', () => {
 
     effects = TestBed.get(AddParserEffects);
     service = TestBed.get(AddParserPageService);
-  });
-
-  it('add parser should call the service and return with the newly added parser when it succeeds', () => {
-    const expected = {
-      chainId: '123',
-      parser: {
-        id: '456',
-        name: 'foo',
-        type: 'bar'
-      }
-    };
-
-    service.add = (): Observable<any> => of(expected.parser);
-
-    const spy = spyOn(service, 'add').and.callThrough();
-
-    actions = new ReplaySubject(1);
-    actions.next(new fromActions.AddParserAction({
-      chainId: '123',
-      parser: {
-        id: '456',
-        name: 'foo',
-        type: 'bar'
-      }
-    }));
-
-    effects.addParser$.subscribe(result => {
-      expect(result).toEqual(new fromActions.AddParserSuccessAction(expected));
-    });
-
-    expect(spy).toHaveBeenCalledWith(expected.chainId, expected.parser);
   });
 
   it('get parser types should call the service and return with the parser types when it succeeds', () => {

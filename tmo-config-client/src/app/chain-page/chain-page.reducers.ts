@@ -1,5 +1,7 @@
 import { createSelector } from '@ngrx/store';
 
+import * as addParserActions from '../chain-add-parser-page/chain-add-parser-page.actions';
+
 import * as chainPageActions from './chain-page.actions';
 import { ParserChainModel, ParserModel, RouteModel } from './chain-page.models';
 import { denormalizeParserConfig } from './chain-page.utils';
@@ -8,21 +10,23 @@ export interface ChainPageState {
   chains: { [key: string]: ParserChainModel };
   parsers: { [key: string]: ParserModel };
   routes: { [key: string]: RouteModel };
-  dirty: boolean;
   error: string;
+  dirtyParsers: string[];
+  dirtyChains: string[];
 }
 
 export const initialState: ChainPageState = {
   chains: {},
   parsers: {},
   routes: {},
-  dirty: false,
   error: '',
+  dirtyParsers: [],
+  dirtyChains: [],
 };
 
 export function reducer(
   state: ChainPageState = initialState,
-  action: chainPageActions.ChainDetailsAction
+  action: chainPageActions.ChainDetailsAction | addParserActions.ParserAction
 ): ChainPageState {
   switch (action.type) {
     case chainPageActions.LOAD_CHAIN_DETAILS_SUCCESS: {
@@ -30,7 +34,9 @@ export function reducer(
         ...state,
         chains: action.payload.chains,
         parsers: action.payload.parsers,
-        routes: action.payload.routes
+        routes: action.payload.routes,
+        dirtyParsers: [],
+        dirtyChains: []
       };
     }
     case chainPageActions.REMOVE_PARSER: {
@@ -39,6 +45,10 @@ export function reducer(
       return {
         ...state,
         parsers,
+        dirtyChains: [
+          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
+          action.payload.chainId
+        ],
         chains: {
           ...state.chains,
           [action.payload.chainId]: {
@@ -58,12 +68,24 @@ export function reducer(
             ...state.parsers[action.payload.parser.id],
             ...action.payload.parser
           }
-        }
+        },
+        dirtyChains: [
+          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
+          action.payload.chainId
+        ],
+        dirtyParsers: [
+          ...state.dirtyParsers.filter(parserId => parserId !== action.payload.parser.id),
+          action.payload.parser.id
+        ],
       };
     }
     case chainPageActions.UPDATE_CHAIN: {
       return {
         ...state,
+        dirtyChains: [
+          ...state.dirtyChains.filter(id => id !== action.payload.chain.id),
+          action.payload.chain.id
+        ],
         chains: {
           ...state.chains,
           [action.payload.chain.id]: {
@@ -73,10 +95,38 @@ export function reducer(
         }
       };
     }
-    case chainPageActions.SET_DIRTY: {
+    case addParserActions.ADD_PARSER: {
       return {
         ...state,
-        dirty: action.payload.dirty
+        parsers: {
+          ...state.parsers,
+          [action.payload.parser.id]: action.payload.parser
+        },
+        dirtyParsers: [
+          ...state.dirtyParsers.filter(parserId => parserId !== action.payload.parser.id),
+          action.payload.parser.id
+        ],
+        dirtyChains: [
+          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
+          action.payload.chainId
+        ],
+        chains: {
+          ...state.chains,
+          [action.payload.chainId]: {
+            ...state.chains[action.payload.chainId],
+            parsers: [
+              ...(state.chains[action.payload.chainId].parsers as string[]),
+              action.payload.parser.id
+            ]
+          }
+        }
+      };
+    }
+    case chainPageActions.SAVE_PARSER_CONFIG: {
+      return {
+        ...state,
+        dirtyChains: [],
+        dirtyParsers: []
       };
     }
   }
@@ -123,7 +173,21 @@ export const getChainDetails = createSelector(
   }
 );
 
-export const isDirty = createSelector(
+export const getDirtyParsers = createSelector(
   getChainPageState,
-  (state) => state.dirty
+  (state) => state.dirtyParsers
+);
+
+export const getDirtyChains = createSelector(
+  getChainPageState,
+  (state) => state.dirtyChains
+);
+
+export const getDirtyStatus = createSelector(
+  getDirtyParsers,
+  getDirtyChains,
+  (parsers: string[], chains: string[]) => ({
+    dirtyChains: chains,
+    dirtyParsers: parsers
+  })
 );

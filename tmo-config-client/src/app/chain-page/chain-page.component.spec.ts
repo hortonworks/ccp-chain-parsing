@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IconDefinition } from '@ant-design/icons-angular';
 import { EditFill } from '@ant-design/icons-angular/icons';
 import { StoreModule } from '@ngrx/store';
@@ -23,6 +23,7 @@ const icons: IconDefinition[] = [EditFill];
 class MockChainViewComponent {
   @Input() parsers: ParserModel[];
   @Input() dirtyParsers;
+  @Input() chainId;
 }
 
 @Component({
@@ -55,6 +56,7 @@ describe('ChainPageComponent', () => {
       declarations: [ChainPageComponent, MockChainViewComponent, MockLiveViewComponent],
       providers: [
         { provide: ActivatedRoute, useFactory: () => fakeActivatedRoute },
+        { provide: Router, useValue: { events: of({}) } },
         { provide: NZ_ICONS, useValue: icons }
       ]
     }).compileComponents();
@@ -151,10 +153,8 @@ describe('ChainPageComponent', () => {
     fixture.detectChanges();
 
     const actionUpdate = new fromActions.UpdateChainAction({chain: {id: '1', name: 'new_name'}});
-    const actionDirty = new fromActions.SetDirtyAction({dirty: true});
 
     expect(store.dispatch).toHaveBeenCalledWith(actionUpdate);
-    expect(store.dispatch).toHaveBeenCalledWith(actionDirty);
   });
 
 });

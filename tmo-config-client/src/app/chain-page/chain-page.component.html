@@ -5,8 +5,9 @@
   <div nz-row nzGutter="16">
     <div nz-col nzSpan="10">
       <app-chain-view
+        [chainId]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].id) || (chain && chain.id)"
         [parsers]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].parsers) || (chain && chain.parsers)"
-        [dirtyParsers]="(dirtyChains[(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].id) || (chain && chain.id)] || { parsers: [] }).parsers"
+        [dirtyParsers]="dirtyParsers"
         (removeParserEmitter)="removeParser($event)"
         (chainLevelChange)="onChainLevelChange($event)"
         (parserChange)="onParserChange($event)"
@@ -61,14 +62,12 @@
       </div>
       <div nz-col nzSpan="23">
         <nz-breadcrumb>
-          <nz-breadcrumb-item class="breadcrumb-item" *ngFor="let breadcrumb of breadcrumbs; let i = index">
-            <span *ngIf="!!dirtyChains[breadcrumb.id]">
+          <nz-breadcrumb-item *ngFor="let breadcrumb of breadcrumbs; index as i">
+            <span *ngIf="dirtyChains.includes(breadcrumb.id)">
               <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#f00'" nz-tooltip nzTooltipTitle="Save the changes"></i>&nbsp;
             </span>
-            <span>
-              <a *ngIf="i < breadcrumbs.length - 1" href="#" (click)="onBreadcrumbClick($event, breadcrumb)">{{ breadcrumb.name }}</a>
-              <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>
-            </span>
+            <a *ngIf="i < breadcrumbs.length - 1" href="#" (click)="onBreadcrumbClick($event, breadcrumb)">{{ breadcrumb.name }}</a>
+            <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>
           </nz-breadcrumb-item>
         </nz-breadcrumb>
       </div>

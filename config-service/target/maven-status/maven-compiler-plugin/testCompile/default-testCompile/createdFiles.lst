@@ -1,0 +1,3 @@
+com/cloudera/parserchains/queryservice/common/utils/UniqueIDGeneratorTest.class
+com/cloudera/parserchains/queryservice/controller/ParserConfigControllerTest.class
+com/cloudera/parserchains/queryservice/service/FileBasedParserConfigServiceTest.class

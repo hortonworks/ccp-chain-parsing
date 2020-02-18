@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { NzModalService } from 'ng-zorro-antd';
 import { Observable, Observer, Subscription } from 'rxjs';
@@ -10,15 +10,7 @@ import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
-import { ChainPageState, getChain, getChainDetails, getChains, isDirty } from './chain-page.reducers';
-
-class DirtyChain {
-  id: string;
-  parsers: string[] = [];
-  constructor(id: string) {
-    this.id = id;
-  }
-}
+import { ChainPageState, getChain, getChainDetails, getChains, getDirtyStatus } from './chain-page.reducers';
 
 @Component({
   selector: 'app-chain-page',
@@ -30,27 +22,32 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   chain: ParserChainModel;
   breadcrumbs: ParserChainModel[] = [];
   chainId: string;
-  dirty = false;
-  dirtyChains: { [key: string]: DirtyChain } = {};
+  dirtyChains: string[] = [];
+  dirtyParsers: string[] = [];
   chainConfig$: Observable<ChainDetailsModel>;
+  getChainSubscription: Subscription;
+  forceDeactivate = false;
   chainIdBeingEdited: string;
   getChainsSubscription: Subscription;
   popOverVisible = false;
   @ViewChild('chainNameInput', { static: false }) chainNameInput: ElementRef;
   editChainNameForm: FormGroup;
+
   constructor(
     private store: Store<ChainPageState>,
     private activatedRoute: ActivatedRoute,
     private modal: NzModalService,
-    private fb: FormBuilder,
+    private router: Router,
+    private fb: FormBuilder
   ) { }
+
+  get dirty() {
+    return this.dirtyParsers.length || this.dirtyParsers;
+  }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params) => {
       this.chainId = params.id;
-      this.store.dispatch(new fromActions.LoadChainDetailsAction({
-        id: params.id
-      }));
     });
 
     this.getChainsSubscription = this.store.pipe(select(getChains)).subscribe((chains) => {
@@ -59,8 +56,12 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
       });
     });
 
-    this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain: ParserChainModel) => {
-      if (chain && chain.parsers && chain.parsers.length > 0) {
+    this.getChainSubscription = this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain: ParserChainModel) => {
+      if (!chain) {
+        this.store.dispatch(new fromActions.LoadChainDetailsAction({
+          id: this.chainId
+        }));
+      } else if (chain && chain.parsers && chain.parsers.length > 0) {
         this.chain = chain;
         this.breadcrumbs = this.breadcrumbs.length > 0 ? this.breadcrumbs : [this.chain];
 
@@ -73,10 +74,19 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
       }
     });
 
+    this.store.pipe(select(getDirtyStatus)).subscribe((status) => {
+      this.dirtyParsers = status.dirtyParsers;
+      this.dirtyChains = status.dirtyChains;
+    });
+
     this.chainConfig$ = this.store.pipe(select(getChainDetails, { chainId: this.chainId }));
 
-    this.store.pipe(select(isDirty)).subscribe((dirty) => {
-      this.dirty = dirty;
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        if (event.url === `/parserconfig/chains/${this.chainId}/new`) {
+          this.forceDeactivate = true;
+        }
+      }
     });
 
     this.editChainNameForm = this.fb.group({
@@ -92,30 +102,9 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
       id,
       chainId
     }));
-    this.store.dispatch(new fromActions.SetDirtyAction({
-      dirty: true
-    }));
   }
 
   onParserChange(changedParser: PartialParserModel) {
-    this.store.dispatch(new fromActions.SetDirtyAction({
-      dirty: true
-    }));
-    if (this.breadcrumbs.length > 0) {
-      this.breadcrumbs.forEach((chain: ParserChainModel) => {
-        if (chain.parsers && chain.parsers.length > 0) {
-          const parserId = (chain.parsers as string[]).find((pid) => pid === changedParser.id);
-          if (parserId) {
-            if (!this.dirtyChains[chain.id]) {
-              this.dirtyChains[chain.id] = new DirtyChain(chain.id);
-            }
-            if (!this.dirtyChains[chain.id].parsers.includes(parserId)) {
-              this.dirtyChains[chain.id].parsers.push(parserId);
-            }
-          }
-        }
-      });
-    }
   }
 
   onChainLevelChange(chainId: string) {
@@ -151,12 +140,6 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
           name: value
         }
       }));
-      this.store.dispatch(new fromActions.SetDirtyAction({
-        dirty: true
-      }));
-      if (!this.dirtyChains[chain.id]) {
-        this.dirtyChains[chain.id] = new DirtyChain(chain.id);
-      }
     }
   }
 
@@ -169,7 +152,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     const deny  = (o: Observer<boolean>) => { o.next(false); o.complete(); };
 
     return new Observable((observer: Observer<boolean>) => {
-      if (this.dirty) {
+      if (this.dirty && !this.forceDeactivate) {
         this.modal.confirm({
           nzTitle: 'You have unsaved changes',
           nzContent: 'Are you sure you want to leave this page?',
@@ -181,6 +164,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         });
       } else {
         allow(observer);
+        this.forceDeactivate = false;
       }
     });
   }
@@ -193,12 +177,6 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
       nzOkType: 'danger',
       nzCancelText: 'Cancel',
       nzOnOk: () => {
-        this.store.dispatch(new fromActions.SetDirtyAction({
-          dirty: false
-        }));
-        Object.keys(this.dirtyChains).forEach(chainId => {
-          delete this.dirtyChains[chainId];
-        });
         this.store.dispatch(new fromActions.LoadChainDetailsAction({
           id: this.chainId
         }));
@@ -214,12 +192,6 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
       nzOkType: 'primary',
       nzCancelText: 'Cancel',
       nzOnOk: () => {
-        this.store.dispatch(new fromActions.SetDirtyAction({
-          dirty: false
-        }));
-        Object.keys(this.dirtyChains).forEach(chainId => {
-          delete this.dirtyChains[chainId];
-        });
         this.store.dispatch(new fromActions.SaveParserConfigAction({ chainId: this.chainId }));
       }
     });
@@ -229,6 +201,9 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     this.breadcrumbs = [];
     if (this.getChainsSubscription) {
       this.getChainsSubscription.unsubscribe();
+    }
+    if (this.getChainSubscription) {
+      this.getChainSubscription.unsubscribe();
     }
   }
 }
