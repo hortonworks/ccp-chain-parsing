@@ -24,18 +24,15 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cloudera.parserchains.queryservice.common.ApplicationConstants;
+import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.ParserChain;
 import com.cloudera.parserchains.queryservice.model.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ParserConfigService;
-import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -173,15 +170,11 @@ public class ParserConfigControllerTest {
     given(service.update(eq(chainIdOne), eq(updatedChain), isA(Path.class)))
         .willReturn(updatedChain);
     mvc.perform(MockMvcRequestBuilders
-        .post(ApplicationConstants.API_CHAINS_UPDATE_URL.replace("{id}", chainIdOne))
+        .put(ApplicationConstants.API_CHAINS_UPDATE_URL.replace("{id}", chainIdOne))
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON)
         .content(updateJson))
-        .andExpect(status().isOk())
-        .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(jsonPath("$.*", hasSize(numFields)))
-        .andExpect(jsonPath("$.id", is(chainIdOne)))
-        .andExpect(jsonPath("$.name", is(chainNameOne)));
+        .andExpect(status().isNoContent());
   }
 
   @Test

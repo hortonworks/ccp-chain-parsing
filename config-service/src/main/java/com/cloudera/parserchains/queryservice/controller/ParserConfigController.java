@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,7 +78,7 @@ public class ParserConfigController {
     }
   }
 
-  @PostMapping(value = "/{id}")
+  @PutMapping(value = "/{id}")
   ResponseEntity<ParserChain> update(@RequestBody ParserChain chain, @PathVariable String id)
       throws IOException {
     String configPath = appProperties.getConfigPath();
@@ -86,7 +87,7 @@ public class ParserConfigController {
       if (null == updatedChain) {
         return ResponseEntity.notFound().build();
       } else {
-        return ResponseEntity.ok(updatedChain);
+        return ResponseEntity.noContent().build();
       }
     } catch (IOException ioe) {
       throw new RuntimeException("Unable to update configuration with id=" + id);
