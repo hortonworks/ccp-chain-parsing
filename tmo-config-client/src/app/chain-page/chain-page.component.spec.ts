@@ -1,12 +1,16 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IconDefinition } from '@ant-design/icons-angular';
 import { EditFill } from '@ant-design/icons-angular/icons';
 import { StoreModule } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 import { Observable, of } from 'rxjs';
 
+import * as fromActions from './chain-page.actions';
 import { ChainPageComponent } from './chain-page.component';
 import { ParserModel } from './chain-page.models';
 import * as fromReducers from './chain-page.reducers';
@@ -19,6 +23,7 @@ const icons: IconDefinition[] = [EditFill];
 class MockChainViewComponent {
   @Input() parsers: ParserModel[];
   @Input() dirtyParsers;
+  @Input() chainId;
 }
 
 @Component({
@@ -36,6 +41,7 @@ const fakeActivatedRoute = {
 describe('ChainPageComponent', () => {
   let component: ChainPageComponent;
   let fixture: ComponentFixture<ChainPageComponent>;
+  let store: Store<ChainPageComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -43,17 +49,21 @@ describe('ChainPageComponent', () => {
         NgZorroAntdModule,
         StoreModule.forRoot({
           'chain-page': fromReducers.reducer
-        })
+        }),
+        NoopAnimationsModule,
+        ReactiveFormsModule,
       ],
       declarations: [ChainPageComponent, MockChainViewComponent, MockLiveViewComponent],
       providers: [
         { provide: ActivatedRoute, useFactory: () => fakeActivatedRoute },
+        { provide: Router, useValue: { events: of({}) } },
         { provide: NZ_ICONS, useValue: icons }
       ]
     }).compileComponents();
   }));
 
   beforeEach(() => {
+    store = TestBed.get(Store);
     fixture = TestBed.createComponent(ChainPageComponent);
     component = fixture.componentInstance;
     component.chain = {
@@ -68,32 +78,83 @@ describe('ChainPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display the textbox for updating the chain name', () => {
-    component.editMode = false;
+  it('should display the popconfirm textbox for updating the chain name', () => {
     fixture.detectChanges();
     const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
     editBtn.click();
+    expect(editBtn).toBeTruthy();
     fixture.detectChanges();
-    const nameField = fixture.nativeElement.querySelector('[data-qe-id="chain-name-field"]');
+
+    const nameField = document.querySelector('[data-qe-id="chain-name-field"]');
     expect(nameField).toBeTruthy();
-    expect(component.editMode).toBe(true);
   });
 
-  it('should call the updateChainName()', () => {
-    spyOn(component, 'updateChainName').and.callThrough();
-    spyOn(component, 'toggleEditMode').and.callThrough();
-    component.editMode = false;
-    fixture.detectChanges();
+  it('should disable the chain name set btn if input length < 3', () => {
     const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
     editBtn.click();
     fixture.detectChanges();
 
-    const nameField = fixture.nativeElement.querySelector('[data-qe-id="chain-name-field"]');
+    const nameField: HTMLInputElement = document.querySelector('[data-qe-id="chain-name-field"]');
+    nameField.value = 'aa';
+    nameField.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const submitBtn: HTMLButtonElement = document.querySelector('[data-qe-id="edit-chain-name-submit-btn"]');
+    expect(submitBtn.disabled).toBe(true);
+  });
+
+  it('should enable the chain name set btn if input length > 3', () => {
+    const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
+    editBtn.click();
+    fixture.detectChanges();
+
+    const nameField: HTMLInputElement = document.querySelector('[data-qe-id="chain-name-field"]');
+    nameField.value = 'aaa';
+    nameField.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const submitBtn: HTMLButtonElement = document.querySelector('[data-qe-id="edit-chain-name-submit-btn"]');
+    expect(submitBtn.disabled).toBe(false);
+  });
+
+  it('should call the onChainNameEditDone()', () => {
+    spyOn(component, 'onChainNameEditDone');
+
+    const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
+    editBtn.click();
+    fixture.detectChanges();
+
+    const nameField: HTMLInputElement = document.querySelector('[data-qe-id="chain-name-field"]');
     nameField.value = 'hello';
     nameField.dispatchEvent(new Event('input'));
     fixture.detectChanges();
-    nameField.dispatchEvent(new Event('blur'));
-    expect(component.updateChainName).toHaveBeenCalled();
-    expect(component.toggleEditMode).toHaveBeenCalled();
+
+    const submitBtn: HTMLButtonElement = document.querySelector('[data-qe-id="edit-chain-name-submit-btn"]');
+    submitBtn.click();
+    fixture.detectChanges();
+
+    expect(component.onChainNameEditDone).toHaveBeenCalled();
   });
+
+  it('onChainNameEditDone() will call the UpdateChain and SetDirty Actions', () => {
+    spyOn(store, 'dispatch');
+
+    const editBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[data-qe-id="chain-name-edit-btn"]');
+    editBtn.click();
+    fixture.detectChanges();
+
+    const nameField: HTMLInputElement = document.querySelector('[data-qe-id="chain-name-field"]');
+    nameField.value = 'new_name';
+    nameField.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const submitBtn: HTMLButtonElement = document.querySelector('[data-qe-id="edit-chain-name-submit-btn"]');
+    submitBtn.click();
+    fixture.detectChanges();
+
+    const actionUpdate = new fromActions.UpdateChainAction({chain: {id: '1', name: 'new_name'}});
+
+    expect(store.dispatch).toHaveBeenCalledWith(actionUpdate);
+  });
+
 });
