@@ -5,7 +5,7 @@
   <div nz-row nzGutter="16">
     <div nz-col nzSpan="10">
       <app-chain-view
-        [chainId]="chain.id"
+        [chainId]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].id) || (chain && chain.id)"
         [parsers]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].parsers) || (chain && chain.parsers)"
         [dirtyParsers]="dirtyParsers"
         (removeParserEmitter)="removeParser($event)"
@@ -23,7 +23,7 @@
   <nz-breadcrumb>
     <nz-breadcrumb-item *ngFor="let breadcrumb of breadcrumbs; index as i">
       <span *ngIf="dirtyChains.includes(breadcrumb.id)">
-        <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#f00'"></i>
+        <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#f00'"></i>&nbsp;
       </span>
       <a *ngIf="i < breadcrumbs.length - 1" href="#" (click)="onBreadcrumbClick($event, breadcrumb)">{{ breadcrumb.name }}</a>
       <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>

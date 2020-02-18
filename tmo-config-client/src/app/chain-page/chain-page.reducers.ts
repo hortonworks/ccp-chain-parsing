@@ -177,9 +177,10 @@ export const getDirtyChains = createSelector(
 );
 
 export const getDirtyStatus = createSelector(
-  getChainPageState,
-  (state) => ({
-    dirtyChains: state.dirtyChains,
-    dirtyParsers: state.dirtyParsers
+  getDirtyParsers,
+  getDirtyChains,
+  (parsers: string[], chains: string[]) => ({
+    dirtyChains: chains,
+    dirtyParsers: parsers
   })
 );
