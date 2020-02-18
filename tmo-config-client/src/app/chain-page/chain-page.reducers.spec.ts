@@ -33,7 +33,8 @@ describe('chain-page: reducers', () => {
         }
       },
       routes: {},
-      error: ''
+      error: '',
+      parserToBeInvestigated: '',
     };
     expect(
       fromReducers.reducer(state, new fromActions.RemoveParserAction({
@@ -67,7 +68,8 @@ describe('chain-page: reducers', () => {
         }
       },
       routes: {},
-      error: ''
+      error: '',
+      parserToBeInvestigated: ''
     });
   });
 
@@ -76,7 +78,8 @@ describe('chain-page: reducers', () => {
       chains: null,
       parsers: null,
       routes: null,
-      error: ''
+      error: '',
+      parserToBeInvestigated: '',
     };
     const chains = {};
     const parsers = {};
@@ -104,7 +107,8 @@ describe('chain-page: reducers', () => {
         }
       },
       routes: null,
-      error: ''
+      error: '',
+      parserToBeInvestigated: '',
     };
     const newState = fromReducers.reducer(state, new fromActions.UpdateParserAction({
       parser: {
