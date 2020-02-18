@@ -10,6 +10,7 @@ import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel } from './chain-page.models';
 import { getChainPageState } from './chain-page.reducers';
 import { denormalizeParserConfig, normalizeParserConfig } from './chain-page.utils';
+import { CustomFormConfig } from './components/custom-form/custom-form.component';
 
 @Injectable()
 export class ChainPageEffects {
@@ -32,7 +33,6 @@ export class ChainPageEffects {
           );
         }),
         catchError((error: { message: string }) => {
-          throw error;
           this.messageService.create('error', error.message);
           return of(new fromActions.LoadChainDetailsFailAction(error));
         })
@@ -52,9 +52,45 @@ export class ChainPageEffects {
           return new fromActions.SaveParserConfigSuccessAction();
         }),
         catchError((error: { message: string }) => {
-          throw error;
           this.messageService.create('error', error.message);
           return of(new fromActions.SaveParserConfigFailAction(error));
+        })
+      );
+    })
+  );
+
+  @Effect()
+  getFormConfig$: Observable<Action> = this.actions$.pipe(
+    ofType(fromActions.GET_FORM_CONFIG),
+    switchMap((action: fromActions.GetFormConfigAction) => {
+      return this.chainPageService.getFormConfig(action.payload.type).pipe(
+        map((formConfig: CustomFormConfig[]) => {
+          return new fromActions.GetFormConfigSuccessAction({
+            parserType: action.payload.type,
+            formConfig
+          });
+        }),
+        catchError((error: { message: string }) => {
+          this.messageService.create('error', error.message);
+          return of(new fromActions.GetFormConfigFailAction(error));
+        })
+      );
+    })
+  );
+
+  @Effect()
+  getFormConfigs$: Observable<Action> = this.actions$.pipe(
+    ofType(fromActions.GET_FORM_CONFIGS),
+    switchMap((action: fromActions.GetFormConfigsAction) => {
+      return this.chainPageService.getFormConfigs().pipe(
+        map((formConfigs: { [key: string]: CustomFormConfig[] }) => {
+          return new fromActions.GetFormConfigsSuccessAction({
+            formConfigs
+          });
+        }),
+        catchError((error: { message: string }) => {
+          this.messageService.create('error', error.message);
+          return of(new fromActions.GetFormConfigsFailAction(error));
         })
       );
     })

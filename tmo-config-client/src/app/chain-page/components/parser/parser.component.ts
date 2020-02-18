@@ -38,6 +38,14 @@ export class ParserComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes.configForm) {
+      this.areFormsReadyToRender = false;
+      this.configForm = this.setFormFieldValues(this.configForm);
+      this.configForm = this.addFormFieldListeners(this.configForm);
+      setTimeout(() => {
+        this.areFormsReadyToRender = true;
+      });
+    }
     if (changes.parser && changes.parser.previousValue) {
       Object.keys(changes.parser.previousValue).forEach(key => {
         if (changes.parser.previousValue[key] !== changes.parser.currentValue[key]) {
@@ -58,7 +66,21 @@ export class ParserComponent implements OnInit, OnChanges {
   updateFormValues(key, fields = []) {
     return produce(fields, (draft) => {
       draft.forEach(field => {
-        if (field.name === key) {
+        if (
+          field.path
+          && field.path === key
+          && typeof this.parser[field.path] === 'object') {
+          const keys = Object.keys(this.parser[field.path]);
+          if (keys.length === 0) {
+            field.value = field.defaultValue || '';
+          } else {
+            keys.forEach((k) => {
+              if (k === field.name) {
+                field.value = this.parser[field.path][k];
+              }
+            });
+          }
+        } else if (field.name === key) {
           field.value = this.parser[key];
         }
       });
@@ -68,7 +90,9 @@ export class ParserComponent implements OnInit, OnChanges {
   setFormFieldValues(fields = []) {
     return produce(fields, (draft) => {
       draft.forEach(field => {
-        if (this.parser[field.name] !== undefined) {
+        if (field.path && this.parser[field.path] !== undefined && this.parser[field.path][field.name] !== undefined) {
+          field.value = this.parser[field.path][field.name];
+        } else if (this.parser[field.name] !== undefined) {
           field.value = this.parser[field.name];
         }
       });
@@ -80,10 +104,19 @@ export class ParserComponent implements OnInit, OnChanges {
       draft.forEach(field => {
         field.onChange = debounce((formFieldData) => {
           this.dirty = true;
-          this.parserChange.emit({
-            id: this.parser.id,
-            [formFieldData.name]: formFieldData.value
-          });
+          const partialParser = formFieldData.path
+            ? {
+              id: this.parser.id,
+              [formFieldData.path]: {
+                ...(this.parser[formFieldData.path] || {}),
+                [formFieldData.name]: formFieldData.value
+              }
+            }
+            : {
+              id: this.parser.id,
+              [formFieldData.name]: formFieldData.value
+            };
+          this.parserChange.emit(partialParser);
         }, 400);
       });
     });

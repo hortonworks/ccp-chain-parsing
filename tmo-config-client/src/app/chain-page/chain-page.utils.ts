@@ -4,29 +4,27 @@ export function normalizeParserConfig(config, normalized?) {
     chains: {},
     routes: {}
   };
-  if (config.parsers) {
-    normalized.chains[config.id] = {
-      ...config,
-      parsers: config.parsers.map((parser) => {
-        normalized.parsers[parser.id] = { ...parser };
-        if (parser.type === 'Router' && parser.config && parser.config.routes) {
-          normalized.parsers[parser.id].config = {
-            ...parser.config,
-            routes: parser.config.routes.map((route) => {
-              normalized.routes[route.id] = { ...route };
-              if (route.subchain) {
-                const chainId = route.subchain.id;
-                normalizeParserConfig(route.subchain, normalized);
-                normalized.routes[route.id].subchain = chainId;
-              }
-              return route.id;
-            })
-          };
-        }
-        return parser.id;
-      })
-    };
-  }
+  normalized.chains[config.id] = {
+    ...config,
+    parsers: (config.parsers || []).map((parser) => {
+      normalized.parsers[parser.id] = { ...parser };
+      if (parser.type === 'Router' && parser.config && parser.config.routes) {
+        normalized.parsers[parser.id].config = {
+          ...parser.config,
+          routes: parser.config.routes.map((route) => {
+            normalized.routes[route.id] = { ...route };
+            if (route.subchain) {
+              const chainId = route.subchain.id;
+              normalizeParserConfig(route.subchain, normalized);
+              normalized.routes[route.id].subchain = chainId;
+            }
+            return route.id;
+          })
+        };
+      }
+      return parser.id;
+    })
+  };
   return normalized;
 }
 

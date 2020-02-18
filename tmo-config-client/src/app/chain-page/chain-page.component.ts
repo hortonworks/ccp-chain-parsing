@@ -10,7 +10,9 @@ import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
+
 import { ChainPageState, getChain, getChainDetails, getChains, getDirtyStatus } from './chain-page.reducers';
+
 
 @Component({
   selector: 'app-chain-page',
@@ -42,7 +44,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   ) { }
 
   get dirty() {
-    return this.dirtyParsers.length || this.dirtyParsers;
+    return this.dirtyParsers.length || this.dirtyParsers.length;
   }
 
   ngOnInit() {
@@ -61,7 +63,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         this.store.dispatch(new fromActions.LoadChainDetailsAction({
           id: this.chainId
         }));
-      } else if (chain && chain.parsers && chain.parsers.length > 0) {
+      } else {
         this.chain = chain;
         this.breadcrumbs = this.breadcrumbs.length > 0 ? this.breadcrumbs : [this.chain];
 
@@ -92,6 +94,8 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     this.editChainNameForm = this.fb.group({
       name: new FormControl(null, [Validators.required, Validators.minLength(3)])
     });
+
+    this.store.dispatch(new fromActions.GetFormConfigsAction());
   }
 
   removeParser(id: string) {
