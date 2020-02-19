@@ -2,6 +2,10 @@ import {
   executionTriggered,
   liveViewRefreshedSuccessfully,
   liveViewRefreshFailed,
+  onOffToggleChanged,
+  onOffToggleRestored,
+  sampleDataInputChanged,
+  sampleDataRestored,
 } from './live-view.actions';
 import { LiveViewActionsType } from './live-view.actions';
 import { initialState, reducer } from './live-view.reducers';
@@ -71,6 +75,54 @@ describe('live-view.reducers', () => {
   it('should update isExecuting on liveViewRefreshFailed action', () => {
     const newState = reducer(initialState, liveViewRefreshFailed({ error: { message: 'ups' } }));
     expect(newState.isExecuting).toBe(false);
+  });
+
+  it('should update isLiveViewOn on onOffToggleChanges action', () => {
+    const newState = reducer(initialState, onOffToggleChanged({ value: true }));
+    expect(newState.isLiveViewOn).toBe(true);
+  });
+
+  it('should update sampleData on sampleDataInputChanged action', () => {
+    const newState = reducer(initialState, sampleDataInputChanged({
+      sampleData: {
+        type: SampleDataType.MANUAL,
+        source: 'this just changed'
+      }
+    }));
+    expect(newState.sampleData).toEqual({
+      type: SampleDataType.MANUAL,
+      source: 'this just changed'
+    });
+  });
+
+  it('should update isLiveViewOn on onOffToggleRestored action', () => {
+    const newState = reducer(initialState, onOffToggleRestored({ value: true }));
+    expect(newState.isLiveViewOn).toBe(true);
+  });
+
+  it('should update sampleData on sampleDataRestored action', () => {
+    const newState = reducer(initialState, sampleDataRestored({
+      sampleData: {
+        type: SampleDataType.MANUAL,
+        source: 'this was persisted'
+      }
+    }));
+    expect(newState.sampleData).toEqual({
+      type: SampleDataType.MANUAL,
+      source: 'this was persisted'
+    });
+  });
+
+  it('should keep original isLiveViewOn stete when no state was persisted', () => {
+    const newState = reducer(initialState, onOffToggleRestored({ value: null }));
+    expect(newState.isLiveViewOn).toBe(initialState.isLiveViewOn);
+  });
+
+  it('should keep original sampleData stete when no state was persisted', () => {
+    const newState = reducer(initialState, sampleDataRestored({
+      sampleData: null
+    }));
+    expect(newState.sampleData).toEqual(initialState.sampleData);
   });
 
 });

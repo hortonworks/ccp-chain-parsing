@@ -25,6 +25,7 @@
   --cldr-almost-black: #232323;
   --cldr-dark-grey: #3C3C3C;
   --cldr-medium-grey: #7D7D7D;
+  --cldr-light-grey: #BBBBBB;
   --cldr-grey: rgba(175, 175, 175, 0.144);
   --page-background: #f1f2f3;
   --background: var(--cldr-white);
@@ -162,7 +163,7 @@
 @background-color-base : hsv(0, 0, 96%); // Default grey background color
 
 // Disabled states
-@disabled-color : rgba(var(--cldr-grey), .75);
+@disabled-color : var(--cldr-light-grey);
 @disabled-bg : @background-color-base;
 @disabled-color-dark : fade(#fff, 35%);
 

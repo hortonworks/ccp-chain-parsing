@@ -20,3 +20,9 @@ export const getExecutionStatus = createSelector(
   getLiveViewState,
   (state: LiveViewState) => state.isExecuting
 );
+
+export const getIsLiveViewOn = createSelector(
+  getLiveViewState,
+  (state: LiveViewState) => state.isLiveViewOn
+);
+
