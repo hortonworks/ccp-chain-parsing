@@ -4,7 +4,17 @@ import { Action } from '@ngrx/store';
 import { NzMessageService } from 'ng-zorro-antd';
 import { of, Subject, throwError } from 'rxjs';
 
-import { executionTriggered, liveViewRefreshedSuccessfully, liveViewRefreshFailed } from './live-view.actions';
+import {
+  executionTriggered,
+  liveViewInitialized,
+  liveViewRefreshedSuccessfully,
+  liveViewRefreshFailed,
+  onOffToggleChanged,
+  onOffToggleRestored,
+  sampleDataInputChanged,
+  sampleDataRestored
+} from './live-view.actions';
+import { LiveViewConsts } from './live-view.consts';
 import { LiveViewEffects } from './live-view.effects';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 import { LiveViewService } from './services/live-view.service';
@@ -122,6 +132,60 @@ describe('live-view.effects', () => {
     actions$.next(executionTriggered({ ...testPayload }));
 
     expect(fakeMessageService.create).toHaveBeenCalledWith('error', 'something went wrong');
+  });
+
+  it('should persist sample data input to local storage', () => {
+    spyOn(localStorage, 'setItem');
+
+    liveViewEffects.persistingSapmleData$.subscribe();
+
+    actions$.next(sampleDataInputChanged({ sampleData: { type: SampleDataType.MANUAL, source: 'testing persistance' } }));
+
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      LiveViewConsts.SAMPLE_DATA_STORAGE_KEY,
+      JSON.stringify({ type: SampleDataType.MANUAL, source: 'testing persistance' })
+    );
+  });
+
+  it('should restore sample data input from local storage on liveViewInitialized action', () => {
+    const testSubscriber = jasmine.createSpy('sampleDataRestoredSpy');
+    liveViewEffects.restoreSampleDataFromLocalStore.subscribe(testSubscriber);
+
+    spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify({ type: SampleDataType.MANUAL, source: 'persisted state' }));
+
+    actions$.next(liveViewInitialized());
+
+    expect(testSubscriber).toHaveBeenCalledWith({
+      sampleData: { type: SampleDataType.MANUAL, source: 'persisted state' },
+      type: sampleDataRestored.type
+    });
+  });
+
+  it('should persist on/off toggle state to local storage', () => {
+    spyOn(localStorage, 'setItem');
+
+    liveViewEffects.persistingOnOffToggle$.subscribe();
+
+    actions$.next(onOffToggleChanged({ value: true }));
+
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      LiveViewConsts.FEATURE_TOGGLE_STORAGE_KEY,
+      'true'
+    );
+  });
+
+  it('should restore on/off toggle state from local storage on liveViewInitialized action', () => {
+    const testSubscriber = jasmine.createSpy('onOffToggleRestoredSpy');
+    liveViewEffects.restoreToggleFromLocalStore.subscribe(testSubscriber);
+
+    spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(true));
+
+    actions$.next(liveViewInitialized());
+
+    expect(testSubscriber).toHaveBeenCalledWith({
+      value: true,
+      type: onOffToggleRestored .type
+    });
   });
 
 });

@@ -5,10 +5,12 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 import { LiveViewResultComponent } from './live-view-result/live-view-result.component';
@@ -36,6 +38,8 @@ import { LiveViewService } from './services/live-view.service';
     NzRadioModule,
     NzInputModule,
     NzSpinModule,
+    NzSwitchModule,
+    NzCardModule,
   ],
   providers: [
     LiveViewService
