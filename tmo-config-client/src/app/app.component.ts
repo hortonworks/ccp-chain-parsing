@@ -9,4 +9,5 @@ export class AppComponent {
   title = 'TMO Parser Chaining';
   isReverseArrow = false;
   width: string | number = 200;
+  isCollapsed = false;
 }
