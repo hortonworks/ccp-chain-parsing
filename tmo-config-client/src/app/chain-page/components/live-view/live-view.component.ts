@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { debounceTime, filter, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 
 import {
   executionTriggered,
@@ -59,9 +59,6 @@ export class LiveViewComponent implements AfterViewInit, OnDestroy {
       this.chainConfig$,
       this.isLiveViewOn$,
     ]).pipe(
-      tap(([ sampleData, chainConfig, isLiveViewOn ]) => {
-        debugger;
-      }),
       debounceTime(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE),
       filter(([ sampleData, chainConfig, isLiveViewOn ]) => isLiveViewOn && !!sampleData.source),
       takeUntil(this.unsubscribe$)
