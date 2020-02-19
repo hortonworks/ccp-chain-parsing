@@ -26,7 +26,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   dirtyChains: string[] = [];
   dirtyParsers: string[] = [];
   chainConfig$: Observable<ChainDetailsModel>;
-  parserToBeInvestigated$: string[];
+  parserToBeInvestigated: string[] = [];
   getChainSubscription: Subscription;
   forceDeactivate = false;
   chainIdBeingEdited: string;
@@ -45,6 +45,18 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
 
   get dirty() {
     return this.dirtyParsers.length || this.dirtyParsers.length;
+  }
+
+  get parsers() {
+    if (this.parserToBeInvestigated.length) {
+      return this.parserToBeInvestigated;
+    } else {
+      return (
+        (this.breadcrumbs.length > 0 &&
+          this.breadcrumbs[this.breadcrumbs.length - 1].parsers) ||
+        (this.chain && this.chain.parsers)
+      );
+    }
   }
 
   ngOnInit() {
@@ -82,9 +94,9 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     });
 
     this.chainConfig$ = this.store.pipe(select(getChainDetails, { chainId: this.chainId }));
+
     this.store.pipe(select(getParserToBeInvestigated)).subscribe((id: string) => {
-      this.parserToBeInvestigated$ = id === '' ? [] : [id];
-      this.getParsers();
+      this.parserToBeInvestigated = id === '' ? [] : [id];
     });
 
     this.router.events.subscribe((event) => {
@@ -100,18 +112,6 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     });
 
     this.store.dispatch(new fromActions.GetFormConfigsAction());
-  }
-
-  getParsers() {
-    if (this.parserToBeInvestigated$.length !== 0) {
-      return this.parserToBeInvestigated$;
-    } else {
-      return (
-        (this.breadcrumbs.length > 0 &&
-          this.breadcrumbs[this.breadcrumbs.length - 1].parsers) ||
-        (this.chain && this.chain.parsers)
-      );
-    }
   }
 
   exitFailedParserEditView() {

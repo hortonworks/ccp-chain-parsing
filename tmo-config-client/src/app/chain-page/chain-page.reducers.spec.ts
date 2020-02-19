@@ -221,4 +221,30 @@ describe('chain-page: reducers', () => {
     const route = fromReducers.getRoute(state, { id: '456' });
     expect(route).toBe(desiredRoute);
   });
+
+  it('should return with the currently investigated parser', () => {
+    const stateForSelector = {
+      'chain-page': {
+        parserToBeInvestigated: '4321'
+      }
+    };
+
+    const investigatedParserSelector = fromReducers.getParserToBeInvestigated(stateForSelector);
+    expect(investigatedParserSelector).toBeDefined('4321');
+  });
+
+  it('should add an investigated parser to the store', () => {
+    const state = {
+      chains: null,
+      parsers: null,
+      dirtyParsers: [],
+      dirtyChains: [],
+      routes: {},
+      error: '',
+      parserToBeInvestigated: '1234',
+    };
+
+    const investigatedParserReducer = fromReducers.reducer(state, new fromActions.LoadFailedParser({ id: '1234'}));
+    expect(investigatedParserReducer.parserToBeInvestigated).toBe('1234');
+  });
 });
