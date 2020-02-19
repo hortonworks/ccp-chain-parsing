@@ -12,6 +12,7 @@ const DELETE = router.delete.bind(router);
 
 let chains = require('./mock-data/chains.json');
 let parserTypes = require('./mock-data/parser-types.json');
+let formConfigs = require('./mock-data/form-configs.json');
 
 GET('/chains', getChains);
 POST('/chains', createChain);
@@ -25,6 +26,9 @@ POST('/chains/:id/parsers', addParser);
 GET('/parser-types', getParserTypes);
 
 POST('/sampleparser/parsingjobs', createParseJob);
+
+GET('/parser-form-configuration/:type', getFormConfig);
+GET('/parser-form-configuration', getFormConfigs);
 
 function createParseJob(req, res) {
   const sources = req.body.sampleData.source.split('\n');
@@ -94,7 +98,8 @@ function createChain(req, res) {
   const id = crypto.randomBytes(8).toString('hex');
   const newChain = {
     ...req.body,
-    id: id
+    id: id,
+    parsers: req.body.parsers || []
   }
 
   if (chains.find(chain => chain.name === newChain.name)) {
@@ -162,6 +167,20 @@ function addParser(req, res) {
 
 function getParserTypes(req, res) {
   return res.status(200).send(parserTypes);
+}
+
+function getFormConfig(req, res) {
+  const type = req.params.type;
+  const config = formConfigs[type];
+  if (config) {
+    res.status(200).send(config);
+    return;
+  }
+  res.status(404).send();
+}
+
+function getFormConfigs(req, res) {
+  res.status(200).send(formConfigs);
 }
 
 module.exports = router;

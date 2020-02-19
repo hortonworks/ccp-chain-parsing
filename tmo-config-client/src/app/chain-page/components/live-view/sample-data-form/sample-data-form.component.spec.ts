@@ -27,12 +27,13 @@ describe('SampleDataFormComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SampleDataFormComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
 
     component.sampleData = {
       type: SampleDataType.MANUAL,
       source: '',
     };
+
+    fixture.detectChanges();
   });
 
   it('should create', () => {

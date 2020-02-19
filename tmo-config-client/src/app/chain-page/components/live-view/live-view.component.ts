@@ -1,13 +1,24 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 
 import { LoadFailedParser } from '../../chain-page.actions';
 
-import { executionTriggered } from './live-view.actions';
+import {
+  executionTriggered,
+  liveViewInitialized,
+  onOffToggleChanged,
+  sampleDataInputChanged,
+} from './live-view.actions';
+import { LiveViewConsts } from './live-view.consts';
 import { LiveViewState } from './live-view.reducers';
-import { getExecutionStatus, getResults, getSampleData } from './live-view.selectors';
+import {
+  getExecutionStatus,
+  getIsLiveViewOn,
+  getResults,
+  getSampleData,
+} from './live-view.selectors';
 import { LiveViewResultModel } from './models/live-view.model';
 import { SampleDataModel } from './models/sample-data.model';
 
@@ -16,23 +27,29 @@ import { SampleDataModel } from './models/sample-data.model';
   templateUrl: './live-view.component.html',
   styleUrls: ['./live-view.component.scss']
 })
-export class LiveViewComponent implements AfterViewInit, OnDestroy {
+export class LiveViewComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() chainConfig$: Observable<{}>;
   @Output() failedParser = new EventEmitter<string>();
 
-  readonly LIVE_VIEW_DEBOUNCE_RATE = 1000;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
+  isLiveViewOn$: Observable<boolean>;
   isExecuting$: Observable<boolean>;
   results$: Observable<LiveViewResultModel>;
   sampleData$: Observable<SampleDataModel>;
 
   sampleDataChange$ = new Subject<SampleDataModel>();
+  featureToggleChange$ = new Subject<boolean>();
 
   constructor(private store: Store<LiveViewState>) {
     this.isExecuting$ = this.store.pipe(select(getExecutionStatus));
     this.results$ = this.store.pipe(select(getResults));
     this.sampleData$ = this.store.pipe(select(getSampleData));
+    this.isLiveViewOn$ = this.store.pipe(select(getIsLiveViewOn));
+  }
+
+  ngOnInit() {
+    this.store.dispatch(liveViewInitialized());
   }
 
   ngAfterViewInit() {
@@ -45,14 +62,29 @@ export class LiveViewComponent implements AfterViewInit, OnDestroy {
 
   private subscribeToRelevantChanges() {
     combineLatest([
-      this.sampleDataChange$,
+      this.sampleData$,
       this.chainConfig$,
+      this.isLiveViewOn$,
     ]).pipe(
-      debounceTime(this.LIVE_VIEW_DEBOUNCE_RATE),
-      filter(([ sampleData ]) => !!sampleData.source),
+      debounceTime(LiveViewConsts.LIVE_VIEW_DEBOUNCE_RATE),
+      filter(([ sampleData, chainConfig, isLiveViewOn ]) => isLiveViewOn && !!sampleData.source),
       takeUntil(this.unsubscribe$)
     ).subscribe(([ sampleData, chainConfig ]) => {
       this.store.dispatch(executionTriggered({ sampleData, chainConfig }));
+    });
+
+    this.featureToggleChange$.pipe(
+        takeUntil(this.unsubscribe$),
+        filter(value => value !== null),
+      ).subscribe(value => {
+      this.store.dispatch(onOffToggleChanged({ value }));
+    });
+
+    this.sampleDataChange$.pipe(
+      takeUntil(this.unsubscribe$),
+      filter(sampleData => sampleData !== null),
+    ).subscribe(sampleData => {
+      this.store.dispatch(sampleDataInputChanged({ sampleData }));
     });
   }
 

@@ -32,6 +32,8 @@ describe('chain-page: reducers', () => {
           outputs: ''
         }
       },
+      dirtyParsers: [],
+      dirtyChains: [],
       routes: {},
       error: '',
       parserToBeInvestigated: '',
@@ -57,19 +59,13 @@ describe('chain-page: reducers', () => {
           config: {},
           input: '',
           outputs: ''
-        },
-        456: {
-          id: '456',
-          name: 'Asa',
-          type: 'Grok',
-          config: {},
-          input: '',
-          outputs: ''
         }
       },
       routes: {},
       error: '',
-      parserToBeInvestigated: ''
+      parserToBeInvestigated: '',
+      dirtyParsers: [],
+      dirtyChains: ['4533'],
     });
   });
 
@@ -80,6 +76,8 @@ describe('chain-page: reducers', () => {
       routes: null,
       error: '',
       parserToBeInvestigated: '',
+      dirtyParsers: [],
+      dirtyChains: [],
     };
     const chains = {};
     const parsers = {};
@@ -109,8 +107,11 @@ describe('chain-page: reducers', () => {
       routes: null,
       error: '',
       parserToBeInvestigated: '',
+      dirtyParsers: [],
+      dirtyChains: [],
     };
     const newState = fromReducers.reducer(state, new fromActions.UpdateParserAction({
+      chainId: '123',
       parser: {
         id: '456',
         outputs: 'new',
@@ -124,6 +125,39 @@ describe('chain-page: reducers', () => {
       outputs: 'new',
       config: 'new'
     });
+    expect(newState.dirtyParsers).toEqual(['456']);
+    expect(newState.dirtyChains).toEqual(['123']);
+  });
+
+  it('should update the given chain name', () => {
+    const state = {
+      parsers: null,
+      chains: {
+        456: {
+          id: '456',
+          name: 'old',
+          parsers: []
+        }
+      },
+      routes: null,
+      dirtyParsers: [],
+      dirtyChains: [],
+      error: '',
+      parserToBeInvestigated: '',
+    };
+    const newState = fromReducers.reducer(state, new fromActions.UpdateChainAction({
+      chain: {
+        id: '456',
+        name: 'new',
+        parsers: []
+      }
+    }));
+    expect(newState.chains['456']).toEqual({
+      id: '456',
+      name: 'new',
+      parsers: []
+    });
+    expect(newState.dirtyChains).toEqual(['456']);
   });
 
   it('should return with the desired parser', () => {

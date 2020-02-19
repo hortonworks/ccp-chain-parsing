@@ -17,6 +17,7 @@
         data-qe-id="sample-input"
         nz-input
         placeholder="Add sample data here..."
+        [value]="sampleData.source"
         [nzAutosize]="{ minRows: 10, maxRows: 44 }"
         (input)="onApply(sampleDataInput.value)"
         name="sampleDataInput"

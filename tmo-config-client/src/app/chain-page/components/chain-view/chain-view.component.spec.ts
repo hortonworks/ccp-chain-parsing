@@ -16,9 +16,11 @@ class MockParserComposerComponent {
   @Input() parsers: ParserModel[];
   @Input() dirtyParsers;
   @Input() parserId;
+  @Input() chainId;
   @Input() dirty;
   @Input() configForm;
   @Input() outputsForm;
+  @Input() metaDataForm;
 }
 
 describe('ChainViewComponent', () => {

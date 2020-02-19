@@ -6,6 +6,7 @@
     [configForm]="configForm"
     [outputsForm]="outputsForm"
     [investigated]="investigated"
+    [metaDataForm]="metaDataForm"
     (parserChange)="onParserChange($event)"
     (removeParser)="onRemoveParser($event)"
   ></app-parser>
@@ -13,7 +14,9 @@
     *ngIf="parser.type === 'Router'"
     [parser]="parser"
     [dirty]="dirty"
+    [metaDataForm]="metaDataForm"
     (subchainSelect)="onSubchainSelect($event)"
+    (parserChange)="onParserChange($event)"
     (removeParser)="onRemoveParser($event)"
   ></app-router>
 </div>

@@ -1,11 +1,12 @@
 <div class="parser-chain">
-  <div *ngFor="let parserId of parsers" class="parser-chain-item">
+  <div *ngFor="let parserId of parsers; trackBy: trackByFn" class="parser-chain-item">
     <div class="chain-item">
       <app-parser-composer
         [parserId]="parserId"
+        [chainId]="chainId"
         [dirty]="(dirtyParsers || []).includes(parserId)"
-        [configForm]="configFormFields"
         [outputsForm]="outputsFormFields"
+        [metaDataForm]="metaDataForm"
         (subchainSelect)="onChainSelected($event)"
         (parserRemove)="onParserRemove($event)"
         (parserChange)="onParserChange($event)"

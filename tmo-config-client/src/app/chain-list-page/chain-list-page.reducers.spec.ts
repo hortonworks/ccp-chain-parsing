@@ -14,7 +14,7 @@ describe('chain-list-page: reducers', () => {
 
   it('should set loading true', () => {
     const previousState = { items: [], loading: false, error: ''};
-    expect(fromReducers.reducer(previousState, new fromActions.LoadChainsAction({page: 1, pageSize: 10}))
+    expect(fromReducers.reducer(previousState, new fromActions.LoadChainsAction())
     ).toEqual({
       ...previousState,
       loading: true,

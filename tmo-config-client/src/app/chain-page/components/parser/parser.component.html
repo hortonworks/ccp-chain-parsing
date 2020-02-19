@@ -8,10 +8,10 @@
       nzType="line"
     >
       <nz-tab nzTitle="Basics">
-        <ul>
-          <li>Name: {{ parser.name }}</li>
-          <li>Type: {{ parser.type }}</li>
-        </ul>
+        <app-custom-form
+          *ngIf="areFormsReadyToRender && metaDataForm != null"
+          [config]="metaDataForm"
+        ></app-custom-form>
       </nz-tab>
       <nz-tab nzTitle="Config">
         <app-custom-form
