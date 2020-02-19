@@ -91,3 +91,5 @@ Provides a catalog of all parsers available to the user.  The primary implementa
 ```
 List<ParserInfo> parsers = new ClassIndexParserCatalog().getParsers();
 ```
+
+The `ParserInfo` provides metadata about each parser like a name, description, and the implementation class.
