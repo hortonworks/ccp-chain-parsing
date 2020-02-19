@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -10,12 +10,6 @@ import * as fromActions from './chain-list-page.actions';
 import { ChainListPageState, getChains } from './chain-list-page.reducers';
 import { ChainModel, ChainOperationalModel } from './chain.model';
 
-const DEFAULT_PAGE = 1;
-const DEFAULT_PAGE_SIZE = 10;
-const defaults = {
-  page: DEFAULT_PAGE,
-  pageSize: DEFAULT_PAGE_SIZE
-};
 @Component({
   selector: 'app-chain-list-page',
   templateUrl: './chain-list-page.component.html',
@@ -24,8 +18,6 @@ const defaults = {
 export class ChainListPageComponent implements OnInit {
   isChainModalVisible = false;
   isOkLoading = false;
-  pageNumber: number;
-  pageSize: number;
   chains$: Observable<ChainModel[]>;
   totalRecords = 200;
   chainDataSorted$: Observable<ChainModel[]>;
@@ -34,14 +26,9 @@ export class ChainListPageComponent implements OnInit {
     private store: Store<ChainListPageState>,
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router,
     ) {
     this.route.queryParams.subscribe((params: ParamMap) => {
-      const param = Object.assign({}, defaults, params || {});
-      this.pageNumber = param.page;
-      this.pageSize = param.pageSize;
-
-      store.dispatch(new LoadChainsAction({page: this.pageNumber, pageSize: this.pageSize}));
+      store.dispatch(new LoadChainsAction());
       this.chains$ = store.pipe(select(getChains));
     });
 
@@ -75,24 +62,6 @@ export class ChainListPageComponent implements OnInit {
   }
   handleCancel(): void {
     this.isChainModalVisible = false;
-  }
-
-  setPageSize(value): void {
-    this.pageSize = value;
-    this.setPagination();
-  }
-  setPageNumber(value): void {
-    this.pageNumber = value;
-    this.setPagination();
-  }
-
-  setPagination(): void {
-    this.router.navigate(['/parserconfig'], {
-      queryParams: {
-        page: this.pageNumber,
-        pageSize : this.pageSize
-      }
-    });
   }
 
   sortTable(data, sortDescription): Observable<[]> {
