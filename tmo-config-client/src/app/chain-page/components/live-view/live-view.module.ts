@@ -27,7 +27,6 @@ import { LiveViewService } from './services/live-view.service';
     LiveViewResultComponent,
   ],
   imports: [
-    // FIXME: with having this imported grid layout works but no ng submodule import needed
     NgZorroAntdModule,
     CommonModule,
     FormsModule,
