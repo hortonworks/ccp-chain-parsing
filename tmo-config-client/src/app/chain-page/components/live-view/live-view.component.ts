@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
@@ -25,7 +25,7 @@ import { SampleDataModel } from './models/sample-data.model';
   templateUrl: './live-view.component.html',
   styleUrls: ['./live-view.component.scss']
 })
-export class LiveViewComponent implements AfterViewInit, OnDestroy {
+export class LiveViewComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() chainConfig$: Observable<{}>;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
