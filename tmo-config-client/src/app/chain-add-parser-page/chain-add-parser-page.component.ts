@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
+import uuidv1 from 'uuid/v1';
 
 import { ParserModel } from '../chain-page/chain-page.models';
 
@@ -23,6 +24,7 @@ export class ChainAddParserPageComponent implements OnInit {
     private fb: FormBuilder,
     private store: Store<AddParserPageState>,
     private activatedRoute: ActivatedRoute,
+    private router: Router
   ) {}
 
   get name() {
@@ -41,14 +43,22 @@ export class ChainAddParserPageComponent implements OnInit {
   addParser() {
     this.store.dispatch(new fromActions.AddParserAction({
       chainId: this.chainId,
-      parser: this.addParserForm.value
+      parser: {
+        ...this.addParserForm.value,
+        id: uuidv1(),
+        config: {},
+        outputs: {},
+        advanced: {}
+      }
     }));
+
+    this.router.navigateByUrl(`/parserconfig/chains/${this.chainId}`);
   }
 
   ngOnInit() {
     this.addParserForm = this.fb.group({
       name: new FormControl('', [Validators.required, Validators.minLength(3)]),
-      type: new FormControl(null, [Validators.required])
+      type: new FormControl(null)
     });
 
     this.activatedRoute.params.subscribe((params) => {

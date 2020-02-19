@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
-import { ChainPageState, getParser } from '../../chain-page.reducers';
+import { ChainPageState, getFormConfigByType, getParser } from '../../chain-page.reducers';
 
 import * as fromActions from '../../chain-page.actions';
 import { ParserModel, PartialParserModel } from '../../chain-page.models';
@@ -16,13 +16,14 @@ export class ParserComposerComponent implements OnInit {
 
   @Input() dirty = false;
   @Input() parserId: string;
-  @Input() configForm: CustomFormConfig[];
+  @Input() chainId: string;
   @Input() outputsForm: CustomFormConfig[];
   @Input() metaDataForm: CustomFormConfig[];
   @Output() subchainSelect = new EventEmitter<string>();
   @Output() parserRemove = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<PartialParserModel>();
 
+  configForm: CustomFormConfig[];
   parser: ParserModel;
 
   constructor(
@@ -34,6 +35,12 @@ export class ParserComposerComponent implements OnInit {
       id: this.parserId
     })).subscribe((parser) => {
       this.parser = parser;
+      if (parser) {
+        this.store.pipe(select(getFormConfigByType, { type: parser.type }))
+        .subscribe((formConfig) => {
+          this.configForm = formConfig;
+        });
+      }
     });
   }
 
@@ -44,6 +51,7 @@ export class ParserComposerComponent implements OnInit {
   onParserChange(partialParser) {
     this.store.dispatch(
       new fromActions.UpdateParserAction({
+        chainId: this.chainId,
         parser: partialParser
       })
     );

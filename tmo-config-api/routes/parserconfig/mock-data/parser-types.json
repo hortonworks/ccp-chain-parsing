@@ -1,10 +1,19 @@
 [{
-  "id": "1",
-  "name": "Parser Type 1"
+  "id": "Syslog",
+  "name": "Syslog"
 }, {
-  "id": "2",
-  "name": "Parser Type 2"
+  "id": "RenameField",
+  "name": "Rename Field"
 }, {
-  "id": "3",
-  "name": "Parser Type 3"
+  "id": "RemoveField",
+  "name": "Remove Field"
+}, {
+  "id": "Timestamp",
+  "name": "Timestamp"
+}, {
+  "id": "DelimitedText",
+  "name": "Delimited Text"
+}, {
+  "id": "Error",
+  "name": "Error"
 }]

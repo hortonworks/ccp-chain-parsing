@@ -12,15 +12,10 @@ export class ChainViewComponent implements OnInit {
 
   @Input() parsers: ParserModel[];
   @Input() dirtyParsers: string[];
+  @Input() chainId: string;
   @Output() removeParserEmitter = new EventEmitter<string>();
   @Output() chainLevelChange = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<PartialParserModel>();
-
-  configFormFields: CustomFormConfig[] = [{
-    id: '123',
-    name: 'config',
-    type: 'textarea',
-  }];
 
   outputsFormFields: CustomFormConfig[] = [{
     id: '456',
@@ -32,28 +27,33 @@ export class ChainViewComponent implements OnInit {
     id: 'name',
     name: 'name',
     type: 'text',
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'Choose a parser type'
   }, {
     id: 'type',
     name: 'type',
     type: 'select',
     label: 'Type',
     options: [{
-      id: 'Grok',
-      name: 'Grok'
+      id: 'Syslog',
+      name: 'Syslog'
     }, {
-      id: 'foo',
-      name: 'Foo'
+      id: 'RenameField',
+      name: 'Rename Field'
     }, {
-      id: 'bar',
-      name: 'Bar'
+      id: 'RemoveField',
+      name: 'Remove Field'
     }, {
-      id: 'Router',
-      name: 'Router'
+      id: 'Timestamp',
+      name: 'Timestamp'
+    }, {
+      id: 'DelimitedText',
+      name: 'Delimited Text'
+    }, {
+      id: 'Error',
+      name: 'Error'
     }]
   }];
-
-  constructor() { }
 
   ngOnInit() {
   }

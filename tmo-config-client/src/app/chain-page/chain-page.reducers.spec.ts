@@ -32,7 +32,8 @@ describe('chain-page: reducers', () => {
           outputs: ''
         }
       },
-      dirty: false,
+      dirtyParsers: [],
+      dirtyChains: [],
       routes: {},
       error: ''
     };
@@ -60,7 +61,8 @@ describe('chain-page: reducers', () => {
         }
       },
       routes: {},
-      dirty: false,
+      dirtyParsers: [],
+      dirtyChains: ['4533'],
       error: ''
     });
   });
@@ -70,7 +72,8 @@ describe('chain-page: reducers', () => {
       chains: null,
       parsers: null,
       routes: null,
-      dirty: false,
+      dirtyParsers: [],
+      dirtyChains: [],
       error: ''
     };
     const chains = {};
@@ -99,10 +102,12 @@ describe('chain-page: reducers', () => {
         }
       },
       routes: null,
-      dirty: false,
+      dirtyParsers: [],
+      dirtyChains: [],
       error: ''
     };
     const newState = fromReducers.reducer(state, new fromActions.UpdateParserAction({
+      chainId: '123',
       parser: {
         id: '456',
         outputs: 'new',
@@ -116,6 +121,8 @@ describe('chain-page: reducers', () => {
       outputs: 'new',
       config: 'new'
     });
+    expect(newState.dirtyParsers).toEqual(['456']);
+    expect(newState.dirtyChains).toEqual(['123']);
   });
 
   it('should update the given chain name', () => {
@@ -129,7 +136,8 @@ describe('chain-page: reducers', () => {
         }
       },
       routes: null,
-      dirty: false,
+      dirtyParsers: [],
+      dirtyChains: [],
       error: ''
     };
     const newState = fromReducers.reducer(state, new fromActions.UpdateChainAction({
@@ -144,6 +152,7 @@ describe('chain-page: reducers', () => {
       name: 'new',
       parsers: []
     });
+    expect(newState.dirtyChains).toEqual(['456']);
   });
 
   it('should return with the desired parser', () => {
@@ -206,19 +215,5 @@ describe('chain-page: reducers', () => {
     };
     const route = fromReducers.getRoute(state, { id: '456' });
     expect(route).toBe(desiredRoute);
-  });
-
-  it('should set dirty', () => {
-    const state = {
-      chains: null,
-      parsers: null,
-      routes: null,
-      dirty: false,
-      error: ''
-    };
-    const newState = fromReducers.reducer(state, new fromActions.SetDirtyAction({
-      dirty: true
-    }));
-    expect(newState.dirty).toBe(true);
   });
 });
