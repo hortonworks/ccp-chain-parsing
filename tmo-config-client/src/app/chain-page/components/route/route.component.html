@@ -27,8 +27,12 @@
       <span nz-tooltip nzTitle="Remove route" nzPlacement="top">
         <button
           nz-button
+          nz-popconfirm
+          nzTitle="Are you sure you want to remove this?"
+          (nzOnConfirm)="onRouteRemoveConfirmed($event, route)"
+          nzCancelText="Cancel"
+          nzOkText="Remove"
           nzType="default"
-          (click)="onRouteRemoveClick($event, route)"
         >
           <i nz-icon nzType="delete" nzTheme="fill"></i>
         </button>

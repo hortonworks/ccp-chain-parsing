@@ -64,7 +64,7 @@ export class RouteComponent implements OnInit {
     }
   }
 
-  onRouteRemoveClick(event: Event, route: RouteModel) {
+  onRouteRemoveConfirmed(event: Event, route: RouteModel) {
     this.store.dispatch(
       new fromActions.RemoveRouteAction({
         chainId: this.subchain.id,
