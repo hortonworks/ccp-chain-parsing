@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-
-import { ChainPageState, getFormConfigByType, getParser } from '../../chain-page.reducers';
+import uuidv1 from 'uuid/v1';
 
 import * as fromActions from '../../chain-page.actions';
 import { ParserModel, PartialParserModel } from '../../chain-page.models';
+import { ChainPageState, getFormConfigByType, getParser } from '../../chain-page.reducers';
 import { CustomFormConfig } from '../custom-form/custom-form.component';
 
 @Component({
@@ -60,6 +60,30 @@ export class ParserComposerComponent implements OnInit {
 
   onRemoveParser(parserId: string) {
     this.parserRemove.emit(parserId);
+  }
+
+  onRouteAdd(parser: ParserModel) {
+    const chainId = uuidv1();
+    const routeId = uuidv1();
+    this.store.dispatch(
+      new fromActions.AddChainAction({
+        chain: {
+          id: chainId,
+          name: chainId
+        }
+      })
+    );
+    this.store.dispatch(
+      new fromActions.AddRouteAction({
+        chainId,
+        parserId: parser.id,
+        route: {
+          id: routeId,
+          name: routeId,
+          subchain: chainId
+        }
+      })
+    );
   }
 
 }

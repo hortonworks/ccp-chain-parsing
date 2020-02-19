@@ -55,32 +55,4 @@ describe('chain add parser page: effects', () => {
 
     expect(spy).toHaveBeenCalledWith();
   });
-
-  it('get parsers should call the service and return with the parser types when it succeeds', () => {
-    const expected = [{
-      id: '1',
-      name: 'foo',
-      type: 'lorem'
-    }, {
-      id: '2',
-      name: 'bar',
-      type: 'ipsum'
-    }];
-
-    service.getParsers = (): Observable<any> => of(expected);
-
-    const spy = spyOn(service, 'getParsers').and.callThrough();
-
-    actions = new ReplaySubject(1);
-    actions.next(new fromActions.GetParsersAction({
-      chainId: '123'
-    }));
-
-    effects.getParsers$.subscribe(result => {
-      expect(result).toEqual(new fromActions.GetParsersSuccessAction(expected));
-    });
-
-    expect(spy).toHaveBeenCalledWith('123');
-  });
-
 });

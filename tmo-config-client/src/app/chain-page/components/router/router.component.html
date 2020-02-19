@@ -11,13 +11,38 @@
         ></app-custom-form>
       </nz-tab>
       <nz-tab nzTitle="Config">
-        <div class="router-config" *ngIf="parser.config && parser.config.routes">
+        <div class="router-config" *ngIf="parser.config">
           <div class="matching-field">
-            Matching field: {{ parser.config.matchingField }}
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="4"
+                [nzFor]="parser.id"
+              >
+                Matching field
+              </nz-form-label>
+              <nz-form-control [nzSm]="16">
+                <input
+                  id="{{ parser.id }}"
+                  nz-input
+                  (blur)="onMatchingFieldBlur($event, parser)"
+                  placeholder="Add matching field"
+                  value="{{ parser.config.matchingField }}"
+                />
+              </nz-form-control>
+            </nz-form-item>
           </div>
           <div class="routes">
+            <a
+              href="#"
+              class="add-route"
+              (click)="onAddRouteClick($event, parser)"
+            >
+              <i nz-icon nzType="file-add" nzTheme="outline"></i>
+              Add route
+            </a>
             <app-route
               *ngFor="let routeId of parser.config.routes"
+                [parser]="parser"
                 [routeId]="routeId"
                 (chainClick)="onSubchainClick($event)"
               ></app-route>
@@ -33,6 +58,9 @@
     </nz-tabset>
   </nz-card>
   <ng-template #extraTemplate>
+    <div *ngIf="dirty" class="parser-dirty">
+      <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#1890ff'"></i>
+    </div>
     <button
       nz-popconfirm
       nzPopconfirmTitle="Are you sure delete this task?"

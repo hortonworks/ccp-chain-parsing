@@ -35,6 +35,7 @@ describe('chain-page: reducers', () => {
       dirtyParsers: [],
       dirtyChains: [],
       routes: {},
+      path: [],
       error: ''
     };
     expect(
@@ -63,6 +64,7 @@ describe('chain-page: reducers', () => {
       routes: {},
       dirtyParsers: [],
       dirtyChains: ['4533'],
+      path: [],
       error: ''
     });
   });
@@ -74,12 +76,14 @@ describe('chain-page: reducers', () => {
       routes: null,
       dirtyParsers: [],
       dirtyChains: [],
+      path: [],
       error: ''
     };
     const chains = {};
     const parsers = {};
     const routes = {};
     const newState = fromReducers.reducer(state, new fromActions.LoadChainDetailsSuccessAction({
+      chainId: '123',
       chains,
       parsers,
       routes
@@ -104,6 +108,7 @@ describe('chain-page: reducers', () => {
       routes: null,
       dirtyParsers: [],
       dirtyChains: [],
+      path: [],
       error: ''
     };
     const newState = fromReducers.reducer(state, new fromActions.UpdateParserAction({
@@ -138,6 +143,7 @@ describe('chain-page: reducers', () => {
       routes: null,
       dirtyParsers: [],
       dirtyChains: [],
+      path: [],
       error: ''
     };
     const newState = fromReducers.reducer(state, new fromActions.UpdateChainAction({

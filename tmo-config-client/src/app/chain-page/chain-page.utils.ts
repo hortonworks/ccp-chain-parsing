@@ -40,7 +40,7 @@ export function denormalizeParserConfig(chain, config) {
       if (parser.type === 'Router') {
         parser.config = {
           ...parser.config,
-          routes: parser.config.routes.map((routeId) => {
+          routes: (parser.config.routes || []).map((routeId) => {
             const route = {
               ...config.routes[routeId]
             };

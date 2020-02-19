@@ -18,6 +18,7 @@ export class MockCustomFormComponent {
 })
 export class MockRouteComponent {
   @Input() routeId;
+  @Input() parser;
 }
 
 describe('RouterComponent', () => {
@@ -33,7 +34,7 @@ describe('RouterComponent', () => {
         MockRouteComponent,
         MockCustomFormComponent,
         RouterComponent
-      ]
+      ],
     })
     .compileComponents();
   }));

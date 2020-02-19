@@ -9,9 +9,9 @@ import { take } from 'rxjs/operators';
 import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
-import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
+import { ChainDetailsModel, ParserChainModel } from './chain-page.models';
 
-import { ChainPageState, getChain, getChainDetails, getChains, getDirtyStatus } from './chain-page.reducers';
+import { ChainPageState, getChain, getChainDetails, getDirtyStatus, getPathWithChains } from './chain-page.reducers';
 
 
 @Component({
@@ -52,10 +52,8 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
       this.chainId = params.id;
     });
 
-    this.getChainsSubscription = this.store.pipe(select(getChains)).subscribe((chains) => {
-      this.breadcrumbs = this.breadcrumbs.map(breadcrumb => {
-        return chains[breadcrumb.id];
-      });
+    this.getChainsSubscription = this.store.pipe(select(getPathWithChains)).subscribe((path) => {
+      this.breadcrumbs = path;
     });
 
     this.getChainSubscription = this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain: ParserChainModel) => {
@@ -65,14 +63,6 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         }));
       } else {
         this.chain = chain;
-        this.breadcrumbs = this.breadcrumbs.length > 0 ? this.breadcrumbs : [this.chain];
-
-        const chainIndexInPath = this.breadcrumbs.length > 0
-          ? this.breadcrumbs.findIndex(breadcrumb => chain.id === breadcrumb.id)
-          : null;
-        if (chainIndexInPath > -1) {
-          this.breadcrumbs[chainIndexInPath] = chain;
-        }
       }
     });
 
@@ -85,7 +75,8 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
-        if (event.url === `/parserconfig/chains/${this.chainId}/new`) {
+        const regex = new RegExp('^\/parserconfig\/chains\/' + this.chainId + '\/new', 'gi');
+        if (event.url && event.url.match(regex)) {
           this.forceDeactivate = true;
         }
       }
@@ -108,25 +99,23 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     }));
   }
 
-  onParserChange(changedParser: PartialParserModel) {
-  }
-
   onChainLevelChange(chainId: string) {
     this.store.pipe(select(getChain, { id: chainId })).pipe(take(1)).subscribe((chain: ParserChainModel) => {
-      const breadcrumbIndex = this.breadcrumbs.findIndex((breadcrumb) => breadcrumb.id === chain.id);
-      if (breadcrumbIndex > -1) {
-
-        this.breadcrumbs[breadcrumbIndex] = chain;
-      } else {
-        this.breadcrumbs.push(chain);
-      }
+      this.store.dispatch(
+        new fromActions.AddToPathAction({ chainId })
+      );
     });
   }
 
   onBreadcrumbClick(event: Event, chain: ParserChainModel) {
     event.preventDefault();
     const index = this.breadcrumbs.findIndex((breadcrumb: ParserChainModel) => breadcrumb.id === chain.id);
-    this.breadcrumbs = this.breadcrumbs.slice(0, index + 1);
+    const removeFromPathList = this.breadcrumbs.slice(index + 1).map(ch => ch.id);
+    if (removeFromPathList.length) {
+      this.store.dispatch(
+        new fromActions.RemoveFromPathAction({ chainId: removeFromPathList })
+      );
+    }
   }
 
   onChainNameEditClick(event: Event, chain: ParserChainModel) {
@@ -199,6 +188,14 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         this.store.dispatch(new fromActions.SaveParserConfigAction({ chainId: this.chainId }));
       }
     });
+  }
+
+  onAddParserClick(event: Event) {
+    event.preventDefault();
+    const routeParams = this.breadcrumbs.length > 1
+      ? { subchain: this.breadcrumbs[this.breadcrumbs.length - 1].id }
+      : {};
+    this.router.navigate([`/parserconfig/chains/${this.chainId}/new`, routeParams]);
   }
 
   ngOnDestroy() {
