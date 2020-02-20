@@ -58,12 +58,11 @@ function createParseJob(req, res) {
         "message": "Parsing Successful"
       };
     } else {
-      parsers
       failedParser = parsers[Math.floor(Math.random() * parsers.length)];
       entry.log = {
         "type": "error",
         "message": `Parsing Failed: ${failedParser.name} parser unable to parse.`,
-        "failedParser": failedParser.id
+        "parserId": failedParser.id
       };
     }
   });

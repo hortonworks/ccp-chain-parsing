@@ -10,7 +10,14 @@ import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
-import { ChainPageState, getChain, getChainDetails, getChains, getDirtyStatus, getParserToBeInvestigated } from './chain-page.reducers';
+import {
+  ChainPageState,
+  getChain,
+  getChainDetails,
+  getChains,
+  getDirtyStatus,
+  getParserToBeInvestigated
+} from './chain-page.reducers';
 
 
 @Component({
@@ -115,7 +122,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   }
 
   exitFailedParserEditView() {
-    this.store.dispatch(new fromActions.LoadFailedParser({ id: '' }));
+    this.store.dispatch(new fromActions.FailedParserSelected({ id: '' }));
   }
 
   removeParser(id: string) {
@@ -204,7 +211,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         this.store.dispatch(new fromActions.LoadChainDetailsAction({
           id: this.chainId
         }));
-        this.store.dispatch(new fromActions.LoadFailedParser({ id: '' }));
+        this.store.dispatch(new fromActions.FailedParserSelected({ id: '' }));
       }
     });
   }
@@ -218,7 +225,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
       nzCancelText: 'Cancel',
       nzOnOk: () => {
         this.store.dispatch(new fromActions.SaveParserConfigAction({ chainId: this.chainId }));
-        this.store.dispatch(new fromActions.LoadFailedParser({ id: '' }));
+        this.store.dispatch(new fromActions.FailedParserSelected({ id: '' }));
       }
     });
   }

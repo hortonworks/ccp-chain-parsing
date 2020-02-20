@@ -10,7 +10,7 @@ export interface EntryParsingResultModel {
   log: {
     type: string;
     message: string;
-    failedParser?: string;
+    parserId?: string;
   };
 }
 

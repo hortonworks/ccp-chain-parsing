@@ -25,7 +25,7 @@ export class ParserComposerComponent implements OnInit {
 
   configForm: CustomFormConfig[];
   parser: ParserModel;
-  investigated = false;
+  isolatedParserView = false;
 
   constructor(
     private store: Store<ChainPageState>
@@ -46,13 +46,7 @@ export class ParserComposerComponent implements OnInit {
 
     this.store
       .pipe(select(getParserToBeInvestigated))
-      .subscribe((id: string) => {
-        if (id.length) {
-          this.investigated = true;
-        } else {
-          this.investigated = false;
-        }
-      });
+      .subscribe(id => this.isolatedParserView = !!id);
   }
 
   onSubchainSelect(chainId: string) {

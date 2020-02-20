@@ -3,7 +3,7 @@ import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 
-import { LoadFailedParser } from '../../chain-page.actions';
+import { FailedParserSelected } from '../../chain-page.actions';
 
 import {
   executionTriggered,
@@ -56,8 +56,8 @@ export class LiveViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscribeToRelevantChanges();
   }
 
-  seeFailedParser(failedParserId) {
-    this.store.dispatch(new LoadFailedParser({ id: failedParserId }));
+  onFailedParserSelected(failedParserId) {
+    this.store.dispatch(new FailedParserSelected({ id: failedParserId }));
   }
 
   private subscribeToRelevantChanges() {

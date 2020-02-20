@@ -127,7 +127,7 @@ export function reducer(
         }
       };
     }
-    case chainPageActions.LOAD_FAILED_PARSER: {
+    case chainPageActions.FAILED_PARSER_SELECTED: {
       return {
         ...state,
         parserToBeInvestigated: action.payload.id
