@@ -3,6 +3,9 @@ package com.cloudera.parserchains.core.catalog;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
+import com.cloudera.parserchains.core.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.config.ConfigName;
+import com.cloudera.parserchains.core.config.ConfigValues;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -25,6 +28,17 @@ public class ClassIndexParserCatalogTest {
         public List<FieldName> outputFields() {
             // do nothing
             return null;
+        }
+
+        @Override
+        public List<ConfigDescriptor> validConfigurations() {
+            // do nothing
+            return null;
+        }
+
+        @Override
+        public void configure(ConfigName name, ConfigValues values) {
+            // do nothing
         }
     }
 

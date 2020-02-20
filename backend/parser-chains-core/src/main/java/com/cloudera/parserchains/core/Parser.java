@@ -1,5 +1,9 @@
 package com.cloudera.parserchains.core;
 
+import com.cloudera.parserchains.core.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.config.ConfigName;
+import com.cloudera.parserchains.core.config.ConfigValues;
+
 import java.util.List;
 
 /**
@@ -20,4 +24,19 @@ public interface Parser {
      * are able to declare their known output fields.
      */
     List<FieldName> outputFields();
+
+    /**
+     * Allows a parser author to describe the configuration parameters required by a parser.
+     * @return A list of the configuration elements expected by the parser.
+     */
+    List<ConfigDescriptor> validConfigurations();
+
+    /**
+     * Configure a parser. Expect this method to be called for each configuration parameter
+     * accepted by the parser.
+     *
+     * @param name The name of the configuration.
+     * @param values The value(s) of the configuration element.
+     */
+    void configure(ConfigName name, ConfigValues values);
 }

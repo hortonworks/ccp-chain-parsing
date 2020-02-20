@@ -3,11 +3,16 @@ package com.cloudera.parserchains.parsers;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.Regex;
+import com.cloudera.parserchains.core.catalog.MessageParser;
+import com.cloudera.parserchains.core.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.config.ConfigKey;
+import com.cloudera.parserchains.core.config.ConfigName;
+import com.cloudera.parserchains.core.config.ConfigValues;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,11 +45,13 @@ public class DelimitedTextParser implements Parser {
     private Regex delimiter;
     private List<OutputField> outputFields;
     private boolean trimWhitespace;
+    private Configurer configurer;
 
     public DelimitedTextParser() {
         outputFields = new ArrayList<>();
         delimiter = Regex.of(",");
         trimWhitespace = true;
+        configurer = new Configurer(this);
     }
 
     /**
@@ -96,6 +103,7 @@ public class DelimitedTextParser implements Parser {
         return trimWhitespace;
     }
 
+
     @Override
     public Message parse(Message input) {
         if(inputField == null) {
@@ -137,5 +145,114 @@ public class DelimitedTextParser implements Parser {
                 .stream()
                 .map(outputField -> outputField.fieldName)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ConfigDescriptor> validConfigurations() {
+        return configurer.validConfigurations();
+    }
+
+    @Override
+    public void configure(ConfigName name, ConfigValues values) {
+        configurer.configure(name, values);
+    }
+
+    /**
+     * Handles configuration for the {@link DelimitedTextParser}.
+     */
+    static class Configurer {
+        static final String OUTPUT_FIELD_NAME = "fieldName";
+        static final String OUTPUT_FIELD_INDEX = "fieldIndex";
+        static final ConfigDescriptor inputFieldConfig = ConfigDescriptor
+                .builder()
+                .name("inputField")
+                .description("The name of the input field to parse.")
+                .isRequired(true)
+                .build();
+        static final ConfigDescriptor outputFieldConfig = ConfigDescriptor
+                .builder()
+                .name("outputField")
+                .description("An output field created by the parser.")
+                .isRequired(true)
+                .requiresValue(OUTPUT_FIELD_INDEX, "The name of the output field.")
+                .requiresValue(OUTPUT_FIELD_NAME, "The column index containing the data for an output field.")
+                .build();
+        static final ConfigDescriptor delimiterConfig = ConfigDescriptor
+                .builder()
+                .name("delimiter")
+                .description("A regex delimiter used to split the text. Defaults to comma.")
+                .isRequired(false)
+                .build();
+        static final ConfigDescriptor trimConfig = ConfigDescriptor
+                .builder()
+                .name("trim")
+                .description("Trim whitespace from each value. Defaults to true.")
+                .isRequired(false)
+                .build();
+        private DelimitedTextParser parser;
+
+        Configurer(DelimitedTextParser parser) {
+            this.parser = parser;
+        }
+
+        List<ConfigDescriptor> validConfigurations() {
+            return Arrays.asList(inputFieldConfig, outputFieldConfig, delimiterConfig, trimConfig);
+        }
+
+        void configure(ConfigName name, ConfigValues values) {
+            if(inputFieldConfig.getName().equals(name)) {
+                configureInput(values);
+
+            } else if(outputFieldConfig.getName().equals(name)) {
+                configureOutput(values);
+
+            } else if(delimiterConfig.getName().equals(name)) {
+                configureDelimiter(values);
+
+            } else if(trimConfig.getName().equals(name)) {
+                configureTrim(values);
+
+            } else {
+                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
+            }
+        }
+
+        private void configureTrim(ConfigValues values) {
+            values.getValue().ifPresent(value -> {
+                boolean trim = Boolean.valueOf(value.getValue());
+                parser.trimWhitespace(trim);
+            });
+        }
+
+        private void configureDelimiter(ConfigValues values) {
+            values.getValue().ifPresent(value -> {
+                Regex delimiter = Regex.of(value.getValue());
+                parser.withDelimiter(delimiter);
+            });
+        }
+
+        private void configureInput(ConfigValues values) {
+            values.getValue().ifPresent(value -> {
+                FieldName inputField = FieldName.of(value.getValue());
+                parser.withInputField(inputField);
+            });
+        }
+
+        private void configureOutput(ConfigValues values) {
+            FieldName outputField = values
+                    .getValue(ConfigKey.of(OUTPUT_FIELD_NAME))
+                    .map(value -> FieldName.of(value.getValue()))
+                    .orElseThrow(() -> missingConfig(ConfigKey.of(OUTPUT_FIELD_NAME)));
+            Integer columnIndex = values
+                    .getValue(ConfigKey.of(OUTPUT_FIELD_INDEX))
+                    .map(value -> Integer.parseInt(value.getValue()))
+                    .orElseThrow(() -> missingConfig(ConfigKey.of(OUTPUT_FIELD_INDEX)));
+            parser.withOutputField(outputField, columnIndex);
+        }
+
+        private IllegalArgumentException missingConfig(ConfigKey missing) {
+            String error = String.format("No value defined for %s.%s", outputFieldConfig.getName(), missing.getKey());
+            return new IllegalArgumentException(error);
+        }
     }
 }

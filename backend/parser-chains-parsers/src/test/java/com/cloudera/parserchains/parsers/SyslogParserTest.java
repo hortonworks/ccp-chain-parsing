@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.cloudera.parserchains.parsers.SyslogParser.Configurer.inputFieldConfig;
+import static com.cloudera.parserchains.parsers.SyslogParser.Configurer.specConfig;
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_APPNAME;
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_HOSTNAME;
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_MSGID;
@@ -22,6 +24,7 @@ import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.MESSAGE;
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.STRUCTURED_BASE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -109,6 +112,11 @@ public class SyslogParserTest {
     }
 
     @Test
+    void validConfigurations() {
+        assertThat(new SyslogParser().validConfigurations(), hasItems(inputFieldConfig, specConfig));
+    }
+
+    @Test
     void outputFields_RFC_3164() {
         SyslogParser parser = new SyslogParser()
                 .withInputField(FieldName.of("original_string"))
@@ -124,7 +132,7 @@ public class SyslogParserTest {
         List<FieldName> actualFields = new ArrayList<>(output.getFields().keySet());
         for(FieldName outputField: parser.outputFields()) {
             assertThat("The output is missing one of the declared output fields.",
-                actualFields, hasItem(outputField));
+                    actualFields, hasItem(outputField));
         }
     }
 
@@ -143,8 +151,8 @@ public class SyslogParserTest {
         // validate
         List<FieldName> actualFields = new ArrayList<>(output.getFields().keySet());
         for(FieldName outputField: parser.outputFields()) {
-            assertThat("The message is missing one of the declared output fields.", 
-                actualFields, hasItem(outputField));
+            assertThat("The message is missing one of the declared output fields.",
+                    actualFields, hasItem(outputField));
         }
     }
 }

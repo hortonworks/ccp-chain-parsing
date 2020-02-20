@@ -1,12 +1,19 @@
 package com.cloudera.parserchains.parsers;
 
+import com.cloudera.parserchains.core.config.ConfigName;
+import com.cloudera.parserchains.core.config.ConfigValues;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import static com.cloudera.parserchains.parsers.RemoveFieldParser.Configurer.removeFieldConfig;
 
 public class RemoveFieldParserTest {
 
@@ -41,10 +48,29 @@ public class RemoveFieldParserTest {
                 .parse(input);
 
         assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get(),
-            "Expected 'field1' to remain.");
+                "Expected 'field1' to remain.");
         assertEquals(FieldValue.of("value2"), output.getField(FieldName.of("field2")).get(),
-            "Expected 'field2' to remain.");
+                "Expected 'field2' to remain.");
         assertEquals(FieldValue.of("value3"), output.getField(FieldName.of("field3")).get(),
-            "Expected 'field3' to remain.");
+                "Expected 'field3' to remain.");
+    }
+
+    @Test
+    void configure() {
+        ConfigValues fieldToRemove = ConfigValues.builder()
+                .withValue("field1")
+                .build();
+        RemoveFieldParser parser = new RemoveFieldParser();
+        parser.configure(removeFieldConfig.getName(), fieldToRemove);
+        assertThat(parser.getFieldsToRemove(), hasItems(FieldName.of("field1")));
+    }
+
+    @Test
+    void unexpectedConfig() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new RemoveFieldParser().configure(
+                        ConfigName.of("invalid"),
+                        ConfigValues.builder().build()
+                ));
     }
 }

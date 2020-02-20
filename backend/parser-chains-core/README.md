@@ -93,3 +93,8 @@ List<ParserInfo> parsers = new ClassIndexParserCatalog().getParsers();
 ```
 
 The `ParserInfo` provides metadata about each parser like a name, description, and the implementation class.
+
+
+### ConfigDescriptor
+
+This classes allows a parser author to describe the configuration parameters available to a user. A list of `ConfigDescriptor` values are returned by a parser's `validConfiguration()` method.

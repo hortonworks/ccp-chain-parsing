@@ -1,12 +1,18 @@
 package com.cloudera.parserchains.parsers;
 
+import com.cloudera.parserchains.core.config.ConfigName;
+import com.cloudera.parserchains.core.config.ConfigValues;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
 import org.junit.jupiter.api.Test;
 
+import static com.cloudera.parserchains.parsers.RenameFieldParser.Configurer.FROM_FIELD;
+import static com.cloudera.parserchains.parsers.RenameFieldParser.Configurer.renameFieldConfig;
+import static com.cloudera.parserchains.parsers.RenameFieldParser.Configurer.TO_FIELD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RenameFieldParserTest {
 
@@ -39,7 +45,28 @@ public class RenameFieldParserTest {
         Message output = new RenameFieldParser()
                 .renameField(FieldName.of("doesNotExist"), FieldName.of("new1"))
                 .parse(input);
-        assertEquals(input, output, 
-            "The output fields should be the same as the input. No rename occurred.");
+        assertEquals(input, output,
+                "The output fields should be the same as the input. No rename occurred.");
+    }
+
+    @Test
+    void configure() {
+        // rename 'original1' to 'new1'
+        ConfigValues fieldToRename = ConfigValues.builder()
+                .withValue(FROM_FIELD, "original1")
+                .withValue(TO_FIELD, "new1")
+                .build();
+        RenameFieldParser parser = new RenameFieldParser();
+        parser.configure(renameFieldConfig.getName(), fieldToRename);
+        assertEquals(FieldName.of("new1"), parser.getFieldsToRename().get(FieldName.of("original1")));
+    }
+
+    @Test
+    void unexpectedConfig() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new RenameFieldParser().configure(
+                        ConfigName.of("invalid"),
+                        ConfigValues.builder().build()
+                ));
     }
 }

@@ -26,12 +26,23 @@ public class FieldNameTest {
     }
 
     @Test
+    void tooShort() {
+        assertThrows(IllegalArgumentException.class, () -> FieldName.of(""));
+    }
+
+    @Test
     void notNull() {
         assertThrows(IllegalArgumentException.class, () -> FieldName.of(null));
     }
 
     @Test
+    void invalidCharacters() {
+        assertThrows(IllegalArgumentException.class, () -> FieldName.of("<html></html>"));
+    }
+
+    @Test
     void get() {
+        String name = "field_name";
         assertEquals(name, FieldName.of(name).get());
     }
 }
