@@ -7,7 +7,13 @@
   margin-left: 10px;
 }
 
+.error-breadcrumb {
+  color: var(--warning);
 
+  &:hover {
+    cursor: pointer;
+  }
+}
 
 .custom-form-group {
   margin: 5px auto !important;

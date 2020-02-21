@@ -4,14 +4,16 @@
   </div>
   <div nz-row nzGutter="16">
     <div nz-col nzSpan="10">
+      <div *ngIf="">test</div>
       <app-chain-view
+        [parsers]="parsers"
         [chainId]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].id) || (chain && chain.id)"
-        [parsers]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].parsers) || (chain && chain.parsers)"
         [dirtyParsers]="dirtyParsers"
         (removeParserEmitter)="removeParser($event)"
         (chainLevelChange)="onChainLevelChange($event)"
         (parserChange)="onParserChange($event)"
       ></app-chain-view>
+
     </div>
     <div nz-col nzSpan="14">
       <app-live-view [chainConfig$]="chainConfig$"></app-live-view>
@@ -22,7 +24,7 @@
 <ng-template #breadcrumbsCardTitle>
   <div nz-col nzSpan="20">
     <div nz-row nzType="flex" nzAlign="middle" nzJustify="start">
-      <div nz-col nzSpan="1">
+      <div nz-col nzSpan="1" *ngIf="!this.parserToBeInvestigated.length">
         <a
           class="chain-edit-btn"
           (click)="onChainNameEditClick($event, chain)"
@@ -62,12 +64,17 @@
       </div>
       <div nz-col nzSpan="23">
         <nz-breadcrumb>
-          <nz-breadcrumb-item *ngFor="let breadcrumb of breadcrumbs; index as i">
-            <span *ngIf="dirtyChains.includes(breadcrumb.id)">
-              <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#f00'" nz-tooltip nzTooltipTitle="Save the changes"></i>&nbsp;
-            </span>
-            <a *ngIf="i < breadcrumbs.length - 1" href="#" (click)="onBreadcrumbClick($event, breadcrumb)">{{ breadcrumb.name }}</a>
-            <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>
+          <ng-container *ngIf="!this.parserToBeInvestigated.length">
+            <nz-breadcrumb-item *ngFor="let breadcrumb of breadcrumbs; index as i">
+              <span *ngIf="dirtyChains.includes(breadcrumb.id)">
+                <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#f00'" nz-tooltip nzTooltipTitle="Save the changes"></i>&nbsp;
+              </span>
+              <a *ngIf="i < breadcrumbs.length - 1" href="#" (click)="onBreadcrumbClick($event, breadcrumb)">{{ breadcrumb.name }}</a>
+              <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>
+            </nz-breadcrumb-item>
+          </ng-container>
+          <nz-breadcrumb-item *ngIf="this.parserToBeInvestigated.length" (click)="exitFailedParserEditView()" class="error-breadcrumb">
+            <i nz-icon nzType="left" nzTheme="outline"></i>Back to previous view
           </nz-breadcrumb-item>
         </nz-breadcrumb>
       </div>

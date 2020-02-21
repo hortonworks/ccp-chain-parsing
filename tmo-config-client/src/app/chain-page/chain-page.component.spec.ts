@@ -157,4 +157,19 @@ describe('ChainPageComponent', () => {
     expect(store.dispatch).toHaveBeenCalledWith(actionUpdate);
   });
 
+  it('should pass the id of a failed parser if investigated', () => {
+    component.parserToBeInvestigated = ['1111'];
+    fixture.detectChanges();
+    expect(component.parsers).toBe(component.parserToBeInvestigated);
+
+    component.parserToBeInvestigated = [];
+    component.chain.parsers = [{
+      id: '123',
+      type: 'test type',
+      name: 'test name'
+    }];
+    fixture.detectChanges();
+    expect(component.parsers).toBe(component.chain.parsers);
+  });
+
 });

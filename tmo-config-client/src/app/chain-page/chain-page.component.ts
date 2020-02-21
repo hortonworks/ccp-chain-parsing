@@ -10,8 +10,14 @@ import { DeactivatePreventer } from '../misc/deactivate-preventer.interface';
 
 import * as fromActions from './chain-page.actions';
 import { ChainDetailsModel, ParserChainModel, PartialParserModel } from './chain-page.models';
-
-import { ChainPageState, getChain, getChainDetails, getChains, getDirtyStatus } from './chain-page.reducers';
+import {
+  ChainPageState,
+  getChain,
+  getChainDetails,
+  getChains,
+  getDirtyStatus,
+  getParserToBeInvestigated
+} from './chain-page.reducers';
 
 
 @Component({
@@ -27,6 +33,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   dirtyChains: string[] = [];
   dirtyParsers: string[] = [];
   chainConfig$: Observable<ChainDetailsModel>;
+  parserToBeInvestigated: string[] = [];
   getChainSubscription: Subscription;
   forceDeactivate = false;
   chainIdBeingEdited: string;
@@ -45,6 +52,18 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
 
   get dirty() {
     return this.dirtyParsers.length || this.dirtyParsers.length;
+  }
+
+  get parsers() {
+    if (this.parserToBeInvestigated.length) {
+      return this.parserToBeInvestigated;
+    } else {
+      return (
+        (this.breadcrumbs.length > 0 &&
+          this.breadcrumbs[this.breadcrumbs.length - 1].parsers) ||
+        (this.chain && this.chain.parsers)
+      );
+    }
   }
 
   ngOnInit() {
@@ -83,6 +102,10 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
 
     this.chainConfig$ = this.store.pipe(select(getChainDetails, { chainId: this.chainId }));
 
+    this.store.pipe(select(getParserToBeInvestigated)).subscribe((id: string) => {
+      this.parserToBeInvestigated = id === '' ? [] : [id];
+    });
+
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         if (event.url === `/parserconfig/chains/${this.chainId}/new`) {
@@ -96,6 +119,10 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     });
 
     this.store.dispatch(new fromActions.GetFormConfigsAction());
+  }
+
+  exitFailedParserEditView() {
+    this.store.dispatch(new fromActions.FailedParserSelected({ id: '' }));
   }
 
   removeParser(id: string) {
@@ -184,6 +211,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         this.store.dispatch(new fromActions.LoadChainDetailsAction({
           id: this.chainId
         }));
+        this.store.dispatch(new fromActions.FailedParserSelected({ id: '' }));
       }
     });
   }
@@ -197,6 +225,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
       nzCancelText: 'Cancel',
       nzOnOk: () => {
         this.store.dispatch(new fromActions.SaveParserConfigAction({ chainId: this.chainId }));
+        this.store.dispatch(new fromActions.FailedParserSelected({ id: '' }));
       }
     });
   }
