@@ -11,10 +11,9 @@ The client code and the mock service to get some mock data via http.
 ```bash
 $ git clone git@github.com:hortonworks/ccp-tmo-search-client.git
 ```
-
-Client
+Client Dev Server
+A dev server that uses the proxy configuration set in proxy.conf.mock.json
 ======
-
 ```bash
 $ cd tmo-config-client
 ```
@@ -24,7 +23,7 @@ $ npm ci
 ```
 
 ```bash
-$ npm start
+$ npm run start:mock
 ```
 
 Mock API
