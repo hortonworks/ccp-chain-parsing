@@ -23,7 +23,7 @@ $ npm ci
 ```
 
 ```bash
-$ npm run start:mock
+$ npm run start:dev
 ```
 
 Mock API
