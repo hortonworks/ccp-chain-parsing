@@ -32,6 +32,10 @@ export const initialState: ChainPageState = {
   path: [],
 };
 
+export const uniqueAdd = (haystack: string[], needle: string): string[] => {
+  return [ ...haystack.filter(item => item !== needle), needle];
+};
+
 export function reducer(
   state: ChainPageState = initialState,
   action: chainPageActions.ChainDetailsAction | addParserActions.ParserAction
@@ -54,10 +58,7 @@ export function reducer(
       return {
         ...state,
         parsers,
-        dirtyChains: [
-          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
-          action.payload.chainId
-        ],
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
         chains: {
           ...state.chains,
           [action.payload.chainId]: {
@@ -78,14 +79,8 @@ export function reducer(
             ...action.payload.parser
           }
         },
-        dirtyChains: [
-          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
-          action.payload.chainId
-        ],
-        dirtyParsers: [
-          ...state.dirtyParsers.filter(parserId => parserId !== action.payload.parser.id),
-          action.payload.parser.id
-        ],
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parser.id),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
       };
     }
     case chainPageActions.ADD_CHAIN: {
@@ -103,10 +98,7 @@ export function reducer(
     case chainPageActions.UPDATE_CHAIN: {
       return {
         ...state,
-        dirtyChains: [
-          ...state.dirtyChains.filter(id => id !== action.payload.chain.id),
-          action.payload.chain.id
-        ],
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chain.id),
         chains: {
           ...state.chains,
           [action.payload.chain.id]: {
@@ -123,14 +115,8 @@ export function reducer(
           ...state.parsers,
           [action.payload.parser.id]: action.payload.parser
         },
-        dirtyParsers: [
-          ...state.dirtyParsers.filter(parserId => parserId !== action.payload.parser.id),
-          action.payload.parser.id
-        ],
-        dirtyChains: [
-          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
-          action.payload.chainId
-        ],
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parser.id),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
         chains: {
           ...state.chains,
           [action.payload.chainId]: {
@@ -174,14 +160,8 @@ export function reducer(
     case chainPageActions.ADD_ROUTE: {
       return {
         ...state,
-        dirtyParsers: [
-          ...state.dirtyParsers.filter(parserId => parserId !== action.payload.parserId),
-          action.payload.parserId
-        ],
-        dirtyChains: [
-          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
-          action.payload.chainId
-        ],
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parserId),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
         parsers: {
           ...state.parsers,
           [action.payload.parserId]: {
@@ -206,14 +186,8 @@ export function reducer(
     case chainPageActions.UPDATE_ROUTE: {
       return {
         ...state,
-        dirtyParsers: [
-          ...state.dirtyParsers.filter(parserId => parserId !== action.payload.parserId),
-          action.payload.parserId
-        ],
-        dirtyChains: [
-          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
-          action.payload.chainId
-        ],
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parserId),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
         routes: {
           ...state.routes,
           [action.payload.route.id]: {
@@ -228,14 +202,8 @@ export function reducer(
       delete routes[action.payload.routeId];
       return {
         ...state,
-        dirtyParsers: [
-          ...state.dirtyParsers.filter(parserId => parserId !== action.payload.parserId),
-          action.payload.parserId
-        ],
-        dirtyChains: [
-          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
-          action.payload.chainId
-        ],
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parserId),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
         routes,
         parsers: {
           ...state.parsers,
@@ -252,10 +220,7 @@ export function reducer(
     case chainPageActions.ADD_TO_PATH: {
       return {
         ...state,
-        path: [
-          ...state.path.filter(chainId => chainId !== action.payload.chainId),
-          action.payload.chainId
-        ]
+        path: uniqueAdd(state.path, action.payload.chainId)
       };
     }
     case chainPageActions.REMOVE_FROM_PATH: {
