@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { select, Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 
 import * as fromActions from '../../chain-page.actions';
 import { ParserChainModel, ParserModel, RouteModel } from '../../chain-page.models';
@@ -10,7 +11,7 @@ import { ChainPageState, getChain, getRoute } from '../../chain-page.reducers';
   templateUrl: './route.component.html',
   styleUrls: ['./route.component.scss']
 })
-export class RouteComponent implements OnInit {
+export class RouteComponent implements OnInit, OnDestroy {
 
   @Input() routeId: string;
   @Input() parser: ParserModel;
@@ -18,21 +19,25 @@ export class RouteComponent implements OnInit {
 
   subchain: ParserChainModel;
   route: RouteModel;
+  getRouteSub: Subscription;
+  getChainSub: Subscription;
 
   constructor(
     private store: Store<ChainPageState>,
   ) { }
 
   ngOnInit() {
-    this.store.pipe(select(getRoute, {
+    this.getRouteSub = this.store.pipe(select(getRoute, {
       id: this.routeId
     })).subscribe((route) => {
       this.route = route;
-      this.store.pipe(select(getChain, {
-        id: this.route.subchain
-      })).subscribe((subchain) => {
-        this.subchain = subchain;
-      });
+      if (route && route.subchain) {
+        this.getChainSub = this.store.pipe(select(getChain, {
+          id: this.route.subchain
+        })).subscribe((subchain) => {
+          this.subchain = subchain;
+        });
+      }
     });
   }
 
@@ -72,5 +77,14 @@ export class RouteComponent implements OnInit {
         routeId: route.id
       })
     );
+  }
+
+  ngOnDestroy() {
+    if (this.getChainSub) {
+      this.getChainSub.unsubscribe();
+    }
+    if (this.getRouteSub) {
+      this.getRouteSub.unsubscribe();
+    }
   }
 }

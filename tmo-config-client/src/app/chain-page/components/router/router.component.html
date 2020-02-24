@@ -41,7 +41,7 @@
               Add route
             </a>
             <app-route
-              *ngFor="let routeId of parser.config.routes"
+              *ngFor="let routeId of parser.config.routes; trackBy: trackByFn"
                 [parser]="parser"
                 [routeId]="routeId"
                 (chainClick)="onSubchainClick($event)"

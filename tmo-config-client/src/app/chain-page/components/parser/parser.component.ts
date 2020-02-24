@@ -18,6 +18,7 @@ export class ParserComponent implements OnInit, OnChanges {
   @Input() metaDataForm: CustomFormConfig[];
   @Input() configForm: CustomFormConfig[];
   @Input() outputsForm: CustomFormConfig[];
+  @Input() isolatedParserView = false;
   @Output() removeParser = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<any>();
 

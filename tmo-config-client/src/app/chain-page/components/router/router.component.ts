@@ -35,4 +35,8 @@ export class RouterComponent extends ParserComponent {
     event.preventDefault();
     this.routeAdd.emit(parser);
   }
+
+  trackByFn(index, routeId) {
+    return routeId;
+  }
 }
