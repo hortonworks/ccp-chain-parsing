@@ -7,10 +7,10 @@ import java.util.Objects;
  *
  * <code>
  * ChainLink chain = ChainBuilder.init()
- *     .then(csvParser)
- *     .routeBy(routerField)
- *     .thenMatch(Regex.of("%ASA-6-302021:"), subChain)
- *     .thenMatch(Regex.of("%ASA-9-302041:"), anotherParser)
+ *     .then(csvParser, LinkName.of("csvParser1"))
+ *     .routeBy(routerField, LinkName.of("router1"))
+ *     .thenMatch(Regex.of("%ASA-6-302021:"), subChain1)
+ *     .thenMatch(Regex.of("%ASA-9-302041:"), subChain2)
  *     .thenDefault(error)
  *     .head();
  * </code>
@@ -49,18 +49,20 @@ public class ChainBuilder {
         /**
          * Adds a link to the head of the chain.
          * @param parser The next parser in the chain.
+         * @param linkName The name assigned to this link in the chain.
          */
-        public MiddleOfChainBuilder then(Parser parser) {
-            NextChainLink head = new NextChainLink(parser);
+        public MiddleOfChainBuilder then(Parser parser, LinkName linkName) {
+            NextChainLink head = new NextChainLink(parser, linkName);
             return new MiddleOfChainBuilder(head);
         }
 
         /**
          * Adds a router to the head of the chain.
          * @param routeBy The field used to route messages.
+         * @param linkName The name assigned to this link in the chain.
          */
-        public EndOfChainBuilder routeBy(FieldName routeBy) {
-            return new EndOfChainBuilder(routeBy);
+        public EndOfChainBuilder routeBy(FieldName routeBy, LinkName linkName) {
+            return new EndOfChainBuilder(routeBy, linkName);
         }
     }
 
@@ -88,9 +90,10 @@ public class ChainBuilder {
         /**
          * Adds another link to the chain.
          * @param parser The next parser in the chain.
+         * @param linkName The name assigned to this link in the chain.
          */
-        public MiddleOfChainBuilder then(Parser parser) {
-            NextChainLink nextLink = new NextChainLink(parser);
+        public MiddleOfChainBuilder then(Parser parser, LinkName linkName) {
+            NextChainLink nextLink = new NextChainLink(parser, linkName);
             lastLink.setNext(nextLink);
             lastLink = nextLink;
             return this;
@@ -101,9 +104,10 @@ public class ChainBuilder {
          * <p>After adding a router to the chain, no other parsers can be added
          * without defining a route.
          * @param routeBy The field used to route messages.
+         * @param linkName The name assigned to this link in the chain.
          */
-        public EndOfChainBuilder routeBy(FieldName routeBy) {
-            return new EndOfChainBuilder(head, lastLink, routeBy);
+        public EndOfChainBuilder routeBy(FieldName routeBy, LinkName linkName) {
+            return new EndOfChainBuilder(head, lastLink, routeBy, linkName);
         }
 
         /**
@@ -128,9 +132,10 @@ public class ChainBuilder {
          * The constructor to use when the router is at the head of the chain.
          * <p>Should only be called by {@link HeadOfChainBuilder}.
          * @param routeBy The field to route by.
+         * @param linkName The name assigned to this link in the chain.
          */
-        private EndOfChainBuilder(FieldName routeBy) {
-            router = new RouterLink().withInputField(routeBy);
+        private EndOfChainBuilder(FieldName routeBy, LinkName linkName) {
+            router = new RouterLink(linkName).withInputField(routeBy);
             this.head = router;
         }
 
@@ -140,9 +145,10 @@ public class ChainBuilder {
          * @param head The head of the chain.
          * @param lastLink The last link in the chain.
          * @param routeBy The field to route by.
+         * @param linkName The name assigned to this link in the chain.
          */
-        private EndOfChainBuilder(ChainLink head, NextChainLink lastLink, FieldName routeBy) {
-            router = new RouterLink().withInputField(routeBy);
+        private EndOfChainBuilder(ChainLink head, NextChainLink lastLink, FieldName routeBy, LinkName linkName) {
+            router = new RouterLink(linkName).withInputField(routeBy);
             this.head = Objects.requireNonNull(head);
             lastLink.setNext(router);
         }
@@ -163,9 +169,10 @@ public class ChainBuilder {
          * <p>This call must be proceeded by a call to 'routeBy'.
          * @param regex The regex used to 'match'.
          * @param parser The next parser on this route.
+         * @param linkName The name assigned to this link in the chain.
          */
-        public EndOfChainBuilder thenMatch(Regex regex, Parser parser) {
-            return thenMatch(regex, new NextChainLink(parser));
+        public EndOfChainBuilder thenMatch(Regex regex, Parser parser, LinkName linkName) {
+            return thenMatch(regex, new NextChainLink(parser, linkName));
         }
 
         /**
@@ -182,10 +189,11 @@ public class ChainBuilder {
          * Add a default route for a router. If no matches occur, the default route is used.
          * <p>This call must be proceeded by 'routeBy'.
          * @param parser The next parser.
+         * @param linkName The name assigned to this link in the chain.
          */
 
-        public EndOfChainBuilder thenDefault(Parser parser) {
-            return thenDefault(new NextChainLink(parser));
+        public EndOfChainBuilder thenDefault(Parser parser, LinkName linkName) {
+            return thenDefault(new NextChainLink(parser, linkName));
         }
 
         /**

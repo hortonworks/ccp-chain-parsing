@@ -8,6 +8,7 @@ import java.util.Optional;
  * Parses a {@link Message} using a parser chain.
  */
 public class ChainRunner {
+    public static final LinkName ORIGINAL_MESSAGE = LinkName.of("original");
     private FieldName inputField;
 
     public ChainRunner() {
@@ -37,6 +38,7 @@ public class ChainRunner {
         // create the initial message
         Message message = Message.builder()
                 .addField(inputField, FieldValue.of(toParse))
+                .createdBy(ORIGINAL_MESSAGE)
                 .build();
 
         List<Message> results = new ArrayList<>();
@@ -47,7 +49,14 @@ public class ChainRunner {
             Message input = results.get(results.size()-1);
             Parser parser = nextLink.get().getParser();
             Message output = parser.parse(input);
-            results.add(output);
+
+            // mark which link created this message
+            LinkName linkName = nextLink.get().getLinkName();
+            Message result = Message.builder()
+                    .clone(output)
+                    .createdBy(linkName)
+                    .build();
+            results.add(result);
 
             // get the next link in the chain
             nextLink = nextLink.get().getNext(output);

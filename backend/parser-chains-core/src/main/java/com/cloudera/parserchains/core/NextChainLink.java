@@ -9,14 +9,25 @@ import java.util.Optional;
 public class NextChainLink implements ChainLink {
     private Parser parser;
     private Optional<ChainLink> next;
+    private LinkName linkName;
 
-    public NextChainLink(Parser parser) {
+    /**
+     * @param parser The parser at this link in the chain.
+     * @param linkName The name of this link in the chain.
+     */
+    public NextChainLink(Parser parser, LinkName linkName) {
         this.parser = Objects.requireNonNull(parser);
         this.next = Optional.empty();
+        this.linkName = Objects.requireNonNull(linkName, "A linkName is required.");
     }
 
     public Parser getParser() {
         return parser;
+    }
+
+    @Override
+    public LinkName getLinkName() {
+        return linkName;
     }
 
     /**
@@ -33,4 +44,6 @@ public class NextChainLink implements ChainLink {
         this.next = Optional.of(next);
         return this;
     }
+
+
 }

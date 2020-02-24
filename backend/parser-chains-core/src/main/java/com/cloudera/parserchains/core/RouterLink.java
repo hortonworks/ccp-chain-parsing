@@ -30,10 +30,20 @@ public class RouterLink implements ChainLink {
     private FieldName inputField;
     private List<Route> routes;
     private Optional<ChainLink> defaultRoute;
+    private LinkName linkName;
 
-    public RouterLink() {
+    /**
+     * @param linkName The name assigned to this link in the chain.
+     */
+    public RouterLink(LinkName linkName) {
+        this.linkName = Objects.requireNonNull(linkName);
         this.routes = new ArrayList<>();
         this.defaultRoute = Optional.empty();
+    }
+
+    @Override
+    public LinkName getLinkName() {
+        return linkName;
     }
 
     public RouterLink withInputField(FieldName fieldName) {
