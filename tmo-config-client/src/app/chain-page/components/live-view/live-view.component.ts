@@ -1,7 +1,9 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
+
+import { FailedParserSelected } from '../../chain-page.actions';
 
 import {
   executionTriggered,
@@ -27,6 +29,7 @@ import { SampleDataModel } from './models/sample-data.model';
 })
 export class LiveViewComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() chainConfig$: Observable<{}>;
+  @Output() failedParser = new EventEmitter<string>();
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -51,6 +54,10 @@ export class LiveViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.subscribeToRelevantChanges();
+  }
+
+  onFailedParserSelected(failedParserId) {
+    this.store.dispatch(new FailedParserSelected({ id: failedParserId }));
   }
 
   private subscribeToRelevantChanges() {

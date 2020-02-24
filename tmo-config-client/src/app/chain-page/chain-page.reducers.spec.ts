@@ -35,7 +35,8 @@ describe('chain-page: reducers', () => {
       dirtyParsers: [],
       dirtyChains: [],
       routes: {},
-      error: ''
+      error: '',
+      parserToBeInvestigated: '',
     };
     expect(
       fromReducers.reducer(state, new fromActions.RemoveParserAction({
@@ -61,9 +62,10 @@ describe('chain-page: reducers', () => {
         }
       },
       routes: {},
+      error: '',
+      parserToBeInvestigated: '',
       dirtyParsers: [],
       dirtyChains: ['4533'],
-      error: ''
     });
   });
 
@@ -72,9 +74,10 @@ describe('chain-page: reducers', () => {
       chains: null,
       parsers: null,
       routes: null,
+      error: '',
+      parserToBeInvestigated: '',
       dirtyParsers: [],
       dirtyChains: [],
-      error: ''
     };
     const chains = {};
     const parsers = {};
@@ -102,9 +105,10 @@ describe('chain-page: reducers', () => {
         }
       },
       routes: null,
+      error: '',
+      parserToBeInvestigated: '',
       dirtyParsers: [],
       dirtyChains: [],
-      error: ''
     };
     const newState = fromReducers.reducer(state, new fromActions.UpdateParserAction({
       chainId: '123',
@@ -138,7 +142,8 @@ describe('chain-page: reducers', () => {
       routes: null,
       dirtyParsers: [],
       dirtyChains: [],
-      error: ''
+      error: '',
+      parserToBeInvestigated: '',
     };
     const newState = fromReducers.reducer(state, new fromActions.UpdateChainAction({
       chain: {
@@ -215,5 +220,31 @@ describe('chain-page: reducers', () => {
     };
     const route = fromReducers.getRoute(state, { id: '456' });
     expect(route).toBe(desiredRoute);
+  });
+
+  it('should return with the currently investigated parser', () => {
+    const stateForSelector = {
+      'chain-page': {
+        parserToBeInvestigated: '4321'
+      }
+    };
+
+    const investigatedParserSelector = fromReducers.getParserToBeInvestigated(stateForSelector);
+    expect(investigatedParserSelector).toBeDefined('4321');
+  });
+
+  it('should add an investigated parser to the store', () => {
+    const state = {
+      chains: null,
+      parsers: null,
+      dirtyParsers: [],
+      dirtyChains: [],
+      routes: {},
+      error: '',
+      parserToBeInvestigated: '1234',
+    };
+
+    const investigatedParserReducer = fromReducers.reducer(state, new fromActions.FailedParserSelected({ id: '1234'}));
+    expect(investigatedParserReducer.parserToBeInvestigated).toBe('1234');
   });
 });

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
-import { ChainPageState, getFormConfigByType, getParser } from '../../chain-page.reducers';
+import { ChainPageState, getFormConfigByType, getParser, getParserToBeInvestigated } from '../../chain-page.reducers';
 
 import * as fromActions from '../../chain-page.actions';
 import { ParserModel, PartialParserModel } from '../../chain-page.models';
@@ -25,6 +25,7 @@ export class ParserComposerComponent implements OnInit {
 
   configForm: CustomFormConfig[];
   parser: ParserModel;
+  isolatedParserView = false;
 
   constructor(
     private store: Store<ChainPageState>
@@ -42,6 +43,10 @@ export class ParserComposerComponent implements OnInit {
         });
       }
     });
+
+    this.store
+      .pipe(select(getParserToBeInvestigated))
+      .subscribe(id => this.isolatedParserView = !!id);
   }
 
   onSubchainSelect(chainId: string) {

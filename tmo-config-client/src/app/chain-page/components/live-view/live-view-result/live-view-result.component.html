@@ -16,6 +16,7 @@
     <div nz-row class="log">
       <div nz-col nzSpan="2" class="label">Log</div>
       <div nz-col nzSpan="22" class="message">{{ entry.log.message }}</div>
+      <button nz-button *ngIf="entry.log.parserId" (click)="onFailedParserClicked(entry.log.parserId)">Click to see failed Parser</button>
     </div>
   </nz-card>
 </div>

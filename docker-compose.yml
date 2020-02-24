@@ -1,0 +1,15 @@
+version: '3.2'
+
+services:
+  client:
+    build: ./tmo-config-client
+    ports: 
+      - 4200:4200
+    depends_on: 
+      - restservice
+    environment: 
+      REST_URL: "restservice:3000"
+  restservice:
+    build: ./backend
+    ports: 
+      - 3000:3000
