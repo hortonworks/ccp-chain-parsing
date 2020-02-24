@@ -18,49 +18,31 @@ import static com.cloudera.parserchains.core.Validator.mustMatch;
  */
 public class ConfigValue {
     private static final Regex validValue = Regex.of("[\\w\\d\\s-_.,|\\]\\[]*");
-    private ConfigKey key;
     private String value;
 
     /**
-     * Create a {@link ConfigValue} with only a value, no key.
+     * Creates a {@link ConfigValue} with a key and value.
      * @param value The value.
      */
     public static ConfigValue of(String value) {
-        // the key is not needed, so just use the default key
-        return new ConfigValue(ConfigKey.defaultKey(), value);
+        return new ConfigValue(value);
     }
 
     /**
-     * Creates a {@link ConfigValue} with a key and value.
-     * @param key The {@link ConfigKey}.
-     * @param value The value.
+     * Private constructor.  See {@link ConfigValue#of(String)}.
      */
-    public static ConfigValue of(ConfigKey key, String value) {
-        return new ConfigValue(key, value);
-    }
-
-    /**
-     * Private constructor.  See {@link ConfigValue#of(ConfigKey, String)}
-     * or {@link ConfigValue#of(String)}.
-     */
-    private ConfigValue(ConfigKey key, String value) {
+    private ConfigValue(String value) {
         mustMatch(value, validValue, "config value");
-        this.key = key;
         this.value = value;
     }
 
-    public ConfigKey getKey() {
-        return key;
-    }
-
-    public String getValue() {
+    public String get() {
         return value;
     }
 
     @Override
     public String toString() {
         return "ConfigValue{" +
-                "key='" + key + '\'' +
                 ", value='" + value + '\'' +
                 '}';
     }
@@ -75,7 +57,6 @@ public class ConfigValue {
         }
         ConfigValue that = (ConfigValue) o;
         return new EqualsBuilder()
-                .append(key, that.key)
                 .append(value, that.value)
                 .isEquals();
     }
@@ -83,7 +64,6 @@ public class ConfigValue {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(key)
                 .append(value)
                 .toHashCode();
     }

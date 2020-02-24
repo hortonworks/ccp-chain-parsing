@@ -9,11 +9,12 @@ import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.config.ConfigDescriptor;
 import com.cloudera.parserchains.core.config.ConfigKey;
 import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValues;
+import com.cloudera.parserchains.core.config.ConfigValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -153,7 +154,7 @@ public class DelimitedTextParser implements Parser {
     }
 
     @Override
-    public void configure(ConfigName name, ConfigValues values) {
+    public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
         configurer.configure(name, values);
     }
 
@@ -161,32 +162,38 @@ public class DelimitedTextParser implements Parser {
      * Handles configuration for the {@link DelimitedTextParser}.
      */
     static class Configurer {
-        static final String OUTPUT_FIELD_NAME = "fieldName";
-        static final String OUTPUT_FIELD_INDEX = "fieldIndex";
+        static final ConfigKey inputFieldKey = ConfigKey.of("inputField");
         static final ConfigDescriptor inputFieldConfig = ConfigDescriptor
                 .builder()
                 .name("inputField")
-                .description("The name of the input field to parse.")
+                .description("Input Field")
+                .acceptsValue(inputFieldKey, "The name of the input field to parse.")
                 .isRequired(true)
                 .build();
+        static final ConfigKey outputFieldName = ConfigKey.of("fieldName");
+        static final ConfigKey outputFieldIndex = ConfigKey.of("fieldIndex");
         static final ConfigDescriptor outputFieldConfig = ConfigDescriptor
                 .builder()
                 .name("outputField")
-                .description("An output field created by the parser.")
+                .description("Output Field")
                 .isRequired(true)
-                .requiresValue(OUTPUT_FIELD_INDEX, "The name of the output field.")
-                .requiresValue(OUTPUT_FIELD_NAME, "The column index containing the data for an output field.")
+                .acceptsValue(outputFieldIndex, "The name of the output field.")
+                .acceptsValue(outputFieldName, "The column index containing the data for an output field.")
                 .build();
+        static final ConfigKey delimiterKey = ConfigKey.of("delimiter");
         static final ConfigDescriptor delimiterConfig = ConfigDescriptor
                 .builder()
                 .name("delimiter")
-                .description("A regex delimiter used to split the text. Defaults to comma.")
+                .description("Delimiter")
+                .acceptsValue(delimiterKey, "A regex delimiter used to split the text. Defaults to comma.")
                 .isRequired(false)
                 .build();
+        static final ConfigKey trimKey = ConfigKey.of("trim");
         static final ConfigDescriptor trimConfig = ConfigDescriptor
                 .builder()
                 .name("trim")
-                .description("Trim whitespace from each value. Defaults to true.")
+                .description("Trim")
+                .acceptsValue(trimKey, "Trim whitespace from each value. Defaults to true.")
                 .isRequired(false)
                 .build();
         private DelimitedTextParser parser;
@@ -199,54 +206,48 @@ public class DelimitedTextParser implements Parser {
             return Arrays.asList(inputFieldConfig, outputFieldConfig, delimiterConfig, trimConfig);
         }
 
-        void configure(ConfigName name, ConfigValues values) {
+        void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
             if(inputFieldConfig.getName().equals(name)) {
                 configureInput(values);
-
             } else if(outputFieldConfig.getName().equals(name)) {
                 configureOutput(values);
-
             } else if(delimiterConfig.getName().equals(name)) {
                 configureDelimiter(values);
-
             } else if(trimConfig.getName().equals(name)) {
                 configureTrim(values);
-
             } else {
                 throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
             }
         }
 
-        private void configureTrim(ConfigValues values) {
-            values.getValue().ifPresent(value -> {
-                boolean trim = Boolean.valueOf(value.getValue());
+        private void configureTrim(Map<ConfigKey, ConfigValue> values) {
+            Optional.ofNullable(values.get(trimKey)).ifPresent(value -> {
+                boolean trim = Boolean.valueOf(value.get());
                 parser.trimWhitespace(trim);
             });
         }
 
-        private void configureDelimiter(ConfigValues values) {
-            values.getValue().ifPresent(value -> {
-                Regex delimiter = Regex.of(value.getValue());
+        private void configureDelimiter(Map<ConfigKey, ConfigValue> values) {
+            Optional.ofNullable(values.get(delimiterKey)).ifPresent(value -> {
+                Regex delimiter = Regex.of(value.get());
                 parser.withDelimiter(delimiter);
             });
         }
 
-        private void configureInput(ConfigValues values) {
-            values.getValue().ifPresent(value -> {
-                FieldName inputField = FieldName.of(value.getValue());
+        private void configureInput(Map<ConfigKey, ConfigValue> values) {
+            Optional.ofNullable(values.get(inputFieldKey)).ifPresent(value -> {
+                FieldName inputField = FieldName.of(value.get());
                 parser.withInputField(inputField);
             });
         }
 
-        private void configureOutput(ConfigValues values) {
-            FieldName outputField = values
-                    .getValue(ConfigKey.of(OUTPUT_FIELD_NAME))
-                    .map(value -> FieldName.of(value.getValue()))
-                    .orElseThrow(() -> missingConfig(ConfigKey.of(OUTPUT_FIELD_NAME)));
-            Integer columnIndex = values
-                    .getValue(ConfigKey.of(OUTPUT_FIELD_INDEX))
-                    .map(value -> Integer.parseInt(value.getValue()))
-                    .orElseThrow(() -> missingConfig(ConfigKey.of(OUTPUT_FIELD_INDEX)));
+        private void configureOutput(Map<ConfigKey, ConfigValue> values) {
+            FieldName outputField = Optional.ofNullable(values.get(outputFieldName))
+                    .map(value -> FieldName.of(value.get()))
+                    .orElseThrow(() -> missingConfig(outputFieldName));
+            Integer columnIndex = Optional.ofNullable(values.get(outputFieldIndex))
+                    .map(value -> Integer.parseInt(value.get()))
+                    .orElseThrow(() -> missingConfig(outputFieldIndex));
             parser.withOutputField(outputField, columnIndex);
         }
 

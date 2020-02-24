@@ -4,7 +4,7 @@ import com.cloudera.parserchains.core.Regex;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Objects;
+import java.util.Map;
 
 /**
  * A {@link ConfigName} is associated with one or more key/value pairs representing
@@ -17,7 +17,7 @@ import java.util.Objects;
  *
  * <p>Effectively, a {@link ConfigName} is associated with a Map<{@link ConfigKey}, {@link ConfigValue}>
  * of values. This relationship can be seen in the parser's primary configuration method;
- * {@link com.cloudera.parserchains.core.Parser#configure(ConfigName, ConfigValues)}.
+ * {@link com.cloudera.parserchains.core.Parser#configure(ConfigName, Map<ConfigKey, ConfigValue>)}.
  */
 public class ConfigKey {
     private static final Regex isValidRegex = Regex.of("[\\w\\d\\s-_.,|\\]\\[]*");
@@ -29,14 +29,6 @@ public class ConfigKey {
      */
     public static ConfigKey of(String key) {
         return new ConfigKey(key);
-    }
-
-    /**
-     * The default {@link ConfigKey} to use when one is not strictly necessary.
-     * @return The key.
-     */
-    public static ConfigKey defaultKey() {
-        return new ConfigKey("default");
     }
 
     private ConfigKey(String key) {

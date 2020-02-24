@@ -1,10 +1,12 @@
 package com.cloudera.parserchains.core;
 
 import com.cloudera.parserchains.core.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.config.ConfigKey;
 import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValues;
+import com.cloudera.parserchains.core.config.ConfigValue;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Parses a {@link Message}.
@@ -32,11 +34,11 @@ public interface Parser {
     List<ConfigDescriptor> validConfigurations();
 
     /**
-     * Configure a parser. Expect this method to be called for each configuration parameter
+     * Configure a parser.
+     * <p>Expect this method to be called for each configuration parameter ({@link ConfigName})
      * accepted by the parser.
-     *
      * @param name The name of the configuration.
      * @param values The value(s) of the configuration element.
      */
-    void configure(ConfigName name, ConfigValues values);
+    void configure(ConfigName name, Map<ConfigKey, ConfigValue> values);
 }
