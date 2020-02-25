@@ -53,4 +53,55 @@ describe('RouterComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should emit a parser change', () => {
+    const spy = spyOn(component.parserChange, 'emit');
+    component.onMatchingFieldBlur(({
+      target: {
+        value: ' trim me!     '
+      }
+    } as unknown) as Event, {
+      id: '123',
+      name: 'parser',
+      type: 'foo',
+      config: {
+        lorem: 'ipsum'
+      }
+    });
+    expect(spy).toHaveBeenCalledWith({
+      id: '123',
+      config: {
+        lorem: 'ipsum',
+        matchingField: 'trim me!'
+      }
+    });
+  });
+
+  it('should emit subchain select', () => {
+    const spy = spyOn(component.subchainSelect, 'emit');
+    component.onSubchainClick('777');
+    expect(spy).toHaveBeenCalledWith('777');
+  });
+
+  it('should emit route add', () => {
+    const spy = spyOn(component.routeAdd, 'emit');
+    const event = ({
+      preventDefault: jasmine.createSpy()
+    } as unknown) as Event;
+    component.onAddRouteClick(event, {
+      id: '123',
+      name: 'parser',
+      type: 'lorem'
+    });
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith({
+      id: '123',
+      name: 'parser',
+      type: 'lorem'
+    });
+  });
+
+  it('should have a track function', () => {
+    expect(component.trackByFn(0, '444')).toBe('444');
+  });
 });

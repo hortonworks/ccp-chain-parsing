@@ -1,9 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DeleteFill, EditFill } from '@ant-design/icons-angular/icons';
-import { StoreModule } from '@ngrx/store';
+import { Store, StoreModule } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 
+import * as fromActions from '../../chain-page.actions';
 import * as fromReducers from '../../chain-page.reducers';
 
 import { RouteComponent } from './route.component';
@@ -11,6 +12,7 @@ import { RouteComponent } from './route.component';
 describe('RouteComponent', () => {
   let component: RouteComponent;
   let fixture: ComponentFixture<RouteComponent>;
+  let store: Store<fromReducers.ChainPageState>;
   const initialState = {
     'chain-page': {
       parsers: {},
@@ -18,7 +20,7 @@ describe('RouteComponent', () => {
         123: {
           id: '123',
           name: 'some route',
-          subchain: '456'
+          subchain: '456',
         }
       },
       chains: {
@@ -52,10 +54,111 @@ describe('RouteComponent', () => {
     fixture = TestBed.createComponent(RouteComponent);
     component = fixture.componentInstance;
     component.routeId = '123';
+    component.parser = {
+      id: '678',
+      name: 'parser',
+      type: 'foo'
+    };
+    store = TestBed.get(Store);
+
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should have a route on init', () => {
+    expect(component.route).toEqual({
+      id: '123',
+      name: 'some route',
+      subchain: '456'
+    });
+  });
+
+  it('should have a subchain on init', () => {
+    expect(component.subchain).toEqual({
+      id: '456',
+      name: 'some chain',
+      parsers: []
+    });
+  });
+
+  it('should emit a chain click event', () => {
+    const spy = spyOn(component.chainClick, 'emit');
+    component.onChainClick(new Event('click'), '123');
+    expect(spy).toHaveBeenCalledWith('123');
+  });
+
+  it('should unsubscribe properly', () => {
+    const getRouteSubSpy = spyOn(component.getRouteSub, 'unsubscribe');
+    const getChainSubSpy = spyOn(component.getChainSub, 'unsubscribe');
+
+    component.ngOnDestroy();
+
+    expect(getRouteSubSpy).toHaveBeenCalledWith();
+    expect(getChainSubSpy).toHaveBeenCalledWith();
+  });
+
+  it('should dispatch remove', () => {
+    const spy = spyOn(store, 'dispatch');
+    component.onRouteRemoveConfirmed(new Event('click'), {
+      id: '123',
+      name: 'route',
+      subchain: '456'
+    });
+    expect(spy).toHaveBeenCalledWith(
+      new fromActions.RemoveRouteAction({
+        routeId: '123',
+        chainId: '456',
+        parserId: '678'
+      })
+    );
+  });
+
+  it('should dispatch update chain and update route', () => {
+    const spy = spyOn(store, 'dispatch');
+    component.onMatchingValueBlur(({
+      target: {
+        value: '  trim me!    '
+      }
+    } as unknown) as Event, {
+      id: '123',
+      name: 'route',
+      subchain: '456'
+    });
+    expect(spy).toHaveBeenCalledWith(
+      new fromActions.UpdateChainAction({
+        chain: {
+          id: '456',
+          name: 'trim me!'
+        }
+      })
+    );
+    expect(spy).toHaveBeenCalledWith(
+      new fromActions.UpdateRouteAction({
+        chainId: '456',
+        parserId: '678',
+        route: {
+          id: '123',
+          matchingValue: 'trim me!'
+        }
+      })
+    );
+  });
+
+  it('should not dispatch anything if the value is the same', () => {
+    const spy = spyOn(store, 'dispatch');
+    component.onMatchingValueBlur(({
+      target: {
+        value: '  foobar    '
+      }
+    } as unknown) as Event, {
+      id: '123',
+      name: 'route',
+      subchain: '456',
+      matchingValue: 'foobar'
+    });
+    expect(spy).not.toHaveBeenCalled();
   });
 });
