@@ -1,18 +1,21 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValues;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.RouterLink;
+import com.cloudera.parserchains.core.catalog.MessageParser;
+import com.cloudera.parserchains.core.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.config.ConfigKey;
+import com.cloudera.parserchains.core.config.ConfigName;
+import com.cloudera.parserchains.core.config.ConfigValue;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A {@link Parser} that always fails.
@@ -62,7 +65,7 @@ public class AlwaysFailParser implements Parser {
     }
 
     @Override
-    public void configure(ConfigName name, ConfigValues values) {
+    public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
        configurer.configure(name, values);
     }
 
@@ -74,10 +77,12 @@ public class AlwaysFailParser implements Parser {
      * Handles configuration for the {@link AlwaysFailParser}.
      */
     static class Configurer {
+        static final ConfigKey errorMessageKey = ConfigKey.of("errorMessage");
         static final ConfigDescriptor errorMessageConfig = ConfigDescriptor
                 .builder()
-                .name("Error Message")
-                .description("The error message to throw.")
+                .name("errorMessage")
+                .description("Error Message")
+                .acceptsValue(errorMessageKey, "The error message to throw.")
                 .isRequired(false)
                 .build();
         private AlwaysFailParser parser;
@@ -90,15 +95,18 @@ public class AlwaysFailParser implements Parser {
             return Arrays.asList(errorMessageConfig);
         }
 
-        public void configure(ConfigName name, ConfigValues values) {
+        public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
             if(errorMessageConfig.getName().equals(name)) {
-                values.getValue().ifPresent(value -> {
-                    parser.withError(value.getValue());
-                });
-
+                configureErrorMessage(values);
             } else {
                 throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
             }
+        }
+
+        private void configureErrorMessage(Map<ConfigKey, ConfigValue> values) {
+            Optional.ofNullable(values.get(errorMessageKey)).ifPresent(
+                    value -> parser.withError(value.get())
+            );
         }
     }
 }

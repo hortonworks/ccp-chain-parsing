@@ -1,13 +1,14 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValues;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.Parser;
+import com.cloudera.parserchains.core.catalog.MessageParser;
+import com.cloudera.parserchains.core.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.config.ConfigKey;
+import com.cloudera.parserchains.core.config.ConfigName;
+import com.cloudera.parserchains.core.config.ConfigValue;
 import com.github.palindromicity.syslog.SyslogParserBuilder;
 import com.github.palindromicity.syslog.SyslogSpecification;
 import com.github.palindromicity.syslog.dsl.ParseException;
@@ -15,6 +16,7 @@ import com.github.palindromicity.syslog.dsl.SyslogFieldKeys;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -52,7 +54,6 @@ public class SyslogParser implements Parser {
         Optional<FieldValue> value = input.getField(inputField);
         if(value.isPresent()) {
             doParse(output, value.get().toString());
-
         } else {
             output.withError(format("Message does not contain input field '%s'", inputField.toString()));
         }
@@ -107,7 +108,7 @@ public class SyslogParser implements Parser {
     }
 
     @Override
-    public void configure(ConfigName name, ConfigValues values) {
+    public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
         configurer.configure(name, values);
     }
 
@@ -115,16 +116,21 @@ public class SyslogParser implements Parser {
      * Handles configuration for the {@link SyslogParser}.
      */
     static class Configurer {
+        static final ConfigKey inputFieldKey = ConfigKey.of("inputField");
         static final ConfigDescriptor inputFieldConfig = ConfigDescriptor
                 .builder()
-                .name("Input Field")
-                .description("The name of the input field to parse.")
+                .name("inputField")
+                .description("Input Field")
+                .acceptsValue(inputFieldKey, "The name of the input field to parse.")
                 .isRequired(false)
                 .build();
+
+        static final ConfigKey specKey = ConfigKey.of("specification");
         static final ConfigDescriptor specConfig = ConfigDescriptor
                 .builder()
-                .name("Specification")
-                .description("The Syslog specification; 'RFC_5424' or 'RFC_3164'. Defaults to 'RFC_5424'")
+                .name("specification")
+                .description("Specification")
+                .acceptsValue(specKey, "The Syslog specification; 'RFC_5424' or 'RFC_3164'. Defaults to 'RFC_5424'")
                 .isRequired(false)
                 .build();
         private SyslogParser parser;
@@ -137,22 +143,28 @@ public class SyslogParser implements Parser {
             return Arrays.asList(inputFieldConfig, specConfig);
         }
 
-        void configure(ConfigName name, ConfigValues values) {
+        void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
             if(inputFieldConfig.getName().equals(name)) {
-                values.getValue().ifPresent(value -> {
-                    FieldName field = FieldName.of(value.getValue());
-                    parser.withInputField(field);
-                });
-
+                configureInputField(values);
             } else if(specConfig.getName().equals(name)) {
-                values.getValue().ifPresent(value -> {
-                    SyslogSpecification spec = SyslogSpecification.valueOf(value.getValue());
-                    parser.withSpecification(spec);
-                });
-
+                configureSpec(values);
             } else {
                 throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
             }
+        }
+
+        private void configureSpec(Map<ConfigKey, ConfigValue> values) {
+            Optional.ofNullable(values.get(specKey)).ifPresent(value -> {
+                SyslogSpecification spec = SyslogSpecification.valueOf(value.get());
+                parser.withSpecification(spec);
+            });
+        }
+
+        private void configureInputField(Map<ConfigKey, ConfigValue> values) {
+            Optional.ofNullable(values.get(inputFieldKey)).ifPresent(value -> {
+                FieldName field = FieldName.of(value.get());
+                parser.withInputField(field);
+            });
         }
     }
 }

@@ -1,12 +1,12 @@
-# service-core
+# Parser Chains Config Service
 
 ### Running project from command line
 
 ```bash
 # Normal
-java -jar target/service-core-1.0-SNAPSHOT.jar
+java -jar target/parser-chains-config-service-1.0-SNAPSHOT.jar
 # Debug mode
-java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n -jar target/service-core-1.0-SNAPSHOT.jar
+java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n -jar target/parser-chains-config-service-1.0-SNAPSHOT.jar
 ```
 
 #### Accessing the REST service
@@ -23,7 +23,7 @@ server.port - set the REST service's port
 config.path - this is where the rest application will store the parser chain configurations. An ID generator file also resides here. Don't modify it unless you know what you're doing!
 server.servlet.context-path - you can change the application context root path here. e.g. setting the value to "parser-config" would change the access endpoint to look like http://localhost:3000/parser-config/swagger-ui.html
 ```bash
-java -jar target/service-core-1.0-SNAPSHOT.jar --server.port=3000 --config.path=/tmp/config --server.servlet.context-path="/parser-config"
+java -jar target/parser-chains-config-service-1.0-SNAPSHOT.jar --server.port=3000 --config.path=/tmp/config --server.servlet.context-path="/parser-config"
 ```
 
 ### Production Deployment
@@ -69,6 +69,10 @@ See https://stackoverflow.com/a/41500347 for detail.
 
 *Other*
 * https://www.baeldung.com/spring-boot-logging
+
+#### Integration Tests
+
+Relevant to the spring mock mvc tests - https://github.com/json-path/JsonPath
 
 #### Reference
 

@@ -1,17 +1,20 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValues;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.Parser;
+import com.cloudera.parserchains.core.catalog.MessageParser;
+import com.cloudera.parserchains.core.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.config.ConfigKey;
+import com.cloudera.parserchains.core.config.ConfigName;
+import com.cloudera.parserchains.core.config.ConfigValue;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A parser that adds the current system time as a field to the message. Useful for
@@ -52,7 +55,7 @@ public class TimestampParser implements Parser {
     }
 
     @Override
-    public void configure(ConfigName name, ConfigValues values) {
+    public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
         configurer.configure(name, values);
     }
 
@@ -89,9 +92,11 @@ public class TimestampParser implements Parser {
      * Handles configuration for the {@link TimestampParser}.
      */
     static class Configurer {
+        static final ConfigKey outputFieldKey = ConfigKey.of("outputField");
         static final ConfigDescriptor outputFieldConfig = ConfigDescriptor.builder()
-                .name("Output Field")
-                .description("The name of the field that will contain the timestamp.  Defaults to 'timestamp'.")
+                .name("outputField")
+                .description("Output Field")
+                .acceptsValue(outputFieldKey,"The name of the field that will contain the timestamp.  Defaults to 'timestamp'.")
                 .isRequired(false)
                 .build();
         private TimestampParser parser;
@@ -104,7 +109,7 @@ public class TimestampParser implements Parser {
             return Arrays.asList(outputFieldConfig);
         }
 
-        public void configure(ConfigName name, ConfigValues values) {
+        public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
             if(outputFieldConfig.getName().equals(name)) {
                 configureOutputField(values);
             } else {
@@ -112,9 +117,9 @@ public class TimestampParser implements Parser {
             }
         }
 
-        private void configureOutputField(ConfigValues values) {
-            values.getValue().ifPresent(value -> {
-                FieldName outputField = FieldName.of(value.getValue());
+        private void configureOutputField(Map<ConfigKey, ConfigValue> values) {
+            Optional.ofNullable(values.get(outputFieldKey)).ifPresent(value -> {
+                FieldName outputField = FieldName.of(value.get());
                 parser.withOutputField(outputField);
             });
         }

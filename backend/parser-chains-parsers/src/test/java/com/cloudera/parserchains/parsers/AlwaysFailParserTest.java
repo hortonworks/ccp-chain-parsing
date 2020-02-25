@@ -1,14 +1,19 @@
 package com.cloudera.parserchains.parsers;
 
 import com.cloudera.parserchains.core.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.config.ConfigKey;
 import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValues;
 import com.cloudera.parserchains.core.Message;
+import com.cloudera.parserchains.core.config.ConfigValue;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.cloudera.parserchains.parsers.AlwaysFailParser.Configurer.errorMessageConfig;
+import static com.cloudera.parserchains.parsers.AlwaysFailParser.Configurer.errorMessageKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,21 +57,19 @@ public class AlwaysFailParserTest {
     @Test
     void configure() {
         String expected = "a custom error message";
-        ConfigValues errorMsg = ConfigValues.builder()
-                .withValue(expected)
-                .build();
+        Map<ConfigKey, ConfigValue> errorMsg = new HashMap<>();
+        errorMsg.put(errorMessageKey, ConfigValue.of(expected));
+
         AlwaysFailParser parser = new AlwaysFailParser();
         parser.configure(errorMessageConfig.getName(), errorMsg);
+
         assertEquals(expected, parser.getError().getMessage());
     }
 
     @Test
     void unexpectedConfig() {
         assertThrows(IllegalArgumentException.class, () ->
-                new AlwaysFailParser().configure(
-                        ConfigName.of("Unexpected configuration"),
-                        ConfigValues.builder().build()
-                ));
+                new AlwaysFailParser().configure(ConfigName.of("Unexpected configuration"), Collections.emptyMap()));
     }
 
     @Test

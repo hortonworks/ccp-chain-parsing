@@ -4,8 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "node -r dotenv/config scripts/config-app-server.js",
-    "start:dev": "ng serve",
-    "start:mock": "ng serve --proxy-config src/proxy.conf.mock.json",
+    "start:dev": "ng serve --proxy-config src/proxy.conf.dev.json",
     "start:production": "node scripts/config-app-server.js",
     "build": "ng build",
     "test": "ng test",

@@ -18,4 +18,10 @@ public interface ChainLink {
      * @return The next {@link ChainLink}.
      */
     Optional<ChainLink> getNext(Message message);
+
+    /**
+     * Returns the name assigned to this link in the chain.
+     * @return The name assigned to this chain link.
+     */
+    LinkName getLinkName();
 }

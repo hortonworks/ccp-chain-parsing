@@ -2,9 +2,8 @@ package com.cloudera.parserchains.core.config;
 
 import com.cloudera.parserchains.core.Parser;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -19,7 +18,7 @@ public class ConfigDescriptor {
     private final ConfigName name;
     private final ConfigDescription description;
     private final boolean isRequired;
-    private final Map<ConfigKey, ConfigDescription> requiredValues;
+    private final Map<ConfigKey, ConfigDescription> acceptedValues;
 
     /**
      * A builder that can be used to construct Creates a {@link ConfigDescriptor}.
@@ -34,11 +33,11 @@ public class ConfigDescriptor {
     private ConfigDescriptor(ConfigName name,
                              ConfigDescription description,
                              boolean isRequired,
-                             Map<ConfigKey, ConfigDescription> requiredValues) {
-        this.name = Objects.requireNonNull(name);
-        this.description = Objects.requireNonNull(description);
+                             Map<ConfigKey, ConfigDescription> acceptedValues) {
+        this.name = Objects.requireNonNull(name, "Name is required.");
+        this.description = Objects.requireNonNull(description, "Description is required.");
         this.isRequired = isRequired;
-        this.requiredValues = Objects.requireNonNull(requiredValues);
+        this.acceptedValues = Objects.requireNonNull(acceptedValues, "Values are required");
     }
 
     /**
@@ -65,18 +64,18 @@ public class ConfigDescriptor {
     /**
      * @return The values required by this configuration parameter.
      */
-    public Map<ConfigKey, ConfigDescription> getRequiredValues() {
-        return requiredValues;
+    public Map<ConfigKey, ConfigDescription> getAcceptedValues() {
+        return Collections.unmodifiableMap(acceptedValues);
     }
 
     public static class Builder {
         private ConfigName name;
         private ConfigDescription description;
         private boolean isRequired;
-        private Map<ConfigKey, ConfigDescription> requiredValues;
+        private Map<ConfigKey, ConfigDescription> acceptedValues;
 
         public Builder() {
-            this.requiredValues = new HashMap<>();
+            this.acceptedValues = new HashMap<>();
         }
 
         public Builder name(ConfigName name) {
@@ -102,21 +101,24 @@ public class ConfigDescriptor {
             return this;
         }
 
-        public Builder requiresValue(ConfigKey key, ConfigDescription description) {
-            this.requiredValues.put(key, description);
+        public Builder acceptsValue(ConfigKey key, ConfigDescription description) {
+            this.acceptedValues.put(key, description);
             return this;
         }
 
-        public Builder requiresValue(String key, String description) {
-            return requiresValue(ConfigKey.of(key), ConfigDescription.of(description));
+        public Builder acceptsValue(String key, String description) {
+            return acceptsValue(ConfigKey.of(key), ConfigDescription.of(description));
+        }
+
+        public Builder acceptsValue(ConfigKey key, String description) {
+            return acceptsValue(key, ConfigDescription.of(description));
         }
 
         public ConfigDescriptor build() {
-            if(requiredValues.size() == 0) {
-                // if no required values defined, must use the default
-                requiredValues.put(ConfigKey.defaultKey(), ConfigDescription.of("default"));
+            if(acceptedValues.size() == 0) {
+                throw new IllegalArgumentException("Must define at least 1 required value.");
             }
-            return new ConfigDescriptor(name, description, isRequired, requiredValues);
+            return new ConfigDescriptor(name, description, isRequired, acceptedValues);
         }
     }
 }

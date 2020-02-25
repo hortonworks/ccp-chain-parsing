@@ -24,10 +24,24 @@ import java.nio.charset.StandardCharsets;
 public class ApplicationConstants {
 
   public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-  public static final String API_BASE_URL = "/api/v1/parserconfig";
-  public static final String API_CHAINS_URL = API_BASE_URL + "/chains";
+  // root
+  public static final String API_BASE_URL = "/api/v1";
+
+  // parser-config endpoint constants
+  public static final String PARSER_CONFIG_BASE_URL = API_BASE_URL + "/parserconfig";
+  // Endpoint names
+  public static final String API_CHAINS = "/chains";
+  public static final String API_PARSER_FORM_CONFIG = "/parser-form-configuration";
+  public static final String API_PARSER_TYPES = "/parser-types";
+  // URLs
+  public static final String API_CHAINS_URL = PARSER_CONFIG_BASE_URL + API_CHAINS;
   public static final String API_CHAINS_CREATE_URL = API_CHAINS_URL;
   public static final String API_CHAINS_READ_URL = API_CHAINS_URL + "/{id}";
   public static final String API_CHAINS_UPDATE_URL = API_CHAINS_READ_URL;
   public static final String API_CHAINS_DELETE_URL = API_CHAINS_READ_URL;
+  public static final String API_PARSER_FORM_CONFIG_URL = PARSER_CONFIG_BASE_URL + API_PARSER_FORM_CONFIG;
+  public static final String API_PARSER_TYPES_URL = PARSER_CONFIG_BASE_URL + API_PARSER_TYPES;
+
+  // parser-form-configuration endpoint constants
+//  public static final String PARSER_FORM_CONFIG_BASE_URL = API_BASE_URL + "/parser-form-configuration";
 }

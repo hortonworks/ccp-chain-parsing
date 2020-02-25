@@ -6,8 +6,10 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MessageTest {
+    static LinkName createdBy = LinkName.of("parser22");
 
     @Test
     void addField() {
@@ -15,6 +17,7 @@ public class MessageTest {
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
                 .addField(FieldName.of("field2"), FieldValue.of("value2"))
                 .addField(FieldName.of("field3"), FieldValue.of("value3"))
+                .createdBy(createdBy)
                 .build();
 
         assertEquals(3, message.getFields().size(), 
@@ -35,10 +38,12 @@ public class MessageTest {
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
                 .addField(FieldName.of("field2"), FieldValue.of("value2"))
                 .addField(FieldName.of("field3"), FieldValue.of("value3"))
+                .createdBy(createdBy)
                 .build();
         Message copy = Message.builder()
                 .withFields(original)
                 .removeField(FieldName.of("field1"))
+                .createdBy(createdBy)
                 .build();
         
         assertFalse(copy.getField(FieldName.of("field1")).isPresent(),
@@ -57,11 +62,12 @@ public class MessageTest {
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
                 .addField(FieldName.of("field2"), FieldValue.of("value2"))
                 .addField(FieldName.of("field3"), FieldValue.of("value3"))
+                .createdBy(createdBy)
                 .build();
-
         Message copy = Message.builder()
                 .withFields(original)
                 .removeFields(Arrays.asList(FieldName.of("field1"), FieldName.of("field2"), FieldName.of("field3")))
+                .createdBy(createdBy)
                 .build();
 
         assertFalse(copy.getField(FieldName.of("field1")).isPresent(),
@@ -80,6 +86,7 @@ public class MessageTest {
                 .addField(FieldName.of("original1"), FieldValue.of("value1"))
                 .addField(FieldName.of("original2"), FieldValue.of("value2"))
                 .addField(FieldName.of("original3"), FieldValue.of("value3"))
+                .createdBy(createdBy)
                 .build();
 
         // rename 'original1' to 'new1'
@@ -87,6 +94,7 @@ public class MessageTest {
                 .withFields(original)
                 .renameField(FieldName.of("original1"), FieldName.of("new1"))
                 .renameField(FieldName.of("original2"), FieldName.of("new2"))
+                .createdBy(createdBy)
                 .build();
 
         assertEquals(3, actual.getFields().size(), 
@@ -105,12 +113,13 @@ public class MessageTest {
     void renameMissingField() {
         Message original = Message.builder()
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
+                .createdBy(createdBy)
                 .build();
-
         // rename 'missing1' which does not exist
         Message actual = Message.builder()
                 .withFields(original)
                 .renameField(FieldName.of("missing1"), FieldName.of("new1"))
+                .createdBy(createdBy)
                 .build();
 
         assertEquals(1, actual.getFields().size(), 
@@ -127,10 +136,11 @@ public class MessageTest {
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
                 .addField(FieldName.of("field2"), FieldValue.of("value2"))
                 .addField(FieldName.of("field3"), FieldValue.of("value3"))
+                .createdBy(createdBy)
                 .build();
-
         Message copy = Message.builder()
                 .withFields(original)
+                .createdBy(createdBy)
                 .build();
 
         assertEquals(3, copy.getFields().size(), 
@@ -150,6 +160,7 @@ public class MessageTest {
         final String errorMessage = "this is an error";
         Message original = Message.builder()
                 .withError(errorMessage)
+                .createdBy(createdBy)
                 .build();
         assertEquals(errorMessage, original.getError().get().getMessage(), 
             "Expected an error message to have been attached to the message.");
@@ -160,8 +171,34 @@ public class MessageTest {
         final Exception exception = new IllegalStateException("this is an error");
         Message original = Message.builder()
                 .withError(exception)
+                .createdBy(createdBy)
                 .build();
         assertEquals(exception, original.getError().get(),
             "Expected an exception to have been attached to the message.");
+    }
+
+    @Test
+    void createdBy() {
+        LinkName expectedName = LinkName.of("parser22");
+        Message message = Message.builder()
+                .addField(FieldName.of("field1"), FieldValue.of("value1"))
+                .createdBy(expectedName)
+                .build();
+        assertEquals(expectedName, message.getCreatedBy());
+    }
+
+    @Test
+    void testClone() {
+        Message original = Message.builder()
+                .addField(FieldName.of("field1"), FieldValue.of("value1"))
+                .addField(FieldName.of("field2"), FieldValue.of("value2"))
+                .addField(FieldName.of("field3"), FieldValue.of("value3"))
+                .createdBy(createdBy)
+                .build();
+        Message clone = Message.builder()
+                .clone(original)
+                .build();
+        assertEquals(original, clone,
+                "Expected the original and the clone to be equal.");
     }
 }

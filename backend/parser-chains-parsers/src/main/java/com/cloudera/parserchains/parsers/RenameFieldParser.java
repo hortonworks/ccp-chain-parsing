@@ -1,13 +1,13 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigKey;
-import com.cloudera.parserchains.core.config.ConfigValues;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.Parser;
+import com.cloudera.parserchains.core.catalog.MessageParser;
+import com.cloudera.parserchains.core.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.config.ConfigKey;
+import com.cloudera.parserchains.core.config.ConfigName;
+import com.cloudera.parserchains.core.config.ConfigValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A parser that can rename message fields.
@@ -64,7 +65,7 @@ public class RenameFieldParser implements Parser {
     }
 
     @Override
-    public void configure(ConfigName name, ConfigValues values) {
+    public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
         configurer.configure(name, values);
     }
 
@@ -72,15 +73,15 @@ public class RenameFieldParser implements Parser {
      * Handles configuration for the {@link RenameFieldParser}.
      */
     static class Configurer {
-        static final String FROM_FIELD = "from";
-        static final String TO_FIELD = "to";
+        static final ConfigKey fromFieldKey = ConfigKey.of("from");
+        static final ConfigKey toFieldKey = ConfigKey.of("to");
         static final ConfigDescriptor renameFieldConfig = ConfigDescriptor
                 .builder()
-                .name("Field to Rename")
-                .description("The field(s) to rename.")
+                .name("fieldToRename")
+                .description("Field to Rename")
                 .isRequired(true)
-                .requiresValue(FROM_FIELD, "The original name of the field.")
-                .requiresValue(TO_FIELD, "The new name of the field.")
+                .acceptsValue(fromFieldKey, "The original name of the field to rename.")
+                .acceptsValue(toFieldKey, "The new name of the field.")
                 .build();
         private RenameFieldParser parser;
 
@@ -92,7 +93,7 @@ public class RenameFieldParser implements Parser {
             return Arrays.asList(renameFieldConfig);
         }
 
-        void configure(ConfigName name, ConfigValues values) {
+        void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
             if(renameFieldConfig.getName().equals(name)) {
                 configureRenameField(values);
             } else {
@@ -100,20 +101,18 @@ public class RenameFieldParser implements Parser {
             }
         }
 
-        private void configureRenameField(ConfigValues values) {
-            FieldName from = values
-                    .getValue(ConfigKey.of(FROM_FIELD))
-                    .map(value -> FieldName.of(value.getValue()))
-                    .orElseThrow(() -> missingConfig(FROM_FIELD));
-            FieldName to = values
-                    .getValue(ConfigKey.of(TO_FIELD))
-                    .map(value -> FieldName.of(value.getValue()))
-                    .orElseThrow(() -> missingConfig(TO_FIELD));
+        private void configureRenameField(Map<ConfigKey, ConfigValue> values) {
+            FieldName from = Optional.ofNullable(values.get(fromFieldKey))
+                    .map(value -> FieldName.of(value.get()))
+                    .orElseThrow(() -> missingConfig(fromFieldKey));
+            FieldName to = Optional.ofNullable((values.get(toFieldKey)))
+                    .map(value -> FieldName.of(value.get()))
+                    .orElseThrow(() -> missingConfig(toFieldKey));
             parser.renameField(from, to);
         }
 
-        private IllegalArgumentException missingConfig(String missing) {
-            String error = String.format("No value defined for %s.%s", renameFieldConfig.getName(), missing);
+        private IllegalArgumentException missingConfig(ConfigKey missing) {
+            String error = String.format("No value defined for %s.%s", renameFieldConfig.getName(), missing.getKey());
             return new IllegalArgumentException(error);
         }
     }

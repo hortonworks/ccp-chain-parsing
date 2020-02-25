@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { ParserModel } from '../../chain-page.models';
+import { ParserModel, PartialParserModel } from '../../chain-page.models';
 import { ParserComponent } from '../parser/parser.component';
 
 @Component({
@@ -13,8 +13,30 @@ export class RouterComponent extends ParserComponent {
   @Input() dirty = false;
   @Input() parser: ParserModel;
   @Output() subchainSelect = new EventEmitter<string>();
+  @Output() routeAdd = new EventEmitter<ParserModel>();
+  @Output() parserChange = new EventEmitter<PartialParserModel>();
+
+  onMatchingFieldBlur(event: Event, parser: ParserModel) {
+    const matchingField = ((event.target as HTMLInputElement).value || '').trim();
+    this.parserChange.emit({
+      id: parser.id,
+      config: {
+        ...(parser.config || {}),
+        matchingField
+      }
+    });
+  }
 
   onSubchainClick(chainId: string) {
     this.subchainSelect.emit(chainId);
+  }
+
+  onAddRouteClick(event: Event, parser: ParserModel) {
+    event.preventDefault();
+    this.routeAdd.emit(parser);
+  }
+
+  trackByFn(index, routeId) {
+    return routeId;
   }
 }

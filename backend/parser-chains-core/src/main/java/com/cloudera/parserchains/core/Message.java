@@ -28,19 +28,33 @@ public class Message {
     public static class Builder {
         private Map<FieldName, FieldValue> fields;
         private Throwable error;
+        private LinkName createdBy;
 
         public Builder() {
             this.fields = new HashMap<>();
         }
 
         /**
-         * Adds all fields
-         * @param message
+         * Adds all fields from a {@link Message}.
+         * @param message The message to copy fields from.
          * @return
          */
         public Builder withFields(Message message) {
             Objects.requireNonNull(message);
             this.fields.putAll(message.fields);
+            return this;
+        }
+
+        /**
+         * Clones a message by copying all underlying fields.
+         * @param message The message to clone.
+         * @return
+         */
+        public Builder clone(Message message) {
+            Objects.requireNonNull(message);
+            this.fields.putAll(message.fields);
+            this.error = message.error;
+            this.createdBy = message.createdBy;
             return this;
         }
 
@@ -115,6 +129,17 @@ public class Message {
         }
 
         /**
+         * Assigns a {@link LinkName} to this message indicating which link in the
+         * chain was responsible for creating the message.
+         * @param createdBy The name of the link that created this message.
+         * @return
+         */
+        public Builder createdBy(LinkName createdBy) {
+            this.createdBy = createdBy;
+            return this;
+        }
+
+        /**
          * Builds a {@link Message}.
          * @return The message.
          */
@@ -125,11 +150,13 @@ public class Message {
 
     private Map<FieldName, FieldValue> fields;
     private Throwable error;
+    private LinkName createdBy;
 
     private Message(Builder builder) {
         this.fields = new HashMap<>();
         this.fields.putAll(builder.fields);
         this.error = builder.error;
+        this.createdBy = builder.createdBy;
     }
 
     /**
@@ -160,6 +187,10 @@ public class Message {
         return Optional.ofNullable(error);
     }
 
+    public LinkName getCreatedBy() {
+        return createdBy;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -172,6 +203,7 @@ public class Message {
         return new EqualsBuilder()
                 .append(fields, message.fields)
                 .append(error, message.error)
+                .append(createdBy, message.createdBy)
                 .isEquals();
     }
 
@@ -180,6 +212,7 @@ public class Message {
         return new HashCodeBuilder(17, 37)
                 .append(fields)
                 .append(error)
+                .append(createdBy)
                 .toHashCode();
     }
 
@@ -188,6 +221,7 @@ public class Message {
         return "Message{" +
                 "fields=" + fields +
                 ", error=" + error +
+                ", createdBy=" + createdBy +
                 '}';
     }
 }

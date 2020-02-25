@@ -18,15 +18,26 @@
 
 package com.cloudera.parserchains.queryservice.controller;
 
-import com.cloudera.parserchains.queryservice.common.ApplicationConstants;
+import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS;
+import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_READ_URL;
+import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_PARSER_FORM_CONFIG;
+import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_PARSER_TYPES;
+import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.PARSER_CONFIG_BASE_URL;
+
 import com.cloudera.parserchains.queryservice.config.AppProperties;
 import com.cloudera.parserchains.queryservice.model.ParserChain;
 import com.cloudera.parserchains.queryservice.model.ParserChainSummary;
+import com.cloudera.parserchains.queryservice.model.ParserConfigSchema;
+import com.cloudera.parserchains.queryservice.model.ParserResults;
+import com.cloudera.parserchains.queryservice.model.ParserTestRun;
+import com.cloudera.parserchains.queryservice.model.ParserType;
 import com.cloudera.parserchains.queryservice.service.ParserConfigService;
+import com.cloudera.parserchains.queryservice.service.ParserDiscoveryService;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,38 +50,40 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = ApplicationConstants.API_CHAINS_URL)
+@RequestMapping(value = PARSER_CONFIG_BASE_URL)
 public class ParserConfigController {
 
   @Autowired
-  ParserConfigService service;
+  ParserConfigService parserConfigService;
+  @Autowired
+  ParserDiscoveryService parserDiscoveryService;
   @Autowired
   AppProperties appProperties;
 
-  @GetMapping()
+  @GetMapping(value = API_CHAINS)
   ResponseEntity<List<ParserChainSummary>> findAll() throws IOException {
     String configPath = appProperties.getConfigPath();
-    List<ParserChainSummary> configs = service.findAll(Paths.get(configPath));
+    List<ParserChainSummary> configs = parserConfigService.findAll(Paths.get(configPath));
     return ResponseEntity.ok(configs);
   }
 
-  @PostMapping()
+  @PostMapping(value = API_CHAINS)
   ResponseEntity<ParserChain> create(@RequestBody ParserChain chain) throws IOException {
     String configPath = appProperties.getConfigPath();
-    ParserChain createdChain = service.create(chain, Paths.get(configPath));
+    ParserChain createdChain = parserConfigService.create(chain, Paths.get(configPath));
     if (null == createdChain) {
       return ResponseEntity.notFound().build();
     } else {
-      return ResponseEntity.created(URI.create(
-          ApplicationConstants.API_CHAINS_READ_URL.replace("{id}", createdChain.getId())))
+      return ResponseEntity
+          .created(URI.create(API_CHAINS_READ_URL.replace("{id}", createdChain.getId())))
           .body(createdChain);
     }
   }
 
-  @GetMapping(value = "/{id}")
+  @GetMapping(value = API_CHAINS + "/{id}")
   ResponseEntity<ParserChain> read(@PathVariable String id) throws IOException {
     String configPath = appProperties.getConfigPath();
-    ParserChain chain = service.read(id, Paths.get(configPath));
+    ParserChain chain = parserConfigService.read(id, Paths.get(configPath));
     if (null == chain) {
       return ResponseEntity.notFound().build();
     } else {
@@ -78,12 +91,12 @@ public class ParserConfigController {
     }
   }
 
-  @PutMapping(value = "/{id}")
+  @PutMapping(value = API_CHAINS + "/{id}")
   ResponseEntity<ParserChain> update(@RequestBody ParserChain chain, @PathVariable String id)
       throws IOException {
     String configPath = appProperties.getConfigPath();
     try {
-      ParserChain updatedChain = service.update(id, chain, Paths.get(configPath));
+      ParserChain updatedChain = parserConfigService.update(id, chain, Paths.get(configPath));
       if (null == updatedChain) {
         return ResponseEntity.notFound().build();
       } else {
@@ -94,14 +107,34 @@ public class ParserConfigController {
     }
   }
 
-  @DeleteMapping(value = "/{id}")
+  @DeleteMapping(value = API_CHAINS + "/{id}")
   ResponseEntity<Void> delete(@PathVariable String id) throws IOException {
     String configPath = appProperties.getConfigPath();
-    if (service.delete(id, Paths.get(configPath))) {
+    if (parserConfigService.delete(id, Paths.get(configPath))) {
       return ResponseEntity.noContent().build();
     } else {
       return ResponseEntity.notFound().build();
     }
+  }
+
+  @GetMapping(value = API_PARSER_TYPES)
+  ResponseEntity<List<ParserType>> findAllTypes() throws IOException {
+    List<ParserType> types = parserDiscoveryService.findAll();
+    return ResponseEntity.ok(types);
+  }
+
+  @GetMapping(value = API_PARSER_FORM_CONFIG)
+  ResponseEntity<Map<String, ParserConfigSchema>> findAllFormConfig() throws IOException {
+    Map<String, ParserConfigSchema> configs = parserDiscoveryService.findAllConfig();
+    return ResponseEntity.ok(configs);
+  }
+
+  // /api/v1/parserconfig/sampleparser/parsingjobs
+  @PostMapping(value = "/PUT/CONSTANT/HERE")
+  ResponseEntity<ParserResults> test(@RequestBody ParserTestRun testRun) throws IOException {
+    // Can modify this service method to run the parser test
+    parserDiscoveryService.test("type", "data");
+    return ResponseEntity.ok(new ParserResults());
   }
 
 }

@@ -116,6 +116,7 @@ describe('chain parser page: effects', () => {
 
     effects.loadChainDetails$.subscribe(result => {
       expect(result).toEqual(new fromActions.LoadChainDetailsSuccessAction({
+        chainId: '123',
         chains: {
           123: {
             id: '123',

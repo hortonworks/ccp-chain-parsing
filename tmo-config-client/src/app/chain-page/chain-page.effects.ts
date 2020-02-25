@@ -29,7 +29,10 @@ export class ChainPageEffects {
         map((chain: ChainDetailsModel) => {
           const normalizedParserConfig = normalizeParserConfig(chain);
           return new fromActions.LoadChainDetailsSuccessAction(
-            normalizedParserConfig
+            {
+              ...normalizedParserConfig,
+              chainId: chain.id
+            }
           );
         }),
         catchError((error: { message: string }) => {

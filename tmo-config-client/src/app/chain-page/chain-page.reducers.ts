@@ -1,6 +1,7 @@
 import { createSelector } from '@ngrx/store';
 
 import * as addParserActions from '../chain-add-parser-page/chain-add-parser-page.actions';
+import { ChainModel } from '../chain-list-page/chain.model';
 
 import * as chainPageActions from './chain-page.actions';
 import { ParserChainModel, ParserModel, RouteModel } from './chain-page.models';
@@ -16,6 +17,7 @@ export interface ChainPageState {
   formConfigs?: { [key: string]: CustomFormConfig[] };
   dirtyParsers: string[];
   dirtyChains: string[];
+  path: string[];
 }
 
 export const initialState: ChainPageState = {
@@ -27,6 +29,11 @@ export const initialState: ChainPageState = {
   formConfigs: {},
   dirtyParsers: [],
   dirtyChains: [],
+  path: [],
+};
+
+export const uniqueAdd = (haystack: string[], needle: string): string[] => {
+  return [ ...haystack.filter(item => item !== needle), needle];
 };
 
 export function reducer(
@@ -41,7 +48,8 @@ export function reducer(
         parsers: action.payload.parsers,
         routes: action.payload.routes,
         dirtyParsers: [],
-        dirtyChains: []
+        dirtyChains: [],
+        path: [action.payload.chainId]
       };
     }
     case chainPageActions.REMOVE_PARSER: {
@@ -50,10 +58,7 @@ export function reducer(
       return {
         ...state,
         parsers,
-        dirtyChains: [
-          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
-          action.payload.chainId
-        ],
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
         chains: {
           ...state.chains,
           [action.payload.chainId]: {
@@ -74,23 +79,26 @@ export function reducer(
             ...action.payload.parser
           }
         },
-        dirtyChains: [
-          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
-          action.payload.chainId
-        ],
-        dirtyParsers: [
-          ...state.dirtyParsers.filter(parserId => parserId !== action.payload.parser.id),
-          action.payload.parser.id
-        ],
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parser.id),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
+      };
+    }
+    case chainPageActions.ADD_CHAIN: {
+      return {
+        ...state,
+        chains: {
+          ...state.chains,
+          [action.payload.chain.id]: {
+            ...action.payload.chain as ChainModel,
+            parsers: []
+          }
+        }
       };
     }
     case chainPageActions.UPDATE_CHAIN: {
       return {
         ...state,
-        dirtyChains: [
-          ...state.dirtyChains.filter(id => id !== action.payload.chain.id),
-          action.payload.chain.id
-        ],
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chain.id),
         chains: {
           ...state.chains,
           [action.payload.chain.id]: {
@@ -107,14 +115,8 @@ export function reducer(
           ...state.parsers,
           [action.payload.parser.id]: action.payload.parser
         },
-        dirtyParsers: [
-          ...state.dirtyParsers.filter(parserId => parserId !== action.payload.parser.id),
-          action.payload.parser.id
-        ],
-        dirtyChains: [
-          ...state.dirtyChains.filter(id => id !== action.payload.chainId),
-          action.payload.chainId
-        ],
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parser.id),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
         chains: {
           ...state.chains,
           [action.payload.chainId]: {
@@ -153,6 +155,78 @@ export function reducer(
         ...state,
         dirtyChains: [],
         dirtyParsers: []
+      };
+    }
+    case chainPageActions.ADD_ROUTE: {
+      return {
+        ...state,
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parserId),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
+        parsers: {
+          ...state.parsers,
+          [action.payload.parserId]: {
+            ...state.parsers[action.payload.parserId],
+            config: {
+              ...(state.parsers[action.payload.parserId].config || {}),
+              routes: [
+                ...((state.parsers[action.payload.parserId].config || {}).routes || []).filter(id => id !== action.payload.route.id),
+                action.payload.route.id
+              ]
+            }
+          }
+        },
+        routes: {
+          ...state.routes,
+          [action.payload.route.id]: {
+            ...action.payload.route as RouteModel
+          }
+        }
+      };
+    }
+    case chainPageActions.UPDATE_ROUTE: {
+      return {
+        ...state,
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parserId),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
+        routes: {
+          ...state.routes,
+          [action.payload.route.id]: {
+            ...state.routes[action.payload.route.id],
+            ...action.payload.route
+          }
+        }
+      };
+    }
+    case chainPageActions.REMOVE_ROUTE: {
+      const routes = { ...state.routes };
+      delete routes[action.payload.routeId];
+      return {
+        ...state,
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parserId),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
+        routes,
+        parsers: {
+          ...state.parsers,
+          [action.payload.parserId]: {
+            ...state.parsers[action.payload.parserId],
+            config: {
+              ...state.parsers[action.payload.parserId].config,
+              routes: state.parsers[action.payload.parserId].config.routes.filter(id => id !== action.payload.routeId)
+            }
+          }
+        }
+      };
+    }
+    case chainPageActions.ADD_TO_PATH: {
+      return {
+        ...state,
+        path: uniqueAdd(state.path, action.payload.chainId)
+      };
+    }
+    case chainPageActions.REMOVE_FROM_PATH: {
+      return {
+        ...state,
+        path: state.path.filter(chainId => !action.payload.chainId.includes(chainId))
       };
     }
   }
@@ -227,10 +301,21 @@ export const getDirtyStatus = createSelector(
 
 export const getFormConfigByType = createSelector(
   getChainPageState,
-  (state, props) => (state.formConfigs || {})[props.type]
+  (state, props) => ((state.formConfigs || {})[props.type] || {}).schemaItems
 );
 
 export const getFormConfigs = createSelector(
   getChainPageState,
   (state) => state.formConfigs
+);
+
+export const getPath = createSelector(
+  getChainPageState,
+  (state) => state.path
+);
+
+export const getPathWithChains = createSelector(
+  getPath,
+  getChains,
+  (path, chains) => path.map(chainId => chains[chainId])
 );

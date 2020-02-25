@@ -52,6 +52,9 @@ export class ChainViewComponent implements OnInit {
     }, {
       id: 'Error',
       name: 'Error'
+    }, {
+      id: 'Router',
+      name: 'Router'
     }]
   }];
 

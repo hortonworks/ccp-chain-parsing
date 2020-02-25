@@ -1,17 +1,20 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValues;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.Parser;
+import com.cloudera.parserchains.core.catalog.MessageParser;
+import com.cloudera.parserchains.core.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.config.ConfigKey;
+import com.cloudera.parserchains.core.config.ConfigName;
+import com.cloudera.parserchains.core.config.ConfigValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * A parser which can remove fields from a message.
@@ -52,7 +55,7 @@ public class RemoveFieldParser implements Parser {
     }
 
     @Override
-    public void configure(ConfigName name, ConfigValues values) {
+    public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
         configurer.configure(name, values);
     }
 
@@ -64,10 +67,12 @@ public class RemoveFieldParser implements Parser {
      * Handles configuration for the {@link RemoveFieldParser}.
      */
     static class Configurer {
+        static final ConfigKey removeFieldKey = ConfigKey.of("fieldToRemove");
         static final ConfigDescriptor removeFieldConfig = ConfigDescriptor
                 .builder()
-                .name("Field to Remove")
-                .description("The name of the field to remove.")
+                .name("fieldToRemove")
+                .description("Field to Remove")
+                .acceptsValue(removeFieldKey, "The name of the field to remove.")
                 .isRequired(true)
                 .build();
         private RemoveFieldParser parser;
@@ -80,15 +85,19 @@ public class RemoveFieldParser implements Parser {
             return Arrays.asList(removeFieldConfig);
         }
 
-        public void configure(ConfigName name, ConfigValues values) {
+        public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
             if(removeFieldConfig.getName().equals(name)) {
-                values.getValue().ifPresent(value -> {
-                    FieldName field = FieldName.of(value.getValue());
-                    parser.removeField(field);
-                });
+                configureRemoveField(values);
             } else {
                 throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
             }
+        }
+
+        private void configureRemoveField(Map<ConfigKey, ConfigValue> values) {
+            Optional.ofNullable(values.get(removeFieldKey)).ifPresent(value -> {
+                FieldName field = FieldName.of(value.get());
+                parser.removeField(field);
+            });
         }
     }
 }

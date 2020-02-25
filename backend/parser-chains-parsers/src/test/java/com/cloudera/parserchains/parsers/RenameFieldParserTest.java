@@ -1,15 +1,20 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValues;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
+import com.cloudera.parserchains.core.config.ConfigKey;
+import com.cloudera.parserchains.core.config.ConfigName;
+import com.cloudera.parserchains.core.config.ConfigValue;
 import org.junit.jupiter.api.Test;
 
-import static com.cloudera.parserchains.parsers.RenameFieldParser.Configurer.FROM_FIELD;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.cloudera.parserchains.parsers.RenameFieldParser.Configurer.fromFieldKey;
+import static com.cloudera.parserchains.parsers.RenameFieldParser.Configurer.toFieldKey;
 import static com.cloudera.parserchains.parsers.RenameFieldParser.Configurer.renameFieldConfig;
-import static com.cloudera.parserchains.parsers.RenameFieldParser.Configurer.TO_FIELD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,21 +57,18 @@ public class RenameFieldParserTest {
     @Test
     void configure() {
         // rename 'original1' to 'new1'
-        ConfigValues fieldToRename = ConfigValues.builder()
-                .withValue(FROM_FIELD, "original1")
-                .withValue(TO_FIELD, "new1")
-                .build();
+        Map<ConfigKey, ConfigValue> values = new HashMap<>();
+        values.put(fromFieldKey, ConfigValue.of("original1"));
+        values.put(toFieldKey, ConfigValue.of("new1"));
+
         RenameFieldParser parser = new RenameFieldParser();
-        parser.configure(renameFieldConfig.getName(), fieldToRename);
+        parser.configure(renameFieldConfig.getName(), values);
         assertEquals(FieldName.of("new1"), parser.getFieldsToRename().get(FieldName.of("original1")));
     }
 
     @Test
     void unexpectedConfig() {
         assertThrows(IllegalArgumentException.class,
-                () -> new RenameFieldParser().configure(
-                        ConfigName.of("invalid"),
-                        ConfigValues.builder().build()
-                ));
+                () -> new RenameFieldParser().configure(ConfigName.of("invalid"), Collections.emptyMap()));
     }
 }

@@ -4,17 +4,23 @@ import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Regex;
-import com.cloudera.parserchains.core.config.ConfigValues;
+import com.cloudera.parserchains.core.config.ConfigKey;
+import com.cloudera.parserchains.core.config.ConfigValue;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static com.cloudera.parserchains.parsers.DelimitedTextParser.Configurer.OUTPUT_FIELD_INDEX;
-import static com.cloudera.parserchains.parsers.DelimitedTextParser.Configurer.OUTPUT_FIELD_NAME;
 import static com.cloudera.parserchains.parsers.DelimitedTextParser.Configurer.delimiterConfig;
+import static com.cloudera.parserchains.parsers.DelimitedTextParser.Configurer.delimiterKey;
 import static com.cloudera.parserchains.parsers.DelimitedTextParser.Configurer.inputFieldConfig;
+import static com.cloudera.parserchains.parsers.DelimitedTextParser.Configurer.inputFieldKey;
 import static com.cloudera.parserchains.parsers.DelimitedTextParser.Configurer.outputFieldConfig;
+import static com.cloudera.parserchains.parsers.DelimitedTextParser.Configurer.outputFieldIndex;
+import static com.cloudera.parserchains.parsers.DelimitedTextParser.Configurer.outputFieldName;
 import static com.cloudera.parserchains.parsers.DelimitedTextParser.Configurer.trimConfig;
+import static com.cloudera.parserchains.parsers.DelimitedTextParser.Configurer.trimKey;
 import static com.cloudera.parserchains.parsers.DelimitedTextParser.OutputField;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -193,29 +199,29 @@ public class DelimitedTextParserTest {
 
     @Test
     void configureInputField() {
-        ConfigValues inputField = ConfigValues.builder()
-                .withValue("original_string")
-                .build();
+        Map<ConfigKey, ConfigValue> values = new HashMap<>();
+        values.put(inputFieldKey, ConfigValue.of("original_string"));
+
         DelimitedTextParser parser = new DelimitedTextParser();
-        parser.configure(inputFieldConfig.getName(), inputField);
+        parser.configure(inputFieldConfig.getName(), values);
+
         assertEquals(FieldName.of("original_string"), parser.getInputField());
     }
 
     @Test
     void configureOutputFields() {
         // define the output field values
-        ConfigValues outputField1 = ConfigValues.builder()
-                .withValue(OUTPUT_FIELD_NAME, "first")
-                .withValue(OUTPUT_FIELD_INDEX, "0")
-                .build();
-        ConfigValues outputField2 = ConfigValues.builder()
-                .withValue(OUTPUT_FIELD_NAME, "second")
-                .withValue(OUTPUT_FIELD_INDEX, "1")
-                .build();
-        ConfigValues outputField3 = ConfigValues.builder()
-                .withValue(OUTPUT_FIELD_NAME, "third")
-                .withValue(OUTPUT_FIELD_INDEX, "2")
-                .build();
+        Map<ConfigKey, ConfigValue> outputField1 = new HashMap<>();
+        outputField1.put(outputFieldName, ConfigValue.of("first"));
+        outputField1.put(outputFieldIndex, ConfigValue.of("0"));
+
+        Map<ConfigKey, ConfigValue> outputField2 = new HashMap<>();
+        outputField2.put(outputFieldName, ConfigValue.of("second"));
+        outputField2.put(outputFieldIndex, ConfigValue.of("1"));
+
+        Map<ConfigKey, ConfigValue> outputField3 = new HashMap<>();
+        outputField3.put(outputFieldName, ConfigValue.of("third"));
+        outputField3.put(outputFieldIndex, ConfigValue.of("2"));
 
         DelimitedTextParser parser = new DelimitedTextParser();
         parser.configure(outputFieldConfig.getName(), outputField1);
@@ -240,21 +246,23 @@ public class DelimitedTextParserTest {
 
     @Test
     void configureDelimiter() {
-        ConfigValues delimiter = ConfigValues.builder()
-                .withValue("|")
-                .build();
+        Map<ConfigKey, ConfigValue> delimiter = new HashMap<>();
+        delimiter.put(delimiterKey, ConfigValue.of("|"));
+
         DelimitedTextParser parser = new DelimitedTextParser();
         parser.configure(delimiterConfig.getName(), delimiter);
+
         assertEquals(Regex.of("|"), parser.getDelimiter());
     }
 
     @Test
     void configureTrim() {
-        ConfigValues trim = ConfigValues.builder()
-                .withValue("false")
-                .build();
+        Map<ConfigKey, ConfigValue> trim = new HashMap<>();
+        trim.put(trimKey, ConfigValue.of("false"));
+
         DelimitedTextParser parser = new DelimitedTextParser();
         parser.configure(trimConfig.getName(), trim);
+
         assertFalse(parser.isTrimWhitespace());
     }
 
