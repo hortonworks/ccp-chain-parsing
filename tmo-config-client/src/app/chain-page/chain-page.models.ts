@@ -14,6 +14,14 @@ export interface RouteModel {
   id: string;
   name: string;
   subchain: string | ParserChainModel;
+  matchingValue?: string;
+}
+
+export interface PartialRouteModel {
+  id?: string;
+  name?: string;
+  subchain?: string | ParserChainModel;
+  matchingValue?: string;
 }
 
 export interface ParserModel {

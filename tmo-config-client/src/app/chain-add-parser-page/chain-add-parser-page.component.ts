@@ -7,7 +7,7 @@ import uuidv1 from 'uuid/v1';
 import { ParserModel } from '../chain-page/chain-page.models';
 
 import * as fromActions from './chain-add-parser-page.actions';
-import { AddParserPageState, getParsers, getParserTypes } from './chain-add-parser-page.reducers';
+import { AddParserPageState, getParserTypes } from './chain-add-parser-page.reducers';
 
 @Component({
   selector: 'app-chain-add-parser-page',
@@ -19,6 +19,7 @@ export class ChainAddParserPageComponent implements OnInit {
   typesList: { id: string, name: string }[] = [];
   parsersList: ParserModel[] = [];
   chainId: string;
+  subchainId: string;
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +43,7 @@ export class ChainAddParserPageComponent implements OnInit {
 
   addParser() {
     this.store.dispatch(new fromActions.AddParserAction({
-      chainId: this.chainId,
+      chainId: this.subchainId || this.chainId,
       parser: {
         ...this.addParserForm.value,
         id: uuidv1(),
@@ -63,26 +64,22 @@ export class ChainAddParserPageComponent implements OnInit {
 
     this.activatedRoute.params.subscribe((params) => {
       this.chainId = params.id;
-      this.store.dispatch(new fromActions.GetParserTypesAction());
-      this.store.dispatch(new fromActions.GetParsersAction({
-        chainId: params.id
-      }));
+      this.subchainId = params.subchain;
     });
+
+    this.store.dispatch(new fromActions.GetParserTypesAction());
 
     this.store.pipe(select(getParserTypes)).subscribe((parserTypes) => {
       this.typesList = parserTypes;
     });
 
-    this.store.pipe(select(getParsers)).subscribe((parsers) => {
-      this.parsersList = parsers || [];
+    // this.store.pipe(select(getParsers)).subscribe((parsers) => {
+    //   this.parsersList = parsers || [];
 
-      if (this.parsersList.length) {
-        this.addParserForm.addControl('parentId', new FormControl(null));
-        this.addParserForm.addControl('outputs', new FormControl(''));
-      }
-    });
-
-
-
+    //   if (this.parsersList.length) {
+    //     this.addParserForm.addControl('parentId', new FormControl(null));
+    //     this.addParserForm.addControl('outputs', new FormControl(''));
+    //   }
+    // });
   }
 }

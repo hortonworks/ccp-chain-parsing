@@ -17,16 +17,6 @@ describe('chain add parser page: reducers', () => {
     );
     expect(newState.parserTypes).toBe(parserTypes);
   });
-
-  it('should set the parsers', () => {
-    const state = {} as unknown;
-    const parsers = [];
-    const newState = fromReducers.reducer(
-      state as fromReducers.AddParserPageState,
-      new fromActions.GetParsersSuccessAction(parsers)
-    );
-    expect(newState.parsers).toBe(parsers);
-  });
 });
 
 describe('chain add parser page: selectors', () => {
@@ -39,15 +29,5 @@ describe('chain add parser page: selectors', () => {
       }
     });
     expect(parserTypes).toBe(parserTypesFromState);
-  });
-
-  it('should return with the parsers from state', () => {
-    const parsersFromState = [];
-    const parserTypes = fromReducers.getParsers({
-      'chain-add-parser-page': {
-        parsers: parsersFromState
-      }
-    });
-    expect(parserTypes).toBe(parsersFromState);
   });
 });

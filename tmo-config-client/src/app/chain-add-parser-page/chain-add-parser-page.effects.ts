@@ -5,7 +5,6 @@ import { NzMessageService } from 'ng-zorro-antd';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { ParserModel } from '../chain-page/chain-page.models';
 import { AddParserPageService } from '../services/chain-add-parser-page.service';
 
 import * as fromActions from './chain-add-parser-page.actions';
@@ -30,23 +29,6 @@ export class AddParserEffects {
           catchError((error: { message: string }) => {
             this.messageService.create('error', error.message);
             return of(new fromActions.GetParserTypesFailAction(error));
-          })
-        );
-    })
-  );
-
-  @Effect()
-  getParsers$: Observable<Action> = this.actions$.pipe(
-    ofType(fromActions.GET_PARSERS),
-    switchMap((action: fromActions.GetParsersAction) => {
-      return this.addParserService.getParsers(action.payload.chainId)
-        .pipe(
-          map((parsers: ParserModel[]) => {
-            return new fromActions.GetParsersSuccessAction(parsers);
-          }),
-          catchError((error: { message: string }) => {
-            this.messageService.create('error', error.message);
-            return of(new fromActions.GetParsersFailAction(error));
           })
         );
     })

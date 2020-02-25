@@ -1,6 +1,13 @@
 import { Action } from '@ngrx/store';
 
-import { ParserChainModel, ParserModel, PartialParserChainModel, PartialParserModel, RouteModel } from './chain-page.models';
+import {
+  ParserChainModel,
+  ParserModel,
+  PartialParserChainModel,
+  PartialParserModel,
+  PartialRouteModel,
+  RouteModel
+} from './chain-page.models';
 import { CustomFormConfig } from './components/custom-form/custom-form.component';
 
 export const LOAD_CHAIN_DETAILS = '[Chain Details] load start';
@@ -11,6 +18,7 @@ export const UPDATE_PARSER = '[Chain Details] update parser';
 export const SAVE_PARSER_CONFIG = '[Chain Details] save parser config';
 export const SAVE_PARSER_CONFIG_SUCCESS = '[Chain Details] save parser config success';
 export const SAVE_PARSER_CONFIG_FAIL = '[Chain Details] save parser config fail';
+export const ADD_CHAIN = '[Chain Details] add chain';
 export const FAILED_PARSER_SELECTED = '[Chain Details] failed parser selected';
 export const UPDATE_CHAIN = '[Chain Details] update chain';
 export const GET_FORM_CONFIG = '[Chain Details] get form config start';
@@ -19,6 +27,11 @@ export const GET_FORM_CONFIG_FAIL = '[Chain Details] get form config fail';
 export const GET_FORM_CONFIGS = '[Chain Details] get form configs start';
 export const GET_FORM_CONFIGS_SUCCESS = '[Chain Details] get form configs success';
 export const GET_FORM_CONFIGS_FAIL = '[Chain Details] get form configs fail';
+export const ADD_ROUTE = '[Chain Details] add route';
+export const UPDATE_ROUTE = '[Chain Details] update route';
+export const REMOVE_ROUTE = '[Chain Details] remove route';
+export const ADD_TO_PATH = '[Chain Details] add to path';
+export const REMOVE_FROM_PATH = '[Chain Details] remove from path';
 
 export class LoadChainDetailsAction implements Action {
   readonly type = LOAD_CHAIN_DETAILS;
@@ -30,7 +43,8 @@ export class LoadChainDetailsSuccessAction implements Action {
   constructor(public payload: {
     chains: { [key: string]: ParserChainModel },
     routes: { [key: string]: RouteModel },
-    parsers: { [key: string]: ParserModel }
+    parsers: { [key: string]: ParserModel },
+    chainId: string
   }) {}
 }
 
@@ -65,6 +79,11 @@ export class SaveParserConfigSuccessAction implements Action {
 export class SaveParserConfigFailAction implements Action {
   readonly type = SAVE_PARSER_CONFIG_FAIL;
   constructor(public error: { message: string }) {}
+}
+
+export class AddChainAction implements Action {
+  readonly type = ADD_CHAIN;
+  constructor(public payload: { chain: PartialParserChainModel }) {}
 }
 
 export class FailedParserSelected implements Action {
@@ -107,6 +126,43 @@ export class GetFormConfigsFailAction implements Action {
   constructor(public error: { message: string }) {}
 }
 
+export class AddRouteAction implements Action {
+  readonly type = ADD_ROUTE;
+  constructor(public payload: {
+    chainId: string,
+    parserId: string,
+    route: PartialRouteModel
+  }) {}
+}
+
+export class UpdateRouteAction implements Action {
+  readonly type = UPDATE_ROUTE;
+  constructor(public payload: {
+    chainId: string,
+    parserId: string,
+    route: PartialRouteModel
+  }) {}
+}
+
+export class RemoveRouteAction implements Action {
+  readonly type = REMOVE_ROUTE;
+  constructor(public payload: {
+    chainId: string,
+    parserId: string,
+    routeId: string
+  }) {}
+}
+
+export class AddToPathAction implements Action {
+  readonly type = ADD_TO_PATH;
+  constructor(public payload: { chainId: string }) {}
+}
+
+export class RemoveFromPathAction implements Action {
+  readonly type = REMOVE_FROM_PATH;
+  constructor(public payload: { chainId: string[] }) {}
+}
+
 export type ChainDetailsAction = LoadChainDetailsAction
   | LoadChainDetailsSuccessAction
   | LoadChainDetailsFailAction
@@ -115,6 +171,7 @@ export type ChainDetailsAction = LoadChainDetailsAction
   | SaveParserConfigAction
   | SaveParserConfigFailAction
   | SaveParserConfigFailAction
+  | AddChainAction
   | FailedParserSelected
   | UpdateChainAction
   | GetFormConfigAction
@@ -122,4 +179,9 @@ export type ChainDetailsAction = LoadChainDetailsAction
   | GetFormConfigFailAction
   | GetFormConfigsAction
   | GetFormConfigsSuccessAction
-  | GetFormConfigsFailAction;
+  | GetFormConfigsFailAction
+  | AddRouteAction
+  | UpdateRouteAction
+  | RemoveRouteAction
+  | AddToPathAction
+  | RemoveFromPathAction;

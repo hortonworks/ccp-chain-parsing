@@ -9,3 +9,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.parser-dirty {
+  position: absolute;
+  left: -4px;
+  top: -9px;
+}
+
+.add-route {
+  display: block;
+  margin-bottom: 10px;
+}

@@ -1,9 +1,11 @@
+.route-subchain {
+  margin-right: 10px;
+}
 
-.route {
+.route-actions {
   display: flex;
 }
 
-.route-matching-value,
-.route-subchain {
-  padding: 10px;
+.route-matching-value {
+  padding: 0 10px;
 }

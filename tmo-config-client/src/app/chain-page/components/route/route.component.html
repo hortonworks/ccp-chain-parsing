@@ -1,15 +1,42 @@
-<div class="route" *ngIf="route">
-  <div class="route-matching-value">{{ route.matchingValue }}</div>
-  <div>
+<div nz-row class="route" *ngIf="route">
+  <div nz-col nzSpan="14" class="route-matching-value">
+    <nz-form-item>
+      <nz-form-control>
+        <input
+          nz-input
+          (blur)="onMatchingValueBlur($event, route)"
+          placeholder="Add matching value"
+          value="{{ route.matchingValue }}"
+        />
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+  <div nz-col nzSpan="8" class="route-actions">
     <div class="route-subchain">
-      <a
-        class="subchain-items"
-        href="#"
-        (click)="onChainClick($event, route.subchain)"
-        title="{{ subchain.name }}"
-      >
-        {{ subchain.name }}
-      </a>
+      <span nz-tooltip nzTitle="View/Edit Subchain" nzPlacement="top">
+        <button
+          nz-button
+          nzType="default"
+          (click)="onChainClick($event, route.subchain)"
+        >
+          <i nz-icon nzType="edit" nzTheme="fill"></i>
+        </button>
+      </span>
+    </div>
+    <div class="route-remove">
+      <span nz-tooltip nzTitle="Remove route" nzPlacement="top">
+        <button
+          nz-button
+          nz-popconfirm
+          nzTitle="Are you sure you want to remove this?"
+          (nzOnConfirm)="onRouteRemoveConfirmed($event, route)"
+          nzCancelText="Cancel"
+          nzOkText="Remove"
+          nzType="default"
+        >
+          <i nz-icon nzType="delete" nzTheme="fill"></i>
+        </button>
+      </span>
     </div>
   </div>
 </div>
