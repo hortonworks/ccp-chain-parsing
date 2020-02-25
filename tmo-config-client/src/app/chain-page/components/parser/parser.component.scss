@@ -4,17 +4,24 @@
   top: -9px;
 }
 
-.parser-delete-btn {
-  right: -18px;
-  color: rgb(20,20,20);
-  .anticon-delete {
-    opacity: 0.6;
+.parser-delete-btn-wrapper {
+  right: 8px;
+  top: 12px;
+  position: absolute;
+  .parser-delete-btn {
+    color: rgb(20,20,20);
+    .anticon-delete {
+      opacity: 0.6;
+    }
+  }
+
+  .parser-delete-btn:hover .anticon-delete {
+    opacity: 0.8;
   }
 }
 
-.parser-delete-btn:hover .anticon-delete {
-  opacity: 0.8;
-}
+
+
 .investigated {
   border-left: 4px solid red;
 }
