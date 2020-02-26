@@ -361,7 +361,9 @@ describe('chain-page: reducers', () => {
   });
 
   it('should return with a form config for a certain parser type', () => {
-    const formConfig = {};
+    const formConfig = {
+      schemaItems: []
+    };
     const formConfigs = {
       foo: formConfig
     };
@@ -372,7 +374,7 @@ describe('chain-page: reducers', () => {
     };
 
     const config = fromReducers.getFormConfigByType(state, { type: 'foo' });
-    expect(config).toBe(formConfig);
+    expect(config).toBe(formConfig.schemaItems);
   });
 
   it('should return with the dirty chains', () => {
