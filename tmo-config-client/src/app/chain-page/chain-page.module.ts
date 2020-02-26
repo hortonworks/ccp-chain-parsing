@@ -17,6 +17,7 @@ import { ParserComposerComponent } from './components/parser-composer/parser-com
 import { ParserComponent } from './components/parser/parser.component';
 import { RouteComponent } from './components/route/route.component';
 import { RouterComponent } from './components/router/router.component';
+import { AdvancedEditorComponent } from './components/parser/advanced-editor/advanced-editor.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { RouterComponent } from './components/router/router.component';
     RouterComponent,
     CustomFormComponent,
     ParserComposerComponent,
-    RouteComponent
+    RouteComponent,
+    AdvancedEditorComponent
   ],
   entryComponents: [ ChainViewComponent ],
   imports: [

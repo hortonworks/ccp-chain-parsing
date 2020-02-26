@@ -6,6 +6,7 @@ import set from 'lodash.set';
 
 import { ParserModel } from '../../chain-page.models';
 import { CustomFormConfig } from '../custom-form/custom-form.component';
+import { ConfigChangedEvent } from './advanced-editor/advanced-editor.component';
 
 @Component({
   selector: 'app-parser',
@@ -119,6 +120,10 @@ export class ParserComponent implements OnInit, OnChanges {
 
   onRemoveParser(parserId: string) {
     this.removeParser.emit(parserId);
+  }
+
+  onAdvancedEditorChanged(event: ConfigChangedEvent) {
+    this.parserChange.emit({ id: this.parser.id, config: event.value });
   }
 
 }
