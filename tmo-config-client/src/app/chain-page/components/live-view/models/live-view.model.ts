@@ -17,5 +17,5 @@ export interface EntryParsingResultModel {
 export interface LiveViewModel {
   sampleData: SampleDataModel;
   chainConfig: {};
-  result?: LiveViewResultModel;
+  result?: EntryParsingResultModel[];
 }

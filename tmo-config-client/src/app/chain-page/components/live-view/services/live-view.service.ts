@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { LiveViewModel } from '../models/live-view.model';
+import { EntryParsingResultModel } from '../models/live-view.model';
 import { SampleDataModel } from '../models/sample-data.model';
 
 @Injectable({
@@ -10,15 +10,15 @@ import { SampleDataModel } from '../models/sample-data.model';
 })
 export class LiveViewService {
 
-  readonly SAMPLE_PARSER_URL = '/api/v1/parserconfig/sampleparser/parsingjobs';
+  readonly SAMPLE_PARSER_URL = '/api/v1/parserconfig/parser-test';
 
   constructor(
     private http: HttpClient,
   ) { }
 
-  execute(sampleData: SampleDataModel, chainConfig: {}): Observable<LiveViewModel> {
-    return this.http.post<LiveViewModel>(
+  execute(sampleData: SampleDataModel, parserChainSchema: {}): Observable<{ results: EntryParsingResultModel[]}> {
+    return this.http.post<{ results: EntryParsingResultModel[]}>(
       this.SAMPLE_PARSER_URL,
-      { sampleData, chainConfig } as LiveViewModel);
+      { sampleData, parserChainSchema } as any);
   }
 }

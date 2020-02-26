@@ -19,7 +19,6 @@ import {
   getResults,
   getSampleData,
 } from './live-view.selectors';
-import { LiveViewResultModel } from './models/live-view.model';
 import { SampleDataModel } from './models/sample-data.model';
 
 @Component({
@@ -35,7 +34,7 @@ export class LiveViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isLiveViewOn$: Observable<boolean>;
   isExecuting$: Observable<boolean>;
-  results$: Observable<LiveViewResultModel>;
+  results$: Observable<any>;
   sampleData$: Observable<SampleDataModel>;
 
   sampleDataChange$ = new Subject<SampleDataModel>();

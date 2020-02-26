@@ -47,7 +47,7 @@ function createParseJob(req, res) {
     const asaTagRegex = /%ASA-\d\-\d*\b/g
     const asaMessageRegex = /(?<=%ASA-\d\-\d*\:)(.*)/g
     const syslogMessageRegex = /%ASA-\d\-\d*\:(.*)/g
-    const parsers = req.body.chainConfig.parsers
+    const parsers = req.body.parserChainSchema.parsers
 
     entry.output.ASA_TAG = asaTagRegex.exec(entry.input)[0];
     entry.output.ASA_message = asaMessageRegex.exec(entry.input)[0];
