@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { NgZorroAntdModule } from 'ng-zorro-antd';
+import { DeleteFill } from '@ant-design/icons-angular/icons';
+import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 import { ParserComponent } from './parser.component';
@@ -34,6 +35,9 @@ describe('ParserComponent', () => {
         ParserComponent,
         MockCustomFormComponent,
       ],
+      providers : [
+        { provide: NZ_ICONS, useValue: [DeleteFill]}
+      ]
     })
     .compileComponents();
   }));
