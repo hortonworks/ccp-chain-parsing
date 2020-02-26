@@ -9,7 +9,7 @@ import static com.cloudera.parserchains.core.Validator.mustMatch;
  */
 public class ConfigDescription {
     static final Regex validDescription = Regex.of("^[a-zA-Z_0-9 ,-.:;'\"()]{1,80}$");
-    public final String description;
+    private final String description;
 
     /**
      * Creates a {@link ConfigDescription}.

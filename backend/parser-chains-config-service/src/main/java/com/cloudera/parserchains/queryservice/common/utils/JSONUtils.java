@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -64,8 +65,10 @@ public enum JSONUtils {
   public final static ReferenceSupplier<List<Object>> LIST_SUPPLIER = new ReferenceSupplier<List<Object>>(){};
 
   private static ThreadLocal<ObjectMapper> _mapper = ThreadLocal.withInitial(() ->
-      new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                        .configure(JsonParser.Feature.ALLOW_COMMENTS, true));
+      new ObjectMapper()
+              .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+              .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
+              .enable(MapperFeature.USE_ANNOTATIONS));
 
   public <T> T convert(Object original, Class<T> targetClass) {
     return _mapper.get().convertValue(original, targetClass);

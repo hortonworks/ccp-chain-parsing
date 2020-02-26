@@ -19,130 +19,103 @@
 package com.cloudera.parserchains.queryservice.service;
 
 import com.cloudera.parserchains.core.Parser;
+import com.cloudera.parserchains.core.ParserBuilder;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
-import com.cloudera.parserchains.core.config.ConfigDescriptor;
-import com.cloudera.parserchains.queryservice.model.ParserConfigSchema;
-import com.cloudera.parserchains.queryservice.model.ParserResults;
-import com.cloudera.parserchains.queryservice.model.ParserType;
-import com.cloudera.parserchains.queryservice.model.SchemaItem;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.cloudera.parserchains.core.config.ConfigDescription;
+import com.cloudera.parserchains.core.config.ConfigKey;
+import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
+import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
+import com.cloudera.parserchains.queryservice.model.ParserID;
+import com.cloudera.parserchains.queryservice.model.ParserName;
+import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
+import com.cloudera.parserchains.queryservice.model.describe.ConfigDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 public class DefaultParserDiscoveryService implements ParserDiscoveryService {
+  static final String DEFAULT_SCHEMA_TYPE = "text";
+  static final String DEFAULT_PATH_ROOT = "config";
+  static final String PATH_DELIMITER = ".";
 
   @Autowired
   private ParserCatalog catalog;
 
   @Autowired
-  public DefaultParserDiscoveryService(ParserCatalog catalog) {
+  private ParserBuilder builder;
+
+  @Autowired
+  private ObjectMapper<ParserSummary, ParserInfo> mapper;
+
+
+  @Autowired
+  public DefaultParserDiscoveryService(ParserCatalog catalog,
+                                       ParserBuilder builder,
+                                       ObjectMapper<ParserSummary, ParserInfo> mapper) {
     this.catalog = catalog;
+    this.builder = builder;
+    this.mapper = mapper;
   }
 
   @Override
-  public List<ParserType> findAll() throws IOException {
-    return infoToType(catalog.getParsers());
-  }
-
-  public static List<ParserType> infoToType(List<ParserInfo> parserInfos) {
-    return parserInfos.stream()
-        .map(info -> new ParserType()
-            .setId(info.getName())
-            .setName(info.getName())
-        ).collect(Collectors.toList());
+  public List<ParserSummary> findAll() throws IOException {
+    return catalog.getParsers()
+            .stream()
+            .map(info -> mapper.reform(info))
+            .collect(Collectors.toList());
   }
 
   @Override
-  public ParserConfigSchema read(String type) throws IOException {
-    return null;
+  public ParserDescriptor describe(ParserName name) throws IOException {
+    return describeAll().get(name);
   }
 
   @Override
-  public Map<String, ParserConfigSchema> findAllConfig() throws IOException {
-    return getConfigs();
-//    return infoToConfig(catalog.getParsers());
+  public Map<ParserName, ParserDescriptor> describeAll() throws IOException {
+    return catalog.getParsers()
+            .stream()
+            .collect(Collectors.toMap(
+                    info -> ParserName.of(info.getName()),
+                    info -> describeParser(info)));
   }
 
-  @Override
-  public ParserResults test(String type, String message) throws IOException {
-    // TODO - this is for running data through a parser chain
-    return null;
-  }
+  private ParserDescriptor describeParser(ParserInfo parserInfo) {
+    // describe the parser; the parserID == parser class
+    ParserID id = ParserID.of(parserInfo.getParserClass().getCanonicalName());
+    ParserName name = ParserName.of(parserInfo.getName());
+    ParserDescriptor schema = new ParserDescriptor()
+            .setParserID(id)
+            .setParserName(name);
 
-  // TODO replace this with a real implementation
-  private Map<String, ParserConfigSchema> getConfigs() {
-    Map<String, ParserConfigSchema> configMap = new HashMap<>();
-    configMap.put("Syslog",
-        new ParserConfigSchema()
-            .setId("Syslog")
-            .addSchemaItem(new SchemaItem()
-                .setName("firstField")
-                .setDescription("First field description")
-                .setLabel("first field")
-                .setPath("config")
-                .setRequired("true")
-                .setType("text"))
-            .addSchemaItem(new SchemaItem()
-                .setName("secondField")
-                .setDescription("Second field description")
-                .setLabel("second field")
-                .setPath("config")
-                .setRequired("true")
-                .setType("text")
-            ));
-    configMap.put("Timestamp",
-        new ParserConfigSchema()
-            .setId("Timestamp")
-            .addSchemaItem(new SchemaItem()
-                .setName("firstField")
-                .setDescription("First field description")
-                .setLabel("first field")
-                .setPath("config")
-                .setRequired("true")
-                .setType("text"))
-            .addSchemaItem(new SchemaItem()
-                .setName("secondField")
-                .setDescription("Second field description")
-                .setLabel("second field")
-                .setPath("config")
-                .setRequired("true")
-                .setType("text")
-            ));
-    return configMap;
-  }
+    Parser parser = builder.build(parserInfo);
+    for(com.cloudera.parserchains.core.config.ConfigDescriptor param: parser.validConfigurations()) {
 
-  /*
-  TODO
-   */
-  public static Map<String, ParserConfigSchema> infoToConfig(List<ParserInfo> parserInfos) {
-    Map<String, ParserConfigSchema> configMap = new HashMap<>();
-    for (ParserInfo info : parserInfos) {
-      try {
-        Constructor<Parser> constructor = info.getParserClass().getConstructor();
-        Parser parser = constructor.newInstance();
-        List<ConfigDescriptor> configDescriptors = parser.validConfigurations();
-        for (ConfigDescriptor desc : configDescriptors) {
-          // TODO - need to figure out mapping from descriptor -> required values -> Tamas's model
-          /*
-          Map<ConfigKey, ConfigDescription> requiredValues = desc.getRequiredValues();
-          ParserFormConfig config = new ParserFormConfig().
-           */
-        }
-      } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-        throw new RuntimeException("Unable to create parser", e);
+      // if >1 accepted values, use a custom path to 'group' the accepted values together, otherwise use root path
+      String path = DEFAULT_PATH_ROOT;
+      if(param.getAcceptedValues().size() > 1) {
+        path = path + PATH_DELIMITER + param.getName().get();
+      }
+
+      for(Map.Entry<ConfigKey, ConfigDescription> entry: param.getAcceptedValues().entrySet()) {
+        ConfigKey configKey = entry.getKey();
+        ConfigDescription description = entry.getValue();
+        ConfigDescriptor item = new ConfigDescriptor()
+                .setName(configKey.getKey())
+                .setLabel(param.getDescription().get())
+                .setDescription(description.get())
+                .setPath(path)
+                .setRequired(Boolean.toString(param.isRequired()))
+                .setType(DEFAULT_SCHEMA_TYPE);
+        schema.addSchemaItem(item);
       }
     }
-//    return parserInfos.stream().collect(Collectors.toMap(ParserInfo::getName,
-//        info -> new ParserFormConfig().setId(info.getName()).setName(info.getName())));
-    return null;
-  }
 
+    return schema;
+  }
 }

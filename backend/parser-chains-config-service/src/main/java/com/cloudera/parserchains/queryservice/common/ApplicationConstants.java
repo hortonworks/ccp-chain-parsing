@@ -33,6 +33,7 @@ public class ApplicationConstants {
   public static final String API_CHAINS = "/chains";
   public static final String API_PARSER_FORM_CONFIG = "/parser-form-configuration";
   public static final String API_PARSER_TYPES = "/parser-types";
+  public static final String API_PARSER_TEST = "/parser-test";
   // URLs
   public static final String API_CHAINS_URL = PARSER_CONFIG_BASE_URL + API_CHAINS;
   public static final String API_CHAINS_CREATE_URL = API_CHAINS_URL;
@@ -41,7 +42,5 @@ public class ApplicationConstants {
   public static final String API_CHAINS_DELETE_URL = API_CHAINS_READ_URL;
   public static final String API_PARSER_FORM_CONFIG_URL = PARSER_CONFIG_BASE_URL + API_PARSER_FORM_CONFIG;
   public static final String API_PARSER_TYPES_URL = PARSER_CONFIG_BASE_URL + API_PARSER_TYPES;
-
-  // parser-form-configuration endpoint constants
-//  public static final String PARSER_FORM_CONFIG_BASE_URL = API_BASE_URL + "/parser-form-configuration";
+  public static final String API_PARSER_TEST_URL = PARSER_CONFIG_BASE_URL + API_PARSER_TEST;
 }

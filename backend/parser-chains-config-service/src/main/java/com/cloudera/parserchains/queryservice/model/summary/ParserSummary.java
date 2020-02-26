@@ -16,46 +16,57 @@
  * limitations under the License.
  */
 
-package com.cloudera.parserchains.queryservice.model;
+package com.cloudera.parserchains.queryservice.model.summary;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.cloudera.parserchains.queryservice.model.ParserID;
+import com.cloudera.parserchains.queryservice.model.ParserName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Objects;
 
-public class ParserChain {
+/**
+ * Describes a type of parser available to the user for
+ * constructing a parser chain.
+ */
+public class ParserSummary {
 
-  private String id;
-  private String name;
-  private List<Parser> parsers;
+  private ParserID id;
+  private ParserName name;
+  @JsonIgnore private String description;
 
-  public ParserChain() {
-    parsers = new ArrayList<>();
+  public String getDescription() {
+    return description;
   }
 
-  public String getId() {
+  public ParserSummary setDescription(String description) {
+    this.description = description;
+    return this;
+  }
+
+  public ParserID getId() {
     return id;
   }
 
-  public ParserChain setId(String id) {
+  public ParserSummary setId(ParserID id) {
     this.id = id;
     return this;
   }
 
-  public String getName() {
+  public ParserSummary setId(String id) {
+    return setId(ParserID.of(id));
+  }
+
+  public ParserName getName() {
     return name;
   }
 
-  public ParserChain setName(String name) {
+  public ParserSummary setName(ParserName name) {
     this.name = name;
     return this;
   }
 
-  public List<Parser> getParsers() {
-    return parsers;
-  }
-
-  public void setParsers(List<Parser> parsers) {
-    this.parsers = parsers;
+  public ParserSummary setName(String name) {
+    return setName(ParserName.of(name));
   }
 
   @Override
@@ -66,9 +77,9 @@ public class ParserChain {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ParserChain that = (ParserChain) o;
+    ParserSummary that = (ParserSummary) o;
     return Objects.equals(id, that.id) &&
-        Objects.equals(name, that.name);
+            Objects.equals(name, that.name);
   }
 
   @Override
@@ -78,10 +89,9 @@ public class ParserChain {
 
   @Override
   public String toString() {
-    return "ParserChain{" +
-        "id='" + id + '\'' +
-        ", name='" + name + '\'' +
-        '}';
+    return "ParserType{" +
+            "id=" + id +
+            ", name=" + name +
+            '}';
   }
-
 }

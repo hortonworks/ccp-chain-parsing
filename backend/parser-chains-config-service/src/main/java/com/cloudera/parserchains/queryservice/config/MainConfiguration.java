@@ -18,11 +18,18 @@
 
 package com.cloudera.parserchains.queryservice.config;
 
+import com.cloudera.parserchains.core.ReflectiveParserBuilder;
+import com.cloudera.parserchains.core.ParserBuilder;
 import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
+import com.cloudera.parserchains.core.catalog.ParserInfo;
 import com.cloudera.parserchains.queryservice.common.utils.IDGenerator;
 import com.cloudera.parserchains.queryservice.common.utils.UniqueIDGenerator;
 import java.nio.file.Paths;
+
+import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
+import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
+import com.cloudera.parserchains.queryservice.model.summary.ParserSummaryMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -44,4 +51,13 @@ public class MainConfiguration {
     return new ClassIndexParserCatalog();
   }
 
+  @Bean
+  public ParserBuilder parserBuilder() {
+    return new ReflectiveParserBuilder();
+  }
+
+  @Bean
+  public ObjectMapper<ParserSummary, ParserInfo> mapper() {
+    return new ParserSummaryMapper();
+  }
 }

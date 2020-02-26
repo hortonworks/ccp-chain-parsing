@@ -13,7 +13,7 @@ import com.cloudera.parserchains.core.Parser;
 public class ParserInfo {
     private final String name;
     private final String description;
-    private final Class<Parser> parserClass;
+    private final Class<? extends Parser> parserClass;
 
     public static Builder builder() {
         return new Builder();
@@ -22,7 +22,7 @@ public class ParserInfo {
     /**
      * Private constructor.  See {@link Builder#builder()}.
      */
-    private ParserInfo(String name, String description, Class<Parser> parserClass) {
+    private ParserInfo(String name, String description, Class<? extends Parser> parserClass) {
         this.name = Objects.requireNonNull(name);
         this.description = Objects.requireNonNull(description);
         this.parserClass = Objects.requireNonNull(parserClass);
@@ -45,7 +45,7 @@ public class ParserInfo {
     /**
      * Returns the implementation class of the parser.
      */
-    public Class<Parser> getParserClass() {
+    public Class<? extends Parser> getParserClass() {
         return parserClass;
     }
 
@@ -77,19 +77,33 @@ public class ParserInfo {
     public static class Builder {
         private String name;
         private String description;
-        private Class<Parser> parserClass;
+        private Class<? extends Parser> parserClass;
 
-        public Builder withName(String name) {
+        public Builder with(Class<?> clazz) {
+            // TODO where should this stuff live; duplicate in ClassIndexPathCatalog
+            MessageParser annotation = clazz.getAnnotation(MessageParser.class);
+            if(annotation != null && Parser.class.isAssignableFrom(clazz)) {
+                // found a parser.  the cast is guaranteed to be safe because of the 'if' condition above
+                @SuppressWarnings("unchecked")
+                Class<Parser> parserClass = (Class<Parser>) clazz;
+                this.name = annotation.name();
+                this.description = annotation.description();
+                this.parserClass = parserClass;
+            }
+            return this;
+        }
+
+        public Builder name(String name) {
             this.name = name;
             return this;
         }
 
-        public Builder withDescription(String description) {
+        public Builder description(String description) {
             this.description = description;
             return this;
         }
 
-        public Builder withParserClass(Class<Parser> parserClass) {
+        public Builder parserClass(Class<? extends Parser> parserClass) {
             this.parserClass = parserClass;
             return this;
         }
