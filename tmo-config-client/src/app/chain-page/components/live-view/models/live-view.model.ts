@@ -1,7 +1,7 @@
 import { SampleDataModel } from './sample-data.model';
 
 export interface LiveViewResultModel {
-  entries: EntryParsingResultModel[];
+  results: EntryParsingResultModel[];
 }
 
 export interface EntryParsingResultModel {
@@ -17,5 +17,5 @@ export interface EntryParsingResultModel {
 export interface LiveViewModel {
   sampleData: SampleDataModel;
   chainConfig: {};
-  result?: EntryParsingResultModel[];
+  results?: EntryParsingResultModel[];
 }
