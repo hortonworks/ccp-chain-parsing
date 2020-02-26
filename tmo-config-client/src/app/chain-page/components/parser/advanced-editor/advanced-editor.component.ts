@@ -28,7 +28,17 @@ export class AdvancedEditorComponent {
   }
 
   onChange(value: string) {
-    this.configChanged.emit({ value: JSON.parse(value) });
+    const jsonRepresentation = JSON.parse(value);
+    if (this.isConfigEqual(jsonRepresentation, this.config)) return;
+
+    this.configChanged.emit({ value: jsonRepresentation });
+  }
+
+  private isConfigEqual(val1: {}, val2: {}) {
+    const ok = Object.keys;
+    return ok(val1).every(val1key => ok(val2).some(val2key => val1key === val2key)) &&
+      ok(val2).every(val2key => ok(val1).some(val1key => val1key === val2key)) &&
+      ok(val1).every(val1key => ok(val2).some(val2key => val2[val2key] === val1[val1key]));
   }
 
 }
