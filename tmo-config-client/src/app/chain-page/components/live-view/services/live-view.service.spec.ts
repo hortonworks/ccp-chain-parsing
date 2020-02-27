@@ -37,7 +37,7 @@ describe('LiveViewService', () => {
       service.SAMPLE_PARSER_URL,
       {
         sampleData: { type: SampleDataType.MANUAL, source: 'test sample input' },
-        parserChainSchema: { id: '456', name: 'gdf', parsers: [] }
+        chainConfig: { id: '456', name: 'gdf', parsers: [] }
       }
     );
   });
