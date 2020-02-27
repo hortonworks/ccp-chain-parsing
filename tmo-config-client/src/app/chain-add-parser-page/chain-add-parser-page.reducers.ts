@@ -20,7 +20,13 @@ export function reducer(
     case addParserActions.GET_PARSER_TYPES_SUCCESS: {
       return {
         ...state,
-        parserTypes: action.payload
+        parserTypes: [
+          ...(action.payload || []),
+          {
+            id: 'Router',
+            name: 'Router'
+          }
+        ]
       };
     }
   }

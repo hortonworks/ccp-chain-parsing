@@ -8,14 +8,20 @@ describe('chain add parser page: reducers', () => {
     expect(fromReducers.reducer(undefined, new fromActions.NoopAction())).toBe(fromReducers.initialState);
   });
 
-  it('should set the parser types', () => {
+  it('should set the parser types and append Router', () => {
     const state = {} as unknown;
-    const parserTypes = [];
+    const parserTypes = [{
+      id: 'Parser',
+      name: 'Parser'
+    }];
     const newState = fromReducers.reducer(
       state as fromReducers.AddParserPageState,
       new fromActions.GetParserTypesSuccessAction(parserTypes)
     );
-    expect(newState.parserTypes).toBe(parserTypes);
+    expect(newState.parserTypes).toEqual([
+      ...parserTypes,
+      { id: 'Router', name: 'Router' }
+    ]);
   });
 });
 
