@@ -84,7 +84,7 @@ public class ParserTestRun {
     @JsonProperty("sampleData")
     private SampleData sampleData;
 
-    @JsonProperty("parserChainSchema")
+    @JsonProperty("chainConfig")
     private ParserChainSchema parserChainSchema;
 
     @JsonProperty("result")

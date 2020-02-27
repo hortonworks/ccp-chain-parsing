@@ -33,7 +33,7 @@ public class ApplicationConstants {
   public static final String API_CHAINS = "/chains";
   public static final String API_PARSER_FORM_CONFIG = "/parser-form-configuration";
   public static final String API_PARSER_TYPES = "/parser-types";
-  public static final String API_PARSER_TEST = "/parser-test";
+  public static final String API_PARSER_TEST = "/tests";
   // URLs
   public static final String API_CHAINS_URL = PARSER_CONFIG_BASE_URL + API_CHAINS;
   public static final String API_CHAINS_CREATE_URL = API_CHAINS_URL;

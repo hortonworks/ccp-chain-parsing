@@ -24,7 +24,7 @@ public class ParserTestRunTest {
      *     "type" : "manual",
      *     "source" : "Marie, Curie"
      *   },
-     *   "parserChainSchema" : {
+     *   "chainConfig" : {
      *     "id" : "3b31e549-340f-47ce-8a71-d702685137f4",
      *     "name" : "My Parser Chain",
      *     "parsers" : [ {
