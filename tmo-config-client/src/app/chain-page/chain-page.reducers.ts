@@ -301,7 +301,7 @@ export const getDirtyStatus = createSelector(
 
 export const getFormConfigByType = createSelector(
   getChainPageState,
-  (state, props) => ((state.formConfigs || {})[props.type] || {}).schemaItems
+  (state, props) => (state.formConfigs || {})[props.type]
 );
 
 export const getFormConfigs = createSelector(

@@ -9,6 +9,14 @@
           *ngIf="areFormsReadyToRender && metaDataForm != null"
           [config]="metaDataForm"
         ></app-custom-form>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">
+            Type
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            Router
+          </nz-form-control>
+        </nz-form-item>
       </nz-tab>
       <nz-tab nzTitle="Config">
         <div class="router-config" *ngIf="parser.config">
