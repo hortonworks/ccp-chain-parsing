@@ -34,7 +34,6 @@
     "id": "RenameField",
     "schemaItems": [
       {
-        "id":"renameFrom",
         "name":"renameFrom",
         "type":"text",
         "label":"From",
@@ -44,7 +43,6 @@
         "path":"config"
       },
       {
-        "id":"renameTo",
         "name":"renameTo",
         "type":"text",
         "label":"To",
@@ -58,7 +56,6 @@
     "id": "RemoveField",
     "schemaItems": [
       {
-        "id":"fieldToRemove",
         "name":"fieldToRemove",
         "type":"text",
         "label":"Field name",
@@ -72,7 +69,6 @@
     "id": "Timestamp",
     "schemaItems": [
       {
-        "id":"timestampField",
         "name":"timestampField",
         "type":"text",
         "label":"Timestamp field",
@@ -86,7 +82,6 @@
     "id": "DelimitedText",
     "schemaItems": [
       {
-        "id":"inputField",
         "name":"inputField",
         "type":"text",
         "label":"Input field",
@@ -95,25 +90,22 @@
         "path":"config"
       },
       {
-        "id":"outputFieldName",
-        "name":"outputFieldName",
+        "name":"fieldName",
         "type":"text",
         "label":"Output field name",
         "description":"",
         "required":true,
-        "path":"config"
+        "path":"config.outputFields"
       },
       {
-        "id":"outputFieldIndex",
-        "name":"outputFieldIndex",
+        "name":"fieldIndex",
         "type":"text",
         "label":"Output field index",
         "description":"",
         "required":true,
-        "path":"config"
+        "path":"config.outputFields"
       },
       {
-        "id":"delimiter",
         "name":"delimiter",
         "type":"text",
         "label":"Delimiter",
@@ -124,7 +116,6 @@
         "path":"config"
       },
       {
-        "id":"trim",
         "name":"trim",
         "type":"text",
         "label":"Trim",
@@ -139,7 +130,6 @@
     "id": "Error",
     "schemaItems": [
       {
-        "id":"error",
         "name":"error",
         "type":"text",
         "label":"Error message",

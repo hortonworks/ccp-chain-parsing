@@ -1,7 +1,8 @@
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { debounce } from 'debounce';
 import produce from 'immer';
-
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import get from 'lodash.get';
+import set from 'lodash.set';
 
 import { ParserModel } from '../../chain-page.models';
 import { CustomFormConfig } from '../custom-form/custom-form.component';
@@ -51,10 +52,10 @@ export class ParserComponent implements OnInit, OnChanges {
       Object.keys(changes.parser.previousValue).forEach(key => {
         if (changes.parser.previousValue[key] !== changes.parser.currentValue[key]) {
           if (key === 'config') {
-            this.configForm = this.updateFormValues(key, this.configForm);
+            this.configForm = this.updateFormValues('config', this.configForm);
           }
           if (key === 'outputs') {
-            this.outputsForm = this.updateFormValues(key, this.outputsForm);
+            this.outputsForm = this.updateFormValues('outputs', this.outputsForm);
           }
           if (['name', 'type'].includes(key)) {
             this.metaDataForm = this.updateFormValues(key, this.metaDataForm);
@@ -67,20 +68,9 @@ export class ParserComponent implements OnInit, OnChanges {
   updateFormValues(key, fields = []) {
     return produce(fields, (draft) => {
       draft.forEach(field => {
-        if (
-          field.path
-          && field.path === key
-          && typeof this.parser[field.path] === 'object') {
-          const keys = Object.keys(this.parser[field.path]);
-          if (keys.length === 0) {
-            field.value = field.defaultValue || '';
-          } else {
-            keys.forEach((k) => {
-              if (k === field.name) {
-                field.value = this.parser[field.path][k];
-              }
-            });
-          }
+        if (field.path && field.path.split('.')[0] === key) {
+          const value = get(this.parser, field.path + '.' + field.name);
+          field.value = value || field.defaultValue || '';
         } else if (field.name === key) {
           field.value = this.parser[key];
         }
@@ -91,10 +81,15 @@ export class ParserComponent implements OnInit, OnChanges {
   setFormFieldValues(fields = []) {
     return produce(fields, (draft) => {
       draft.forEach(field => {
-        if (field.path && this.parser[field.path] !== undefined && this.parser[field.path][field.name] !== undefined) {
-          field.value = this.parser[field.path][field.name];
-        } else if (this.parser[field.name] !== undefined) {
-          field.value = this.parser[field.name];
+        field.id = [
+          this.parser.id,
+          field.path ? [field.path, field.name].join('.') : field.name
+        ].join('-');
+        if (field.path) {
+          const value = get(this.parser, [field.path, field.name].join('.'));
+          field.value = value || field.defaultValue || '';
+        } else {
+          field.value = this.parser[field.name] || field.defaultValue || '';
         }
       });
     });
@@ -106,13 +101,11 @@ export class ParserComponent implements OnInit, OnChanges {
         field.onChange = debounce((formFieldData) => {
           this.dirty = true;
           const partialParser = formFieldData.path
-            ? {
-              id: this.parser.id,
-              [formFieldData.path]: {
-                ...(this.parser[formFieldData.path] || {}),
-                [formFieldData.name]: formFieldData.value
-              }
-            }
+            ? produce(this.parser, (draftParser) => {
+                set({
+                  ...draftParser
+                }, [formFieldData.path, formFieldData.name].join('.'), formFieldData.value);
+              })
             : {
               id: this.parser.id,
               [formFieldData.name]: formFieldData.value
