@@ -2,9 +2,9 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { FormControl, FormGroup } from '@angular/forms';
 
 export interface CustomFormConfig {
-  id: string;
   name: string;
   type: string;
+  id?: string;
   path?: string;
   value?: string;
   label?: string;
