@@ -25,6 +25,7 @@ export class ParserComposerComponent implements OnInit {
   @Output() parserChange = new EventEmitter<PartialParserModel>();
 
   configForm: CustomFormConfig[];
+  parserType: string;
   parser: ParserModel;
   isolatedParserView = false;
 
@@ -40,7 +41,10 @@ export class ParserComposerComponent implements OnInit {
       if (parser) {
         this.store.pipe(select(getFormConfigByType, { type: parser.type }))
         .subscribe((formConfig) => {
-          this.configForm = formConfig;
+          if (formConfig) {
+            this.configForm = formConfig.schemaItems;
+            this.parserType = formConfig.name;
+          }
         });
       }
     });

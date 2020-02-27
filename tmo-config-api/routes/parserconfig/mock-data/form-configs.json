@@ -1,6 +1,7 @@
 {
   "Syslog": {
     "id": "Syslog",
+    "name": "Syslog",
     "schemaItems": [
       {
         "name":"inputField",
@@ -32,6 +33,7 @@
   ]},
   "RenameField":{
     "id": "RenameField",
+    "name": "Rename field(s)",
     "schemaItems": [
       {
         "name":"renameFrom",
@@ -54,6 +56,7 @@
   ]},
   "RemoveField":{
     "id": "RemoveField",
+    "name": "Remove Field(s)",
     "schemaItems": [
       {
         "name":"fieldToRemove",
@@ -67,6 +70,7 @@
   ]},
   "Timestamp":{
     "id": "Timestamp",
+    "name": "Timestamp",
     "schemaItems": [
       {
         "name":"timestampField",
@@ -80,6 +84,7 @@
   ]},
   "DelimitedText":{
     "id": "DelimitedText",
+    "name": "Delimited Text",
     "schemaItems": [
       {
         "name":"inputField",
@@ -128,6 +133,7 @@
   ]},
   "Error":{
     "id": "Error",
+    "name": "Error",
     "schemaItems": [
       {
         "name":"error",
