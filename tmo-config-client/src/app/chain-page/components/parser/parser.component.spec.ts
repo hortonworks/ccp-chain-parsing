@@ -1,12 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DeleteFill } from '@ant-design/icons-angular/icons';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 
+import { ConfigChangedEvent } from './advanced-editor/advanced-editor.component';
 import { ParserComponent } from './parser.component';
-import { ConfigChangedEvent, AdvancedEditorComponent } from './advanced-editor/advanced-editor.component';
-import { By } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-custom-form',
@@ -236,7 +235,7 @@ describe('ParserComponent', () => {
     expect(mockListener).toHaveBeenCalledWith({
       id: '123',
       config: value,
-    })
+    });
   });
 
 });
