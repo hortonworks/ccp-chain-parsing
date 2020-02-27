@@ -47,7 +47,7 @@ describe('AdvancedEditorComponent', () => {
     expect(mockListener).not.toHaveBeenCalledWith();
   });
 
-  it('should not emit event if new value equels with the original', () => {
+  it('should not emit event if new value equals with the original', () => {
     const mockListener = jasmine.createSpy('mockListener');
     component.config = { initialField: 'initial value' };
     component.configChanged.subscribe(mockListener);

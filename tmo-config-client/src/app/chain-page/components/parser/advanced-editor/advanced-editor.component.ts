@@ -37,9 +37,9 @@ export class AdvancedEditorComponent {
       return;
     }
 
-    if (isEqual(json, this.config)) { return; }
-
-    this.configChanged.emit({ value: json });
+    if (!isEqual(json, this.config)) {
+      this.configChanged.emit({ value: json });
+    }
   }
 
 }
