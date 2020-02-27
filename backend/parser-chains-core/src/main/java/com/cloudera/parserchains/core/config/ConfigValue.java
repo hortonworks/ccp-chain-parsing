@@ -43,7 +43,7 @@ public class ConfigValue {
     @Override
     public String toString() {
         return "ConfigValue{" +
-                ", value='" + value + '\'' +
+                "value='" + value + '\'' +
                 '}';
     }
 

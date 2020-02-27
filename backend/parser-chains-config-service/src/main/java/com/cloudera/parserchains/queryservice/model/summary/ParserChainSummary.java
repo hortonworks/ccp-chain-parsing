@@ -16,20 +16,30 @@
  * limitations under the License.
  */
 
-package com.cloudera.parserchains.queryservice.model;
+package com.cloudera.parserchains.queryservice.model.summary;
+
+import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 
 import java.util.Objects;
 
-public class ParserType {
+public class ParserChainSummary {
 
   private String id;
   private String name;
+
+  public ParserChainSummary() {
+  }
+
+  public ParserChainSummary(ParserChainSchema chain) {
+    this.id = chain.getId();
+    this.name = chain.getName();
+  }
 
   public String getId() {
     return id;
   }
 
-  public ParserType setId(String id) {
+  public ParserChainSummary setId(String id) {
     this.id = id;
     return this;
   }
@@ -38,7 +48,7 @@ public class ParserType {
     return name;
   }
 
-  public ParserType setName(String name) {
+  public ParserChainSummary setName(String name) {
     this.name = name;
     return this;
   }
@@ -51,7 +61,7 @@ public class ParserType {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ParserType that = (ParserType) o;
+    ParserChainSummary that = (ParserChainSummary) o;
     return Objects.equals(id, that.id) &&
         Objects.equals(name, that.name);
   }
@@ -61,4 +71,11 @@ public class ParserType {
     return Objects.hash(id, name);
   }
 
+  @Override
+  public String toString() {
+    return "ParserChainSummary{" +
+        "id='" + id + '\'' +
+        ", name='" + name + '\'' +
+        '}';
+  }
 }

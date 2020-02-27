@@ -18,66 +18,189 @@
 
 package com.cloudera.parserchains.queryservice.service;
 
-import static com.cloudera.parserchains.queryservice.service.DefaultParserDiscoveryService.infoToType;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.when;
-
 import com.cloudera.parserchains.core.Parser;
+import com.cloudera.parserchains.core.ParserBuilder;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
-import com.cloudera.parserchains.queryservice.model.ParserType;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
+import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
+import com.cloudera.parserchains.queryservice.model.ParserName;
+import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
+import com.cloudera.parserchains.queryservice.model.summary.ParserSummaryMapper;
+import com.cloudera.parserchains.queryservice.model.describe.ConfigDescriptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.cloudera.parserchains.queryservice.service.DefaultParserDiscoveryService.DEFAULT_PATH_ROOT;
+import static com.cloudera.parserchains.queryservice.service.DefaultParserDiscoveryService.DEFAULT_SCHEMA_TYPE;
+import static com.cloudera.parserchains.queryservice.service.DefaultParserDiscoveryService.PATH_DELIMITER;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 public class DefaultParserDiscoveryServiceTest {
-
-  @Mock
-  private ParserCatalog catalog;
-  @Mock
-  private Parser parserType1;
-  @Mock
-  private Parser parserType2;
-  @Mock
-  private Parser parserType3;
+  @Mock private ParserCatalog catalog;
+  @Mock private ParserBuilder builder;
+  @Mock private Parser parser1;
+  @Mock private Parser parser2;
+  private ParserInfo parserInfo1;
+  private ParserInfo parserInfo2;
+  private com.cloudera.parserchains.core.config.ConfigDescriptor descriptor1;
   private ParserDiscoveryService service;
-  private List<ParserInfo> parserInfos;
+  private ObjectMapper<ParserSummary, ParserInfo> mapper;
 
   @BeforeEach
   public void beforeEach() throws IOException {
-    parserInfos = Arrays.asList(
-        ParserInfo.builder().withName("type1").withDescription("type 1 description")
-            .withParserClass((Class<Parser>) parserType1.getClass()).build(),
-        ParserInfo.builder().withName("type2").withDescription("type 2 description")
-            .withParserClass((Class<Parser>) parserType2.getClass()).build(),
-        ParserInfo.builder().withName("type3").withDescription("type 3 description")
-            .withParserClass((Class<Parser>) parserType3.getClass()).build()
-    );
-    when(catalog.getParsers()).thenReturn(parserInfos);
-    service = new DefaultParserDiscoveryService(catalog);
+    mapper = new ParserSummaryMapper();
+    service = new DefaultParserDiscoveryService(catalog, builder, mapper);
+    parserInfo1 = ParserInfo.builder()
+            .name("type1")
+            .description("type 1 description")
+            .parserClass(parser1.getClass())
+            .build();
+    parserInfo2 = ParserInfo.builder()
+            .name("type2")
+            .description("type 2 description")
+            .parserClass(parser2.getClass())
+            .build();
+    descriptor1 = com.cloudera.parserchains.core.config.ConfigDescriptor.builder()
+            .name("outputField")
+            .description("The name of the output field.")
+            .isRequired(true)
+            .acceptsValue("outputField", "The name of the output field.")
+            .build();
+  }
+
+  private void setupCatalog(List<ParserInfo> parserInfos) {
+    when(catalog.getParsers())
+            .thenReturn(parserInfos);
+  }
+
+  private void setupParser(Parser parser, ParserInfo parserInfo1, com.cloudera.parserchains.core.config.ConfigDescriptor descriptor) {
+    // the parser needs to return the given descriptors
+    when(parser.validConfigurations())
+            .thenReturn(Arrays.asList(descriptor));
+
+    // the builder needs to return the parser
+    when(builder.build(eq(parserInfo1)))
+            .thenReturn(parser);
   }
 
   @Test
-  public void returns_list_of_parsers() throws IOException {
-    List<ParserType> expected = infoToType(parserInfos);
-    List<ParserType> actual = service.findAll();
+  void findAll() throws IOException {
+    // the catalog needs to include parser1
+    setupCatalog(Arrays.asList(parserInfo1, parserInfo2));
+
+    // execute - find all parsers
+    List<ParserSummary> actual = service.findAll();
+    List<ParserSummary> expected = catalog.getParsers()
+            .stream()
+            .map(info -> mapper.reform(info))
+            .collect(Collectors.toList());
     assertThat(actual, equalTo(expected));
+    assertThat(actual.size(), equalTo(2));
   }
 
-  /*
-  add this back once the config piece is figured out
   @Test
-  public void returns_map_of_configs() throws IOException {
-    Map<String, ParserFormConfig> expected = infoToConfig(parserInfos);
-    Map<String, ParserFormConfig> actual = service.findAllConfig();
-    assertThat(actual, equalTo(expected));
+  void describe() throws IOException {
+    // setup
+    setupParser(parser1, parserInfo1, descriptor1);
+    setupCatalog(Arrays.asList(parserInfo1));
+
+    // execute - describe the parameters exposed by parser1
+    ParserName name = ParserName.of(parserInfo1.getName());
+    ParserDescriptor schema = service.describe(name);
+
+    // validate
+    assertThat("The parserID should be set to the parser's class name.",
+            schema.getParserName().getName(), equalTo(parserInfo1.getName()));
+    ConfigDescriptor expectedItem = new ConfigDescriptor()
+            .setName(descriptor1.getName().get())
+            .setDescription(descriptor1.getDescription().get())
+            .setLabel(descriptor1.getDescription().get())
+            .setType(DEFAULT_SCHEMA_TYPE)
+            .setRequired(Boolean.toString(descriptor1.isRequired()))
+            .setPath(DEFAULT_PATH_ROOT);
+    assertThat("Expect the schema item to match the descriptor.",
+            schema.getConfigurations().get(0), equalTo(expectedItem));
   }
-   */
+
+  @Test
+  void describeMultipleValues() throws IOException {
+    // setup
+    com.cloudera.parserchains.core.config.ConfigDescriptor descriptor = com.cloudera.parserchains.core.config.ConfigDescriptor.builder()
+            .name("fieldToRename")
+            .description("Field to Rename")
+            .isRequired(true)
+            .acceptsValue("from", "The original name of the field to rename.")
+            .acceptsValue("to", "The new name of the field.")
+            .build();
+    setupParser(parser1, parserInfo1, descriptor);
+    setupCatalog(Arrays.asList(parserInfo1));
+
+    // execute - describe the parameters exposed by parser1
+    ParserName name = ParserName.of(parserInfo1.getName());
+    ParserDescriptor schema = service.describe(name);
+
+    // validate
+    assertThat("Expect 1 schema item for each accepted value; from/to in this case.",
+            schema.getConfigurations().size(), equalTo(2));
+    ConfigDescriptor expectedFromItem = new ConfigDescriptor()
+            .setName("from")
+            .setDescription("The original name of the field to rename.")
+            .setLabel("Field to Rename")
+            .setType(DEFAULT_SCHEMA_TYPE)
+            .setRequired(Boolean.toString(descriptor.isRequired()))
+            .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "fieldToRename");
+    ConfigDescriptor expectedToItem = new ConfigDescriptor()
+            .setName("to")
+            .setDescription("The new name of the field.")
+            .setLabel("Field to Rename")
+            .setType(DEFAULT_SCHEMA_TYPE)
+            .setRequired(Boolean.toString(descriptor.isRequired()))
+            .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "fieldToRename");
+    assertThat("Expected the schema items to describe the 'to' field.",
+            schema.getConfigurations(), hasItem(expectedToItem));
+    assertThat("Expected the schema items to describe the 'from' field.",
+            schema.getConfigurations(), hasItem(expectedFromItem));
+  }
+
+  @Test
+  void describeAll() throws IOException {
+    // setup
+    setupParser(parser1, parserInfo1, descriptor1);
+    setupCatalog(Arrays.asList(parserInfo1));
+
+    // execute - describe all available parser
+    Map<ParserName, ParserDescriptor> schema = service.describeAll();
+
+    // validate
+    assertThat("Expect 1 parser type to be returned.",
+            schema.size(), equalTo(1));
+    ParserName expected = mapper.reform(parserInfo1).getName();
+    assertThat("Expected parser typ.",
+            schema.containsKey(expected));
+    ParserDescriptor actual = schema.get(expected);
+    ConfigDescriptor expectedItem = new ConfigDescriptor()
+            .setName(descriptor1.getName().get())
+            .setDescription(descriptor1.getDescription().get())
+            .setLabel(descriptor1.getDescription().get())
+            .setType(DEFAULT_SCHEMA_TYPE)
+            .setRequired(Boolean.toString(descriptor1.isRequired()))
+            .setPath(DEFAULT_PATH_ROOT);
+    assertThat("Expect the schema item to match the descriptor.",
+            actual.getConfigurations().get(0), equalTo(expectedItem));
+  }
 }

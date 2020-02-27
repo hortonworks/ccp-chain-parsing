@@ -20,8 +20,8 @@ package com.cloudera.parserchains.queryservice.service;
 
 import com.cloudera.parserchains.queryservice.common.utils.IDGenerator;
 import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.ParserChain;
-import com.cloudera.parserchains.queryservice.model.ParserChainSummary;
+import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
+import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.DirectoryStream;
@@ -33,13 +33,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FileBasedParserConfigService implements ParserConfigService {
+public class FileBasedChainPersistenceService implements ChainPersistenceService {
 
   private static final Logger LOG = LogManager.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -59,7 +60,7 @@ public class FileBasedParserConfigService implements ParserConfigService {
   };
 
   @Autowired
-  public FileBasedParserConfigService(IDGenerator<Long> idGenerator) {
+  public FileBasedChainPersistenceService(IDGenerator<Long> idGenerator) {
     this.idGenerator = idGenerator;
   }
 
@@ -72,7 +73,7 @@ public class FileBasedParserConfigService implements ParserConfigService {
     List<ParserChainSummary> summaries = new ArrayList<>();
     for (Path file : inputs) {
       try {
-        ParserChain chain = JSONUtils.INSTANCE.load(file.toFile(), ParserChain.class);
+        ParserChainSchema chain = JSONUtils.INSTANCE.load(file.toFile(), ParserChainSchema.class);
         summaries.add(new ParserChainSummary(chain));
       } catch (IOException ioe) {
         LOG.warn(
@@ -99,7 +100,7 @@ public class FileBasedParserConfigService implements ParserConfigService {
   }
 
   @Override
-  public ParserChain create(ParserChain chain, Path path) throws IOException {
+  public ParserChainSchema create(ParserChainSchema chain, Path path) throws IOException {
     String newId = Long.toString(idGenerator.incrementAndGet());
     LOG.debug("Generating new ID='{}' for parser chain with name='{}'", () -> newId,
         chain::getName);
@@ -108,7 +109,7 @@ public class FileBasedParserConfigService implements ParserConfigService {
     return chain;
   }
 
-  private void writeChain(ParserChain chain, Path outPath) throws IOException {
+  private void writeChain(ParserChainSchema chain, Path outPath) throws IOException {
     Path out = Paths.get(getFileName(chain.getId()));
     out = outPath.resolve(out);
     byte[] bytes = JSONUtils.INSTANCE.toJSONPretty(chain);
@@ -120,12 +121,12 @@ public class FileBasedParserConfigService implements ParserConfigService {
   }
 
   @Override
-  public ParserChain read(String id, Path path) throws IOException {
+  public ParserChainSchema read(String id, Path path) throws IOException {
     Path inPath = findFile(id, path);
     if (null == inPath) {
       return null;
     }
-    return JSONUtils.INSTANCE.load(inPath.toFile(), ParserChain.class);
+    return JSONUtils.INSTANCE.load(inPath.toFile(), ParserChainSchema.class);
   }
 
   private Path findFile(String id, Path root) throws IOException {
@@ -140,8 +141,8 @@ public class FileBasedParserConfigService implements ParserConfigService {
   }
 
   @Override
-  public ParserChain update(String id, ParserChain chain, Path path) throws IOException {
-    ParserChain readChain = read(id, path);
+  public ParserChainSchema update(String id, ParserChainSchema chain, Path path) throws IOException {
+    ParserChainSchema readChain = read(id, path);
     if (null == readChain) {
       return null;
     }

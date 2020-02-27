@@ -1,20 +1,33 @@
 package com.cloudera.parserchains.queryservice.service;
 
-import com.cloudera.parserchains.queryservice.model.ParserConfigSchema;
-import com.cloudera.parserchains.queryservice.model.ParserResults;
-import com.cloudera.parserchains.queryservice.model.ParserType;
+import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
+import com.cloudera.parserchains.queryservice.model.ParserName;
+import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A service that finds and describes the parsers that are available.
+ */
 public interface ParserDiscoveryService {
 
-  List<ParserType> findAll() throws IOException;
+  /**
+   * Finds all of the parser types available for the user to build
+   * parser chains with.
+   */
+  List<ParserSummary> findAll() throws IOException;
 
-  ParserConfigSchema read(String type) throws IOException;
+  /**
+   * Describes the configuration parameters available for a given parser.
+   * @param name The parser name.
+   */
+  ParserDescriptor describe(ParserName name) throws IOException;
 
-  Map<String, ParserConfigSchema> findAllConfig() throws IOException;
-
-  // TODO not sure if the live view tests will be run through the entire chain or a single parser?
-  ParserResults test(String type, String message) throws IOException;
+  /**
+   * Describes the configuration parameters for all available parser
+   * types.
+   */
+  Map<ParserName, ParserDescriptor> describeAll() throws IOException;
 }

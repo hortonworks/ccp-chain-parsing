@@ -36,9 +36,9 @@ public class ClassIndexParserCatalog implements ParserCatalog {
                 @SuppressWarnings("unchecked")
                 Class<Parser> parserClass = (Class<Parser>) clazz;
                 ParserInfo parserInfo = ParserInfo.builder()
-                        .withName(annotation.name())
-                        .withDescription(annotation.description())
-                        .withParserClass(parserClass)
+                        .name(annotation.name())
+                        .description(annotation.description())
+                        .parserClass(parserClass)
                         .build();
                 results.add(parserInfo);
             } else {

@@ -26,8 +26,8 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 
 import com.cloudera.parserchains.queryservice.common.utils.IDGenerator;
-import com.cloudera.parserchains.queryservice.model.ParserChain;
-import com.cloudera.parserchains.queryservice.model.ParserChainSummary;
+import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
+import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,17 +41,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class FileBasedParserConfigServiceTest {
+public class FileBasedChainPersistenceServiceTest {
 
   @Mock
   private IDGenerator<Long> idGenerator;
-  private FileBasedParserConfigService service;
+  private FileBasedChainPersistenceService service;
   private Path configPath;
 
   @BeforeEach
   public void beforeEach() throws IOException {
     when(idGenerator.incrementAndGet()).thenReturn(1L, 2L, 3L, 4L, 5L);
-    service = new FileBasedParserConfigService(idGenerator);
+    service = new FileBasedChainPersistenceService(idGenerator);
     String tempDirPrefix = this.getClass().getName();
     configPath = Files.createTempDirectory(tempDirPrefix);
     // this will verify we fail gracefully on bad files or files that are not config files, e.g. idgenerator file
@@ -60,10 +60,10 @@ public class FileBasedParserConfigServiceTest {
 
   @Test
   public void creates_parser_chain() throws IOException {
-    ParserChain chain = new ParserChain().setName("chain1");
-    ParserChain result = service.create(chain, configPath);
-    ParserChain actual = service.read(result.getId(), configPath);
-    ParserChain expected = new ParserChain().setId("1").setName("chain1");
+    ParserChainSchema chain = new ParserChainSchema().setName("chain1");
+    ParserChainSchema result = service.create(chain, configPath);
+    ParserChainSchema actual = service.read(result.getId(), configPath);
+    ParserChainSchema expected = new ParserChainSchema().setId("1").setName("chain1");
     assertThat(actual, equalTo(expected));
   }
 
@@ -71,7 +71,7 @@ public class FileBasedParserConfigServiceTest {
   public void findAll_returns_all_existing_parser_chains() throws IOException {
     List<String> names = Arrays.asList("chain1", "chain2", "chain3", "chain4", "chain5");
     for (String name : names) {
-      ParserChain chain = new ParserChain().setName(name);
+      ParserChainSchema chain = new ParserChainSchema().setName(name);
       service.create(chain, configPath);
     }
     List<ParserChainSummary> actual = service.findAll(configPath);
@@ -86,40 +86,40 @@ public class FileBasedParserConfigServiceTest {
 
   @Test
   public void reads_existing_parser_chain() throws IOException {
-    ParserChain chain = new ParserChain().setName("chain1");
+    ParserChainSchema chain = new ParserChainSchema().setName("chain1");
     service.create(chain, configPath);
-    ParserChain actual = service.read("1", configPath);
-    ParserChain expected = new ParserChain().setId("1").setName("chain1");
+    ParserChainSchema actual = service.read("1", configPath);
+    ParserChainSchema expected = new ParserChainSchema().setId("1").setName("chain1");
     assertThat(actual, equalTo(expected));
   }
 
   @Test
   public void updates_existing_parser_chain() throws IOException {
-    ParserChain chain = new ParserChain().setName("chain1");
+    ParserChainSchema chain = new ParserChainSchema().setName("chain1");
     service.create(chain, configPath);
     chain.setName("UPDATEDchain1");
-    ParserChain actual = service.update("1", chain, configPath);
-    ParserChain expected = new ParserChain().setId("1").setName("UPDATEDchain1");
+    ParserChainSchema actual = service.update("1", chain, configPath);
+    ParserChainSchema expected = new ParserChainSchema().setId("1").setName("UPDATEDchain1");
     assertThat(actual, equalTo(expected));
   }
 
   @Test
   public void updates_existing_parser_chain_without_changing_the_ID() throws IOException {
-    ParserChain chain = new ParserChain().setName("chain1");
+    ParserChainSchema chain = new ParserChainSchema().setName("chain1");
     service.create(chain, configPath);
     chain.setId("NOBUENO");
     chain.setName("UPDATEDchain1");
-    ParserChain actual = service.update("1", chain, configPath);
-    ParserChain expected = new ParserChain().setId("1").setName("UPDATEDchain1");
+    ParserChainSchema actual = service.update("1", chain, configPath);
+    ParserChainSchema expected = new ParserChainSchema().setId("1").setName("UPDATEDchain1");
     assertThat(actual, equalTo(expected));
   }
 
   @Test
   public void returns_null_on_update_to_nonexistent_parser_chain() throws IOException {
-    ParserChain chain = new ParserChain().setName("chain1");
+    ParserChainSchema chain = new ParserChainSchema().setName("chain1");
     service.create(chain, configPath);
     chain.setName("UPDATEDchain1");
-    ParserChain actual = service.update("5", chain, configPath);
+    ParserChainSchema actual = service.update("5", chain, configPath);
     assertThat(actual, is(nullValue()));
   }
 
@@ -127,7 +127,7 @@ public class FileBasedParserConfigServiceTest {
   public void deletes_parser_chain_by_id() throws IOException {
     List<String> names = Arrays.asList("chain1", "chain2", "chain3");
     for (String name : names) {
-      ParserChain chain = new ParserChain().setName("chain1");
+      ParserChainSchema chain = new ParserChainSchema().setName("chain1");
       service.create(chain, configPath);
     }
     final String idToDelete = "2";

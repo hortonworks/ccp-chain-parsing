@@ -16,11 +16,14 @@
  * limitations under the License.
  */
 
-package com.cloudera.parserchains.queryservice.model;
+package com.cloudera.parserchains.queryservice.model.describe;
 
 import java.util.Objects;
 
-public class SchemaItem {
+/**
+ * Describes a configuration parameter accepted by a parser.
+ */
+public class ConfigDescriptor {
   private String name;
   private String type = "text";
   private String label;
@@ -32,7 +35,7 @@ public class SchemaItem {
     return name;
   }
 
-  public SchemaItem setName(String name) {
+  public ConfigDescriptor setName(String name) {
     this.name = name;
     return this;
   }
@@ -41,7 +44,7 @@ public class SchemaItem {
     return type;
   }
 
-  public SchemaItem setType(String type) {
+  public ConfigDescriptor setType(String type) {
     this.type = type;
     return this;
   }
@@ -50,7 +53,7 @@ public class SchemaItem {
     return label;
   }
 
-  public SchemaItem setLabel(String label) {
+  public ConfigDescriptor setLabel(String label) {
     this.label = label;
     return this;
   }
@@ -59,7 +62,7 @@ public class SchemaItem {
     return description;
   }
 
-  public SchemaItem setDescription(String description) {
+  public ConfigDescriptor setDescription(String description) {
     this.description = description;
     return this;
   }
@@ -68,7 +71,7 @@ public class SchemaItem {
     return required;
   }
 
-  public SchemaItem setRequired(String required) {
+  public ConfigDescriptor setRequired(String required) {
     this.required = required;
     return this;
   }
@@ -77,7 +80,7 @@ public class SchemaItem {
     return path;
   }
 
-  public SchemaItem setPath(String path) {
+  public ConfigDescriptor setPath(String path) {
     this.path = path;
     return this;
   }
@@ -90,7 +93,7 @@ public class SchemaItem {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SchemaItem that = (SchemaItem) o;
+    ConfigDescriptor that = (ConfigDescriptor) o;
     return Objects.equals(name, that.name) &&
         Objects.equals(type, that.type) &&
         Objects.equals(label, that.label) &&
@@ -102,5 +105,17 @@ public class SchemaItem {
   @Override
   public int hashCode() {
     return Objects.hash(name, type, label, description, required, path);
+  }
+
+  @Override
+  public String toString() {
+    return "SchemaItem{" +
+            "name='" + name + '\'' +
+            ", type='" + type + '\'' +
+            ", label='" + label + '\'' +
+            ", description='" + description + '\'' +
+            ", required='" + required + '\'' +
+            ", path='" + path + '\'' +
+            '}';
   }
 }

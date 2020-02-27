@@ -16,28 +16,47 @@
  * limitations under the License.
  */
 
-package com.cloudera.parserchains.queryservice.model;
+package com.cloudera.parserchains.queryservice.model.define;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class ParserChainSummary {
+/**
+ * Defines the structure of a parser chain.
+ */
+public class ParserChainSchema {
 
+  /**
+   * The id of the parser chain.
+   *
+   * <p>This value is generated and is expected to be unique amongst
+   * all parser chains.
+   */
   private String id;
+
+  /**
+   * The user provided name of the parser chain.
+   */
   private String name;
 
-  public ParserChainSummary() {
-  }
+  /**
+   * The parsers in this parser chain.
+   */
+  @JsonProperty("parsers")
+  private List<ParserSchema> parsers;
 
-  public ParserChainSummary(ParserChain chain) {
-    this.id = chain.getId();
-    this.name = chain.getName();
+  public ParserChainSchema() {
+    parsers = new ArrayList<>();
   }
 
   public String getId() {
     return id;
   }
 
-  public ParserChainSummary setId(String id) {
+  public ParserChainSchema setId(String id) {
     this.id = id;
     return this;
   }
@@ -46,8 +65,22 @@ public class ParserChainSummary {
     return name;
   }
 
-  public ParserChainSummary setName(String name) {
+  public ParserChainSchema setName(String name) {
     this.name = name;
+    return this;
+  }
+
+  public List<ParserSchema> getParsers() {
+    return parsers;
+  }
+
+  public ParserChainSchema setParsers(List<ParserSchema> parsers) {
+    this.parsers = parsers;
+    return this;
+  }
+
+  public ParserChainSchema addParser(ParserSchema parserSchema) {
+    this.parsers.add(parserSchema);
     return this;
   }
 
@@ -59,7 +92,7 @@ public class ParserChainSummary {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ParserChainSummary that = (ParserChainSummary) o;
+    ParserChainSchema that = (ParserChainSchema) o;
     return Objects.equals(id, that.id) &&
         Objects.equals(name, that.name);
   }
@@ -71,9 +104,10 @@ public class ParserChainSummary {
 
   @Override
   public String toString() {
-    return "ParserChainSummary{" +
+    return "ParserChain{" +
         "id='" + id + '\'' +
         ", name='" + name + '\'' +
         '}';
   }
+
 }
