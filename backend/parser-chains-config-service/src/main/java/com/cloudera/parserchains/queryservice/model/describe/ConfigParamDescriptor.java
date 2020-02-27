@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Describes a configuration parameter accepted by a parser.
  */
-public class ConfigDescriptor {
+public class ConfigParamDescriptor {
   private String name;
   private String type = "text";
   private String label;
@@ -35,7 +35,7 @@ public class ConfigDescriptor {
     return name;
   }
 
-  public ConfigDescriptor setName(String name) {
+  public ConfigParamDescriptor setName(String name) {
     this.name = name;
     return this;
   }
@@ -44,7 +44,7 @@ public class ConfigDescriptor {
     return type;
   }
 
-  public ConfigDescriptor setType(String type) {
+  public ConfigParamDescriptor setType(String type) {
     this.type = type;
     return this;
   }
@@ -53,7 +53,7 @@ public class ConfigDescriptor {
     return label;
   }
 
-  public ConfigDescriptor setLabel(String label) {
+  public ConfigParamDescriptor setLabel(String label) {
     this.label = label;
     return this;
   }
@@ -62,7 +62,7 @@ public class ConfigDescriptor {
     return description;
   }
 
-  public ConfigDescriptor setDescription(String description) {
+  public ConfigParamDescriptor setDescription(String description) {
     this.description = description;
     return this;
   }
@@ -71,7 +71,7 @@ public class ConfigDescriptor {
     return required;
   }
 
-  public ConfigDescriptor setRequired(String required) {
+  public ConfigParamDescriptor setRequired(String required) {
     this.required = required;
     return this;
   }
@@ -80,7 +80,7 @@ public class ConfigDescriptor {
     return path;
   }
 
-  public ConfigDescriptor setPath(String path) {
+  public ConfigParamDescriptor setPath(String path) {
     this.path = path;
     return this;
   }
@@ -93,7 +93,7 @@ public class ConfigDescriptor {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ConfigDescriptor that = (ConfigDescriptor) o;
+    ConfigParamDescriptor that = (ConfigParamDescriptor) o;
     return Objects.equals(name, that.name) &&
         Objects.equals(type, that.type) &&
         Objects.equals(label, that.label) &&

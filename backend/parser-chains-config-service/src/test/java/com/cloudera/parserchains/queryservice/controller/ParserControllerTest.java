@@ -24,7 +24,7 @@ import com.cloudera.parserchains.queryservice.common.utils.CollectionsUtils;
 import com.cloudera.parserchains.queryservice.model.ParserID;
 import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
-import com.cloudera.parserchains.queryservice.model.describe.ConfigDescriptor;
+import com.cloudera.parserchains.queryservice.model.describe.ConfigParamDescriptor;
 import com.cloudera.parserchains.queryservice.service.ParserDiscoveryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ParserConfigControllerTest {
+public class ParserControllerTest {
 
   @Autowired
   private MockMvc mvc;
@@ -84,14 +84,14 @@ public class ParserConfigControllerTest {
 
   @Test
   public void describe_all_parsers() throws Exception {
-    ConfigDescriptor fieldOne = new ConfigDescriptor()
+    ConfigParamDescriptor fieldOne = new ConfigParamDescriptor()
             .setName("outputField")
             .setDescription("The name of the output field.")
             .setLabel("Output Field")
             .setPath("config")
             .setRequired("true")
             .setType("text");
-    ConfigDescriptor fieldTwo = new ConfigDescriptor()
+    ConfigParamDescriptor fieldTwo = new ConfigParamDescriptor()
             .setName("inputField")
             .setDescription("The name of the input field.")
             .setLabel("Input Field")

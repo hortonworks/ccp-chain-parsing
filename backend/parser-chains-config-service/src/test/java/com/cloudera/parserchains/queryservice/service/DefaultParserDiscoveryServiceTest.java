@@ -22,9 +22,9 @@ import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.ParserBuilder;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
+import com.cloudera.parserchains.core.config.ConfigDescriptor;
 import com.cloudera.parserchains.queryservice.model.ParserID;
-import com.cloudera.parserchains.queryservice.model.ParserName;
-import com.cloudera.parserchains.queryservice.model.describe.ConfigDescriptor;
+import com.cloudera.parserchains.queryservice.model.describe.ConfigParamDescriptor;
 import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
 import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
@@ -58,7 +58,7 @@ public class DefaultParserDiscoveryServiceTest {
   @Mock private Parser parser2;
   private ParserInfo parserInfo1;
   private ParserInfo parserInfo2;
-  private com.cloudera.parserchains.core.config.ConfigDescriptor descriptor1;
+  private ConfigDescriptor descriptor1;
   private ParserDiscoveryService service;
   private ObjectMapper<ParserSummary, ParserInfo> mapper;
 
@@ -76,7 +76,7 @@ public class DefaultParserDiscoveryServiceTest {
             .description("type 2 description")
             .parserClass(parser2.getClass())
             .build();
-    descriptor1 = com.cloudera.parserchains.core.config.ConfigDescriptor.builder()
+    descriptor1 = ConfigDescriptor.builder()
             .name("outputField")
             .description("The name of the output field.")
             .isRequired(true)
@@ -89,7 +89,7 @@ public class DefaultParserDiscoveryServiceTest {
             .thenReturn(parserInfos);
   }
 
-  private void setupParser(Parser parser, ParserInfo parserInfo1, com.cloudera.parserchains.core.config.ConfigDescriptor descriptor) {
+  private void setupParser(Parser parser, ParserInfo parserInfo1, ConfigDescriptor descriptor) {
     // the parser needs to return the given descriptors
     when(parser.validConfigurations())
             .thenReturn(Arrays.asList(descriptor));
@@ -127,7 +127,7 @@ public class DefaultParserDiscoveryServiceTest {
     // validate
     assertThat("The parserID should be set to the parser's class name.",
             schema.getParserName().getName(), equalTo(parserInfo1.getName()));
-    ConfigDescriptor expectedItem = new ConfigDescriptor()
+    ConfigParamDescriptor expectedItem = new ConfigParamDescriptor()
             .setName(descriptor1.getName().get())
             .setDescription(descriptor1.getDescription().get())
             .setLabel(descriptor1.getDescription().get())
@@ -141,7 +141,7 @@ public class DefaultParserDiscoveryServiceTest {
   @Test
   void describeMultipleValues() throws IOException {
     // setup
-    com.cloudera.parserchains.core.config.ConfigDescriptor descriptor = com.cloudera.parserchains.core.config.ConfigDescriptor.builder()
+    ConfigDescriptor descriptor = ConfigDescriptor.builder()
             .name("fieldToRename")
             .description("Field to Rename")
             .isRequired(true)
@@ -158,14 +158,14 @@ public class DefaultParserDiscoveryServiceTest {
     // validate
     assertThat("Expect 1 schema item for each accepted value; from/to in this case.",
             schema.getConfigurations().size(), equalTo(2));
-    ConfigDescriptor expectedFromItem = new ConfigDescriptor()
+    ConfigParamDescriptor expectedFromItem = new ConfigParamDescriptor()
             .setName("from")
             .setDescription("The original name of the field to rename.")
             .setLabel("Field to Rename")
             .setType(DEFAULT_SCHEMA_TYPE)
             .setRequired(Boolean.toString(descriptor.isRequired()))
             .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "fieldToRename");
-    ConfigDescriptor expectedToItem = new ConfigDescriptor()
+    ConfigParamDescriptor expectedToItem = new ConfigParamDescriptor()
             .setName("to")
             .setDescription("The new name of the field.")
             .setLabel("Field to Rename")
@@ -194,7 +194,7 @@ public class DefaultParserDiscoveryServiceTest {
     assertThat("Expect the result to be keyed by the parser ID.",
             schema.containsKey(expected));
     ParserDescriptor actual = schema.get(expected);
-    ConfigDescriptor expectedItem = new ConfigDescriptor()
+    ConfigParamDescriptor expectedItem = new ConfigParamDescriptor()
             .setName(descriptor1.getName().get())
             .setDescription(descriptor1.getDescription().get())
             .setLabel(descriptor1.getDescription().get())

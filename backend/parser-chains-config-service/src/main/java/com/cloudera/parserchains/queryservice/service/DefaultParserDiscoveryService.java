@@ -23,10 +23,11 @@ import com.cloudera.parserchains.core.ParserBuilder;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
 import com.cloudera.parserchains.core.config.ConfigDescription;
+import com.cloudera.parserchains.core.config.ConfigDescriptor;
 import com.cloudera.parserchains.core.config.ConfigKey;
 import com.cloudera.parserchains.queryservice.model.ParserID;
 import com.cloudera.parserchains.queryservice.model.ParserName;
-import com.cloudera.parserchains.queryservice.model.describe.ConfigDescriptor;
+import com.cloudera.parserchains.queryservice.model.describe.ConfigParamDescriptor;
 import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
 import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
@@ -94,7 +95,7 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
             .setParserName(name);
 
     Parser parser = builder.build(parserInfo);
-    for(com.cloudera.parserchains.core.config.ConfigDescriptor param: parser.validConfigurations()) {
+    for(ConfigDescriptor param: parser.validConfigurations()) {
 
       // if >1 accepted values, use a custom path to 'group' the accepted values together, otherwise use root path
       String path = DEFAULT_PATH_ROOT;
@@ -105,7 +106,7 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
       for(Map.Entry<ConfigKey, ConfigDescription> entry: param.getAcceptedValues().entrySet()) {
         ConfigKey configKey = entry.getKey();
         ConfigDescription description = entry.getValue();
-        ConfigDescriptor item = new ConfigDescriptor()
+        ConfigParamDescriptor item = new ConfigParamDescriptor()
                 .setName(configKey.getKey())
                 .setLabel(param.getDescription().get())
                 .setDescription(description.get())

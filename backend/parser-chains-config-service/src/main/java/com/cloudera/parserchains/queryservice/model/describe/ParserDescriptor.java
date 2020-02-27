@@ -54,7 +54,7 @@ public class ParserDescriptor {
    * Describes the configuration parameters accepted by this parser.
    */
   @JsonProperty("schemaItems")
-  private List<ConfigDescriptor> configurations;
+  private List<ConfigParamDescriptor> configurations;
 
   public ParserDescriptor() {
     configurations = new ArrayList<>();
@@ -78,16 +78,16 @@ public class ParserDescriptor {
     return this;
   }
 
-  public List<ConfigDescriptor> getConfigurations() {
+  public List<ConfigParamDescriptor> getConfigurations() {
     return configurations;
   }
 
-  public ParserDescriptor setConfigurations(List<ConfigDescriptor> configurations) {
+  public ParserDescriptor setConfigurations(List<ConfigParamDescriptor> configurations) {
     this.configurations = configurations;
     return this;
   }
 
-  public ParserDescriptor addConfiguration(ConfigDescriptor item) {
+  public ParserDescriptor addConfiguration(ConfigParamDescriptor item) {
     configurations.add(item);
     return this;
   }

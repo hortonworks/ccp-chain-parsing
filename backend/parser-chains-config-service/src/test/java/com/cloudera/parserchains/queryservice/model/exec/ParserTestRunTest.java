@@ -1,10 +1,13 @@
-package com.cloudera.parserchains.queryservice.model;
+package com.cloudera.parserchains.queryservice.model.exec;
 
+import com.cloudera.parserchains.core.catalog.AnnotationBasedParserInfoBuilder;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
+import com.cloudera.parserchains.core.catalog.ParserInfoBuilder;
 import com.cloudera.parserchains.parsers.DelimitedTextParser;
+import com.cloudera.parserchains.parsers.SyslogParser;
 import com.cloudera.parserchains.parsers.TimestampParser;
 import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
+import com.cloudera.parserchains.queryservice.model.ParserName;
 import com.cloudera.parserchains.queryservice.model.define.ConfigValueSchema;
 import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.model.define.ParserSchema;
@@ -18,6 +21,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 
 public class ParserTestRunTest {
+    private ParserInfoBuilder parserInfoBuilder = new AnnotationBasedParserInfoBuilder();
+
     /**
      * {
      *   "sampleData" : {
@@ -61,9 +66,7 @@ public class ParserTestRunTest {
     @Test
     void toJSON() throws JsonProcessingException {
         // create a delimited text parser
-        ParserInfo csvInfo = ParserInfo.builder()
-                .with(DelimitedTextParser.class)
-                .build();
+        ParserInfo csvInfo = parserInfoBuilder.build(DelimitedTextParser.class).get();
         ParserSummary csvType = new ParserSummaryMapper()
                 .reform(csvInfo);
         ParserSchema csvParserSchema = new ParserSchema()
@@ -80,9 +83,7 @@ public class ParserTestRunTest {
                                 .addValue("fieldIndex", "1"));
 
         // create a timestamp parser
-        ParserInfo timestampInfo = ParserInfo.builder()
-                .with(TimestampParser.class)
-                .build();
+        ParserInfo timestampInfo = parserInfoBuilder.build(TimestampParser.class).get();
         ParserSummary timestampType = new ParserSummaryMapper()
                 .reform(timestampInfo);
         ParserSchema timestampParserSchema = new ParserSchema()

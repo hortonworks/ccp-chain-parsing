@@ -25,11 +25,11 @@ public class ParserSummaryMapper implements ObjectMapper<ParserSummary, ParserIn
             throw new IllegalArgumentException(msg, e);
         }
 
-        if(com.cloudera.parserchains.core.Parser.class.isAssignableFrom(clazz)) {
+        if(Parser.class.isAssignableFrom(clazz)) {
             // the cast is guaranteed to be safe because of the 'if' condition above
             @SuppressWarnings("unchecked")
             Class<com.cloudera.parserchains.core.Parser> parserClass = (Class<Parser>) clazz;
-            return new ParserInfo.Builder()
+            return ParserInfo.builder()
                     .parserClass(parserClass)
                     .name(source.getName().getName())
                     .description(source.getDescription())

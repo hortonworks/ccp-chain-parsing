@@ -1,12 +1,12 @@
-package com.cloudera.parserchains.queryservice.model;
+package com.cloudera.parserchains.queryservice.model.define;
 
+import com.cloudera.parserchains.core.catalog.AnnotationBasedParserInfoBuilder;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
+import com.cloudera.parserchains.core.catalog.ParserInfoBuilder;
 import com.cloudera.parserchains.parsers.RenameFieldParser;
 import com.cloudera.parserchains.parsers.SyslogParser;
 import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.define.ConfigValueSchema;
-import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
-import com.cloudera.parserchains.queryservice.model.define.ParserSchema;
+import com.cloudera.parserchains.queryservice.model.ParserName;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummaryMapper;
 import org.adrianwalker.multilinestring.Multiline;
@@ -16,6 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 
 public class ParserChainSchemaTest {
+    private ParserInfoBuilder parserInfoBuilder = new AnnotationBasedParserInfoBuilder();
 
     /**
      * {
@@ -57,9 +58,7 @@ public class ParserChainSchemaTest {
     @Test
     void toJSON() throws Exception {
         // create a parser
-        ParserInfo syslogInfo = ParserInfo.builder()
-                .with(SyslogParser.class)
-                .build();
+        ParserInfo syslogInfo = parserInfoBuilder.build(SyslogParser.class).get();
         ParserSummary syslogType = new ParserSummaryMapper()
                 .reform(syslogInfo);
         ParserSchema syslogParserSchema = new ParserSchema()
@@ -72,9 +71,7 @@ public class ParserChainSchemaTest {
                         new ConfigValueSchema().addValue("specification", "RFC_5424"));
 
         // create another parser
-        ParserInfo renameInfo = ParserInfo.builder()
-                .with(RenameFieldParser.class)
-                .build();
+        ParserInfo renameInfo = parserInfoBuilder.build(RenameFieldParser.class).get();
         ParserSummary renameType = new ParserSummaryMapper()
                 .reform(renameInfo);
         ParserSchema renameParserSchema = new ParserSchema()

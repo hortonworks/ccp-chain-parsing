@@ -1,11 +1,10 @@
 package com.cloudera.parserchains.core.catalog;
 
+import com.cloudera.parserchains.core.Parser;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Objects;
-
-import com.cloudera.parserchains.core.Parser;
 
 /**
  * Describes a {@link Parser} that was discovered using a {@link ParserCatalog}.
@@ -79,18 +78,7 @@ public class ParserInfo {
         private String description;
         private Class<? extends Parser> parserClass;
 
-        public Builder with(Class<?> clazz) {
-            // TODO where should this stuff live; duplicate in ClassIndexPathCatalog
-            MessageParser annotation = clazz.getAnnotation(MessageParser.class);
-            if(annotation != null && Parser.class.isAssignableFrom(clazz)) {
-                // found a parser.  the cast is guaranteed to be safe because of the 'if' condition above
-                @SuppressWarnings("unchecked")
-                Class<Parser> parserClass = (Class<Parser>) clazz;
-                this.name = annotation.name();
-                this.description = annotation.description();
-                this.parserClass = parserClass;
-            }
-            return this;
+        private Builder() {
         }
 
         public Builder name(String name) {

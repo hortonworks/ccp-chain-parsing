@@ -46,7 +46,7 @@ import static com.cloudera.parserchains.queryservice.common.ApplicationConstants
  */
 @RestController
 @RequestMapping(value = PARSER_CONFIG_BASE_URL)
-public class ParserConfigController {
+public class ParserController {
 
   @Autowired
   ParserDiscoveryService parserDiscoveryService;

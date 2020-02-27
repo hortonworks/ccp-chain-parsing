@@ -7,8 +7,6 @@ import org.atteo.classindex.ClassIndex;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cloudera.parserchains.core.Parser;
-
 /**
  * A {@link ParserCatalog} that builds a catalog of parsers using a class index
  * compiled at build time.
@@ -20,6 +18,15 @@ import com.cloudera.parserchains.core.Parser;
  */
 public class ClassIndexParserCatalog implements ParserCatalog {
     private static final Logger logger = LogManager.getLogger(ClassIndexParserCatalog.class);
+    private ParserInfoBuilder parserInfoBuilder;
+
+    public ClassIndexParserCatalog(ParserInfoBuilder parserInfoBuilder) {
+        this.parserInfoBuilder = parserInfoBuilder;
+    }
+
+    public ClassIndexParserCatalog() {
+        this(new AnnotationBasedParserInfoBuilder());
+    }
 
     @Override
     public List<ParserInfo> getParsers() {
@@ -28,23 +35,7 @@ public class ClassIndexParserCatalog implements ParserCatalog {
         // search the class index for the annotation
         Iterable<Class<?>> knownAnnotations = ClassIndex.getAnnotated(MessageParser.class);
         for(Class<?> clazz: knownAnnotations) {
-            MessageParser annotation = clazz.getAnnotation(MessageParser.class);
-
-            // parsers must implement the parser interface
-            if(Parser.class.isAssignableFrom(clazz)) {
-                // found a parser.  the cast is guaranteed to be safe because of the 'if' condition above
-                @SuppressWarnings("unchecked")
-                Class<Parser> parserClass = (Class<Parser>) clazz;
-                ParserInfo parserInfo = ParserInfo.builder()
-                        .name(annotation.name())
-                        .description(annotation.description())
-                        .parserClass(parserClass)
-                        .build();
-                results.add(parserInfo);
-            } else {
-                logger.warn("Found class with annotation '{}' that does not implement '{}'; class={}",
-                        MessageParser.class.getName(), Parser.class.getName(), clazz.getName());
-            }
+            parserInfoBuilder.build(clazz).ifPresent(info -> results.add(info));
         }
 
         if(logger.isDebugEnabled()) {

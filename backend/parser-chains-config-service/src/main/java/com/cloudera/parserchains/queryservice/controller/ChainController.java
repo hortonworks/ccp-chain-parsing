@@ -38,7 +38,7 @@ import static com.cloudera.parserchains.queryservice.common.ApplicationConstants
  */
 @RestController
 @RequestMapping(value = PARSER_CONFIG_BASE_URL)
-public class ParserChainController {
+public class ChainController {
 
     @Autowired
     ChainPersistenceService chainPersistenceService;

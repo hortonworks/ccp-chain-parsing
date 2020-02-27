@@ -1,10 +1,10 @@
-package com.cloudera.parserchains.queryservice.model;
+package com.cloudera.parserchains.queryservice.model.describe;
 
 
 import com.cloudera.parserchains.parsers.SyslogParser;
 import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.describe.ConfigDescriptor;
-import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
+import com.cloudera.parserchains.queryservice.model.ParserID;
+import com.cloudera.parserchains.queryservice.model.ParserName;
 import org.adrianwalker.multilinestring.Multiline;
 import org.junit.jupiter.api.Test;
 
@@ -42,14 +42,14 @@ public class ParserDescriptorTest {
         ParserDescriptor schema = new ParserDescriptor()
                 .setParserID(ParserID.of(SyslogParser.class))
                 .setParserName(ParserName.of("Syslog"))
-                .addConfiguration(new ConfigDescriptor()
+                .addConfiguration(new ConfigParamDescriptor()
                         .setName("outputField")
                         .setDescription("The name of the output field.")
                         .setLabel("Output Field")
                         .setPath("config")
                         .setRequired("true")
                         .setType("text"))
-                .addConfiguration(new ConfigDescriptor()
+                .addConfiguration(new ConfigParamDescriptor()
                         .setName("inputField")
                         .setDescription("The name of the input field.")
                         .setLabel("Input Field")

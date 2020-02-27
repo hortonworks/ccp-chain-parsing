@@ -21,6 +21,7 @@ package com.cloudera.parserchains.queryservice.model.summary;
 import com.cloudera.parserchains.queryservice.model.ParserID;
 import com.cloudera.parserchains.queryservice.model.ParserName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
@@ -30,9 +31,14 @@ import java.util.Objects;
  */
 public class ParserSummary {
 
+  @JsonProperty("id")
   private ParserID id;
+
+  @JsonProperty("name")
   private ParserName name;
-  @JsonIgnore private String description;
+
+  @JsonIgnore
+  private String description;
 
   public String getDescription() {
     return description;
