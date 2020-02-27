@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { AdvancedEditorComponent } from './advanced-editor.component';
 import { FormsModule } from '@angular/forms';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
+
+import { AdvancedEditorComponent } from './advanced-editor.component';
 
 describe('AdvancedEditorComponent', () => {
   let component: AdvancedEditorComponent;

@@ -1,11 +1,15 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { debounce } from 'debounce';
 import produce from 'immer';
+<<<<<<< HEAD
 import get from 'lodash.get';
 import set from 'lodash.set';
+=======
+>>>>>>> BUG-123191 Fixing lint errors
 
 import { ParserModel } from '../../chain-page.models';
 import { CustomFormConfig } from '../custom-form/custom-form.component';
+
 import { ConfigChangedEvent } from './advanced-editor/advanced-editor.component';
 
 @Component({

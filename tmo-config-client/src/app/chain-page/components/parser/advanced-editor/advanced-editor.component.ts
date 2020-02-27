@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import isEqual from 'lodash.isequal';
 
 export interface ConfigChangedEvent {
@@ -13,7 +13,7 @@ export interface ConfigChangedEvent {
 export class AdvancedEditorComponent {
 
   @Input() config = {};
-  @Output('onConfigChanged') configChanged = new EventEmitter<ConfigChangedEvent>();
+  @Output() configChanged = new EventEmitter<ConfigChangedEvent>();
 
   monacoOptions = {
     language: 'json',
@@ -26,7 +26,7 @@ export class AdvancedEditorComponent {
     },
     automaticLayout: true,
     formatOnPaste: true,
-  }
+  };
 
   onChange(value: string) {
     let json = {};
@@ -37,7 +37,7 @@ export class AdvancedEditorComponent {
       return;
     }
 
-    if (isEqual(json, this.config)) return;
+    if (isEqual(json, this.config)) { return; }
 
     this.configChanged.emit({ value: json });
   }

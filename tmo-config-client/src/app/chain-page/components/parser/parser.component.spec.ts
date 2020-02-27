@@ -18,7 +18,7 @@ export class MockCustomFormComponent {
   selector: 'app-advanced-editor',
   template: '',
 })
-export class MockAdvancedEditor {
+export class MockAdvancedEditorComponent {
   @Input() config = [];
 }
 
@@ -42,7 +42,7 @@ describe('ParserComponent', () => {
       declarations: [
         ParserComponent,
         MockCustomFormComponent,
-        MockAdvancedEditor,
+        MockAdvancedEditorComponent,
       ],
       providers : [
         { provide: NZ_ICONS, useValue: [DeleteFill]}
