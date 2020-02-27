@@ -1,12 +1,4 @@
 <nz-card class="parser-chain" *ngIf="chain" [nzTitle]="breadcrumbsCardTitle">
-  <div class="add-parser">
-    <a
-      href="#"
-      (click)="onAddParserClick($event)"
-    >
-      Add new parser
-    </a>
-  </div>
   <div nz-row nzGutter="16">
     <div nz-col nzSpan="10">
       <div *ngIf="">test</div>
@@ -17,7 +9,19 @@
         (removeParserEmitter)="removeParser($event)"
         (chainLevelChange)="onChainLevelChange($event)"
       ></app-chain-view>
-
+      <div class="add-parser">
+        <button
+          nz-button
+          nzType="primary"
+          class="add-new-parser-button"
+          (click)="onAddParserClick($event)"
+          nz-tooltip
+          nzTooltipTitle="Add new Parser"
+          nzTooltipPlacement="right"
+        >
+          <i nz-icon nzType="plus" nzTheme="outline"></i>
+        </button>
+      </div>
     </div>
     <div nz-col nzSpan="14">
       <app-live-view [chainConfig$]="chainConfig$"></app-live-view>
