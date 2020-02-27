@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdvancedEditorComponent } from './advanced-editor.component';
+import { FormsModule } from '@angular/forms';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 describe('AdvancedEditorComponent', () => {
   let component: AdvancedEditorComponent;
@@ -8,6 +10,10 @@ describe('AdvancedEditorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [
+        FormsModule,
+        MonacoEditorModule.forRoot(),
+      ],
       declarations: [ AdvancedEditorComponent ]
     })
     .compileComponents();
@@ -22,4 +28,33 @@ describe('AdvancedEditorComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should dispatch event when value changes', () => {
+    const mockListener = jasmine.createSpy('mockListener');
+    component.configChanged.subscribe(mockListener);
+
+    component.onChange('{ "someField": "some value" }');
+
+    expect(mockListener).toHaveBeenCalledWith({ value: JSON.parse('{ "someField": "some value" }') });
+  });
+
+  it('should ignore content if not valid json', () => {
+    const mockListener = jasmine.createSpy('mockListener');
+    component.configChanged.subscribe(mockListener);
+
+    component.onChange('not a json, but sure it can be typed in to the editor');
+
+    expect(mockListener).not.toHaveBeenCalledWith();
+  });
+
+  it('should not emit event if new value equels with the original', () => {
+    const mockListener = jasmine.createSpy('mockListener');
+    component.config = { initialField: 'initial value' };
+    component.configChanged.subscribe(mockListener);
+
+    component.onChange('{ initialField: "initial value" }');
+
+    expect(mockListener).not.toHaveBeenCalledWith();
+  });
+
 });

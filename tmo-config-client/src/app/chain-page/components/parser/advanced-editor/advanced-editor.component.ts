@@ -28,10 +28,17 @@ export class AdvancedEditorComponent {
   }
 
   onChange(value: string) {
-    const jsonRepresentation = JSON.parse(value);
-    if (this.isConfigEqual(jsonRepresentation, this.config)) return;
+    let json = {};
 
-    this.configChanged.emit({ value: jsonRepresentation });
+    try {
+      json = JSON.parse(value);
+    } catch {
+      return;
+    }
+
+    if (this.isConfigEqual(json, this.config)) return;
+
+    this.configChanged.emit({ value: json });
   }
 
   private isConfigEqual(val1: {}, val2: {}) {
