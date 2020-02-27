@@ -96,24 +96,19 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
 
     Parser parser = builder.build(parserInfo);
     for(ConfigDescriptor param: parser.validConfigurations()) {
-
-      // if >1 accepted values, use a custom path to 'group' the accepted values together, otherwise use root path
-      String path = DEFAULT_PATH_ROOT;
-      if(param.getAcceptedValues().size() > 1) {
-        path = path + PATH_DELIMITER + param.getName().get();
-      }
-
       for(Map.Entry<ConfigKey, ConfigDescription> entry: param.getAcceptedValues().entrySet()) {
+
+        // describe each parameter accepted by the parser
         ConfigKey configKey = entry.getKey();
         ConfigDescription description = entry.getValue();
-        ConfigParamDescriptor item = new ConfigParamDescriptor()
+        ConfigParamDescriptor paramDescriptor = new ConfigParamDescriptor()
                 .setName(configKey.getKey())
                 .setLabel(param.getDescription().get())
                 .setDescription(description.get())
-                .setPath(path)
+                .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + param.getName().get())
                 .setRequired(Boolean.toString(param.isRequired()))
                 .setType(DEFAULT_SCHEMA_TYPE);
-        descriptor.addConfiguration(item);
+        descriptor.addConfiguration(paramDescriptor);
       }
     }
 

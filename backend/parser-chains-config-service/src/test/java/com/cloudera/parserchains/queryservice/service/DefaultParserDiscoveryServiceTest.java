@@ -133,7 +133,7 @@ public class DefaultParserDiscoveryServiceTest {
             .setLabel(descriptor1.getDescription().get())
             .setType(DEFAULT_SCHEMA_TYPE)
             .setRequired(Boolean.toString(descriptor1.isRequired()))
-            .setPath(DEFAULT_PATH_ROOT);
+            .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "outputField");
     assertThat("Expect the schema item to match the descriptor.",
             schema.getConfigurations().get(0), equalTo(expectedItem));
   }
@@ -200,7 +200,7 @@ public class DefaultParserDiscoveryServiceTest {
             .setLabel(descriptor1.getDescription().get())
             .setType(DEFAULT_SCHEMA_TYPE)
             .setRequired(Boolean.toString(descriptor1.isRequired()))
-            .setPath(DEFAULT_PATH_ROOT);
+            .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "outputField");
     assertThat("Expect the schema item to match the descriptor.",
             actual.getConfigurations().get(0), equalTo(expectedItem));
   }
