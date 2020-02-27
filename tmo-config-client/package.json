@@ -36,6 +36,7 @@
     "immer": "^3.3.0",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
+    "lodash.isequal": "^4.5.0",
     "ng-zorro-antd": "^8.3.1",
     "ngrx-store-freeze": "^0.2.4",
     "ngx-monaco-editor": "^8.1.0",
