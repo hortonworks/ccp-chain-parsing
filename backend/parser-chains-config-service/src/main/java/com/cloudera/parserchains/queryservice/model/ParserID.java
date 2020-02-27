@@ -1,5 +1,6 @@
 package com.cloudera.parserchains.queryservice.model;
 
+import com.cloudera.parserchains.core.RouterLink;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -13,17 +14,7 @@ import java.util.Objects;
 public class ParserID {
     @JsonValue
     private final String id;
-
-    /**
-     * Creates a new {@link ParserID}.
-     * @param id The unique identifier for the parser.
-     * @return
-     */
-    @JsonCreator
-    public static ParserID of(String id) {
-        return new ParserID(id);
-    }
-
+    
     /**
      * Creates a new {@link ParserID} from a Parser class.
      * @param clazz The Parser class.
@@ -33,8 +24,12 @@ public class ParserID {
         return new ParserID(clazz.getCanonicalName());
     }
 
+    public static ParserID router() {
+        return ParserID.of(RouterLink.class);
+    }
+
     /**
-     * Private constructor.  See {@link ParserID#of(String)}.
+     * Private constructor.  See {@link ParserID#of(Class)}.
      */
     private ParserID(String id) {
         this.id = Objects.requireNonNull(id);

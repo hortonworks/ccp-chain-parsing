@@ -24,12 +24,12 @@ import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
 import com.cloudera.parserchains.core.config.ConfigDescription;
 import com.cloudera.parserchains.core.config.ConfigKey;
-import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
-import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
 import com.cloudera.parserchains.queryservice.model.ParserID;
 import com.cloudera.parserchains.queryservice.model.ParserName;
-import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
 import com.cloudera.parserchains.queryservice.model.describe.ConfigDescriptor;
+import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
+import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
+import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,24 +72,24 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
   }
 
   @Override
-  public ParserDescriptor describe(ParserName name) throws IOException {
+  public ParserDescriptor describe(ParserID name) throws IOException {
     return describeAll().get(name);
   }
 
   @Override
-  public Map<ParserName, ParserDescriptor> describeAll() throws IOException {
+  public Map<ParserID, ParserDescriptor> describeAll() throws IOException {
     return catalog.getParsers()
             .stream()
             .collect(Collectors.toMap(
-                    info -> ParserName.of(info.getName()),
+                    info -> ParserID.of(info.getParserClass()),
                     info -> describeParser(info)));
   }
 
   private ParserDescriptor describeParser(ParserInfo parserInfo) {
     // describe the parser; the parserID == parser class
-    ParserID id = ParserID.of(parserInfo.getParserClass().getCanonicalName());
+    ParserID id = ParserID.of(parserInfo.getParserClass());
     ParserName name = ParserName.of(parserInfo.getName());
-    ParserDescriptor schema = new ParserDescriptor()
+    ParserDescriptor descriptor = new ParserDescriptor()
             .setParserID(id)
             .setParserName(name);
 
@@ -112,10 +112,10 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
                 .setPath(path)
                 .setRequired(Boolean.toString(param.isRequired()))
                 .setType(DEFAULT_SCHEMA_TYPE);
-        schema.addSchemaItem(item);
+        descriptor.addConfiguration(item);
       }
     }
 
-    return schema;
+    return descriptor;
   }
 }

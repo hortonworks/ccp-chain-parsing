@@ -2,14 +2,14 @@ package com.cloudera.parserchains.queryservice.model.summary;
 
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
+import com.cloudera.parserchains.queryservice.model.ParserID;
 
 public class ParserSummaryMapper implements ObjectMapper<ParserSummary, ParserInfo> {
 
     @Override
     public ParserSummary reform(ParserInfo source) {
-        String clazzName = source.getParserClass().getCanonicalName();
         return new ParserSummary()
-                .setId(clazzName)
+                .setId(ParserID.of(source.getParserClass()))
                 .setName(source.getName())
                 .setDescription(source.getDescription());
     }

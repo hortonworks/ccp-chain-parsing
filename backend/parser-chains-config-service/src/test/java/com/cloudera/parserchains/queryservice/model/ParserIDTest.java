@@ -1,5 +1,6 @@
 package com.cloudera.parserchains.queryservice.model;
 
+import com.cloudera.parserchains.parsers.SyslogParser;
 import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.adrianwalker.multilinestring.Multiline;
@@ -19,20 +20,19 @@ public class ParserIDTest {
 
     @Test
     void fromString() {
-        final String expected = "com.foo.bar.Parser";
-        ParserID id = ParserID.of(expected);
-        assertEquals(expected, id.getId());
+        ParserID id = ParserID.of(SyslogParser.class);
+        assertEquals("com.cloudera.parserchains.parsers.SyslogParser", id.getId());
     }
 
     /**
-     * "com.foo.bar.Parser"
+     * "com.cloudera.parserchains.parsers.SyslogParser"
      */
     @Multiline
     private String expectedJSON;
 
     @Test
     void toJSON() throws JsonProcessingException {
-        ParserID id = ParserID.of("com.foo.bar.Parser");
+        ParserID id = ParserID.of(SyslogParser.class);
         String actual = JSONUtils.INSTANCE.toJSON(id, false);
         assertThat(actual, equalToCompressingWhiteSpace(expectedJSON));
     }

@@ -19,8 +19,9 @@
 package com.cloudera.parserchains.queryservice.controller;
 
 import com.cloudera.parserchains.queryservice.config.AppProperties;
-import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
+import com.cloudera.parserchains.queryservice.model.ParserID;
 import com.cloudera.parserchains.queryservice.model.ParserName;
+import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
 import com.cloudera.parserchains.queryservice.service.ParserDiscoveryService;
 import io.swagger.annotations.ApiOperation;
@@ -69,8 +70,8 @@ public class ParserConfigController {
           @ApiResponse(code = 404, message = "Unable to retrieve.")
   })
   @GetMapping(value = API_PARSER_FORM_CONFIG)
-  ResponseEntity<Map<ParserName, ParserDescriptor>> describeAll() throws IOException {
-    Map<ParserName, ParserDescriptor> configs = parserDiscoveryService.describeAll();
+  ResponseEntity<Map<ParserID, ParserDescriptor>> describeAll() throws IOException {
+    Map<ParserID, ParserDescriptor> configs = parserDiscoveryService.describeAll();
     if(configs != null || configs.size() >= 0) {
       return ResponseEntity.ok(configs);
     } else {

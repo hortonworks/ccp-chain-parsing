@@ -42,20 +42,11 @@ public class ParserSummaryMapperTest {
     }
 
     @Test
-    void classNotFound() {
-        ParserSummary parserSummary = new ParserSummary()
-                .setName("Syslog")
-                .setDescription("Parses Syslog according to RFC 3164 and 5424.")
-                .setId("com.foo.class.does.not.exist.Parser");
-        assertThrows(IllegalArgumentException.class, () -> new ParserSummaryMapper().transform(parserSummary));
-    }
-
-    @Test
     void classNotAParser() {
         ParserSummary parserSummary = new ParserSummary()
                 .setName("Syslog")
                 .setDescription("Parses Syslog according to RFC 3164 and 5424.")
-                .setId("com.cloudera.parserchains.queryservice.model.ParserTypeMapperTest");
+                .setId((ParserID.of(ParserSummaryMapperTest.class)));
         assertThrows(IllegalArgumentException.class, () -> new ParserSummaryMapper().transform(parserSummary));
     }
 }

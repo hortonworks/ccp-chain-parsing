@@ -1,5 +1,6 @@
 package com.cloudera.parserchains.queryservice.model;
 
+import com.cloudera.parserchains.parsers.SyslogParser;
 import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
 import org.adrianwalker.multilinestring.Multiline;
@@ -24,7 +25,7 @@ public class ParserSummaryTest {
         ParserSummary parserSummary = new ParserSummary()
                 .setName("Syslog")
                 .setDescription("Parses Syslog according to RFC 3164 and 5424.")
-                .setId("com.cloudera.parserchains.parsers.SyslogParser");
+                .setId((ParserID.of(SyslogParser.class)));
 
         String actual = JSONUtils.INSTANCE.toJSON(parserSummary, true);
         assertThat(actual, equalToCompressingWhiteSpace(expectedJSON));

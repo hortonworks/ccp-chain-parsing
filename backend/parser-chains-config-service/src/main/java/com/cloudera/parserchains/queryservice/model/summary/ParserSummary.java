@@ -52,10 +52,6 @@ public class ParserSummary {
     return this;
   }
 
-  public ParserSummary setId(String id) {
-    return setId(ParserID.of(id));
-  }
-
   public ParserName getName() {
     return name;
   }

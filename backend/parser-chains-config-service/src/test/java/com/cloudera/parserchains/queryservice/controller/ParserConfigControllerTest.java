@@ -18,9 +18,11 @@
 
 package com.cloudera.parserchains.queryservice.controller;
 
+import com.cloudera.parserchains.parsers.SyslogParser;
+import com.cloudera.parserchains.parsers.TimestampParser;
 import com.cloudera.parserchains.queryservice.common.utils.CollectionsUtils;
+import com.cloudera.parserchains.queryservice.model.ParserID;
 import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
-import com.cloudera.parserchains.queryservice.model.ParserName;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
 import com.cloudera.parserchains.queryservice.model.describe.ConfigDescriptor;
 import com.cloudera.parserchains.queryservice.service.ParserDiscoveryService;
@@ -62,10 +64,10 @@ public class ParserConfigControllerTest {
   public void list_all_parsers() throws Exception {
     List<ParserSummary> parsers = Arrays.asList(
             new ParserSummary()
-                    .setId("com.cloudera.parserchains.parsers.SyslogParser")
+                    .setId(ParserID.of(SyslogParser.class))
                     .setName("Syslog"),
             new ParserSummary()
-                    .setId("com.cloudera.parserchains.parsers.TimestampParser")
+                    .setId(ParserID.of(TimestampParser.class))
                     .setName("Timestamp"));
     given(parserDiscoveryService.findAll()).willReturn(parsers);
     mvc.perform(MockMvcRequestBuilders.get(API_PARSER_TYPES_URL)
@@ -97,27 +99,27 @@ public class ParserConfigControllerTest {
             .setRequired("true")
             .setType("text");
     ParserSummary type1 = new ParserSummary()
-            .setId("com.cloudera.parserchains.parsers.SyslogParser")
+            .setId(ParserID.of(SyslogParser.class))
             .setName("Syslog");
     ParserDescriptor schema1 = new ParserDescriptor()
             .setParserID(type1.getId())
             .setParserName(type1.getName())
-            .addSchemaItem(fieldOne)
-            .addSchemaItem(fieldTwo);
+            .addConfiguration(fieldOne)
+            .addConfiguration(fieldTwo);
     ParserSummary type2 = new ParserSummary()
-            .setId("com.cloudera.parserchains.parsers.TimestampParser")
+            .setId(ParserID.of(TimestampParser.class))
             .setName("Timestamp");
     ParserDescriptor schema2 = new ParserDescriptor()
             .setParserID(type2.getId())
             .setParserName(type2.getName())
-            .addSchemaItem(fieldOne)
-            .addSchemaItem(fieldTwo);
-    Map<ParserName, ParserDescriptor> toReturn = CollectionsUtils.toMap(
-            type1.getName(), schema1,
-            type2.getName(), schema2
+            .addConfiguration(fieldOne)
+            .addConfiguration(fieldTwo);
+    Map<ParserID, ParserDescriptor> toReturn = CollectionsUtils.toMap(
+            type1.getId(), schema1,
+            type2.getId(), schema2
     );
     given(parserDiscoveryService.describeAll()).willReturn(toReturn);
-    mvc.perform(MockMvcRequestBuilders.get(API_PARSER_FORM_CONFIG_URL)
+    String response = mvc.perform(MockMvcRequestBuilders.get(API_PARSER_FORM_CONFIG_URL)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
@@ -125,44 +127,48 @@ public class ParserConfigControllerTest {
             .andExpect(jsonPath("$.*", hasSize(2)))
 
             // Syslog parser
-            .andExpect(jsonPath("$.Syslog.name", is("Syslog")))
-            .andExpect(jsonPath("$.Syslog.id", is("com.cloudera.parserchains.parsers.SyslogParser")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].name", is("Syslog")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].id", is("com.cloudera.parserchains.parsers.SyslogParser")))
 
             // Syslog parser, 1st argument
-            .andExpect(jsonPath("$.Syslog.schemaItems.[0].name", is("outputField")))
-            .andExpect(jsonPath("$.Syslog.schemaItems.[0].type", is("text")))
-            .andExpect(jsonPath("$.Syslog.schemaItems.[0].label", is("Output Field")))
-            .andExpect(jsonPath("$.Syslog.schemaItems.[0].description", is("The name of the output field.")))
-            .andExpect(jsonPath("$.Syslog.schemaItems.[0].required", is("true")))
-            .andExpect(jsonPath("$.Syslog.schemaItems.[0].path", is("config")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].name", is("outputField")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].type", is("text")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].label", is("Output Field")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].description", is("The name of the output field.")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].required", is("true")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].path", is("config")))
 
             // Syslog parser, 2nd argument
-            .andExpect(jsonPath("$.Syslog.schemaItems.[1].name", is("inputField")))
-            .andExpect(jsonPath("$.Syslog.schemaItems.[1].type", is("text")))
-            .andExpect(jsonPath("$.Syslog.schemaItems.[1].label", is("Input Field")))
-            .andExpect(jsonPath("$.Syslog.schemaItems.[1].description", is("The name of the input field.")))
-            .andExpect(jsonPath("$.Syslog.schemaItems.[1].required", is("true")))
-            .andExpect(jsonPath("$.Syslog.schemaItems.[1].path", is("config")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].name", is("inputField")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].type", is("text")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].label", is("Input Field")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].description", is("The name of the input field.")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].required", is("true")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].path", is("config")))
 
             // Timestamp parser
-            .andExpect(jsonPath("$.Timestamp.name", is("Timestamp")))
-            .andExpect(jsonPath("$.Timestamp.id", is("com.cloudera.parserchains.parsers.TimestampParser")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].name", is("Timestamp")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].id", is("com.cloudera.parserchains.parsers.TimestampParser")))
 
             // Timestamp parser, 1st argument
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[0].name", is("outputField")))
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[0].type", is("text")))
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[0].label", is("Output Field")))
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[0].description", is("The name of the output field.")))
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[0].required", is("true")))
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[0].path", is("config")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].name", is("outputField")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].type", is("text")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].label", is("Output Field")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].description", is("The name of the output field.")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].required", is("true")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].path", is("config")))
 
             // Timestamp parser, 2nd argument
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[1].name", is("inputField")))
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[1].type", is("text")))
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[1].label", is("Input Field")))
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[1].description", is("The name of the input field.")))
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[1].required", is("true")))
-            .andExpect(jsonPath("$.Timestamp.schemaItems.[1].path", is("config")));
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].name", is("inputField")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].type", is("text")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].label", is("Input Field")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].description", is("The name of the input field.")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].required", is("true")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].path", is("config")))
+
+            .andReturn().getResponse().getContentAsString();
+    System.out.println(response);
+    ;
   }
 
 

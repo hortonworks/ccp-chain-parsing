@@ -22,12 +22,13 @@ import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.ParserBuilder;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
-import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
-import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
+import com.cloudera.parserchains.queryservice.model.ParserID;
 import com.cloudera.parserchains.queryservice.model.ParserName;
+import com.cloudera.parserchains.queryservice.model.describe.ConfigDescriptor;
+import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
+import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummaryMapper;
-import com.cloudera.parserchains.queryservice.model.describe.ConfigDescriptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -120,8 +121,8 @@ public class DefaultParserDiscoveryServiceTest {
     setupCatalog(Arrays.asList(parserInfo1));
 
     // execute - describe the parameters exposed by parser1
-    ParserName name = ParserName.of(parserInfo1.getName());
-    ParserDescriptor schema = service.describe(name);
+    ParserID parserID = ParserID.of(parser1.getClass());
+    ParserDescriptor schema = service.describe(parserID);
 
     // validate
     assertThat("The parserID should be set to the parser's class name.",
@@ -151,8 +152,8 @@ public class DefaultParserDiscoveryServiceTest {
     setupCatalog(Arrays.asList(parserInfo1));
 
     // execute - describe the parameters exposed by parser1
-    ParserName name = ParserName.of(parserInfo1.getName());
-    ParserDescriptor schema = service.describe(name);
+    ParserID parserID = ParserID.of(parserInfo1.getParserClass());
+    ParserDescriptor schema = service.describe(parserID);
 
     // validate
     assertThat("Expect 1 schema item for each accepted value; from/to in this case.",
@@ -184,13 +185,13 @@ public class DefaultParserDiscoveryServiceTest {
     setupCatalog(Arrays.asList(parserInfo1));
 
     // execute - describe all available parser
-    Map<ParserName, ParserDescriptor> schema = service.describeAll();
+    Map<ParserID, ParserDescriptor> schema = service.describeAll();
 
     // validate
     assertThat("Expect 1 parser type to be returned.",
             schema.size(), equalTo(1));
-    ParserName expected = mapper.reform(parserInfo1).getName();
-    assertThat("Expected parser typ.",
+    ParserID expected = mapper.reform(parserInfo1).getId();
+    assertThat("Expect the result to be keyed by the parser ID.",
             schema.containsKey(expected));
     ParserDescriptor actual = schema.get(expected);
     ConfigDescriptor expectedItem = new ConfigDescriptor()

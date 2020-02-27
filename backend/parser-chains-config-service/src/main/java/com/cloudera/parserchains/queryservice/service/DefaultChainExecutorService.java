@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 @Service
 public class DefaultChainExecutorService implements ChainExecutorService {
     private static final Logger logger = LogManager.getLogger(DefaultChainExecutorService.class);
-    private static final ParserID routerID = ParserID.of("router");
     private ParserBuilder parserBuilder;
     private ParserCatalog parserCatalog;
 
@@ -55,7 +54,7 @@ public class DefaultChainExecutorService implements ChainExecutorService {
         NextChainLink head = null;
         NextChainLink current = null;
         for(ParserSchema parserSchema : parserChainSchema.getParsers()) {
-            if(routerID.equals(parserSchema.getId())) {
+            if(ParserID.router().equals(parserSchema.getId())) {
                 // construct the router
 
                 // TODO implement me

@@ -87,7 +87,7 @@ public class ParserDescriptor {
     return this;
   }
 
-  public ParserDescriptor addSchemaItem(ConfigDescriptor item) {
+  public ParserDescriptor addConfiguration(ConfigDescriptor item) {
     configurations.add(item);
     return this;
   }
