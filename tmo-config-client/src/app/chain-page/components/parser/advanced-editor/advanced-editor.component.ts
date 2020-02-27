@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import isEqual from 'lodash.isequal';
 
 export interface ConfigChangedEvent {
   value: {};
@@ -36,16 +37,9 @@ export class AdvancedEditorComponent {
       return;
     }
 
-    if (this.isConfigEqual(json, this.config)) return;
+    if (isEqual(json, this.config)) return;
 
     this.configChanged.emit({ value: json });
-  }
-
-  private isConfigEqual(val1: {}, val2: {}) {
-    const ok = Object.keys;
-    return ok(val1).every(val1key => ok(val2).some(val2key => val1key === val2key)) &&
-      ok(val2).every(val2key => ok(val1).some(val1key => val1key === val2key)) &&
-      ok(val1).every(val1key => ok(val2).some(val2key => val2[val2key] === val1[val1key]));
   }
 
 }
