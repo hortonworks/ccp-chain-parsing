@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DeleteFill } from '@ant-design/icons-angular/icons';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 
+import { ConfigChangedEvent } from './advanced-editor/advanced-editor.component';
 import { ParserComponent } from './parser.component';
 
 @Component({
@@ -12,6 +13,15 @@ import { ParserComponent } from './parser.component';
 })
 export class MockCustomFormComponent {
   @Input() config = [];
+}
+
+@Component({
+  selector: 'app-advanced-editor',
+  template: '',
+})
+export class MockAdvancedEditorComponent {
+  @Input() config = [];
+  @Output() configChanged = new EventEmitter<ConfigChangedEvent>();
 }
 
 describe('ParserComponent', () => {
@@ -34,6 +44,7 @@ describe('ParserComponent', () => {
       declarations: [
         ParserComponent,
         MockCustomFormComponent,
+        MockAdvancedEditorComponent,
       ],
       providers : [
         { provide: NZ_ICONS, useValue: [DeleteFill]}
@@ -212,4 +223,19 @@ describe('ParserComponent', () => {
     expect(fields[2].value).toBe('field name INIT');
     expect(fields[3].value).toBe('field index INIT');
   });
+
+  it('should dispatch action if config changed by the advanced editor', () => {
+    const mockListener = jasmine.createSpy('mockListener');
+    const value = { someField: 'some value' };
+
+    component.parserChange.subscribe(mockListener);
+
+    component.onAdvancedEditorChanged({ value });
+
+    expect(mockListener).toHaveBeenCalledWith({
+      id: '123',
+      config: value,
+    });
+  });
+
 });

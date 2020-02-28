@@ -14,6 +14,7 @@ import { ChainViewComponent } from './components/chain-view/chain-view.component
 import { CustomFormComponent } from './components/custom-form/custom-form.component';
 import { LiveViewModule } from './components/live-view/live-view.module';
 import { ParserComposerComponent } from './components/parser-composer/parser-composer.component';
+import { AdvancedEditorComponent } from './components/parser/advanced-editor/advanced-editor.component';
 import { ParserComponent } from './components/parser/parser.component';
 import { RouteComponent } from './components/route/route.component';
 import { RouterComponent } from './components/router/router.component';
@@ -26,7 +27,8 @@ import { RouterComponent } from './components/router/router.component';
     RouterComponent,
     CustomFormComponent,
     ParserComposerComponent,
-    RouteComponent
+    RouteComponent,
+    AdvancedEditorComponent
   ],
   entryComponents: [ ChainViewComponent ],
   imports: [
