@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { NgZorroAntdModule } from 'ng-zorro-antd';
+import { DeleteFill } from '@ant-design/icons-angular/icons';
+import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 
 import { RouterComponent } from './router.component';
 
@@ -35,6 +36,9 @@ describe('RouterComponent', () => {
         MockCustomFormComponent,
         RouterComponent
       ],
+      providers: [
+        {provide: NZ_ICONS, useValue: [DeleteFill]}
+      ]
     })
     .compileComponents();
   }));
