@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,7 +68,8 @@ public enum JSONUtils {
   private static ThreadLocal<ObjectMapper> _mapper = ThreadLocal.withInitial(() ->
       new ObjectMapper()
               .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-              .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
+              .enable(JsonParser.Feature.ALLOW_COMMENTS)
+              .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
               .enable(MapperFeature.USE_ANNOTATIONS));
 
   public <T> T convert(Object original, Class<T> targetClass) {

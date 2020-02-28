@@ -43,6 +43,7 @@ public class ParserSchema {
   private ParserName name;
   private Map<String, List<ConfigValueSchema>> config;
   private Map<String, Object> outputs;
+  private Map<String, Object> advanced;
 
   public ParserSchema() {
     config = new HashMap<>();
@@ -111,6 +112,15 @@ public class ParserSchema {
     return this;
   }
 
+  public Map<String, Object> getAdvanced() {
+    return advanced;
+  }
+
+  public ParserSchema setAdvanced(Map<String, Object> advanced) {
+    this.advanced = advanced;
+    return this;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -126,6 +136,7 @@ public class ParserSchema {
             .append(config, parserSchema.config)
             .append(outputs, parserSchema.outputs)
             .append(label, parserSchema.label)
+            .append(advanced, parserSchema.advanced)
             .isEquals();
   }
 
@@ -136,6 +147,7 @@ public class ParserSchema {
             .append(name)
             .append(config)
             .append(outputs)
+            .append(advanced)
             .append(label)
             .toHashCode();
   }

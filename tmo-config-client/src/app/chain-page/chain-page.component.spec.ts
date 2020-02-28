@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IconDefinition } from '@ant-design/icons-angular';
-import { EditFill } from '@ant-design/icons-angular/icons';
+import { EditFill, PlusOutline } from '@ant-design/icons-angular/icons';
 import { StoreModule } from '@ngrx/store';
 import { Store } from '@ngrx/store';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
@@ -15,7 +15,7 @@ import { ChainPageComponent } from './chain-page.component';
 import { ParserModel } from './chain-page.models';
 import * as fromReducers from './chain-page.reducers';
 
-const icons: IconDefinition[] = [EditFill];
+const icons: IconDefinition[] = [EditFill, PlusOutline];
 @Component({
   selector: 'app-chain-view',
   template: ''

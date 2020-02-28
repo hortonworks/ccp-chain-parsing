@@ -119,7 +119,7 @@ public class ParserControllerTest {
             type2.getId(), schema2
     );
     given(parserDiscoveryService.describeAll()).willReturn(toReturn);
-    String response = mvc.perform(MockMvcRequestBuilders.get(API_PARSER_FORM_CONFIG_URL)
+    mvc.perform(MockMvcRequestBuilders.get(API_PARSER_FORM_CONFIG_URL)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
@@ -164,12 +164,6 @@ public class ParserControllerTest {
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].label", is("Input Field")))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].description", is("The name of the input field.")))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].required", is("true")))
-            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].path", is("config")))
-
-            .andReturn().getResponse().getContentAsString();
-    System.out.println(response);
-    ;
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].path", is("config")));
   }
-
-
 }

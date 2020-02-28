@@ -24,6 +24,7 @@ import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
 import com.cloudera.parserchains.queryservice.common.utils.IDGenerator;
+import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.common.utils.UniqueIDGenerator;
 import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
@@ -35,6 +36,11 @@ import java.nio.file.Paths;
 
 @Configuration
 public class MainConfiguration {
+
+  @Bean
+  public com.fasterxml.jackson.databind.ObjectMapper objectMapper() {
+    return JSONUtils.INSTANCE.getMapper();
+  }
 
   @Bean
   public AppProperties appProperties() {
