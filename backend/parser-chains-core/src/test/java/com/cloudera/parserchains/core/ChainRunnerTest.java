@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.description;
 import static org.mockito.Mockito.eq;
@@ -140,16 +141,31 @@ public class ChainRunnerTest {
                 .build();
         verify(parser2, description("Expected parser2 to parse the next message."))
                 .parse(eq(expectedInput2));
-
         verify(parser3, never()).parse(any());
         assertEquals(3, results.size(),
             "Expected 3 = 1 original + 1 from parser1 + 1 error from parser2 + 0 from parser3 (it was not executed).");
-
         assertEquals(ChainRunner.ORIGINAL_MESSAGE, results.get(0).getCreatedBy(),
                 "Expected the 1st message to have 'createdBy' defined.");
         assertEquals(linkName1, results.get(1).getCreatedBy(),
                 "Expected the 2nd message to have been 'createdBy' by " + linkName1);
         assertEquals(linkName2, results.get(2).getCreatedBy(),
                 "Expected the 3rd message to have been 'createdBy' by " + linkName2);
+    }
+
+    @Test
+    void nullChain() {
+        ChainRunner runner = new ChainRunner();
+        List<Message> results = runner.run(inputToParse, null);
+
+        assertEquals(ChainRunner.ORIGINAL_MESSAGE, results.get(0).getCreatedBy(),
+                "Expected the 1st message to have 'createdBy' defined.");
+        Message expectedMessage = Message.builder()
+                .addField(runner.getInputField(), FieldValue.of(inputToParse))
+                .createdBy(ChainRunner.ORIGINAL_MESSAGE)
+                .build();
+        assertEquals(1, results.size(),
+                "Expected 1 message to be returned to indicate there was an error.");
+        assertTrue(results.get(0).getError().isPresent(),
+                "Expected an error to be indicated on the message.");
     }
 }

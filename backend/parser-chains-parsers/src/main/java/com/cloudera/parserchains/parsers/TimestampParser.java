@@ -24,12 +24,13 @@ import java.util.Optional;
     name="Timestamp",
     description="Adds a timestamp to a message. Can be used to mark processing time.")
 public class TimestampParser implements Parser {
+    private static final FieldName DEFAULT_OUTPUT_FIELD = FieldName.of("timestamp");
     private FieldName outputField;
     private Clock clock;
     private Configurer configurer;
 
     public TimestampParser() {
-        this.outputField = FieldName.of("timestamp");
+        this.outputField = DEFAULT_OUTPUT_FIELD;
         this.clock = new Clock();
         this.configurer = new Configurer(this);
     }

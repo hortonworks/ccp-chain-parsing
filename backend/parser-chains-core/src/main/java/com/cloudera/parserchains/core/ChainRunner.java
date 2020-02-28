@@ -1,6 +1,10 @@
 package com.cloudera.parserchains.core;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,11 +12,12 @@ import java.util.Optional;
  * Parses a {@link Message} using a parser chain.
  */
 public class ChainRunner {
+    private static final Logger logger = LogManager.getLogger(ChainRunner.class);
     public static final LinkName ORIGINAL_MESSAGE = LinkName.of("original");
     private FieldName inputField;
 
     public ChainRunner() {
-        inputField = FieldName.of("original_string");
+        inputField = Constants.DEFAULT_INPUT_FIELD;
     }
 
     /**
@@ -35,15 +40,33 @@ public class ChainRunner {
      * @return
      */
     public List<Message> run(String toParse, ChainLink chain) {
-        // create the initial message
-        Message message = Message.builder()
+        List<Message> results;
+        Message original = Message.builder()
                 .addField(inputField, FieldValue.of(toParse))
                 .createdBy(ORIGINAL_MESSAGE)
                 .build();
+        try {
+            results = doRun(original, chain);
 
+        } catch(Throwable t) {
+            String msg = "An unexpected error occurred while running a parser chain. " +
+                    " Ensure that no parser is throwing an unchecked exception. Parsers should " +
+                    " instead be reporting the error in the output message.";
+            Message error = Message.builder()
+                    .clone(original)
+                    .withError(msg)
+                    .build();
+            results = Arrays.asList(error);
+            logger.warn(msg, t);
+        }
+        return results;
+    }
+
+    private List<Message> doRun(Message original, ChainLink chain) {
         List<Message> results = new ArrayList<>();
-        results.add(message);
-        Optional<ChainLink> nextLink = Optional.of(chain);
+        results.add(original);
+
+        Optional<ChainLink> nextLink = Optional.ofNullable(chain);
         do {
             // parse the message
             Message input = results.get(results.size()-1);

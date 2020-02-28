@@ -1,5 +1,6 @@
 package com.cloudera.parserchains.parsers;
 
+import com.cloudera.parserchains.core.Constants;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
@@ -31,8 +32,9 @@ public class SyslogParser implements Parser {
     private Configurer configurer;
 
     public SyslogParser() {
-        this.configurer = new Configurer(this);
-        this.specification = SyslogSpecification.RFC_5424;
+        inputField = Constants.DEFAULT_INPUT_FIELD;
+        configurer = new Configurer(this);
+        specification = SyslogSpecification.RFC_5424;
     }
 
     public SyslogParser withSpecification(SyslogSpecification specification) {
@@ -47,26 +49,25 @@ public class SyslogParser implements Parser {
 
     @Override
     public Message parse(Message input) {
-        if(inputField == null) {
-            throw new IllegalStateException("Input field has not been defined.");
-        }
         Message.Builder output = Message.builder().withFields(input);
-        Optional<FieldValue> value = input.getField(inputField);
-        if(value.isPresent()) {
-            doParse(output, value.get().toString());
-        } else {
-            output.withError(format("Message does not contain input field '%s'", inputField.toString()));
-        }
+        if(inputField == null) {
+            output.withError("Input Field has not been defined.");
 
+        } else if(!input.getField(inputField).isPresent()) {
+            output.withError(format("Message missing expected input field '%s'", inputField.toString()));
+
+        } else {
+            input.getField(inputField).ifPresent(val -> doParse(val.toString(), output));
+        }
         return output.build();
     }
 
-    private void doParse(Message.Builder output, String value) {
+    private void doParse(String valueToParse, Message.Builder output) {
         try {
             new SyslogParserBuilder()
                     .forSpecification(specification)
                     .build()
-                    .parseLine(value)
+                    .parseLine(valueToParse)
                     .forEach((k, v) -> output.addField(FieldName.of(k), FieldValue.of(v.toString())));
 
         } catch(ParseException e) {

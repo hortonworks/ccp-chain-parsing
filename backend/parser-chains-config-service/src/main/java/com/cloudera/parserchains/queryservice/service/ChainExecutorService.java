@@ -16,7 +16,6 @@ public interface ChainExecutorService {
      * @param chain The parser chain to execute.
      * @param textToParse The text to parse.
      * @return The result of parsing the text with the parser chain.
-     * @throws IOException
      */
-    ParserResult execute(ParserChainSchema chain, String textToParse) throws IOException;
+    ParserResult execute(ParserChainSchema chain, String textToParse);
 }

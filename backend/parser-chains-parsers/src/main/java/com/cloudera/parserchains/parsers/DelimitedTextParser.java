@@ -1,5 +1,7 @@
 package com.cloudera.parserchains.parsers;
 
+import com.cloudera.parserchains.core.ChainRunner;
+import com.cloudera.parserchains.core.Constants;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
@@ -49,6 +51,7 @@ public class DelimitedTextParser implements Parser {
     private Configurer configurer;
 
     public DelimitedTextParser() {
+        inputField = Constants.DEFAULT_INPUT_FIELD;
         outputFields = new ArrayList<>();
         delimiter = Regex.of(",");
         trimWhitespace = true;
@@ -104,20 +107,18 @@ public class DelimitedTextParser implements Parser {
         return trimWhitespace;
     }
 
-
     @Override
     public Message parse(Message input) {
-        if(inputField == null) {
-            throw new IllegalStateException("Input field has not been defined.");
-        }
         Message.Builder output = Message.builder().withFields(input);
-        Optional<FieldValue> fieldValue = input.getField(inputField);
-        if(fieldValue.isPresent()) {
-            doParse(fieldValue.get().toString(), output);
-        } else {
-            output.withError(format("Message does not contain input field '%s'", inputField.toString()));
-        }
+        if(inputField == null) {
+            output.withError("Input Field has not been defined.");
 
+        } else if(!input.getField(inputField).isPresent()) {
+            output.withError(format("Message missing expected input field '%s'", inputField.toString()));
+
+        } else {
+            input.getField(inputField).ifPresent(val -> doParse(val.toString(), output));
+        }
         return output.build();
     }
 

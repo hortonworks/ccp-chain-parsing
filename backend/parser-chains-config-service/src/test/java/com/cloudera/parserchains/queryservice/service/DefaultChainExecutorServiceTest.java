@@ -115,6 +115,35 @@ public class DefaultChainExecutorServiceTest {
                 result.getLog().getMessage(), is("IllegalStateException: Found 1 column(s), index 2 does not exist."));
     }
 
+
+    /**
+     * {
+     *     "id" : "3b31e549-340f-47ce-8a71-d702685137f4",
+     *     "name" : "My Parser Chain",
+     *     "parsers" : [ {
+     *       "id" : "8673f8f4-a308-4689-822c-0b01477ef378",
+     *       "name" : "Bad Parser",
+     *       "type" : "com.cloudera.parserchains.queryservice.service.MisbehavingParser",
+     *       "config" : { },
+     *       "outputs" : { }
+     *     } ]
+     * }
+     */
+    @Multiline
+    private String exceptionalChainJSON;
+
+    @Test
+    void handleException() throws Exception {
+        // the service should catch and handle any exceptions thrown by a parser
+        String textToParse = "this is some text to parse";
+        ParserChainSchema schema = JSONUtils.INSTANCE.load(exceptionalChainJSON, ParserChainSchema.class);
+        ParserResult result = service.execute(schema, textToParse);
+
+        expectField(result.getInput(), "original_string", textToParse);
+        assertThat("Expected the 'error' type to indicate an error was caught and reported.",
+                result.getLog().getType(), is(DefaultChainExecutorService.ERROR_TYPE));
+    }
+
     private void expectField(Map<String, String> fields, String fieldName, String expectedValue) {
         assertThat(String.format("Expected a field that does not exist; %s=%s", fieldName, expectedValue),
                 fields.get(fieldName), is(expectedValue));
