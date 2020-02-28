@@ -8,14 +8,14 @@ import {
   sampleDataInputChanged,
   sampleDataRestored,
 } from './live-view.actions';
-import { LiveViewResultModel } from './models/live-view.model';
+import { EntryParsingResultModel } from './models/live-view.model';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 
 export interface LiveViewState {
   isLiveViewOn: boolean;
   isExecuting: boolean;
   sampleData: SampleDataModel;
-  result: LiveViewResultModel;
+  result: EntryParsingResultModel[];
 }
 
 export const initialState: LiveViewState = {
@@ -25,9 +25,7 @@ export const initialState: LiveViewState = {
     type: SampleDataType.MANUAL,
     source: '',
   },
-  result: {
-    entries: []
-  },
+  result: [],
 };
 
 export function reducer(
@@ -46,7 +44,7 @@ export function reducer(
       return {
         ...state,
         isExecuting: false,
-        result: action.liveViewResult.result,
+        result: action.liveViewResult.results,
       };
     }
     case liveViewRefreshFailed.type: {

@@ -25,15 +25,16 @@ POST('/chains/:id/parsers', addParser);
 
 GET('/parser-types', getParserTypes);
 
-POST('/sampleparser/parsingjobs', createParseJob);
+POST('/tests', createParseJob);
 
 GET('/parser-form-configuration/:type', getFormConfig);
 GET('/parser-form-configuration', getFormConfigs);
 
 function createParseJob(req, res) {
-  const sources = req.body.sampleData.source.split('\n');
+  const parsers = req.body.chainConfig.parsers
+  const source = req.body.sampleData.source;
   const log = ['PASS', 'FAIL'];
-  let entries = sources.map(source => { return {
+  let results = parsers.map(parser => { return {
       input: source,
       output: {
         original_string: source
@@ -43,35 +44,32 @@ function createParseJob(req, res) {
   });
 
 
-  entries.map(entry => {
+  results.map((result, index) => {
     const asaTagRegex = /%ASA-\d\-\d*\b/g
     const asaMessageRegex = /(?<=%ASA-\d\-\d*\:)(.*)/g
     const syslogMessageRegex = /%ASA-\d\-\d*\:(.*)/g
-    const parsers = req.body.chainConfig.parsers
 
-    entry.output.ASA_TAG = asaTagRegex.exec(entry.input)[0];
-    entry.output.ASA_message = asaMessageRegex.exec(entry.input)[0];
+
+    result.output.ASA_TAG = asaTagRegex.exec(result.input);
+    result.output.ASA_message = asaMessageRegex.exec(result.input);
     if (log[Math.floor(Math.random() * 2)] === 'PASS') {
-      entry.output.syslogMessage = syslogMessageRegex.exec(entry.input)[0];
-      entry.log = {
+      result.output.syslogMessage = syslogMessageRegex.exec(result.input);
+      result.log = {
         "type": "info",
-        "message": "Parsing Successful"
+        "message": "Parsing Successful",
+        "parserId": parsers[index].id
       };
     } else {
-      failedParser = parsers[Math.floor(Math.random() * parsers.length)];
-      entry.log = {
+      result.log = {
         "type": "error",
-        "message": `Parsing Failed: ${failedParser.name} parser unable to parse.`,
-        "parserId": failedParser.id
+        "message": `Parsing Failed: ${parsers[index].name} parser unable to parse.`,
+        "parserId": parsers[index].id
       };
     }
   });
 
   let response = {
-    ...req.body,
-    result: {
-      entries
-    }
+    results
   };
 
   setTimeout(() => {

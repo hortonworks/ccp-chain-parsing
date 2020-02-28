@@ -25,9 +25,7 @@ describe('live-view.reducers', () => {
       source: '',
     },
     isExecuting: false,
-    result: {
-      entries: []
-    },
+    results: [],
   };
 
   it('should handle default case', () => {
@@ -45,31 +43,35 @@ describe('live-view.reducers', () => {
   });
 
   it('should update isExecuting on liveViewRefreshedSuccessfully action', () => {
+    const results = [
+      {
+        input: 'input result',
+        output: 'output result',
+        log: { type: '', message: 'log result'},
+      }
+    ];
     const newState = reducer(initialState, liveViewRefreshedSuccessfully({ liveViewResult: {
       ...testLiveViewState,
-      chainConfig: testConfigState,
+      results
     } }));
     expect(newState.isExecuting).toBe(false);
   });
 
   it('should update result on liveViewRefreshedSuccessfully action', () => {
-    const result = {
-      entries: [
-        {
-          input: 'input result',
-          output: 'output result',
-          log: { type: '', message: 'log result'},
-        }
-      ]
-    };
+    const results = [
+      {
+        input: 'input result',
+        output: 'output result',
+        log: { type: '', message: 'log result'},
+      }
+    ];
 
     const newState = reducer(initialState, liveViewRefreshedSuccessfully({ liveViewResult: {
       ...testLiveViewState,
-      chainConfig: testConfigState,
-      result,
+      results,
     } }));
 
-    expect(newState.result).toEqual(result);
+    expect(newState.result).toEqual(results);
   });
 
   it('should update isExecuting on liveViewRefreshFailed action', () => {

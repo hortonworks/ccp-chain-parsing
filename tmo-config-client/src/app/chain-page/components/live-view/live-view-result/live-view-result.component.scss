@@ -13,16 +13,16 @@
       padding: 0 .2em .4em .2em;
     }
 
+    .fieldName {
+      font-weight: bold;
+    }
+
     &.input {
       background-color: aliceblue;
       border-bottom: 1px solid grey;
     }
     &.output {
       border-bottom: 1px solid grey;
-
-      .fieldName {
-        font-weight: bold;
-      }
     }
     &.log {
       background-color: #EEEEEE;

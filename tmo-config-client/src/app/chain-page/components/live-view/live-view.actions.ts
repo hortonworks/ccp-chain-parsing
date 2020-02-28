@@ -1,6 +1,6 @@
 import { createAction, props, union } from '@ngrx/store';
 
-import { LiveViewModel } from './models/live-view.model';
+import { EntryParsingResultModel } from './models/live-view.model';
 import { SampleDataModel } from './models/sample-data.model';
 
 export const liveViewInitialized = createAction(
@@ -14,7 +14,7 @@ export const executionTriggered = createAction(
 
 export const liveViewRefreshedSuccessfully = createAction(
   '[LiveView] Live View Refreshed Successfully',
-  props<{ liveViewResult: LiveViewModel }>()
+  props<{ liveViewResult: { results: EntryParsingResultModel[]}  }>()
 );
 
 export const liveViewRefreshFailed = createAction(
