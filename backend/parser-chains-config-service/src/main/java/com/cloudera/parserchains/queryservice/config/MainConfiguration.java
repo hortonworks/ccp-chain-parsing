@@ -18,6 +18,8 @@
 
 package com.cloudera.parserchains.queryservice.config;
 
+import com.cloudera.parserchains.core.ChainRunner;
+import com.cloudera.parserchains.core.DefaultChainRunner;
 import com.cloudera.parserchains.core.ParserBuilder;
 import com.cloudera.parserchains.core.ReflectiveParserBuilder;
 import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
@@ -65,5 +67,10 @@ public class MainConfiguration {
   @Bean
   public ObjectMapper<ParserSummary, ParserInfo> mapper() {
     return new ParserSummaryMapper();
+  }
+
+  @Bean
+  public ChainRunner chainRunner() {
+    return new DefaultChainRunner();
   }
 }

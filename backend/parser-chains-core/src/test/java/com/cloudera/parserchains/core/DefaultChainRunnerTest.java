@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
 
-public class ChainRunnerTest {
+public class DefaultChainRunnerTest {
     static String inputToParse;
     static Message errorMessage;
     static LinkName linkName1;
@@ -51,13 +51,13 @@ public class ChainRunnerTest {
                 .then(parser1, linkName1)
                 .then(parser2, linkName2)
                 .head();
-        ChainRunner runner = new ChainRunner();
+        DefaultChainRunner runner = new DefaultChainRunner();
         List<Message> results = runner.run(inputToParse, chain);
 
         // verify the input received by each parser
         Message expectedInput1 = Message.builder()
                 .addField(runner.getInputField(), FieldValue.of(inputToParse))
-                .createdBy(ChainRunner.ORIGINAL_MESSAGE)
+                .createdBy(DefaultChainRunner.ORIGINAL_MESSAGE_NAME)
                 .build();
         verify(parser1, description("Expected parser1 to get the original message."))
                 .parse(eq(expectedInput1));
@@ -71,7 +71,7 @@ public class ChainRunnerTest {
         // verify the list of results
         assertEquals(3, results.size(),
             "Expected 3 = 1 original input + 1 from parser1 + 1 from parser2.");
-        assertEquals(ChainRunner.ORIGINAL_MESSAGE, results.get(0).getCreatedBy(),
+        assertEquals(DefaultChainRunner.ORIGINAL_MESSAGE_NAME, results.get(0).getCreatedBy(),
                 "Expected the 1st message to have 'createdBy' defined.");
         assertEquals(linkName1, results.get(1).getCreatedBy(),
                 "Expected the 2nd message to have been 'createdBy' by " + linkName1);
@@ -90,14 +90,14 @@ public class ChainRunnerTest {
                 .head();
 
         // change the name of the input field.
-        ChainRunner runner = new ChainRunner()
+        DefaultChainRunner runner = new DefaultChainRunner()
                 .withInputField(FieldName.of("the_original_message"));
         List<Message> results = runner.run(inputToParse, chain);
 
         // the original message that we expect the ChainRunner to build
         Message expectedMessage = Message.builder()
                 .addField(runner.getInputField(), FieldValue.of(inputToParse))
-                .createdBy(ChainRunner.ORIGINAL_MESSAGE)
+                .createdBy(DefaultChainRunner.ORIGINAL_MESSAGE_NAME)
                 .build();
 
         // 1 original input + 1 from parser1 = 2
@@ -125,13 +125,13 @@ public class ChainRunnerTest {
                 .then(parser2, linkName2)
                 .then(parser3, linkName3)
                 .head();
-        ChainRunner runner = new ChainRunner();
+        DefaultChainRunner runner = new DefaultChainRunner();
         List<Message> results = runner.run(inputToParse, chain);
 
         // verify the input received by each parser
         Message expectedInput1 = Message.builder()
                 .addField(runner.getInputField(), FieldValue.of(inputToParse))
-                .createdBy(ChainRunner.ORIGINAL_MESSAGE)
+                .createdBy(DefaultChainRunner.ORIGINAL_MESSAGE_NAME)
                 .build();
         verify(parser1, description("Expected parser1 to get the original message."))
                 .parse(eq(expectedInput1));
@@ -144,7 +144,7 @@ public class ChainRunnerTest {
         verify(parser3, never()).parse(any());
         assertEquals(3, results.size(),
             "Expected 3 = 1 original + 1 from parser1 + 1 error from parser2 + 0 from parser3 (it was not executed).");
-        assertEquals(ChainRunner.ORIGINAL_MESSAGE, results.get(0).getCreatedBy(),
+        assertEquals(DefaultChainRunner.ORIGINAL_MESSAGE_NAME, results.get(0).getCreatedBy(),
                 "Expected the 1st message to have 'createdBy' defined.");
         assertEquals(linkName1, results.get(1).getCreatedBy(),
                 "Expected the 2nd message to have been 'createdBy' by " + linkName1);
@@ -154,14 +154,14 @@ public class ChainRunnerTest {
 
     @Test
     void nullChain() {
-        ChainRunner runner = new ChainRunner();
+        DefaultChainRunner runner = new DefaultChainRunner();
         List<Message> results = runner.run(inputToParse, null);
 
-        assertEquals(ChainRunner.ORIGINAL_MESSAGE, results.get(0).getCreatedBy(),
+        assertEquals(DefaultChainRunner.ORIGINAL_MESSAGE_NAME, results.get(0).getCreatedBy(),
                 "Expected the 1st message to have 'createdBy' defined.");
         Message expectedMessage = Message.builder()
                 .addField(runner.getInputField(), FieldValue.of(inputToParse))
-                .createdBy(ChainRunner.ORIGINAL_MESSAGE)
+                .createdBy(DefaultChainRunner.ORIGINAL_MESSAGE_NAME)
                 .build();
         assertEquals(1, results.size(),
                 "Expected 1 message to be returned to indicate there was an error.");

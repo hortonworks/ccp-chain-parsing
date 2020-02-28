@@ -23,7 +23,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,19 +36,41 @@ public class DefaultChainExecutorService implements ChainExecutorService {
     public static final String ERROR_TYPE = "error";
     private ParserBuilder parserBuilder;
     private ParserCatalog parserCatalog;
+    private ChainRunner chainRunner;
 
-    public DefaultChainExecutorService(ParserBuilder parserBuilder, ParserCatalog parserCatalog) {
+    public DefaultChainExecutorService(ParserBuilder parserBuilder,
+                                       ParserCatalog parserCatalog,
+                                       ChainRunner chainRunner) {
         this.parserBuilder = parserBuilder;
         this.parserCatalog = parserCatalog;
+        this.chainRunner = chainRunner;
     }
 
     @Override
     public ParserResult execute(ParserChainSchema chain, String textToParse) {
-        ChainLink head = buildChain(chain);
-        List<Message> messages = new ChainRunner().run(textToParse, head);
-        return toResult(messages);
+        Message original = chainRunner.originalMessage(textToParse);
+        try {
+            ChainLink head = buildChain(chain);
+            if(head != null) {
+                // use the parser chain to parse the message
+                List<Message> messages = chainRunner.run(textToParse, head);
+                return chainExecuted(messages);
+            } else {
+                // there are no parsers in the chain yet
+                return chainNotDefined(original);
+            }
+        } catch(Throwable t) {
+            // there was a problem constructing or executing the parser chain
+            Message error = Message.builder().clone(original).withError(t).build();
+            return chainFailed(error);
+        }
     }
 
+    /**
+     * Build a parser chain.
+     * @param parserChainSchema
+     * @return A parser chain or Optional.empty if there are no parsers defined in the schema.
+     */
     private ChainLink buildChain(ParserChainSchema parserChainSchema) {
         List<ParserInfo> parserInfos = parserCatalog.getParsers();
 
@@ -59,7 +80,6 @@ public class DefaultChainExecutorService implements ChainExecutorService {
         for(ParserSchema parserSchema : parserChainSchema.getParsers()) {
             if(ParserID.router().equals(parserSchema.getId())) {
                 // construct the router
-
                 // TODO implement me
 
             } else {
@@ -72,7 +92,6 @@ public class DefaultChainExecutorService implements ChainExecutorService {
                 if(head == null) {
                     head = new NextChainLink(parser, linkName);
                     current = head;
-
                 } else {
                     NextChainLink next = new NextChainLink(parser, linkName);
                     current.setNext(next);
@@ -115,7 +134,11 @@ public class DefaultChainExecutorService implements ChainExecutorService {
         }
     }
 
-    private ParserResult toResult(List<Message> messages) {
+    /**
+     * Returns a {@link ParserResult} after a parser chain was executed.
+     * @param messages The result of executing the parser chain.
+     */
+    private ParserResult chainExecuted(List<Message> messages) {
         ParserResult result = new ParserResult();
 
         // define the input fields
@@ -140,13 +163,75 @@ public class DefaultChainExecutorService implements ChainExecutorService {
         String message = SUCCESS_MESSAGE;
         String type = INFO_TYPE;
         if(output.getError().isPresent()) {
-            message = ExceptionUtils.getRootCauseMessage(output.getError().get());
+            Throwable rootCause = ExceptionUtils.getRootCause(output.getError().get());
+            message = rootCause.getMessage();
             type = ERROR_TYPE;
         }
         result.setLog(new ParserTestRun.ResultLog()
                 .setMessage(message)
                 .setParserId(output.getCreatedBy().get())
                 .setType(type));
+        return result;
+    }
+
+    /**
+     * Return a {@link ParserResult} indicating that an unexpected error occurred
+     * while executing the parser chain.
+     * @param original The original message to parse.
+     */
+    private ParserResult chainFailed(Message original) {
+        ParserResult result = new ParserResult();
+
+        // define the input fields
+        result.setInput(original.getFields()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().get(),
+                        e -> e.getValue().get())));
+
+        // define the log section
+        String message = "No parser chain defined.";
+        String type = INFO_TYPE;
+        if(original.getError().isPresent()) {
+            Throwable rootCause = ExceptionUtils.getRootCause(original.getError().get());
+            message = rootCause.getMessage();
+            type = ERROR_TYPE;
+        }
+        result.setLog(new ParserTestRun.ResultLog()
+                .setMessage(message)
+                .setParserId(original.getCreatedBy().get())
+                .setType(type));
+
+        // there are no output fields
+        return result;
+    }
+
+    /**
+     * Return a {@link ParserResult} indicating that no parser chain has yet been
+     * defined.
+     * <p>If a parser chain has not yet been defined by the user, the result returned
+     * should indicate success even though we could not parse anything.
+     * @param original The original message to parse.
+     */
+    private ParserResult chainNotDefined(Message original) {
+        ParserResult result = new ParserResult();
+
+        // define the input fields
+        result.setInput(original.getFields()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().get(),
+                        e -> e.getValue().get())));
+
+        // define the log section
+        result.setLog(new ParserTestRun.ResultLog()
+                .setMessage( "No parser chain defined.")
+                .setParserId(original.getCreatedBy().get())
+                .setType(INFO_TYPE));
+
+        // there are no output fields
         return result;
     }
 }

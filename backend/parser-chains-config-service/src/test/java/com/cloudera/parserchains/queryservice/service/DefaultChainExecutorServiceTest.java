@@ -1,5 +1,6 @@
 package com.cloudera.parserchains.queryservice.service;
 
+import com.cloudera.parserchains.core.DefaultChainRunner;
 import com.cloudera.parserchains.core.ReflectiveParserBuilder;
 import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
 import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DefaultChainExecutorServiceTest {
@@ -22,7 +24,10 @@ public class DefaultChainExecutorServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        service = new DefaultChainExecutorService(new ReflectiveParserBuilder(), new ClassIndexParserCatalog());
+        service = new DefaultChainExecutorService(
+                new ReflectiveParserBuilder(),
+                new ClassIndexParserCatalog(),
+                new DefaultChainRunner());
     }
 
     /**
@@ -112,9 +117,8 @@ public class DefaultChainExecutorServiceTest {
         assertThat("Expected the 'error' type when an error occurs.",
                 result.getLog().getType(), is(DefaultChainExecutorService.ERROR_TYPE));
         assertThat("Expected the error message to be included in the result.",
-                result.getLog().getMessage(), is("IllegalStateException: Found 1 column(s), index 2 does not exist."));
+                result.getLog().getMessage(), is("Found 1 column(s), index 2 does not exist."));
     }
-
 
     /**
      * {
@@ -142,6 +146,21 @@ public class DefaultChainExecutorServiceTest {
         expectField(result.getInput(), "original_string", textToParse);
         assertThat("Expected the 'error' type to indicate an error was caught and reported.",
                 result.getLog().getType(), is(DefaultChainExecutorService.ERROR_TYPE));
+        assertThat("Expected the error message to be included in the result.",
+                result.getLog().getMessage(), startsWith("An unexpected error occurred while"));
+    }
+
+    @Test
+    void noChainDefined() {
+        ParserChainSchema emptyChain = new ParserChainSchema().setId("1").setName("Hello, Chain");
+        String textToParse = "this is some text to parse";
+        ParserResult result = service.execute(emptyChain, textToParse);
+
+        expectField(result.getInput(), "original_string", textToParse);
+        assertThat("Expected success to be indicated.",
+                result.getLog().getType(), is(DefaultChainExecutorService.INFO_TYPE));
+        assertThat("Expected a message indicated no parser chain defined.",
+                result.getLog().getMessage(), is("No parser chain defined."));
     }
 
     private void expectField(Map<String, String> fields, String fieldName, String expectedValue) {
