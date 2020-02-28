@@ -24,6 +24,11 @@ public class ParserResults {
         this.results = results;
     }
 
+    public ParserResults(ParserResult result) {
+        this.results = new ArrayList<>();
+        this.results.add(result);
+    }
+
     public List<ParserResult> getResults() {
         return results;
     }

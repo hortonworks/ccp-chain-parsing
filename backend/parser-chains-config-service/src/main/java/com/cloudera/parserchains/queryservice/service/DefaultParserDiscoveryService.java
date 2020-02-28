@@ -54,7 +54,6 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
   @Autowired
   private ObjectMapper<ParserSummary, ParserInfo> mapper;
 
-
   @Autowired
   public DefaultParserDiscoveryService(ParserCatalog catalog,
                                        ParserBuilder builder,

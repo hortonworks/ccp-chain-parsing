@@ -12,18 +12,18 @@ import com.cloudera.parserchains.core.catalog.ParserInfo;
 import com.cloudera.parserchains.core.config.ConfigKey;
 import com.cloudera.parserchains.core.config.ConfigName;
 import com.cloudera.parserchains.core.config.ConfigValue;
+import com.cloudera.parserchains.queryservice.model.ParserID;
 import com.cloudera.parserchains.queryservice.model.define.ConfigValueSchema;
 import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.model.define.ParserSchema;
-import com.cloudera.parserchains.queryservice.model.ParserID;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +32,9 @@ import java.util.stream.Collectors;
 @Service
 public class DefaultChainExecutorService implements ChainExecutorService {
     private static final Logger logger = LogManager.getLogger(DefaultChainExecutorService.class);
+    public static final String SUCCESS_MESSAGE = "success";
+    public static final String INFO_TYPE = "info";
+    public static final String ERROR_TYPE = "error";
     private ParserBuilder parserBuilder;
     private ParserCatalog parserCatalog;
 
@@ -41,10 +44,10 @@ public class DefaultChainExecutorService implements ChainExecutorService {
     }
 
     @Override
-    public List<ParserResult> execute(ParserChainSchema chain, String textToParse) throws IOException {
+    public ParserResult execute(ParserChainSchema chain, String textToParse) throws IOException {
         ChainLink head = buildChain(chain);
         List<Message> messages = new ChainRunner().run(textToParse, head);
-        return toResults(messages);
+        return toResult(messages);
     }
 
     private ChainLink buildChain(ParserChainSchema parserChainSchema) {
@@ -112,38 +115,38 @@ public class DefaultChainExecutorService implements ChainExecutorService {
         }
     }
 
-    private List<ParserResult> toResults(List<Message> messages) {
-        List<ParserResult> results = new ArrayList<>();
+    private ParserResult toResult(List<Message> messages) {
+        ParserResult result = new ParserResult();
 
-        for(int i=0; i<messages.size()-1; i++) {
-            ParserResult result = new ParserResult();
+        // define the input fields
+        Message input = messages.get(0);
+        result.setInput(input.getFields()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().get(),
+                        e -> e.getValue().get())));
 
-            // define the input fields
-            Message input = messages.get(i);
-            result.setInput(input.getFields()
-                    .entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(
-                            e -> e.getKey().get(),
-                            e -> e.getValue().get())));
+        // define the output fields
+        Message output = messages.get(messages.size()-1);
+        result.setOutput(output.getFields()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().get(),
+                        e -> e.getValue().get())));
 
-            // define the output fields
-            Message output = messages.get(i+1);
-            result.setOutput(output.getFields()
-                    .entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(
-                            e -> e.getKey().get(),
-                            e -> e.getValue().get())));
-
-            // define the log section
-            result.setLog(new ParserTestRun.ResultLog()
-                    .setMessage("success")
-                    .setParserId(output.getCreatedBy().get())
-                    .setType("info"));
-
-            results.add(result);
+        // define the log section
+        String message = SUCCESS_MESSAGE;
+        String type = INFO_TYPE;
+        if(output.getError().isPresent()) {
+            message = ExceptionUtils.getRootCauseMessage(output.getError().get());
+            type = ERROR_TYPE;
         }
-        return results;
+        result.setLog(new ParserTestRun.ResultLog()
+                .setMessage(message)
+                .setParserId(output.getCreatedBy().get())
+                .setType(type));
+        return result;
     }
 }

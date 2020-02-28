@@ -151,9 +151,8 @@ public class ChainController {
     ResponseEntity<ParserResults> test(
             @ApiParam(name = "testRun", value = "Describes the parser chain test to run.", required = true)
             @RequestBody ParserTestRun testRun) throws IOException {
-        List<ParserResult> results = chainExecutorService.execute(
-                testRun.getParserChainSchema(),
-                testRun.getSampleData().getSource());
-        return ResponseEntity.ok(new ParserResults(results));
+        String textToParse = testRun.getSampleData().getSource();
+        ParserResult result = chainExecutorService.execute(testRun.getParserChainSchema(), textToParse);
+        return ResponseEntity.ok(new ParserResults(result));
     }
 }
