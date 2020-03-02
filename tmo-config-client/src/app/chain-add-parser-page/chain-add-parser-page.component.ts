@@ -42,15 +42,19 @@ export class ChainAddParserPageComponent implements OnInit {
   }
 
   addParser() {
+    const parser = {
+      ...this.addParserForm.value,
+      id: uuidv1(),
+      config: {},
+      outputs: {},
+      advanced: {}
+    };
+    if (this.addParserForm.value.type === 'Router') {
+      parser.routing = {};
+    }
     this.store.dispatch(new fromActions.AddParserAction({
       chainId: this.subchainId || this.chainId,
-      parser: {
-        ...this.addParserForm.value,
-        id: uuidv1(),
-        config: {},
-        outputs: {},
-        advanced: {}
-      }
+      parser
     }));
 
     this.router.navigateByUrl(`/parserconfig/chains/${this.chainId}`);
