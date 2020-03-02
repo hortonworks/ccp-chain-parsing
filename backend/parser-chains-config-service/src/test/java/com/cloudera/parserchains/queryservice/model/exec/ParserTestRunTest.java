@@ -27,7 +27,9 @@ public class ParserTestRunTest {
      * {
      *   "sampleData" : {
      *     "type" : "manual",
-     *     "source" : "Marie, Curie"
+     *     "source" : [
+     *       "Marie, Curie"
+     *      ]
      *   },
      *   "chainConfig" : {
      *     "id" : "3b31e549-340f-47ce-8a71-d702685137f4",
@@ -103,7 +105,7 @@ public class ParserTestRunTest {
         ParserTestRun testRun = new ParserTestRun();
         testRun.setParserChainSchema(parserChainSchema);
         testRun.setSampleData(new ParserTestRun.SampleData()
-                .setSource("Marie, Curie")
+                .addSource("Marie, Curie")
                 .setType("manual"));
 
         String actual = JSONUtils.INSTANCE.toJSON(testRun, true);

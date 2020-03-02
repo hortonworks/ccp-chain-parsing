@@ -21,13 +21,18 @@ package com.cloudera.parserchains.queryservice.model.exec;
 import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ParserTestRun {
 
     public static class SampleData {
         private String type;
-        private String source;
+        private List<String> source;
+
+        public SampleData() {
+            this.source = new ArrayList<>();
+        }
 
         public String getType() {
             return type;
@@ -38,12 +43,16 @@ public class ParserTestRun {
             return this;
         }
 
-        public String getSource() {
+        public List<String> getSource() {
             return source;
         }
 
-        public SampleData setSource(String source) {
+        public void setSource(List<String> source) {
             this.source = source;
+        }
+
+        public SampleData addSource(String toParse) {
+            this.source.add(toParse);
             return this;
         }
     }

@@ -231,13 +231,13 @@ public class ChainControllerTest {
      * }
      */
     @Multiline
-    static String parserChainAsJson;
+    static String parserChain;
 
     @Test
-    void test_parser_chain() throws Exception {
+    void test_chain() throws Exception {
         RequestBuilder postRequest = MockMvcRequestBuilders
                 .post(API_PARSER_TEST_URL)
-                .content(parserChainAsJson)
+                .content(parserChain)
                 .contentType(MediaType.APPLICATION_JSON);
         mvc.perform(postRequest)
                 .andExpect(status().isOk())
@@ -249,6 +249,68 @@ public class ChainControllerTest {
                 .andExpect(jsonPath("$.results.[0].log.type", is("info")))
                 .andExpect(jsonPath("$.results.[0].log.message", is("success")))
                 .andExpect(jsonPath("$.results.[0].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
+                .andReturn();
+    }
+
+    /**
+     * {
+     *   "sampleData": {
+     *     "type": "manual",
+     *     "source": [
+     *          "Marie, Curie",
+     *          "Ada, Lovelace"
+     *      ]
+     *   },
+     *   "chainConfig": {
+     *     "id": "3b31e549-340f-47ce-8a71-d702685137f4",
+     *     "name": "My Parser Chain",
+     *     "parsers": [
+     *       {
+     *         "id": "61e99275-e076-46b6-aaed-8acce58cc0e4",
+     *         "name": "Timestamp",
+     *         "type": "com.cloudera.parserchains.parsers.TimestampParser",
+     *         "config": {
+     *           "outputField": [
+     *             {
+     *               "outputField": "timestamp"
+     *             }
+     *           ]
+     *         },
+     *         "outputs": {}
+     *       }
+     *     ]
+     *   }
+     * }
+     */
+    @Multiline
+    static String parserChainMultipleMessages;
+
+    @Test
+    void test_chain_with_2_messages() throws Exception {
+        RequestBuilder postRequest = MockMvcRequestBuilders
+                .post(API_PARSER_TEST_URL)
+                .content(parserChainMultipleMessages)
+                .contentType(MediaType.APPLICATION_JSON);
+        mvc.perform(postRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results", instanceOf(List.class)))
+                .andExpect(jsonPath("$.results", hasSize(2)))
+
+                // the result of parsing the first message
+                .andExpect(jsonPath("$.results.[0].input.original_string", is("Marie, Curie")))
+                .andExpect(jsonPath("$.results.[0].output.original_string", is("Marie, Curie")))
+                .andExpect(jsonPath("$.results.[0].output.timestamp", matchesPattern("[0-9]+")))
+                .andExpect(jsonPath("$.results.[0].log.type", is("info")))
+                .andExpect(jsonPath("$.results.[0].log.message", is("success")))
+                .andExpect(jsonPath("$.results.[0].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
+
+                // the result of parsing the second message
+                .andExpect(jsonPath("$.results.[1].input.original_string", is("Ada, Lovelace")))
+                .andExpect(jsonPath("$.results.[1].output.original_string", is("Ada, Lovelace")))
+                .andExpect(jsonPath("$.results.[1].output.timestamp", matchesPattern("[0-9]+")))
+                .andExpect(jsonPath("$.results.[1].log.type", is("info")))
+                .andExpect(jsonPath("$.results.[1].log.message", is("success")))
+                .andExpect(jsonPath("$.results.[1].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
                 .andReturn();
     }
 }
