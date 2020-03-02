@@ -4,7 +4,7 @@
 
 ```bash
 # Normal
-java -jar target/parser-chains-config-service-1.0-SNAPSHOT.jar
+java -Dloader.path="contrib" -jar parser-chains-config-service-1.0-SNAPSHOT.jar --server.port=3000 --config.path=parser-chain-configs
 # Debug mode
 java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n -jar target/parser-chains-config-service-1.0-SNAPSHOT.jar
 ```
@@ -18,12 +18,14 @@ Default http://localhost:8080/swagger-ui.html
 The api root is `api/v1/parserconfig`
 curl -X GET "http://localhost:3000/api/v1/parserconfig/chains" -H "accept: */*"
 
-#### Other options
-server.port - set the REST service's port
-config.path - this is where the rest application will store the parser chain configurations. An ID generator file also resides here. Don't modify it unless you know what you're doing!
+#### Options Detail
+
+loader.path - This sets the 3rd party lib directory for adding additional classes to the REST application classpath. This is a Spring Boot property that's passed in using Java system properties, i.e. "-D"
+server.port - Set the REST service's port
+config.path - This is where the rest application will store the parser chain configurations. An ID generator file also resides here. Don't modify it unless you know what you're doing!
 server.servlet.context-path - you can change the application context root path here. e.g. setting the value to "parser-config" would change the access endpoint to look like http://localhost:3000/parser-config/swagger-ui.html
 ```bash
-java -jar target/parser-chains-config-service-1.0-SNAPSHOT.jar --server.port=3000 --config.path=/tmp/config --server.servlet.context-path="/parser-config"
+java -jar parser-chains-config-service-1.0-SNAPSHOT.jar --server.port=3000 --config.path=parser-chain-configs --server.servlet.context-path="/parser-config"
 ```
 
 ### Production Deployment

@@ -123,6 +123,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
+                <configuration>
+                    <!-- This is specified so that we can specify a directory for loading third party jar dependencies -->
+                    <!-- https://docs.spring.io/spring-boot/docs/current/maven-plugin/usage.html -->
+                    <layout>ZIP</layout> <!-- to use PropertiesLauncher -->
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
