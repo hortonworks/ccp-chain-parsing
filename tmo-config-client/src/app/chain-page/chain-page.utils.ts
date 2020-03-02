@@ -8,10 +8,10 @@ export function normalizeParserConfig(config, normalized?) {
     ...config,
     parsers: (config.parsers || []).map((parser) => {
       normalized.parsers[parser.id] = { ...parser };
-      if (parser.type === 'Router' && parser.config && parser.config.routes) {
-        normalized.parsers[parser.id].config = {
-          ...parser.config,
-          routes: parser.config.routes.map((route) => {
+      if (parser.type === 'Router' && parser.routing && parser.routing.routes) {
+        normalized.parsers[parser.id].routing = {
+          ...parser.routing,
+          routes: parser.routing.routes.map((route) => {
             normalized.routes[route.id] = { ...route };
             if (route.subchain) {
               const chainId = route.subchain.id;
@@ -38,9 +38,9 @@ export function denormalizeParserConfig(chain, config) {
         ...config.parsers[parserId]
       };
       if (parser.type === 'Router') {
-        parser.config = {
-          ...parser.config,
-          routes: (parser.config.routes || []).map((routeId) => {
+        parser.routing = {
+          ...parser.routing,
+          routes: (parser.routing.routes || []).map((routeId) => {
             const route = {
               ...config.routes[routeId]
             };

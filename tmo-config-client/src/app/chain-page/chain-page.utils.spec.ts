@@ -15,7 +15,7 @@ describe('Chain page utils: normalize', () => {
         id: '2',
         name: 'parser 2',
         type: 'Router',
-        config: {
+        routing: {
           routes: [{
             id: '1',
             name: 'route 1',
@@ -29,7 +29,7 @@ describe('Chain page utils: normalize', () => {
                 id: '4',
                 name: 'parser 4',
                 type: 'Router',
-                config: {
+                routing: {
                   routes: [{
                     id: '3',
                     name: 'route 3',
@@ -93,7 +93,7 @@ describe('Chain page utils: normalize', () => {
           id: '2',
           name: 'parser 2',
           type: 'Router',
-          config: {
+          routing: {
             routes: ['1', '2']
           }
         },
@@ -105,7 +105,7 @@ describe('Chain page utils: normalize', () => {
           id: '4',
           name: 'parser 4',
           type: 'Router',
-          config: {
+          routing: {
             routes: ['3']
           }
         },
@@ -158,7 +158,7 @@ describe('Chain page utils: normalize', () => {
         id: '2',
         name: 'parser 2',
         type: 'Router',
-        config: {
+        routing: {
           routes: [{
             id: '1',
             name: 'route 1',
@@ -172,7 +172,7 @@ describe('Chain page utils: normalize', () => {
                 id: '4',
                 name: 'parser 4',
                 type: 'Router',
-                config: {
+                routing: {
                   routes: [{
                     id: '3',
                     name: 'route 3',

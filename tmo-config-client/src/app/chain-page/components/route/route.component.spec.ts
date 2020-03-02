@@ -21,6 +21,7 @@ describe('RouteComponent', () => {
           id: '123',
           name: 'some route',
           subchain: '456',
+          default: false,
         }
       },
       chains: {
@@ -72,7 +73,8 @@ describe('RouteComponent', () => {
     expect(component.route).toEqual({
       id: '123',
       name: 'some route',
-      subchain: '456'
+      subchain: '456',
+      default: false,
     });
   });
 
@@ -105,7 +107,8 @@ describe('RouteComponent', () => {
     component.onRouteRemoveConfirmed(new Event('click'), {
       id: '123',
       name: 'route',
-      subchain: '456'
+      subchain: '456',
+      default: false,
     });
     expect(spy).toHaveBeenCalledWith(
       new fromActions.RemoveRouteAction({
@@ -125,7 +128,8 @@ describe('RouteComponent', () => {
     } as unknown) as Event, {
       id: '123',
       name: 'route',
-      subchain: '456'
+      subchain: '456',
+      default: false,
     });
     expect(spy).toHaveBeenCalledWith(
       new fromActions.UpdateChainAction({
@@ -156,6 +160,7 @@ describe('RouteComponent', () => {
     } as unknown) as Event, {
       id: '123',
       name: 'route',
+      default: false,
       subchain: '456',
       matchingValue: 'foobar'
     });

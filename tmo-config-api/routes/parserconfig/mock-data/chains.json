@@ -28,13 +28,14 @@
         "id": "9999r",
         "name": "My first Router",
         "type": "Router",
-        "config": {
+        "routing": {
           "matchingField": "bro_tag",
           "routes": [
             {
               "id": "1234r",
               "name": "Dummy Route 1",
               "matchingValue": "%ASA-7-609001",
+              "default": false,
               "subchain": {
                 "id": "444",
                 "name": "Dummy SubChain A",
@@ -46,13 +47,14 @@
                     "id": "4444",
                     "name": "My Second (and also nested) Router",
                     "type": "Router",
-                    "config": {
+                    "routing": {
                       "matchingField": "bro_tag",
                       "routes": [
                         {
                           "id": "4567r",
                           "name": "Dummy Route 1",
                           "matchingValue": "%ASA-7-609001",
+                          "default": false,
                           "subchain": {
                             "id": "555",
                             "name": "Dummy Chain A",
@@ -85,13 +87,14 @@
                     "id": "4444-",
                     "name": "Third Router",
                     "type": "Router",
-                    "config": {
+                    "routing": {
                       "matchingField": "bro_tag",
                       "routes": [
                         {
                           "id": "891011r",
                           "name": "Dummy Route 1",
                           "matchingValue": "%ASA-7-609001",
+                          "default": false,
                           "subchain": {
                             "id": "777",
                             "name": "Dummy Chain A",

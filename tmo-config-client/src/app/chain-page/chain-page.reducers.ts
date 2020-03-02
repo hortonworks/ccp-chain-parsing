@@ -166,10 +166,10 @@ export function reducer(
           ...state.parsers,
           [action.payload.parserId]: {
             ...state.parsers[action.payload.parserId],
-            config: {
-              ...(state.parsers[action.payload.parserId].config || {}),
+            routing: {
+              ...(state.parsers[action.payload.parserId].routing || {}),
               routes: [
-                ...((state.parsers[action.payload.parserId].config || {}).routes || []).filter(id => id !== action.payload.route.id),
+                ...((state.parsers[action.payload.parserId].routing || {}).routes || []).filter(id => id !== action.payload.route.id),
                 action.payload.route.id
               ]
             }
@@ -209,9 +209,9 @@ export function reducer(
           ...state.parsers,
           [action.payload.parserId]: {
             ...state.parsers[action.payload.parserId],
-            config: {
-              ...state.parsers[action.payload.parserId].config,
-              routes: state.parsers[action.payload.parserId].config.routes.filter(id => id !== action.payload.routeId)
+            routing: {
+              ...state.parsers[action.payload.parserId].routing,
+              routes: state.parsers[action.payload.parserId].routing.routes.filter(id => id !== action.payload.routeId)
             }
           }
         }
