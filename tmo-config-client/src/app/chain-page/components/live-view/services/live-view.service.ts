@@ -19,7 +19,7 @@ export class LiveViewService {
   execute(sampleData: SampleDataModel, chainConfig: {}): Observable<{ results: EntryParsingResultModel[]}> {
     const sampleDataRequest: SampleDataRequestModel = {
       ...sampleData,
-      source: sampleData.source.split('\n')
+      source: sampleData.source.trimEnd().split('\n')
     };
     return this.http.post<{ results: EntryParsingResultModel[]}>(
       this.SAMPLE_PARSER_URL,
