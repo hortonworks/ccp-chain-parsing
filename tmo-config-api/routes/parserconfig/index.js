@@ -32,9 +32,9 @@ GET('/parser-form-configuration', getFormConfigs);
 
 function createParseJob(req, res) {
   const parsers = req.body.chainConfig.parsers
-  const source = req.body.sampleData.source;
+  const sources = req.body.sampleData.source;
   const log = ['PASS', 'FAIL'];
-  let results = parsers.map(parser => { return {
+  let results = sources.map(source => { return {
       input: source,
       output: {
         original_string: source

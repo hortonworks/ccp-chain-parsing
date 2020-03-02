@@ -1,4 +1,4 @@
-import { SampleDataModel } from './sample-data.model';
+import { SampleDataModel, SampleDataRequestModel } from './sample-data.model';
 
 export interface LiveViewResultModel {
   results: EntryParsingResultModel[];
@@ -18,4 +18,9 @@ export interface LiveViewModel {
   sampleData: SampleDataModel;
   chainConfig: {};
   results?: EntryParsingResultModel[];
+}
+
+export interface LiveViewRequestModel {
+  sampleData: SampleDataRequestModel;
+  chainConfig: {};
 }

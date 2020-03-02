@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { EntryParsingResultModel, LiveViewModel } from '../models/live-view.model';
-import { SampleDataModel } from '../models/sample-data.model';
+import { EntryParsingResultModel, LiveViewRequestModel } from '../models/live-view.model';
+import { SampleDataModel, SampleDataRequestModel } from '../models/sample-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +17,12 @@ export class LiveViewService {
   ) { }
 
   execute(sampleData: SampleDataModel, chainConfig: {}): Observable<{ results: EntryParsingResultModel[]}> {
+    const sampleDataRequest: SampleDataRequestModel = {
+      ...sampleData,
+      source: sampleData.source.trimEnd().split('\n')
+    };
     return this.http.post<{ results: EntryParsingResultModel[]}>(
       this.SAMPLE_PARSER_URL,
-      { sampleData, chainConfig } as LiveViewModel);
+      { sampleData: sampleDataRequest, chainConfig } as LiveViewRequestModel);
   }
 }
