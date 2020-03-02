@@ -4,7 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import uuidv1 from 'uuid/v1';
 
-import { ParserModel } from '../chain-page/chain-page.models';
+import * as fromChainPageActions from '../chain-page/chain-page.actions';
+import { ParserChainModel, ParserModel } from '../chain-page/chain-page.models';
+import { getChain } from '../chain-page/chain-page.reducers';
 
 import * as fromActions from './chain-add-parser-page.actions';
 import { AddParserPageState, getParserTypes } from './chain-add-parser-page.reducers';
@@ -67,19 +69,18 @@ export class ChainAddParserPageComponent implements OnInit {
       this.subchainId = params.subchain;
     });
 
+    this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain: ParserChainModel) => {
+      if (!chain) {
+        this.store.dispatch(new fromChainPageActions.LoadChainDetailsAction({
+          id: this.chainId
+        }));
+      }
+    });
+
     this.store.dispatch(new fromActions.GetParserTypesAction());
 
     this.store.pipe(select(getParserTypes)).subscribe((parserTypes) => {
       this.typesList = parserTypes;
     });
-
-    // this.store.pipe(select(getParsers)).subscribe((parsers) => {
-    //   this.parsersList = parsers || [];
-
-    //   if (this.parsersList.length) {
-    //     this.addParserForm.addControl('parentId', new FormControl(null));
-    //     this.addParserForm.addControl('outputs', new FormControl(''));
-    //   }
-    // });
   }
 }

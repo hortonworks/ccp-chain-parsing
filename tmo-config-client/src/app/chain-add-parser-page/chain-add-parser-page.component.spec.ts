@@ -3,20 +3,26 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { StoreModule } from '@ngrx/store';
+import { Store, StoreModule } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { of } from 'rxjs';
 
+import * as fromChainPageReducers from '../chain-page/chain-page.reducers';
+
 import { ChainAddParserPageComponent } from './chain-add-parser-page.component';
-import { reducer } from './chain-add-parser-page.reducers';
+import { AddParserPageState, reducer } from './chain-add-parser-page.reducers';
 
 const fakeActivatedRoute = {
-  params: of({})
+  params: of({
+    id: '456'
+  })
 };
 
 describe('ChainAddParserPageComponent', () => {
   let component: ChainAddParserPageComponent;
   let fixture: ComponentFixture<ChainAddParserPageComponent>;
+  let store: Store<AddParserPageState>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -27,11 +33,20 @@ describe('ChainAddParserPageComponent', () => {
         ReactiveFormsModule,
         NoopAnimationsModule,
         StoreModule.forRoot({
-          'chain-add-parser-page': reducer
+          'chain-add-parser-page': reducer,
+          'chain-page': fromChainPageReducers.reducer
         }),
         RouterTestingModule
       ],
       providers: [
+        provideMockStore({ initialState: {
+          'chain-add-parser-page': {},
+          'chain-page': {
+            chains: {
+              456: {}
+            }
+          }
+        } }),
         { provide: ActivatedRoute, useFactory: () => fakeActivatedRoute }
       ]
     })
@@ -42,9 +57,17 @@ describe('ChainAddParserPageComponent', () => {
     fixture = TestBed.createComponent(ChainAddParserPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    store = TestBed.get(Store);
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should load the main chain', () => {
+    const spy = spyOn(store, 'dispatch');
+    component.ngOnInit();
+    expect(spy).toHaveBeenCalled();
   });
 });
