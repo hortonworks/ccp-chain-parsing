@@ -8,3 +8,8 @@ export interface SampleDataModel {
     type: SampleDataType;
     source: string;
 }
+
+export interface SampleDataRequestModel {
+    type: SampleDataType;
+    source: string[];
+}
