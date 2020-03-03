@@ -229,6 +229,30 @@ export function reducer(
         path: state.path.filter(chainId => !action.payload.chainId.includes(chainId))
       };
     }
+    case chainPageActions.SET_ROUTE_AS_DEFAULT: {
+      const routes = Object.keys(state.routes).reduce((acc, routeId) => {
+        if (state.routes[routeId].default === true) {
+          acc[routeId] = {
+            ...state.routes[routeId],
+            default: false
+          };
+        } else if (action.payload.routeId === routeId) {
+          acc[routeId] = {
+            ...state.routes[routeId],
+            default: true
+          };
+        } else {
+          acc[routeId] = state.routes[routeId];
+        }
+        return acc;
+      }, {});
+      return {
+        ...state,
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parserId),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
+        routes
+      };
+    }
   }
   return state;
 }

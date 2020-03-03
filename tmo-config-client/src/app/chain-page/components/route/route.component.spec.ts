@@ -166,4 +166,31 @@ describe('RouteComponent', () => {
     });
     expect(spy).not.toHaveBeenCalled();
   });
+
+  it('should dispatch set default route action', () => {
+    const spy = spyOn(store, 'dispatch');
+    component.parser = {
+      id: '101112',
+      name: 'some parser',
+      type: 'foo'
+    };
+    component.subchain = {
+      id: '456',
+      name: 'some chain',
+      parsers: ['101112']
+    };
+    component.onDefaultCheckboxChange(new Event('click'), {
+      id: '123',
+      name: 'some route',
+      default: false,
+      subchain: '456'
+    });
+    expect(spy).toHaveBeenCalledWith(
+      new fromActions.SetRouteAsDefaultAction({
+        chainId: '456',
+        parserId: '101112',
+        routeId: '123',
+      })
+    );
+  });
 });

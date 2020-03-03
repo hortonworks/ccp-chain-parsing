@@ -675,6 +675,55 @@ describe('chain-page: reducers', () => {
     expect(newState.dirtyChains).toEqual([]);
     expect(newState.dirtyParsers).toEqual([]);
   });
+
+  it('set the default route (only one is allowed)', () => {
+    const state = {
+      chains: {
+        123: {
+          id: '123',
+          name: 'chain',
+          parsers: ['456']
+        }
+      },
+      parsers: {
+        456: {
+          id: '456',
+          name: 'parser',
+          type: 'foo'
+        }
+      },
+      routes: {
+        678: {
+          id: '678',
+          name: 'route',
+          default: false,
+          subchain: '444'
+        },
+        91011: {
+          id: '91011',
+          name: 'route 2',
+          default: true,
+          subchain: '555'
+        }
+      },
+      dirtyParsers: [],
+      dirtyChains: [],
+      path: [],
+      error: '',
+      parserToBeInvestigated: '',
+    };
+    const newState = fromReducers.reducer(state,
+      new fromActions.SetRouteAsDefaultAction({
+        chainId: '123',
+        parserId: '456',
+        routeId: '678'
+      })
+    );
+    expect(newState.dirtyChains).toEqual(['123']);
+    expect(newState.dirtyParsers).toEqual(['456']);
+    expect(newState.routes['91011'].default).toBe(false);
+    expect(newState.routes['678'].default).toBe(true);
+  });
 });
 
 describe('chain page reducer utils: uniqueAdd', () => {

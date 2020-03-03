@@ -35,7 +35,7 @@
               "id": "1234r",
               "name": "Dummy Route 1",
               "matchingValue": "%ASA-7-609001",
-              "default": false,
+              "default": true,
               "subchain": {
                 "id": "444",
                 "name": "Dummy SubChain A",

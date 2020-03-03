@@ -30,6 +30,7 @@ export const GET_FORM_CONFIGS_FAIL = '[Chain Details] get form configs fail';
 export const ADD_ROUTE = '[Chain Details] add route';
 export const UPDATE_ROUTE = '[Chain Details] update route';
 export const REMOVE_ROUTE = '[Chain Details] remove route';
+export const SET_ROUTE_AS_DEFAULT = '[Chain Details] set route as default';
 export const ADD_TO_PATH = '[Chain Details] add to path';
 export const REMOVE_FROM_PATH = '[Chain Details] remove from path';
 
@@ -163,6 +164,15 @@ export class RemoveFromPathAction implements Action {
   constructor(public payload: { chainId: string[] }) {}
 }
 
+export class SetRouteAsDefaultAction implements Action {
+  readonly type = SET_ROUTE_AS_DEFAULT;
+  constructor(public payload: {
+    chainId: string,
+    parserId: string,
+    routeId: string
+  }) {}
+}
+
 export type ChainDetailsAction = LoadChainDetailsAction
   | LoadChainDetailsSuccessAction
   | LoadChainDetailsFailAction
@@ -183,5 +193,6 @@ export type ChainDetailsAction = LoadChainDetailsAction
   | AddRouteAction
   | UpdateRouteAction
   | RemoveRouteAction
+  | SetRouteAsDefaultAction
   | AddToPathAction
   | RemoveFromPathAction;
