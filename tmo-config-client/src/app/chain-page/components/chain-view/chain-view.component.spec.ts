@@ -33,7 +33,6 @@ describe('ChainViewComponent', () => {
       type: 'Grok',
       config: {},
       input: '',
-      outputs: ''
     }
   ];
 
