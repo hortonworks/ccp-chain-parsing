@@ -22,6 +22,8 @@ export class ChainListPageComponent implements OnInit {
   totalRecords = 200;
   chainDataSorted$: Observable<ChainModel[]>;
   sortDescription$: BehaviorSubject<{key: string, value: string}> = new BehaviorSubject({ key: 'name', value: '' });
+  newChainForm: FormGroup;
+
   constructor(
     private store: Store<ChainListPageState>,
     private fb: FormBuilder,
@@ -39,9 +41,6 @@ export class ChainListPageComponent implements OnInit {
       switchMap(([ chains, sortDescription ]) => this.sortTable(chains, sortDescription))
     );
   }
-
-
-  newChainForm: FormGroup;
 
   get chainName() {
     return this.newChainForm.get('chainName') as FormControl;
@@ -64,9 +63,9 @@ export class ChainListPageComponent implements OnInit {
     this.isChainModalVisible = false;
   }
 
-  sortTable(data, sortDescription): Observable<[]> {
+  sortTable(data: ChainModel[], sortDescription): Observable<ChainModel[]> {
     const sortValue = sortDescription.value;
-    const newData = data.slice().sort((a, b): number => {
+    const newData = (data || []).slice().sort((a, b) => {
       const first = a.name.toLowerCase();
       const second = b.name.toLowerCase();
       if (sortValue === 'ascend') {

@@ -63,10 +63,7 @@ describe('chain-list-page: reducers', () => {
     const previousState = { items: itemList, loading: true, error: ''};
 
     expect(
-      fromReducers.reducer(previousState, new fromActions.DeleteChainSuccessAction([{
-        id: 'id1',
-        name: 'Chain 1'
-      }]))
+      fromReducers.reducer(previousState, new fromActions.DeleteChainSuccessAction('id2'))
     ).toEqual({
       ...previousState,
       loading: false,

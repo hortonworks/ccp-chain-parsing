@@ -58,9 +58,9 @@ export class ChainListEffects {
     switchMap((action: fromActions.DeleteChainAction) => {
       return this.chainListService.deleteChain(action.chainId)
         .pipe(
-          map((chains: ChainModel[]) => {
+          map(() => {
             this.messageService.create('success', action.chainId + ' deleted Successfully');
-            return new fromActions.DeleteChainSuccessAction(chains);
+            return new fromActions.DeleteChainSuccessAction(action.chainId);
           }),
           catchError((error: { message: string }) => {
             this.messageService.create('error', error.message);

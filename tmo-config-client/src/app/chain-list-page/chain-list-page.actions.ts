@@ -38,7 +38,7 @@ export class DeleteChainAction implements Action {
 
 export class DeleteChainSuccessAction implements Action {
   readonly type = DELETE_CHAIN_SUCCESS;
-  constructor(public chains: ChainModel[]) {}
+  constructor(public chainId: string) {}
 }
 
 export class DeleteChainFailAction implements Action {

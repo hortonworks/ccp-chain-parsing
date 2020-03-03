@@ -132,7 +132,7 @@ describe('ChainListPage: effects', () => {
 
     effects.deleteChain$.subscribe(result => {
       expect(result).toEqual(
-        new fromActions.DeleteChainSuccessAction(initialValue)
+        new fromActions.DeleteChainSuccessAction('id1')
       );
     });
 
