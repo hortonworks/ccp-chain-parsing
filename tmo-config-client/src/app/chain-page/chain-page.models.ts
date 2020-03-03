@@ -28,22 +28,16 @@ export interface ParserModel {
   id: string;
   type: string;
   name: string;
-  parentId?: string;
-  chainId?: string;
   config?: any;
   input?: any;
-  outputs?: any;
 }
 
 export interface PartialParserModel {
   id?: string;
   type?: string;
   name?: string;
-  parentId?: string;
-  chainId?: string;
   config?: any;
   input?: any;
-  outputs?: any;
 }
 
 export interface ChainDetailsModel {
