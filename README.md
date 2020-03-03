@@ -99,10 +99,10 @@ This can help you to fire up our services locally and also to serve as documenta
 
 ## Running our services locally
 The only thing you need to do after checking out this repo is the following:
-- You need to have Docker installed on your machine
-- Get into the root directory of this repo
+- Ensure you have Docker installed on your machine.
+- Navigate into the root directory of this repo in your terminal.
 - Run ```docker-compose up```
-The first time this going to build two images based on the latest version of our repo. This could take 2-4 minutes depending on your computer. When the build is done it's going to fire up the required services and build up the connections between them to make the project work.
+The first time this command is run, it is going to build two images based on the latest version of our repo. This could take 2-4 minutes depending on your computer. When the build is done, it's going to fire up the required services and build up the connections between them to make the project work.
 
 From this point, you can reach our GUI in the following URL:
 ```http://localhost:4200```
@@ -119,8 +119,10 @@ Either way, you can:
 - Run ```docker-compose down```
 This will shut down our services and the blonging contiainers running in Docker.
 
-## Rebuilding Docker images in case you pulled down updates from our repo
-The only thing you need to do in this case is, in addition, the command described above is applying the ```--build``` flag like:
-```docker-compose up --build```
+## Rebuilding Docker images after pulling down updates from our repo
+The only thing you need to do in this case is run the compose command with the ```--build``` flag:
+```bash
+docker-compose up --build
+```
 
-Whit this, every time you making or pulling down new changes form our git repo you can update your Docker images.
+Every time you make or pull down new changes from our git repo, you should update your Docker images with the above command.
