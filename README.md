@@ -1,7 +1,32 @@
 # ccp-tmo-search-client
 
+## Quick Start
+
+1. Clone the repository locally. If you have ssh setup, run:
+```bash
+$ git clone git@github.com:hortonworks/ccp-tmo-search-client.git
+```
+Otherwise, use https:
+```bash
+$ git clone https://github.com/hortonworks/ccp-tmo-search-client.git
+```
+
+2. From inside the cloned directory, run the following to build a docker container. This command will take several minutes.
+```bash
+docker-compose up
+```
+3. Once you see the following message in your terminal, visit `http://localhost:4200/` in your browser.
+```bash
+client_1       |       You can reach our UI by using CMD + Click on the link below
+client_1       |       or copying it to your browser.
+client_1       |       http://localhost:4200
+```
+
 Contributing
 ============
+
+## With the Mock API
+This scenario is good for developing the UI against backend services that do not exist yet.
 
 Make sure you have the latest Node (LTS).
 
@@ -11,9 +36,9 @@ The client code and the mock service to get some mock data via http.
 ```bash
 $ git clone git@github.com:hortonworks/ccp-tmo-search-client.git
 ```
-Client Dev Server
-A dev server that uses the proxy configuration set in proxy.conf.mock.json
-======
+### Client Development Server
+A dev server that uses the proxy configuration set in proxy.conf.dev.json
+
 ```bash
 $ cd tmo-config-client
 ```
@@ -26,8 +51,7 @@ $ npm ci
 $ npm run start:dev
 ```
 
-Mock API
-========
+### Mock API
 
 ```bash
 $ cd tmo-config-api
@@ -39,6 +63,27 @@ $ npm ci
 
 ```bash
 $ npm start
+```
+
+## With REST services
+If you would like to develop the UI using services that currently exist.
+
+```bash
+docker-compose up
+```
+
+```bash
+$ cd tmo-config-client
+```
+
+```bash
+$ npm ci
+```
+
+```bash
+$ npm run start:dev -- --port=4201
+// port 4200 is being used by docker
+// serve the app on another port for development
 ```
 
 # Dockerization and setup for docker-compose
