@@ -21,7 +21,7 @@ public final class Regex {
      * Instead use {@link Regex#of(String)}.
      */
     private Regex(String regex) {
-        this.regex = Objects.requireNonNull(regex);
+        this.regex = Objects.requireNonNull(regex, "A valid regular expression is required.");
         this.pattern = Pattern.compile(regex);
     }
 

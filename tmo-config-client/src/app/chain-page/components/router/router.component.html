@@ -19,7 +19,7 @@
         </nz-form-item>
       </nz-tab>
       <nz-tab nzTitle="Config">
-        <div class="router-config" *ngIf="parser.config">
+        <div class="router-config" *ngIf="parser.routing">
           <div class="matching-field">
             <nz-form-item>
               <nz-form-label
@@ -34,7 +34,7 @@
                   nz-input
                   (blur)="onMatchingFieldBlur($event, parser)"
                   placeholder="Add matching field"
-                  value="{{ parser.config.matchingField }}"
+                  value="{{ parser.routing.matchingField }}"
                 />
               </nz-form-control>
             </nz-form-item>
@@ -49,7 +49,7 @@
               Add route
             </a>
             <app-route
-              *ngFor="let routeId of parser.config.routes; trackBy: trackByFn"
+              *ngFor="let routeId of parser.routing.routes; trackBy: trackByFn"
                 [parser]="parser"
                 [routeId]="routeId"
                 (chainClick)="onSubchainClick($event)"

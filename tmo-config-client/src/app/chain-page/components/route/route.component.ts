@@ -79,6 +79,16 @@ export class RouteComponent implements OnInit, OnDestroy {
     );
   }
 
+  onDefaultCheckboxChange(event: Event, route: RouteModel) {
+    this.store.dispatch(
+      new fromActions.SetRouteAsDefaultAction({
+        chainId: this.subchain.id,
+        parserId: this.parser.id,
+        routeId: route.id
+      })
+    );
+  }
+
   ngOnDestroy() {
     if (this.getChainSub) {
       this.getChainSub.unsubscribe();

@@ -38,12 +38,12 @@ public class SyslogParser implements Parser {
     }
 
     public SyslogParser withSpecification(SyslogSpecification specification) {
-        this.specification = Objects.requireNonNull(specification);
+        this.specification = Objects.requireNonNull(specification, "A valid specification is required.");
         return this;
     }
 
     public SyslogParser withInputField(FieldName inputField) {
-        this.inputField = Objects.requireNonNull(inputField);
+        this.inputField = Objects.requireNonNull(inputField, "A valid input field is required.");
         return this;
     }
 

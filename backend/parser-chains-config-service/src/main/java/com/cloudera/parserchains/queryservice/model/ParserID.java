@@ -24,15 +24,18 @@ public class ParserID {
         return new ParserID(clazz.getCanonicalName());
     }
 
+    /**
+     * Returns the {@link ParserID} used to identify a router.
+     */
     public static ParserID router() {
-        return ParserID.of(RouterLink.class);
+        return new ParserID("Router");
     }
 
     /**
      * Private constructor.  See {@link ParserID#of(Class)}.
      */
     private ParserID(String id) {
-        this.id = Objects.requireNonNull(id);
+        this.id = Objects.requireNonNull(id, "A valid ID is required.");
     }
 
     public String getId() {

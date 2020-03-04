@@ -231,13 +231,13 @@ public class ChainControllerTest {
      * }
      */
     @Multiline
-    static String parserChain;
+    static String test_chain;
 
     @Test
     void test_chain() throws Exception {
         RequestBuilder postRequest = MockMvcRequestBuilders
                 .post(API_PARSER_TEST_URL)
-                .content(parserChain)
+                .content(test_chain)
                 .contentType(MediaType.APPLICATION_JSON);
         mvc.perform(postRequest)
                 .andExpect(status().isOk())
@@ -283,13 +283,13 @@ public class ChainControllerTest {
      * }
      */
     @Multiline
-    static String parserChainMultipleMessages;
+    static String test_chain_with_2_messages;
 
     @Test
     void test_chain_with_2_messages() throws Exception {
         RequestBuilder postRequest = MockMvcRequestBuilders
                 .post(API_PARSER_TEST_URL)
-                .content(parserChainMultipleMessages)
+                .content(test_chain_with_2_messages)
                 .contentType(MediaType.APPLICATION_JSON);
         mvc.perform(postRequest)
                 .andExpect(status().isOk())
@@ -312,5 +312,62 @@ public class ChainControllerTest {
                 .andExpect(jsonPath("$.results.[1].log.message", is("success")))
                 .andExpect(jsonPath("$.results.[1].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
                 .andReturn();
+    }
+
+    /**
+     * {
+     *   "sampleData": {
+     *     "type": "manual",
+     *     "source": [
+     *          "Marie, Curie",
+     *          "Ada, Lovelace"
+     *      ]
+     *   },
+     *   "chainConfig": {
+     *     "id": "3b31e549-340f-47ce-8a71-d702685137f4",
+     *     "name": "Chain with Invalid Router",
+     *     "parsers": [
+     *       {
+     *         "id": "61e99275-e076-46b6-aaed-8acce58cc0e4",
+     *         "name": "Invalid Router",
+     *         "type": "Router",
+     *         "config": {
+     *         },
+     *         "outputs": {
+     *         },
+     *         "routing":{
+     *           "routes":[
+     *            ]
+     *         }
+     *       }
+     *     ]
+     *   }
+     * }
+     */
+    @Multiline
+    static String test_invalid_chain_with_2_messages;
+
+    @Test
+    void test_invalid_chain_with_2_messages() throws Exception {
+        RequestBuilder postRequest = MockMvcRequestBuilders
+                .post(API_PARSER_TEST_URL)
+                .content(test_invalid_chain_with_2_messages)
+                .contentType(MediaType.APPLICATION_JSON);
+         mvc.perform(postRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results", instanceOf(List.class)))
+                .andExpect(jsonPath("$.results", hasSize(2)))
+
+                // the error result for the first message
+                .andExpect(jsonPath("$.results.[0].log.type", is("error")))
+                .andExpect(jsonPath("$.results.[0].log.message",
+                        is("java.lang.IllegalArgumentException: Invalid field name: 'null'")))
+                .andExpect(jsonPath("$.results.[0].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
+
+                 // the error result for the second message
+                .andExpect(jsonPath("$.results.[1].log.type", is("error")))
+                .andExpect(jsonPath("$.results.[1].log.message",
+                        is("java.lang.IllegalArgumentException: Invalid field name: 'null'")))
+                .andExpect(jsonPath("$.results.[1].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")));
     }
 }

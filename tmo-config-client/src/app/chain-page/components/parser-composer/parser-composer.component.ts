@@ -90,7 +90,8 @@ export class ParserComposerComponent implements OnInit {
         route: {
           id: routeId,
           name: routeId,
-          subchain: chainId
+          subchain: chainId,
+          default: false,
         }
       })
     );

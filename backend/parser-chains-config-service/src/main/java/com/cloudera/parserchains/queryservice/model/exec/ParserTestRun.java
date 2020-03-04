@@ -58,6 +58,10 @@ public class ParserTestRun {
     }
 
     public static class ResultLog {
+        public static final String DEFAULT_SUCCESS_MESSAGE = "success";
+        public static final String INFO_TYPE = "info";
+        public static final String ERROR_TYPE = "error";
+
         private String type;
         private String message;
         private String parserId;
@@ -66,27 +70,32 @@ public class ParserTestRun {
             return type;
         }
 
-        public ResultLog setType(String type) {
-            this.type = type;
-            return this;
-        }
-
         public String getMessage() {
             return message;
-        }
-
-        public ResultLog setMessage(String message) {
-            this.message = message;
-            return this;
         }
 
         public String getParserId() {
             return parserId;
         }
 
-        public ResultLog setParserId(String parserId) {
-            this.parserId = parserId;
-            return this;
+        public static ResultLog error(String parserId, String message) {
+            ResultLog log = new ResultLog();
+            log.type = ERROR_TYPE;
+            log.message = message;
+            log.parserId = parserId;
+            return log;
+        }
+
+        public static ResultLog success(String parserId) {
+            return success(parserId, DEFAULT_SUCCESS_MESSAGE);
+        }
+
+        public static ResultLog success(String parserId, String message) {
+            ResultLog log = new ResultLog();
+            log.type = INFO_TYPE;
+            log.message = message;
+            log.parserId = parserId;
+            return log;
         }
     }
 

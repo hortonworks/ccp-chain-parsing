@@ -64,13 +64,13 @@ describe('RouterComponent', () => {
       id: '123',
       name: 'parser',
       type: 'foo',
-      config: {
+      routing: {
         lorem: 'ipsum'
       }
     });
     expect(spy).toHaveBeenCalledWith({
       id: '123',
-      config: {
+      routing: {
         lorem: 'ipsum',
         matchingField: 'trim me!'
       }

@@ -38,12 +38,24 @@ public class ParserSchema {
 
   @JsonProperty("id")
   private String label;
+
   @JsonProperty("type")
   private ParserID id;
+
+  @JsonProperty("name")
   private ParserName name;
+
+  @JsonProperty("config")
   private Map<String, List<ConfigValueSchema>> config;
+
+  @JsonProperty("outputs")
   private Map<String, Object> outputs;
+
+  @JsonProperty("advanced")
   private Map<String, Object> advanced;
+
+  @JsonProperty("routing")
+  private RoutingSchema routing;
 
   public ParserSchema() {
     config = new HashMap<>();
@@ -121,6 +133,15 @@ public class ParserSchema {
     return this;
   }
 
+  public RoutingSchema getRouting() {
+    return routing;
+  }
+
+  public ParserSchema setRouting(RoutingSchema routing) {
+    this.routing = routing;
+    return this;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -129,26 +150,41 @@ public class ParserSchema {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ParserSchema parserSchema = (ParserSchema) o;
+    ParserSchema that = (ParserSchema) o;
     return new EqualsBuilder()
-            .append(id, parserSchema.id)
-            .append(name, parserSchema.name)
-            .append(config, parserSchema.config)
-            .append(outputs, parserSchema.outputs)
-            .append(label, parserSchema.label)
-            .append(advanced, parserSchema.advanced)
+            .append(label, that.label)
+            .append(id, that.id)
+            .append(name, that.name)
+            .append(config, that.config)
+            .append(outputs, that.outputs)
+            .append(advanced, that.advanced)
+            .append(routing, that.routing)
             .isEquals();
   }
 
   @Override
   public int hashCode() {
     return new HashCodeBuilder(17, 37)
+            .append(label)
             .append(id)
             .append(name)
             .append(config)
             .append(outputs)
             .append(advanced)
-            .append(label)
+            .append(routing)
             .toHashCode();
+  }
+
+  @Override
+  public String toString() {
+    return "ParserSchema{" +
+            "label='" + label + '\'' +
+            ", id=" + id +
+            ", name=" + name +
+            ", config=" + config +
+            ", outputs=" + outputs +
+            ", advanced=" + advanced +
+            ", routing=" + routing +
+            '}';
   }
 }

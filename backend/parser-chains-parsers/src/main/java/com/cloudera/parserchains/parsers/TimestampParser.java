@@ -64,7 +64,7 @@ public class TimestampParser implements Parser {
      * @param fieldName The name of the field added to each message.
      */
     public TimestampParser withOutputField(FieldName fieldName) {
-        this.outputField = Objects.requireNonNull(fieldName);
+        this.outputField = Objects.requireNonNull(fieldName, "A valid output field is required.");
         return this;
     }
 
