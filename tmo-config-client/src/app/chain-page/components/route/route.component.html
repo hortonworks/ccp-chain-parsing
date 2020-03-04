@@ -8,6 +8,16 @@
           placeholder="Add matching value"
           value="{{ route.matchingValue }}"
         />
+        <div nz-row *ngIf="!route.default">
+          <label
+            class="set-as-default"
+            nz-checkbox
+            (click)="onDefaultCheckboxChange($event, route)"
+          >Set as default</label>
+        </div>
+        <div nz-row *ngIf="route.default">
+          <span class="default-route">Default route</span>
+        </div>
       </nz-form-control>
     </nz-form-item>
   </div>

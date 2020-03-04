@@ -273,7 +273,8 @@ describe('chain-page: reducers', () => {
     const desiredRoute = {
       id: '456',
       name: 'some route',
-      subchain: ''
+      subchain: '',
+      default: false,
     };
     const state = {
       'chain-page': {
@@ -460,7 +461,7 @@ describe('chain-page: reducers', () => {
           id: '123',
           name: 'parser 1',
           type: 'foo',
-          config: {
+          routing: {
             routes: ['456']
           }
         }
@@ -470,7 +471,8 @@ describe('chain-page: reducers', () => {
           id: '456',
           name: 'route 1',
           matchingValue: 'foo',
-          subchain: null
+          subchain: null,
+          default: false,
         }
       },
       dirtyParsers: [],
@@ -488,7 +490,7 @@ describe('chain-page: reducers', () => {
     expect(newState.routes).toEqual({});
     expect(newState.dirtyChains).toEqual(['678']);
     expect(newState.dirtyParsers).toEqual(['123']);
-    expect(newState.parsers['123'].config.routes).toEqual([]);
+    expect(newState.parsers['123'].routing.routes).toEqual([]);
   });
 
   it('should add a route', () => {
@@ -505,7 +507,7 @@ describe('chain-page: reducers', () => {
           id: '123',
           name: 'parser 1',
           type: 'foo',
-          config: {
+          routing: {
             routes: []
           }
         }
@@ -525,7 +527,8 @@ describe('chain-page: reducers', () => {
         id: '456',
         name: 'route 1',
         matchingValue: 'foo',
-        subchain: null
+        subchain: null,
+        default: false,
       }
     }));
     expect(newState.routes).toEqual({
@@ -533,12 +536,13 @@ describe('chain-page: reducers', () => {
         id: '456',
         name: 'route 1',
         matchingValue: 'foo',
-        subchain: null
+        subchain: null,
+        default: false,
       }
     });
     expect(newState.dirtyChains).toEqual(['678']);
     expect(newState.dirtyParsers).toEqual(['123']);
-    expect(newState.parsers['123'].config.routes).toEqual(['456']);
+    expect(newState.parsers['123'].routing.routes).toEqual(['456']);
   });
 
   it('should update a route', () => {
@@ -555,7 +559,7 @@ describe('chain-page: reducers', () => {
           id: '123',
           name: 'parser 1',
           type: 'foo',
-          config: {
+          routing: {
             routes: []
           }
         }
@@ -565,7 +569,8 @@ describe('chain-page: reducers', () => {
           id: '456',
           name: 'route 1',
           matchingValue: 'foo',
-          subchain: null
+          subchain: null,
+          default: false,
         }
       },
       dirtyParsers: [],
@@ -588,61 +593,12 @@ describe('chain-page: reducers', () => {
         id: '456',
         name: 'route 1 UPDATED',
         matchingValue: 'foo',
-        subchain: null
+        subchain: null,
+        default: false,
       }
     });
     expect(newState.dirtyChains).toEqual(['678']);
     expect(newState.dirtyParsers).toEqual(['123']);
-  });
-
-  it('should add a route', () => {
-    const state = {
-      chains: {
-        678: {
-          id: '678',
-          name: 'chain 1',
-          parsers: ['123']
-        }
-      },
-      parsers: {
-        123: {
-          id: '123',
-          name: 'parser 1',
-          type: 'foo',
-          config: {
-            routes: []
-          }
-        }
-      },
-      routes: {},
-      dirtyParsers: [],
-      dirtyChains: [],
-      path: [],
-      error: '',
-      parserToBeInvestigated: '',
-    };
-
-    const newState = fromReducers.reducer(state, new fromActions.AddRouteAction({
-      chainId: '678',
-      parserId: '123',
-      route: {
-        id: '456',
-        name: 'route 1',
-        matchingValue: 'foo',
-        subchain: null
-      }
-    }));
-    expect(newState.routes).toEqual({
-      456: {
-        id: '456',
-        name: 'route 1',
-        matchingValue: 'foo',
-        subchain: null
-      }
-    });
-    expect(newState.dirtyChains).toEqual(['678']);
-    expect(newState.dirtyParsers).toEqual(['123']);
-    expect(newState.parsers['123'].config.routes).toEqual(['456']);
   });
 
   it('should add a form config by type', () => {
@@ -718,6 +674,55 @@ describe('chain-page: reducers', () => {
     const newState = fromReducers.reducer(state, new fromActions.SaveParserConfigAction({ chainId: '123' }));
     expect(newState.dirtyChains).toEqual([]);
     expect(newState.dirtyParsers).toEqual([]);
+  });
+
+  it('set the default route (only one is allowed)', () => {
+    const state = {
+      chains: {
+        123: {
+          id: '123',
+          name: 'chain',
+          parsers: ['456']
+        }
+      },
+      parsers: {
+        456: {
+          id: '456',
+          name: 'parser',
+          type: 'foo'
+        }
+      },
+      routes: {
+        678: {
+          id: '678',
+          name: 'route',
+          default: false,
+          subchain: '444'
+        },
+        91011: {
+          id: '91011',
+          name: 'route 2',
+          default: true,
+          subchain: '555'
+        }
+      },
+      dirtyParsers: [],
+      dirtyChains: [],
+      path: [],
+      error: '',
+      parserToBeInvestigated: '',
+    };
+    const newState = fromReducers.reducer(state,
+      new fromActions.SetRouteAsDefaultAction({
+        chainId: '123',
+        parserId: '456',
+        routeId: '678'
+      })
+    );
+    expect(newState.dirtyChains).toEqual(['123']);
+    expect(newState.dirtyParsers).toEqual(['456']);
+    expect(newState.routes['91011'].default).toBe(false);
+    expect(newState.routes['678'].default).toBe(true);
   });
 });
 

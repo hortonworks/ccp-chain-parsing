@@ -13,6 +13,7 @@ export interface PartialParserChainModel {
 export interface RouteModel {
   id: string;
   name: string;
+  default: boolean;
   subchain: string | ParserChainModel;
   matchingValue?: string;
 }
@@ -20,6 +21,7 @@ export interface RouteModel {
 export interface PartialRouteModel {
   id?: string;
   name?: string;
+  default?: boolean;
   subchain?: string | ParserChainModel;
   matchingValue?: string;
 }
@@ -31,6 +33,7 @@ export interface ParserModel {
   parentId?: string;
   chainId?: string;
   config?: any;
+  routing?: any;
   input?: any;
   outputs?: any;
 }
@@ -42,6 +45,7 @@ export interface PartialParserModel {
   parentId?: string;
   chainId?: string;
   config?: any;
+  routing?: any;
   input?: any;
   outputs?: any;
 }

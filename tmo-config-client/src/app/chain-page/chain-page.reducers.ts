@@ -166,10 +166,10 @@ export function reducer(
           ...state.parsers,
           [action.payload.parserId]: {
             ...state.parsers[action.payload.parserId],
-            config: {
-              ...(state.parsers[action.payload.parserId].config || {}),
+            routing: {
+              ...(state.parsers[action.payload.parserId].routing || {}),
               routes: [
-                ...((state.parsers[action.payload.parserId].config || {}).routes || []).filter(id => id !== action.payload.route.id),
+                ...((state.parsers[action.payload.parserId].routing || {}).routes || []).filter(id => id !== action.payload.route.id),
                 action.payload.route.id
               ]
             }
@@ -209,9 +209,9 @@ export function reducer(
           ...state.parsers,
           [action.payload.parserId]: {
             ...state.parsers[action.payload.parserId],
-            config: {
-              ...state.parsers[action.payload.parserId].config,
-              routes: state.parsers[action.payload.parserId].config.routes.filter(id => id !== action.payload.routeId)
+            routing: {
+              ...state.parsers[action.payload.parserId].routing,
+              routes: state.parsers[action.payload.parserId].routing.routes.filter(id => id !== action.payload.routeId)
             }
           }
         }
@@ -227,6 +227,30 @@ export function reducer(
       return {
         ...state,
         path: state.path.filter(chainId => !action.payload.chainId.includes(chainId))
+      };
+    }
+    case chainPageActions.SET_ROUTE_AS_DEFAULT: {
+      const routes = Object.keys(state.routes).reduce((acc, routeId) => {
+        if (state.routes[routeId].default === true) {
+          acc[routeId] = {
+            ...state.routes[routeId],
+            default: false
+          };
+        } else if (action.payload.routeId === routeId) {
+          acc[routeId] = {
+            ...state.routes[routeId],
+            default: true
+          };
+        } else {
+          acc[routeId] = state.routes[routeId];
+        }
+        return acc;
+      }, {});
+      return {
+        ...state,
+        dirtyParsers: uniqueAdd(state.dirtyParsers, action.payload.parserId),
+        dirtyChains: uniqueAdd(state.dirtyChains, action.payload.chainId),
+        routes
       };
     }
   }

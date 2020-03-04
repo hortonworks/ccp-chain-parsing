@@ -20,8 +20,8 @@ export class RouterComponent extends ParserComponent {
     const matchingField = ((event.target as HTMLInputElement).value || '').trim();
     this.parserChange.emit({
       id: parser.id,
-      config: {
-        ...(parser.config || {}),
+      routing: {
+        ...(parser.routing || {}),
         matchingField
       }
     });

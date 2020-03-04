@@ -39,7 +39,7 @@ describe('chain parser page: effects', () => {
           id: '123',
           name: 'some parser',
           type: 'Router',
-          config: {
+          routing: {
             routes: ['123']
           }
         },
@@ -89,10 +89,11 @@ describe('chain parser page: effects', () => {
         id: '123',
         name: 'some parser',
         type: 'Router',
-        config: {
+        routing: {
           routes: [{
             id: '123',
             name: 'some route',
+            default: false,
             subchain: {
               id: '456',
               name: 'some chain',
@@ -134,7 +135,7 @@ describe('chain parser page: effects', () => {
             id: '123',
             name: 'some parser',
             type: 'Router',
-            config: {
+            routing: {
               routes: ['123']
             }
           },
@@ -148,7 +149,8 @@ describe('chain parser page: effects', () => {
           123: {
             id: '123',
             name: 'some route',
-            subchain: '456'
+            subchain: '456',
+            default: false,
           }
         }
       }));
@@ -178,7 +180,7 @@ describe('chain parser page: effects', () => {
         id: '123',
         name: 'some parser',
         type: 'Router',
-        config: {
+        routing: {
           routes: [{
             id: '123',
             name: 'some route',
