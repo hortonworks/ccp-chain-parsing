@@ -27,12 +27,6 @@
           [config]="configForm"
         ></app-custom-form>
       </nz-tab>
-      <nz-tab nzTitle="Outputs">
-        <app-custom-form
-          *ngIf="areFormsReadyToRender && outputsForm != null"
-          [config]="outputsForm"
-        ></app-custom-form>
-      </nz-tab>
       <nz-tab nzTitle="Advanced">
         <app-advanced-editor
           [config]="parser.config"
