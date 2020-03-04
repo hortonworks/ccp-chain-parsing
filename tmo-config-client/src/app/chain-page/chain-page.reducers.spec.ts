@@ -21,14 +21,12 @@ describe('chain-page: reducers', () => {
           name: 'Syslog',
           type: 'Grok',
           config: {},
-          input: '',
         },
         456: {
           id: '456',
           name: 'Asa',
           type: 'Grok',
           config: {},
-          input: '',
         }
       },
       dirtyParsers: [],
@@ -57,7 +55,6 @@ describe('chain-page: reducers', () => {
           name: 'Syslog',
           type: 'Grok',
           config: {},
-          input: '',
         }
       },
       routes: {},

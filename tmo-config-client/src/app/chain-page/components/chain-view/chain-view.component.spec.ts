@@ -32,7 +32,6 @@ describe('ChainViewComponent', () => {
       name: 'Syslog',
       type: 'Grok',
       config: {},
-      input: '',
     }
   ];
 

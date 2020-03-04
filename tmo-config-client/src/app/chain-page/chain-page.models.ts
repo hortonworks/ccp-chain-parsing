@@ -29,7 +29,6 @@ export interface ParserModel {
   type: string;
   name: string;
   config?: any;
-  input?: any;
 }
 
 export interface PartialParserModel {
@@ -37,7 +36,6 @@ export interface PartialParserModel {
   type?: string;
   name?: string;
   config?: any;
-  input?: any;
 }
 
 export interface ChainDetailsModel {
