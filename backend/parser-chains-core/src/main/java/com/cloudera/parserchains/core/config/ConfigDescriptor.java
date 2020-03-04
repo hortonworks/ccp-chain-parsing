@@ -79,7 +79,7 @@ public class ConfigDescriptor {
         }
 
         public Builder name(ConfigName name) {
-            this.name = Objects.requireNonNull(name);
+            this.name = Objects.requireNonNull(name, "A name is required.");
             return this;
         }
 
@@ -88,7 +88,7 @@ public class ConfigDescriptor {
         }
 
         public Builder description(ConfigDescription description) {
-            this.description = Objects.requireNonNull(description);
+            this.description = Objects.requireNonNull(description, "A description is required.");
             return this;
         }
 

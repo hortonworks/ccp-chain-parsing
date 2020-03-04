@@ -15,6 +15,7 @@ import com.cloudera.parserchains.core.config.ConfigValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -74,7 +75,7 @@ public class DelimitedTextParser implements Parser {
      * @param delimiter A character or regular expression defining the delimiter used to split the text.
      */
     public DelimitedTextParser withDelimiter(Regex delimiter) {
-        this.delimiter = Objects.requireNonNull(delimiter);
+        this.delimiter = Objects.requireNonNull(delimiter, "A valid delimited is required.");
         return this;
     }
 
@@ -91,8 +92,8 @@ public class DelimitedTextParser implements Parser {
         return this;
     }
 
-    List<OutputField> getOutputFields() {
-        return outputFields;
+    public List<OutputField> getOutputFields() {
+        return Collections.unmodifiableList(outputFields);
     }
 
     /**

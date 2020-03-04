@@ -44,13 +44,13 @@ public class AlwaysFailParser implements Parser {
     }
 
     public AlwaysFailParser withError(String message) {
-        Objects.requireNonNull(message);
+        Objects.requireNonNull(message, "A valid error message is required.");
         error = new IllegalStateException(message);
         return this;
     }
 
     public AlwaysFailParser withError(Throwable error) {
-        this.error = Objects.requireNonNull(error);
+        this.error = Objects.requireNonNull(error, "A valid error message is required.");
         return this;
     }
 

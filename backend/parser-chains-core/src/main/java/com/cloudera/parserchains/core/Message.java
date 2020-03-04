@@ -40,7 +40,7 @@ public class Message {
          * @return
          */
         public Builder withFields(Message message) {
-            Objects.requireNonNull(message);
+            Objects.requireNonNull(message, "A message is required.");
             this.fields.putAll(message.fields);
             return this;
         }
@@ -51,7 +51,7 @@ public class Message {
          * @return
          */
         public Builder clone(Message message) {
-            Objects.requireNonNull(message);
+            Objects.requireNonNull(message, "A message to clone is required.");
             this.fields.putAll(message.fields);
             this.error = message.error;
             this.createdBy = message.createdBy;
@@ -65,7 +65,8 @@ public class Message {
          * @return
          */
         public Builder addField(FieldName name, FieldValue value) {
-            this.fields.put(Objects.requireNonNull(name), Objects.requireNonNull(value));
+            this.fields.put(Objects.requireNonNull(name, "A valid field name is required."),
+                    Objects.requireNonNull(value, "A valid field value is required."));
             return this;
         }
 

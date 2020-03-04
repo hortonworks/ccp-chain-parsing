@@ -1,5 +1,6 @@
 package com.cloudera.parserchains.queryservice.service;
 
+import com.cloudera.parserchains.core.ChainLink;
 import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 
@@ -17,5 +18,5 @@ public interface ChainExecutorService {
      * @param textToParse The text to parse.
      * @return The result of parsing the text with the parser chain.
      */
-    ParserResult execute(ParserChainSchema chain, String textToParse);
+    ParserResult execute(ChainLink chain, String textToParse);
 }

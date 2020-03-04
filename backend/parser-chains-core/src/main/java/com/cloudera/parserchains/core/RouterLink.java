@@ -19,8 +19,8 @@ public class RouterLink implements ChainLink {
         final ChainLink next;
 
         public Route(Regex regex, ChainLink next) {
-            this.regex = Objects.requireNonNull(regex);
-            this.next = Objects.requireNonNull(next);
+            this.regex = Objects.requireNonNull(regex, "A valid regular expression is required.");
+            this.next = Objects.requireNonNull(next, "A valid next link is required.");
         }
     }
 
@@ -36,7 +36,7 @@ public class RouterLink implements ChainLink {
      * @param linkName The name assigned to this link in the chain.
      */
     public RouterLink(LinkName linkName) {
-        this.linkName = Objects.requireNonNull(linkName);
+        this.linkName = Objects.requireNonNull(linkName, "A link name is required.");
         this.routes = new ArrayList<>();
         this.defaultRoute = Optional.empty();
     }

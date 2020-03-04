@@ -1,13 +1,16 @@
 package com.cloudera.parserchains.queryservice.controller;
 
+import com.cloudera.parserchains.core.ChainLink;
 import com.cloudera.parserchains.queryservice.config.AppProperties;
 import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResults;
 import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
+import com.cloudera.parserchains.queryservice.service.ChainBuilderService;
 import com.cloudera.parserchains.queryservice.service.ChainExecutorService;
 import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
+import com.cloudera.parserchains.queryservice.service.InvalidParserException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -32,6 +35,7 @@ import static com.cloudera.parserchains.queryservice.common.ApplicationConstants
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_READ_URL;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_PARSER_TEST;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.PARSER_CONFIG_BASE_URL;
+import static com.cloudera.parserchains.queryservice.model.exec.ParserTestRun.ResultLog.error;
 
 /**
  * The controller responsible for operations on parser chains.
@@ -42,6 +46,9 @@ public class ChainController {
 
     @Autowired
     ChainPersistenceService chainPersistenceService;
+
+    @Autowired
+    ChainBuilderService chainBuilderService;
 
     @Autowired
     ChainExecutorService chainExecutorService;
@@ -145,17 +152,34 @@ public class ChainController {
 
     @ApiOperation(value = "Executes a parser chain to parse sample data.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "A list of parser results.")
+            @ApiResponse(code = 200, message = "The result of parsing the message."),
     })
     @PostMapping(value = API_PARSER_TEST)
     ResponseEntity<ParserResults> test(
             @ApiParam(name = "testRun", value = "Describes the parser chain test to run.", required = true)
             @RequestBody ParserTestRun testRun) throws IOException {
+
         ParserResults results = new ParserResults();
         for(String textToParse: testRun.getSampleData().getSource()) {
-            ParserResult result = chainExecutorService.execute(testRun.getParserChainSchema(), textToParse);
+            ParserResult result = doTest(testRun.getParserChainSchema(), textToParse);
             results.addResult(result);
         }
+
+        // there must be 1 result for each message that needs parsed
         return ResponseEntity.ok(results);
+    }
+
+    private ParserResult doTest(ParserChainSchema schema, String textToParse) {
+        ParserResult result;
+        try {
+            ChainLink chain = chainBuilderService.build(schema);
+            result = chainExecutorService.execute(chain, textToParse);
+
+        } catch(InvalidParserException e) {
+            String parserId = e.getBadParser().getLabel();
+            ParserTestRun.ResultLog log = error(parserId, e.getMessage());
+            result = new ParserResult().setLog(log);
+        }
+        return result;
     }
 }

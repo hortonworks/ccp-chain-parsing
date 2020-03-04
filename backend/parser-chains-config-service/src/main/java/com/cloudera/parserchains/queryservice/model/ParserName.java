@@ -1,5 +1,6 @@
 package com.cloudera.parserchains.queryservice.model;
 
+import com.cloudera.parserchains.core.RouterLink;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -24,10 +25,17 @@ public class ParserName {
     }
 
     /**
+     * Returns the {@link ParserName} associated with a router.
+     */
+    public static ParserName router() {
+        return ParserName.of("Router");
+    }
+
+    /**
      * Private constructor, use {@link ParserName#of(String)} instead.
      */
     private ParserName(String name) {
-        this.name = Objects.requireNonNull(name);
+        this.name = Objects.requireNonNull(name, "A valid name is required.");
     }
 
     public String getName() {

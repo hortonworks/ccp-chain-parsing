@@ -4,7 +4,6 @@ import com.cloudera.parserchains.core.catalog.AnnotationBasedParserInfoBuilder;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
 import com.cloudera.parserchains.core.catalog.ParserInfoBuilder;
 import com.cloudera.parserchains.parsers.DelimitedTextParser;
-import com.cloudera.parserchains.parsers.SyslogParser;
 import com.cloudera.parserchains.parsers.TimestampParser;
 import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.ParserName;
@@ -60,7 +59,7 @@ public class ParserTestRunTest {
      *       "outputs" : { }
      *     } ]
      *   }
-     *}
+     * }
      */
     @Multiline
     private String expected;
