@@ -46,11 +46,6 @@ public class TimestampParser implements Parser {
     }
 
     @Override
-    public List<FieldName> outputFields() {
-        return Arrays.asList(outputField);
-    }
-
-    @Override
     public List<ConfigDescriptor> validConfigurations() {
         return configurer.validConfigurations();
     }

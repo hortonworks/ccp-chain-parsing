@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Defines the structure of a router contained within a parser chain.
+ *
  * <p>Only a router will contain these fields.
  */
 @JsonPropertyOrder({"matchingField", "routes"})

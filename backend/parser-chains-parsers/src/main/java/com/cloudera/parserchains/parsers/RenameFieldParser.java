@@ -55,11 +55,6 @@ public class RenameFieldParser implements Parser {
     }
 
     @Override
-    public List<FieldName> outputFields() {
-        return new ArrayList<>(fieldsToRename.keySet());
-    }
-
-    @Override
     public List<ConfigDescriptor> validConfigurations() {
         return configurer.validConfigurations();
     }

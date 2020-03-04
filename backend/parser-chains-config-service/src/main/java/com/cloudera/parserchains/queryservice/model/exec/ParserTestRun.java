@@ -21,90 +21,32 @@ package com.cloudera.parserchains.queryservice.model.exec;
 import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Defines the data model for when a request is made to execute a parser chain on
+ * a set of sample data.  This is also called the "Live View" feature.
+ *
+ * <p>This is the top-level class defining the data model for the "Live View" feature.
+ */
 public class ParserTestRun {
 
-    public static class SampleData {
-        private String type;
-        private List<String> source;
-
-        public SampleData() {
-            this.source = new ArrayList<>();
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public SampleData setType(String type) {
-            this.type = type;
-            return this;
-        }
-
-        public List<String> getSource() {
-            return source;
-        }
-
-        public void setSource(List<String> source) {
-            this.source = source;
-        }
-
-        public SampleData addSource(String toParse) {
-            this.source.add(toParse);
-            return this;
-        }
-    }
-
-    public static class ResultLog {
-        public static final String DEFAULT_SUCCESS_MESSAGE = "success";
-        public static final String INFO_TYPE = "info";
-        public static final String ERROR_TYPE = "error";
-
-        private String type;
-        private String message;
-        private String parserId;
-
-        public String getType() {
-            return type;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public String getParserId() {
-            return parserId;
-        }
-
-        public static ResultLog error(String parserId, String message) {
-            ResultLog log = new ResultLog();
-            log.type = ERROR_TYPE;
-            log.message = message;
-            log.parserId = parserId;
-            return log;
-        }
-
-        public static ResultLog success(String parserId) {
-            return success(parserId, DEFAULT_SUCCESS_MESSAGE);
-        }
-
-        public static ResultLog success(String parserId, String message) {
-            ResultLog log = new ResultLog();
-            log.type = INFO_TYPE;
-            log.message = message;
-            log.parserId = parserId;
-            return log;
-        }
-    }
-
+    /**
+     * The sample data that needs to be parsed.
+     */
     @JsonProperty("sampleData")
     private SampleData sampleData;
 
+    /**
+     * Defines the parser chain that needs to be constructed.
+     */
     @JsonProperty("chainConfig")
     private ParserChainSchema parserChainSchema;
 
+    /**
+     * Describes the result of parsing each message with the parser chain.
+     * <p>There should be one result for each message received.
+     */
     @JsonProperty("result")
     private List<ParserResult> result;
 

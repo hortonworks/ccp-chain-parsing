@@ -3,10 +3,11 @@ package com.cloudera.parserchains.queryservice.controller;
 import com.cloudera.parserchains.core.ChainLink;
 import com.cloudera.parserchains.queryservice.config.AppProperties;
 import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
-import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResults;
 import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
+import com.cloudera.parserchains.queryservice.model.exec.ResultLog;
+import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ChainBuilderService;
 import com.cloudera.parserchains.queryservice.service.ChainExecutorService;
 import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
@@ -35,7 +36,7 @@ import static com.cloudera.parserchains.queryservice.common.ApplicationConstants
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_READ_URL;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_PARSER_TEST;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.PARSER_CONFIG_BASE_URL;
-import static com.cloudera.parserchains.queryservice.model.exec.ParserTestRun.ResultLog.error;
+import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.error;
 
 /**
  * The controller responsible for operations on parser chains.
@@ -75,8 +76,7 @@ public class ChainController {
     @PostMapping(value = API_CHAINS)
     ResponseEntity<ParserChainSchema> create(
             @ApiParam(name = "parserChain", value = "The parser chain to create.", required = true)
-            @RequestBody ParserChainSchema chain)
-            throws IOException {
+            @RequestBody ParserChainSchema chain) throws IOException {
         String configPath = appProperties.getConfigPath();
         ParserChainSchema createdChain = chainPersistenceService.create(chain, Paths.get(configPath));
         if (null == createdChain) {
@@ -96,8 +96,7 @@ public class ChainController {
     @GetMapping(value = API_CHAINS + "/{id}")
     ResponseEntity<ParserChainSchema> read(
             @ApiParam(name = "id", value = "The ID of the parser chain to retrieve.", required = true)
-            @PathVariable String id)
-            throws IOException {
+            @PathVariable String id) throws IOException {
         String configPath = appProperties.getConfigPath();
         ParserChainSchema chain = chainPersistenceService.read(id, Paths.get(configPath));
         if (null == chain) {
@@ -117,8 +116,7 @@ public class ChainController {
             @ApiParam(name = "parserChain", value = "The new parser chain definition.", required = true)
             @RequestBody ParserChainSchema chain,
             @ApiParam(name = "id", value = "The ID of the parser chain to update.")
-            @PathVariable String id)
-            throws IOException {
+            @PathVariable String id) {
         String configPath = appProperties.getConfigPath();
         try {
             ParserChainSchema updatedChain = chainPersistenceService.update(id, chain, Paths.get(configPath));
@@ -140,8 +138,7 @@ public class ChainController {
     @DeleteMapping(value = API_CHAINS + "/{id}")
     ResponseEntity<Void> delete(
             @ApiParam(name = "id", value = "The ID of the parser chain to delete.", required = true)
-            @PathVariable String id)
-            throws IOException {
+            @PathVariable String id) throws IOException {
         String configPath = appProperties.getConfigPath();
         if (chainPersistenceService.delete(id, Paths.get(configPath))) {
             return ResponseEntity.noContent().build();
@@ -157,15 +154,12 @@ public class ChainController {
     @PostMapping(value = API_PARSER_TEST)
     ResponseEntity<ParserResults> test(
             @ApiParam(name = "testRun", value = "Describes the parser chain test to run.", required = true)
-            @RequestBody ParserTestRun testRun) throws IOException {
-
+            @RequestBody ParserTestRun testRun) {
         ParserResults results = new ParserResults();
         for(String textToParse: testRun.getSampleData().getSource()) {
             ParserResult result = doTest(testRun.getParserChainSchema(), textToParse);
             results.addResult(result);
         }
-
-        // there must be 1 result for each message that needs parsed
         return ResponseEntity.ok(results);
     }
 
@@ -177,7 +171,7 @@ public class ChainController {
 
         } catch(InvalidParserException e) {
             String parserId = e.getBadParser().getLabel();
-            ParserTestRun.ResultLog log = error(parserId, e.getMessage());
+            ResultLog log = error(parserId, e.getMessage());
             result = new ParserResult().setLog(log);
         }
         return result;

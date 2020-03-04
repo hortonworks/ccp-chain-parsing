@@ -76,34 +76,6 @@ public class SyslogParser implements Parser {
     }
 
     @Override
-    public List<FieldName> outputFields() {
-        if(SyslogSpecification.RFC_3164.equals(specification)) {
-            return Arrays.asList(
-                    FieldName.of(SyslogFieldKeys.MESSAGE.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_HOSTNAME.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_PRI.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_PRI_SEVERITY.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_PRI_FACILITY.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_TIMESTAMP.getField()));
-
-        } else if (SyslogSpecification.RFC_5424.equals(specification)) {
-            return Arrays.asList(
-                    FieldName.of(SyslogFieldKeys.MESSAGE.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_APPNAME.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_HOSTNAME.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_PRI.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_PRI_SEVERITY.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_PRI_FACILITY.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_PROCID.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_TIMESTAMP.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_MSGID.getField()),
-                    FieldName.of(SyslogFieldKeys.HEADER_VERSION.getField()));
-        } else {
-            throw new IllegalArgumentException("Unexpected specification: " + specification);
-        }
-    }
-
-    @Override
     public List<ConfigDescriptor> validConfigurations() {
         return configurer.validConfigurations();
     }

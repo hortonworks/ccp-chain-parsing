@@ -18,6 +18,9 @@
 
 package com.cloudera.parserchains.queryservice.model.exec;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +30,9 @@ import java.util.Map;
  * <p>A result is captured for each parser in a parser chain. This
  * describes the intermediate steps involved in parsing a message with
  * a parser chain.
+ *
+ * <p>See also {@link ParserTestRun} which is the top-level class for the
+ * data model used for the "Live View" feature.
  */
 public class ParserResult {
     /**
@@ -42,7 +48,7 @@ public class ParserResult {
     /**
      * Describes the outcome of parsing the message.
      */
-    private ParserTestRun.ResultLog log;
+    private ResultLog log;
 
     public ParserResult() {
         this.input = new HashMap<>();
@@ -67,12 +73,46 @@ public class ParserResult {
         return this;
     }
 
-    public ParserTestRun.ResultLog getLog() {
+    public ResultLog getLog() {
         return log;
     }
 
-    public ParserResult setLog(ParserTestRun.ResultLog log) {
+    public ParserResult setLog(ResultLog log) {
         this.log = log;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ParserResult that = (ParserResult) o;
+        return new EqualsBuilder()
+                .append(input, that.input)
+                .append(output, that.output)
+                .append(log, that.log)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(input)
+                .append(output)
+                .append(log)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "ParserResult{" +
+                "input=" + input +
+                ", output=" + output +
+                ", log=" + log +
+                '}';
     }
 }

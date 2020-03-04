@@ -55,11 +55,6 @@ public class AlwaysFailParser implements Parser {
     }
 
     @Override
-    public List<FieldName> outputFields() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public List<ConfigDescriptor> validConfigurations() {
         return configurer.validConfigurations();
     }

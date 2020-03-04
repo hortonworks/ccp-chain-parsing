@@ -9,10 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Describes the configuration values defined by the user when
- * building a parser chain.
+ * Describes the configuration values defined by the user when building a parser chain.
  */
 public class ConfigValueSchema {
+
+    /**
+     * The configuration values as key/value pairs.
+     */
     private Map<String, String> values;
 
     public ConfigValueSchema() {

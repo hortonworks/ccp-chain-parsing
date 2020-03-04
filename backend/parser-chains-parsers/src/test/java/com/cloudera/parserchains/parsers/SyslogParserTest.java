@@ -115,44 +115,4 @@ public class SyslogParserTest {
     void validConfigurations() {
         assertThat(new SyslogParser().validConfigurations(), hasItems(inputFieldConfig, specConfig));
     }
-
-    @Test
-    void outputFields_RFC_3164() {
-        SyslogParser parser = new SyslogParser()
-                .withInputField(FieldName.of("original_string"))
-                .withSpecification(SyslogSpecification.RFC_3164);
-
-        // parse the message
-        Message input = Message.builder()
-                .addField(FieldName.of("original_string"), FieldValue.of(SYSLOG_3164))
-                .build();
-        Message output = parser.parse(input);
-
-        // validate
-        List<FieldName> actualFields = new ArrayList<>(output.getFields().keySet());
-        for(FieldName outputField: parser.outputFields()) {
-            assertThat("The output is missing one of the declared output fields.",
-                    actualFields, hasItem(outputField));
-        }
-    }
-
-    @Test
-    void outputFields_RFC_5424() {
-        SyslogParser parser = new SyslogParser()
-                .withInputField(FieldName.of("original_string"))
-                .withSpecification(SyslogSpecification.RFC_5424);
-
-        // parse the message
-        Message input = Message.builder()
-                .addField(FieldName.of("original_string"), FieldValue.of(SYSLOG_5424))
-                .build();
-        Message output = parser.parse(input);
-
-        // validate
-        List<FieldName> actualFields = new ArrayList<>(output.getFields().keySet());
-        for(FieldName outputField: parser.outputFields()) {
-            assertThat("The message is missing one of the declared output fields.",
-                    actualFields, hasItem(outputField));
-        }
-    }
 }

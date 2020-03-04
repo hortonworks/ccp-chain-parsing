@@ -38,8 +38,7 @@ public class ParserChainSchemaTest {
      *       "specification" : [ {
      *         "specification" : "RFC_5424"
      *       } ]
-     *     },
-     *     "outputs" : { }
+     *     }
      *   }, {
      *     "id" : "bdf7d8be-50b1-4998-8b3f-f525d1e95931",
      *     "name" : "Rename Field(s)",
@@ -52,8 +51,7 @@ public class ParserChainSchemaTest {
      *         "from" : "syslog.header.hostName",
      *         "to" : "host"
      *       } ]
-     *     },
-     *     "outputs" : { }
+     *     }
      *   } ]
      * }
      */
@@ -113,14 +111,12 @@ public class ParserChainSchemaTest {
      *         "fieldIndex" : "0",
      *         "fieldName" : "name"
      *       } ]
-     *     },
-     *     "outputs" : { }
+     *     }
      *   }, {
      *     "id" : "123e4567-e89b-12d3-a456-556642440000",
      *     "name" : "Router",
      *     "type" : "Router",
      *     "config" : { },
-     *     "outputs" : { },
      *     "routing" : {
      *       "matchingField" : "name",
      *       "routes" : [ {
@@ -139,8 +135,7 @@ public class ParserChainSchemaTest {
      *               "outputField" : [ {
      *                 "outputField" : "processing_time"
      *               } ]
-     *             },
-     *             "outputs" : { }
+     *             }
      *           } ]
      *         }
      *       }, {
@@ -155,8 +150,7 @@ public class ParserChainSchemaTest {
      *             "id" : "ceb95dd5-1e3f-41f2-bf60-ee2fe2c962c6",
      *             "name" : "Error",
      *             "type" : "com.cloudera.parserchains.parsers.AlwaysFailParser",
-     *             "config" : { },
-     *             "outputs" : { }
+     *             "config" : { }
      *           } ]
      *         }
      *       } ]

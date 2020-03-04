@@ -7,7 +7,6 @@ import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
 import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
-import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
 import org.adrianwalker.multilinestring.Multiline;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,9 +14,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static com.cloudera.parserchains.queryservice.model.exec.ParserTestRun.ResultLog.DEFAULT_SUCCESS_MESSAGE;
-import static com.cloudera.parserchains.queryservice.model.exec.ParserTestRun.ResultLog.ERROR_TYPE;
-import static com.cloudera.parserchains.queryservice.model.exec.ParserTestRun.ResultLog.INFO_TYPE;
+import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.DEFAULT_SUCCESS_MESSAGE;
+import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.ERROR_TYPE;
+import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.INFO_TYPE;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -52,8 +51,7 @@ public class DefaultChainExecutorServiceTest {
      *         "outputField" : {
      *           "outputField": "processing_time"
      *         }
-     *       },
-     *       "outputs" : { }
+     *       }
      *     }, {
      *       "id" : "3b31e549-340f-47ce-8a71-d702685137f4",
      *       "name" : "Delimited Text",
@@ -72,8 +70,7 @@ public class DefaultChainExecutorServiceTest {
      *           "fieldIndex" : "2",
      *           "fieldName" : "phone"
      *         }  ]
-     *       },
-     *       "outputs" : { }
+     *       }
      *     }]
      * }
      */
@@ -102,9 +99,9 @@ public class DefaultChainExecutorServiceTest {
         expectField(result.getOutput(), "phone", phoneField);
         assertThat(result.getOutput().keySet(), hasItem("processing_time"));
         assertThat("Expected the 'info' type on success.",
-                result.getLog().getType(), is(ParserTestRun.ResultLog.INFO_TYPE));
+                result.getLog().getType(), is(INFO_TYPE));
         assertThat("Expected the 'success' message on success.",
-                result.getLog().getMessage(), is(ParserTestRun.ResultLog.DEFAULT_SUCCESS_MESSAGE));
+                result.getLog().getMessage(), is(DEFAULT_SUCCESS_MESSAGE));
         assertThat("Expected the parserId to be set to the last parser in the chain.",
                 result.getLog().getParserId(), is("3b31e549-340f-47ce-8a71-d702685137f4"));
     }
@@ -140,8 +137,7 @@ public class DefaultChainExecutorServiceTest {
      *       "id" : "8673f8f4-a308-4689-822c-0b01477ef378",
      *       "name" : "Bad Parser",
      *       "type" : "com.cloudera.parserchains.queryservice.service.MisbehavingParser",
-     *       "config" : { },
-     *       "outputs" : { }
+     *       "config" : { }
      *     } ]
      * }
      */
@@ -199,14 +195,12 @@ public class DefaultChainExecutorServiceTest {
      *         "fieldIndex" : "2",
      *         "fieldName" : "phone"
      *       }  ]
-     *     },
-     *     "outputs" : { }
+     *     }
      *   }, {
      *     "id" : "123e4567-e89b-12d3-a456-556642440000",
      *     "name" : "Router",
      *     "type" : "Router",
      *     "config" : { },
-     *     "outputs" : { },
      *     "routing" : {
      *       "matchingField" : "name",
      *       "routes" : [ {
@@ -223,8 +217,7 @@ public class DefaultChainExecutorServiceTest {
      *               "outputField" : [ {
      *                 "outputField" : "processing_time"
      *               } ]
-     *             },
-     *             "outputs" : { }
+     *             }
      *           } ]
      *         }
      *       }, {
@@ -237,8 +230,7 @@ public class DefaultChainExecutorServiceTest {
      *             "id" : "ceb95dd5-1e3f-41f2-bf60-ee2fe2c962c6",
      *             "name" : "Error",
      *             "type" : "com.cloudera.parserchains.parsers.AlwaysFailParser",
-     *             "config" : { },
-     *             "outputs" : { }
+     *             "config" : { }
      *           } ]
      *         }
      *       } ]

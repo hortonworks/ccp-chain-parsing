@@ -51,9 +51,6 @@ public class ParserChainSchema {
   @JsonProperty("parsers")
   private List<ParserSchema> parsers;
 
-
-  private RoutingSchema routing;
-
   public ParserChainSchema() {
     parsers = new ArrayList<>();
   }
@@ -103,7 +100,6 @@ public class ParserChainSchema {
             .append(id, that.id)
             .append(name, that.name)
             .append(parsers, that.parsers)
-            .append(routing, that.routing)
             .isEquals();
   }
 
@@ -113,7 +109,6 @@ public class ParserChainSchema {
             .append(id)
             .append(name)
             .append(parsers)
-            .append(routing)
             .toHashCode();
   }
 
@@ -123,7 +118,6 @@ public class ParserChainSchema {
             "id='" + id + '\'' +
             ", name='" + name + '\'' +
             ", parsers=" + parsers +
-            ", routing=" + routing +
             '}';
   }
 }

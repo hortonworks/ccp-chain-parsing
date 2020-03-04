@@ -30,6 +30,9 @@ import java.util.List;
 
 /**
  * Describes features of a parser including its configuration parameters.
+ *
+ * <p>This defines the data model for how a parser is described so that it
+ * can be viewed and configured in the front-end.
  */
 @JsonPropertyOrder({"id", "name", "schemaItems"})
 public class ParserDescriptor {

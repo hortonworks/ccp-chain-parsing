@@ -26,12 +26,6 @@ public interface Parser {
     Message parse(Message message);
 
     /**
-     * Returns the known output fields added to all parsed messages.  Not all parsers
-     * are able to declare their known output fields.
-     */
-    List<FieldName> outputFields();
-
-    /**
      * Allows a parser author to describe the configuration parameters required by a parser.
      * @return A list of the configuration elements expected by the parser.
      */

@@ -5,7 +5,6 @@ import com.cloudera.parserchains.core.config.ConfigKey;
 import com.cloudera.parserchains.core.config.ConfigName;
 import com.cloudera.parserchains.core.config.ConfigValue;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -18,12 +17,6 @@ public class NoopParser implements Parser {
     public Message parse(Message message) {
         // nothing to do
         return message;
-    }
-
-    @Override
-    public List<FieldName> outputFields() {
-        // nothing to do
-        return Collections.emptyList();
     }
 
     @Override

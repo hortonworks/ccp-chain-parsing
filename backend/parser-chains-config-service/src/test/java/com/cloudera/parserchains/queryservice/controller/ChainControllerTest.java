@@ -223,8 +223,7 @@ public class ChainControllerTest {
      *               "outputField": "timestamp"
      *             }
      *           ]
-     *         },
-     *         "outputs": {}
+     *         }
      *       }
      *     ]
      *   }
@@ -275,8 +274,7 @@ public class ChainControllerTest {
      *               "outputField": "timestamp"
      *             }
      *           ]
-     *         },
-     *         "outputs": {}
+     *         }
      *       }
      *     ]
      *   }
@@ -332,8 +330,6 @@ public class ChainControllerTest {
      *         "name": "Invalid Router",
      *         "type": "Router",
      *         "config": {
-     *         },
-     *         "outputs": {
      *         },
      *         "routing":{
      *           "routes":[

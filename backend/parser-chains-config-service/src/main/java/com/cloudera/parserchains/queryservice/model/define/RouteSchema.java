@@ -14,6 +14,7 @@ public class RouteSchema {
 
     /**
      * If the field value matches this regular expression, this route is taken.
+     *
      * <p>This value is not used for the default route.
      */
     @JsonProperty("matchingValue")
@@ -21,7 +22,9 @@ public class RouteSchema {
 
     /**
      * The default route is taken if there is no match to another route.
+     *
      * <p>Only one route should be defined as the default route.
+     *
      * <p>The {@link #matchingValue} field is not used for the default route.
      */
     @JsonProperty("default")

@@ -45,8 +45,7 @@ public class ParserTestRunTest {
      *           "fieldIndex" : "1",
      *           "fieldName" : "lastName"
      *         } ]
-     *       },
-     *       "outputs" : { }
+     *       }
      *     }, {
      *       "id" : "74d10881-ae37-4c90-95f5-ae0c10aae1f4",
      *       "name" : "Timestamp",
@@ -55,8 +54,7 @@ public class ParserTestRunTest {
      *         "outputField" : [ {
      *           "outputField" : "timestamp"
      *         } ]
-     *       },
-     *       "outputs" : { }
+     *       }
      *     } ]
      *   }
      * }
@@ -103,7 +101,7 @@ public class ParserTestRunTest {
 
         ParserTestRun testRun = new ParserTestRun();
         testRun.setParserChainSchema(parserChainSchema);
-        testRun.setSampleData(new ParserTestRun.SampleData()
+        testRun.setSampleData(new SampleData()
                 .addSource("Marie, Curie")
                 .setType("manual"));
 

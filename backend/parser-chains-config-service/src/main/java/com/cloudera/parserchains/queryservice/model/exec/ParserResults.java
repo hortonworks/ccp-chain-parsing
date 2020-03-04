@@ -8,6 +8,9 @@ import java.util.List;
 
 /**
  * Describes the result of parsing a message with a parser chain.
+ *
+ * <p>See also {@link ParserTestRun} which is the top-level class for the
+ * data model used for the "Live View" feature.
  */
 public class ParserResults {
 

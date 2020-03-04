@@ -1,6 +1,5 @@
 package com.cloudera.parserchains.core.catalog;
 
-import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.config.ConfigDescriptor;
@@ -33,12 +32,6 @@ public class AnnotationBasedParserInfoBuilderTest {
         }
 
         @Override
-        public List<FieldName> outputFields() {
-            // do nothing
-            return null;
-        }
-
-        @Override
         public List<ConfigDescriptor> validConfigurations() {
             // do nothing
             return null;
@@ -66,12 +59,6 @@ public class AnnotationBasedParserInfoBuilderTest {
     public class MissingAnnotationParser implements Parser {
         @Override
         public Message parse(Message message) {
-            // do nothing
-            return null;
-        }
-
-        @Override
-        public List<FieldName> outputFields() {
             // do nothing
             return null;
         }

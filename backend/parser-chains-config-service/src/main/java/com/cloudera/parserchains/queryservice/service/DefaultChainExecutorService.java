@@ -4,7 +4,7 @@ import com.cloudera.parserchains.core.ChainLink;
 import com.cloudera.parserchains.core.ChainRunner;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
-import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
+import com.cloudera.parserchains.queryservice.model.exec.ResultLog;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.cloudera.parserchains.queryservice.model.exec.ParserTestRun.ResultLog.error;
-import static com.cloudera.parserchains.queryservice.model.exec.ParserTestRun.ResultLog.success;
+import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.error;
+import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.success;
 
 @Service
 public class DefaultChainExecutorService implements ChainExecutorService {
@@ -32,11 +32,9 @@ public class DefaultChainExecutorService implements ChainExecutorService {
             if (chain != null) {
                 List<Message> messages = chainRunner.run(textToParse, chain);
                 return chainExecuted(messages);
-
             } else {
                 return chainNotDefined(original);
             }
-
         } catch(Throwable e) {
             return chainFailed(original, e);
         }
@@ -68,12 +66,11 @@ public class DefaultChainExecutorService implements ChainExecutorService {
                         e -> e.getValue().get())));
 
         // define the log section
-        ParserTestRun.ResultLog log;
+        ResultLog log;
         String parserId = output.getCreatedBy().get();
         if(output.getError().isPresent()) {
             Throwable rootCause = ExceptionUtils.getRootCause(output.getError().get());
             log = error(parserId, rootCause.getMessage());
-
         } else {
             log = success(parserId);
         }
@@ -99,7 +96,7 @@ public class DefaultChainExecutorService implements ChainExecutorService {
 
         // define the log section
         Throwable rootCause = ExceptionUtils.getRootCause(t);
-        ParserTestRun.ResultLog log = error(original.getCreatedBy().get(), rootCause.getMessage());
+        ResultLog log = error(original.getCreatedBy().get(), rootCause.getMessage());
 
         // there are no output fields
         return result.setLog(log);
@@ -125,7 +122,7 @@ public class DefaultChainExecutorService implements ChainExecutorService {
 
         // there are no output fields
         // define the log section
-        ParserTestRun.ResultLog log = success(original.getCreatedBy().get(), "No parser chain defined.");
+        ResultLog log = success(original.getCreatedBy().get(), "No parser chain defined.");
         return result.setLog(log);
     }
 }

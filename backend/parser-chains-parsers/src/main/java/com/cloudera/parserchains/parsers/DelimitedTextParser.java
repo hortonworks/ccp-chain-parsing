@@ -143,14 +143,6 @@ public class DelimitedTextParser implements Parser {
     }
 
     @Override
-    public List<FieldName> outputFields() {
-        return outputFields
-                .stream()
-                .map(outputField -> outputField.fieldName)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<ConfigDescriptor> validConfigurations() {
         return configurer.validConfigurations();
     }

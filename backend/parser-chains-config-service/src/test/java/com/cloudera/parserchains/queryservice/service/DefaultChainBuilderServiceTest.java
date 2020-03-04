@@ -43,8 +43,7 @@ public class DefaultChainBuilderServiceTest {
      *         "outputField" : {
      *           "outputField": "processing_time"
      *         }
-     *       },
-     *       "outputs" : { }
+     *       }
      *     }, {
      *       "id" : "3b31e549-340f-47ce-8a71-d702685137f4",
      *       "name" : "Delimited Text",
@@ -63,8 +62,7 @@ public class DefaultChainBuilderServiceTest {
      *           "fieldIndex" : "2",
      *           "fieldName" : "phone"
      *         }  ]
-     *       },
-     *       "outputs" : { }
+     *       }
      *     }]
      * }
      */
@@ -110,10 +108,6 @@ public class DefaultChainBuilderServiceTest {
      *          "id":"96f5f340-5d96-11ea-89de-3b83ec1839cd",
      *          "config":{
      *          },
-     *          "outputs":{
-     *          },
-     *          "advanced":{
-     *          },
      *          "routing":{
      *             "routes":[
      *             ]
@@ -143,10 +137,6 @@ public class DefaultChainBuilderServiceTest {
      *             "id":"c5df7b70-5d61-11ea-a9b6-9537bbab1bb1",
      *             "config":{
      *             },
-     *             "outputs":{
-     *             },
-     *             "advanced":{
-     *             },
      *             "routing":{
      *                "matchingField":"original_string",
      *                "routes":[
@@ -158,10 +148,6 @@ public class DefaultChainBuilderServiceTest {
      *             "type":"com.cloudera.parserchains.parsers.TimestampParser",
      *             "id":"2313a690-5d62-11ea-a9b6-9537bbab1bb1",
      *             "config":{
-     *             },
-     *             "outputs":{
-     *             },
-     *             "advanced":{
      *             }
      *          }
      *       ]
