@@ -14,7 +14,6 @@ class MockParserComponent {
   @Input() dirty = false;
   @Input() parser;
   @Input() configForm;
-  @Input() outputsForm;
   @Input() isolatedParserView;
   @Input() metaDataForm;
   @Input() parserType;

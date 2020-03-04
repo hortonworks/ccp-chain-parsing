@@ -39,17 +39,12 @@ export class ChainAddParserPageComponent implements OnInit {
   get sourceParser() {
     return this.addParserForm.get('chainId') as FormControl;
   }
-  get sourceParserOutput() {
-    return this.addParserForm.get('outputs') as FormControl;
-  }
 
   addParser() {
     const parser = {
       ...this.addParserForm.value,
       id: uuidv1(),
       config: {},
-      outputs: {},
-      advanced: {}
     };
     if (this.addParserForm.value.type === 'Router') {
       parser.routing = {};

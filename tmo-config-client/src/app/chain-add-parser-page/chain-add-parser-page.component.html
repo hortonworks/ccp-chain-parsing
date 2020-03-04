@@ -26,11 +26,6 @@
             </nz-select>
           </nz-form-control>
         </nz-form-item>
-        <nz-form-item *ngIf="parsersList.length">
-          <nz-form-control>
-            <input type="text" nz-input formControlName="outputs" placeholder="Parser Output" />
-          </nz-form-control>
-        </nz-form-item>
         <nz-form-item>
           <nz-form-control>
             <button nz-button nzType="primary" type="submit" [disabled] = "!addParserForm.valid">Add Parser</button>

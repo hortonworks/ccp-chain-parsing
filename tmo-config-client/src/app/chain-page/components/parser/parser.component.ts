@@ -20,7 +20,6 @@ export class ParserComponent implements OnInit, OnChanges {
   @Input() parser: ParserModel;
   @Input() metaDataForm: CustomFormConfig[];
   @Input() configForm: CustomFormConfig[];
-  @Input() outputsForm: CustomFormConfig[];
   @Input() isolatedParserView = false;
   @Input() parserType: string;
   @Output() removeParser = new EventEmitter<string>();
@@ -30,11 +29,9 @@ export class ParserComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.configForm = this.setFormFieldValues(this.configForm);
-    this.outputsForm = this.setFormFieldValues(this.outputsForm);
     this.metaDataForm = this.setFormFieldValues(this.metaDataForm);
 
     this.configForm = this.addFormFieldListeners(this.configForm);
-    this.outputsForm = this.addFormFieldListeners(this.outputsForm);
     this.metaDataForm = this.addFormFieldListeners(this.metaDataForm);
 
     setTimeout(() => {
@@ -56,9 +53,6 @@ export class ParserComponent implements OnInit, OnChanges {
         if (changes.parser.previousValue[key] !== changes.parser.currentValue[key]) {
           if (key === 'config') {
             this.configForm = this.updateFormValues('config', this.configForm);
-          }
-          if (key === 'outputs') {
-            this.outputsForm = this.updateFormValues('outputs', this.outputsForm);
           }
           if (['name', 'type'].includes(key)) {
             this.metaDataForm = this.updateFormValues(key, this.metaDataForm);
