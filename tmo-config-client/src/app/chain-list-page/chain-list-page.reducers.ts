@@ -70,7 +70,7 @@ export function reducer(
       return {
         ...state,
         loading: false,
-        items: action.chains
+        items: state.items.filter(chainItem => chainItem.id !== action.chainId)
       };
     }
     case chainListPageActions.DELETE_CHAIN_FAIL: {
