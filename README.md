@@ -22,36 +22,28 @@ client_1       |       or copying it to your browser.
 client_1       |       http://localhost:4200
 ```
 
+4. In order to shut down the services and remove the docker container, open a new tab and run:
+```bash
+docker-compose down
+```
+For a more detailed explination of what's going on here, see the Dockerization section below.
+
 Contributing
 ============
+
+You can close the project to your local computer via ssh with the following command:
+```bash
+$ git clone git@github.com:hortonworks/ccp-tmo-search-client.git
+```
 
 ## With the Mock API
 This scenario is good for developing the UI against backend services that do not exist yet.
 
 Make sure you have the latest Node (LTS).
 
-In order to run the application on your local computer, you need to run two services in parallel.
-The client code and the mock service to get some mock data via http.
+In order to run the application on your local computer, you need to run two services in parallel: the client code and the mock service (which provides mock data via http).
 
-```bash
-$ git clone git@github.com:hortonworks/ccp-tmo-search-client.git
-```
-### Client Development Server
-A dev server that uses the proxy configuration set in proxy.conf.dev.json
-
-```bash
-$ cd tmo-config-client
-```
-
-```bash
-$ npm ci
-```
-
-```bash
-$ npm run start:dev
-```
-
-### Mock API
+### Running the Mock API
 
 ```bash
 $ cd tmo-config-api
@@ -65,8 +57,23 @@ $ npm ci
 $ npm start
 ```
 
+### Running the client application with a development server
+The following spins up the client application using a development server. The dev server uses the proxy configuration set in proxy.conf.dev.json
+
+```bash
+$ cd tmo-config-client
+```
+
+```bash
+$ npm ci
+```
+
+```bash
+$ npm run start:dev
+```
+
 ## With REST services
-If you would like to develop the UI using services that currently exist.
+If you would like to develop the UI using services that currently exist, run the following:
 
 ```bash
 docker-compose up
@@ -82,19 +89,19 @@ $ npm ci
 
 ```bash
 $ npm run start:dev -- --port=4201
-// port 4200 is being used by docker
+// because port 4200 is being used by docker
 // serve the app on another port for development
 ```
 
 # Dockerization and setup for docker-compose
-As part of our effort to make the deployment of this software solution as easy as possible we Dockerized all of our services and the User Interface.
+As part of our effort to make the deployment of this software solution as easy as possible, we Dockerized all of our services and the user interface.
 
 You can find the currently available Dockerfiles in
 ```./tmo-config-client/Dockerfile``` as our GUI image. And
 ```./backend/Dockerfile``` as a dockerized image of our main service.
 
-To make the local development, testing and in some cases the deployment easier we also provided a docker-compose.yml file.
-This can help you to fire up our services locally and also to serve as documentation to see how they are connected.
+To make local development, testing and, in some cases, deployment easier, there is a docker-compose.yml file provided.
+This is where our services are definded and can be reconfigured, if desired.
 (Right now this connection is the simplest possible: the GUI requesting a single service.)
 
 ## Running our services locally
@@ -110,7 +117,7 @@ From this point, you can reach our GUI in the following URL:
 Right now your terminal is attached to the output of the dockerized services. This can help you see what's going on under the hood and to report issues with more detailed log messages attached.
 
 ### Shutting down our services
-If you like to shut down our services you need to open a separate terminal (hence, the original one is now showing the output of our Dockerized services). The other way - if you are not interested in console messages - is to run Docker in detached mode by using the ```-d``` flag at startup, like:
+When you want to shut down our services, you first need to open a separate terminal window or tab (this is because the original one is now showing the output of our Dockerized services). The other way - if you are not interested in console messages - is to run Docker in detached mode by using the ```-d``` flag at startup, like:
 ```docker-compose up -d```
 
 Either way, you can:
