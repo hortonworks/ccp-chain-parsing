@@ -21,16 +21,12 @@ describe('chain-page: reducers', () => {
           name: 'Syslog',
           type: 'Grok',
           config: {},
-          input: '',
-          outputs: ''
         },
         456: {
           id: '456',
           name: 'Asa',
           type: 'Grok',
           config: {},
-          input: '',
-          outputs: ''
         }
       },
       dirtyParsers: [],
@@ -59,8 +55,6 @@ describe('chain-page: reducers', () => {
           name: 'Syslog',
           type: 'Grok',
           config: {},
-          input: '',
-          outputs: ''
         }
       },
       routes: {},
@@ -140,7 +134,6 @@ describe('chain-page: reducers', () => {
           id: '456',
           type: 'grok',
           name: 'some parser',
-          outputs: 'old',
           config: 'old'
         }
       },
@@ -155,7 +148,6 @@ describe('chain-page: reducers', () => {
       chainId: '123',
       parser: {
         id: '456',
-        outputs: 'new',
         config: 'new'
       }
     }));
@@ -163,7 +155,6 @@ describe('chain-page: reducers', () => {
       id: '456',
       type: 'grok',
       name: 'some parser',
-      outputs: 'new',
       config: 'new'
     });
     expect(newState.dirtyParsers).toEqual(['456']);
@@ -232,7 +223,6 @@ describe('chain-page: reducers', () => {
       id: '456',
       type: 'grok',
       name: 'some parser',
-      outputs: 'old',
       config: 'old'
     };
     const state = {
