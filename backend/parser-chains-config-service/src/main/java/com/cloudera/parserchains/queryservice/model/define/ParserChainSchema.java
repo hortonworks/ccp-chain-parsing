@@ -19,10 +19,11 @@
 package com.cloudera.parserchains.queryservice.model.define;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Defines the structure of a parser chain.
@@ -35,11 +36,13 @@ public class ParserChainSchema {
    * <p>This value is generated and is expected to be unique amongst
    * all parser chains.
    */
+  @JsonProperty("id")
   private String id;
 
   /**
    * The user provided name of the parser chain.
    */
+  @JsonProperty("name")
   private String name;
 
   /**
@@ -47,6 +50,9 @@ public class ParserChainSchema {
    */
   @JsonProperty("parsers")
   private List<ParserSchema> parsers;
+
+
+  private RoutingSchema routing;
 
   public ParserChainSchema() {
     parsers = new ArrayList<>();
@@ -93,21 +99,31 @@ public class ParserChainSchema {
       return false;
     }
     ParserChainSchema that = (ParserChainSchema) o;
-    return Objects.equals(id, that.id) &&
-        Objects.equals(name, that.name);
+    return new EqualsBuilder()
+            .append(id, that.id)
+            .append(name, that.name)
+            .append(parsers, that.parsers)
+            .append(routing, that.routing)
+            .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name);
+    return new HashCodeBuilder(17, 37)
+            .append(id)
+            .append(name)
+            .append(parsers)
+            .append(routing)
+            .toHashCode();
   }
 
   @Override
   public String toString() {
-    return "ParserChain{" +
-        "id='" + id + '\'' +
-        ", name='" + name + '\'' +
-        '}';
+    return "ParserChainSchema{" +
+            "id='" + id + '\'' +
+            ", name='" + name + '\'' +
+            ", parsers=" + parsers +
+            ", routing=" + routing +
+            '}';
   }
-
 }

@@ -16,9 +16,9 @@ public class NextChainLink implements ChainLink {
      * @param linkName The name of this link in the chain.
      */
     public NextChainLink(Parser parser, LinkName linkName) {
-        this.parser = Objects.requireNonNull(parser);
+        this.parser = Objects.requireNonNull(parser, "A valid parser is required.");
         this.next = Optional.empty();
-        this.linkName = Objects.requireNonNull(linkName, "A linkName is required.");
+        this.linkName = Objects.requireNonNull(linkName, "A link name is required.");
     }
 
     public Parser getParser() {

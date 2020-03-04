@@ -18,6 +18,7 @@
 
 package com.cloudera.parserchains.queryservice.model.exec;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -43,27 +44,35 @@ public class ParserResult {
      */
     private ParserTestRun.ResultLog log;
 
+    public ParserResult() {
+        this.input = new HashMap<>();
+        this.output = new HashMap<>();
+    }
+
     public Map<String, String> getInput() {
         return input;
     }
 
-    public void setInput(Map<String, String> input) {
+    public ParserResult setInput(Map<String, String> input) {
         this.input = input;
+        return this;
     }
 
     public Map<String, String> getOutput() {
         return output;
     }
 
-    public void setOutput(Map<String, String> output) {
+    public ParserResult setOutput(Map<String, String> output) {
         this.output = output;
+        return this;
     }
 
     public ParserTestRun.ResultLog getLog() {
         return log;
     }
 
-    public void setLog(ParserTestRun.ResultLog log) {
+    public ParserResult setLog(ParserTestRun.ResultLog log) {
         this.log = log;
+        return this;
     }
 }
