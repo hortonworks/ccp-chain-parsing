@@ -4,7 +4,7 @@ import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IconDefinition } from '@ant-design/icons-angular';
-import { DeleteFill, RightSquareFill } from '@ant-design/icons-angular/icons';
+import { DeleteFill, PlusOutline, RightSquareFill } from '@ant-design/icons-angular/icons';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
@@ -15,7 +15,7 @@ import * as fromActions from './chain-list-page.actions';
 import { ChainListPageComponent } from './chain-list-page.component';
 import { ChainModel } from './chain.model';
 
-const icons: IconDefinition[] = [DeleteFill, RightSquareFill];
+const icons: IconDefinition[] = [PlusOutline, DeleteFill, RightSquareFill];
 
 class FakeChainListPageService {
   getChains() {
