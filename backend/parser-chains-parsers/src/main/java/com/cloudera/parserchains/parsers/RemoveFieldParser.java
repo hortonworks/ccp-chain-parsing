@@ -62,12 +62,16 @@ public class RemoveFieldParser implements Parser {
      * Handles configuration for the {@link RemoveFieldParser}.
      */
     static class Configurer {
-        static final ConfigKey removeFieldKey = ConfigKey.of("fieldToRemove");
+        static final ConfigKey removeFieldKey = ConfigKey.builder()
+                .key("fieldToRemove")
+                .label("Field to Remove")
+                .description("The name of the field to remove.")
+                .build();
         static final ConfigDescriptor removeFieldConfig = ConfigDescriptor
                 .builder()
                 .name("fieldToRemove")
                 .description("Field to Remove")
-                .acceptsValue(removeFieldKey, "The name of the field to remove.")
+                .acceptsValue(removeFieldKey)
                 .isRequired(true)
                 .build();
         private RemoveFieldParser parser;

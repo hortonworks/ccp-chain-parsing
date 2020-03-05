@@ -21,25 +21,51 @@ import java.util.Map;
  */
 public class ConfigKey {
     private static final Regex isValidRegex = Regex.of("[\\w\\d\\s-_.,|\\]\\[]*");
+
+    /**
+     * A unique key used to identify the configuration element.
+     */
     private final String key;
 
     /**
-     * Create a {@link ConfigKey}.
-     * @param key The key.
+     * A brief label that can be shown to the user.
      */
-    public static ConfigKey of(String key) {
-        return new ConfigKey(key);
+    private final String label;
+
+    /**
+     * A description that can be shown to the user.
+     */
+    private final ConfigDescription description;
+
+    public static Builder builder() {
+        return new Builder();
     }
 
-    private ConfigKey(String key) {
+    /**
+     * Private constructor.  See {@link #builder()}.
+     * @param key A unique key used to identify the configuration element.
+     * @param label A brief label that can be shown to the user.
+     * @param description A description of the configuration element.
+     */
+    private ConfigKey(String key, String label, ConfigDescription description) {
         if(!isValidRegex.matches(key)) {
             throw new IllegalArgumentException(String.format("Invalid config key: '%s'", key));
         }
         this.key = key;
+        this.label = label;
+        this.description = description;
     }
 
     public String getKey() {
         return key;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public ConfigDescription getDescription() {
+        return description;
     }
 
     @Override
@@ -68,5 +94,41 @@ public class ConfigKey {
         return "ConfigKey{" +
                 "key='" + key + '\'' +
                 '}';
+    }
+
+    public static class Builder {
+        private String key;
+        private String label;
+        private ConfigDescription description;
+
+        /**
+         * @param key A unique key used to identify the configuration element.
+         */
+        public Builder key(String key) {
+            this.key = key;
+            return this;
+        }
+
+        /**
+         * @param label A brief label that can be shown to the user.
+         */
+        public Builder label(String label) {
+            // a label is not required
+            this.label = label;
+            return this;
+        }
+
+        /**
+         * @param description A description of the configuration element.
+         */
+        public Builder description(String description) {
+            // a description is not required
+            this.description = ConfigDescription.of(description);
+            return this;
+        }
+
+        public ConfigKey build() {
+            return new ConfigKey(key, label, description);
+        }
     }
 }

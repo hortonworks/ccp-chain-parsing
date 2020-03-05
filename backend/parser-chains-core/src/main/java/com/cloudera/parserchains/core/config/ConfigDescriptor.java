@@ -2,9 +2,9 @@ package com.cloudera.parserchains.core.config;
 
 import com.cloudera.parserchains.core.Parser;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -18,7 +18,7 @@ public class ConfigDescriptor {
     private final ConfigName name;
     private final ConfigDescription description;
     private final boolean isRequired;
-    private final Map<ConfigKey, ConfigDescription> acceptedValues;
+    private final List<ConfigKey> acceptedValues;
 
     /**
      * A builder that can be used to construct Creates a {@link ConfigDescriptor}.
@@ -33,7 +33,7 @@ public class ConfigDescriptor {
     private ConfigDescriptor(ConfigName name,
                              ConfigDescription description,
                              boolean isRequired,
-                             Map<ConfigKey, ConfigDescription> acceptedValues) {
+                             List<ConfigKey> acceptedValues) {
         this.name = Objects.requireNonNull(name, "Name is required.");
         this.description = Objects.requireNonNull(description, "Description is required.");
         this.isRequired = isRequired;
@@ -64,18 +64,18 @@ public class ConfigDescriptor {
     /**
      * @return The values required by this configuration parameter.
      */
-    public Map<ConfigKey, ConfigDescription> getAcceptedValues() {
-        return Collections.unmodifiableMap(acceptedValues);
+    public List<ConfigKey> getAcceptedValues() {
+        return Collections.unmodifiableList(acceptedValues);
     }
 
     public static class Builder {
         private ConfigName name;
         private ConfigDescription description;
         private boolean isRequired;
-        private Map<ConfigKey, ConfigDescription> acceptedValues;
+        private List<ConfigKey> acceptedValues;
 
         public Builder() {
-            this.acceptedValues = new HashMap<>();
+            this.acceptedValues = new ArrayList<>();
         }
 
         public Builder name(ConfigName name) {
@@ -101,23 +101,35 @@ public class ConfigDescriptor {
             return this;
         }
 
-        public Builder acceptsValue(ConfigKey key, ConfigDescription description) {
-            this.acceptedValues.put(key, description);
+        public Builder acceptsValue(ConfigKey key) {
+            this.acceptedValues.add(key);
             return this;
         }
 
-        public Builder acceptsValue(String key, String description) {
-            return acceptsValue(ConfigKey.of(key), ConfigDescription.of(description));
-        }
-
-        public Builder acceptsValue(ConfigKey key, String description) {
-            return acceptsValue(key, ConfigDescription.of(description));
+        public Builder acceptsValue(String key, String label, String description) {
+            ConfigKey configKey = ConfigKey.builder()
+                    .key(key)
+                    .label(label)
+                    .description(description)
+                    .build();
+            return acceptsValue(configKey);
         }
 
         public ConfigDescriptor build() {
             if(acceptedValues.size() == 0) {
                 throw new IllegalArgumentException("Must define at least 1 required value.");
             }
+
+            // shortcut - if name not defined, use the name associated with the ConfigKey
+            if(name == null && acceptedValues.size() > 0) {
+                name = ConfigName.of(acceptedValues.get(0).getKey());
+            }
+
+            // shortcut - if description not defined, use the name associated with the ConfigKey
+            if(description == null && acceptedValues.size() > 0) {
+                description = acceptedValues.get(0).getDescription();
+            }
+
             return new ConfigDescriptor(name, description, isRequired, acceptedValues);
         }
     }

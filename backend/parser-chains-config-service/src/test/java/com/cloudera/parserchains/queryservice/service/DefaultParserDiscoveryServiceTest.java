@@ -80,7 +80,7 @@ public class DefaultParserDiscoveryServiceTest {
             .name("outputField")
             .description("The name of the output field.")
             .isRequired(true)
-            .acceptsValue("outputField", "The name of the output field.")
+            .acceptsValue("outputField", "Output Field", "The name of the output field.")
             .build();
   }
 
@@ -130,7 +130,7 @@ public class DefaultParserDiscoveryServiceTest {
     ConfigParamDescriptor expectedItem = new ConfigParamDescriptor()
             .setName(descriptor1.getName().get())
             .setDescription(descriptor1.getDescription().get())
-            .setLabel(descriptor1.getDescription().get())
+            .setLabel(descriptor1.getAcceptedValues().get(0).getLabel())
             .setType(DEFAULT_SCHEMA_TYPE)
             .setRequired(Boolean.toString(descriptor1.isRequired()))
             .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "outputField");
@@ -145,8 +145,8 @@ public class DefaultParserDiscoveryServiceTest {
             .name("fieldToRename")
             .description("Field to Rename")
             .isRequired(true)
-            .acceptsValue("from", "The original name of the field to rename.")
-            .acceptsValue("to", "The new name of the field.")
+            .acceptsValue("from", "From", "The original name of the field to rename.")
+            .acceptsValue("to", "To", "The new name of the field.")
             .build();
     setupParser(parser1, parserInfo1, descriptor);
     setupCatalog(Arrays.asList(parserInfo1));
@@ -161,14 +161,14 @@ public class DefaultParserDiscoveryServiceTest {
     ConfigParamDescriptor expectedFromItem = new ConfigParamDescriptor()
             .setName("from")
             .setDescription("The original name of the field to rename.")
-            .setLabel("Field to Rename")
+            .setLabel("From")
             .setType(DEFAULT_SCHEMA_TYPE)
             .setRequired(Boolean.toString(descriptor.isRequired()))
             .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "fieldToRename");
     ConfigParamDescriptor expectedToItem = new ConfigParamDescriptor()
             .setName("to")
             .setDescription("The new name of the field.")
-            .setLabel("Field to Rename")
+            .setLabel("To")
             .setType(DEFAULT_SCHEMA_TYPE)
             .setRequired(Boolean.toString(descriptor.isRequired()))
             .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "fieldToRename");
@@ -197,7 +197,7 @@ public class DefaultParserDiscoveryServiceTest {
     ConfigParamDescriptor expectedItem = new ConfigParamDescriptor()
             .setName(descriptor1.getName().get())
             .setDescription(descriptor1.getDescription().get())
-            .setLabel(descriptor1.getDescription().get())
+            .setLabel(descriptor1.getAcceptedValues().get(0).getLabel())
             .setType(DEFAULT_SCHEMA_TYPE)
             .setRequired(Boolean.toString(descriptor1.isRequired()))
             .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "outputField");

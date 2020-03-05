@@ -1,6 +1,5 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.ChainRunner;
 import com.cloudera.parserchains.core.Constants;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
@@ -156,40 +155,62 @@ public class DelimitedTextParser implements Parser {
      * Handles configuration for the {@link DelimitedTextParser}.
      */
     static class Configurer {
-        static final ConfigKey inputFieldKey = ConfigKey.of("inputField");
+        // input field
+        static final ConfigKey inputFieldKey = ConfigKey.builder()
+                .key("inputField")
+                .label("Input Field")
+                .description("The name of the input field to parse.")
+                .build();
         static final ConfigDescriptor inputFieldConfig = ConfigDescriptor
                 .builder()
-                .name("inputField")
-                .description("Input Field")
-                .acceptsValue(inputFieldKey, "The name of the input field to parse.")
+                .acceptsValue(inputFieldKey)
                 .isRequired(true)
                 .build();
-        static final ConfigKey outputFieldName = ConfigKey.of("fieldName");
-        static final ConfigKey outputFieldIndex = ConfigKey.of("fieldIndex");
+
+        // output field
+        static final ConfigKey outputFieldName = ConfigKey.builder()
+                .key("fieldName")
+                .label("Field Name")
+                .description("The name of the output field.")
+                .build();
+        static final ConfigKey outputFieldIndex = ConfigKey.builder()
+                .key("fieldIndex")
+                .label("Column Index")
+                .description("The index (0-based) of the column containing the data.")
+                .build();
         static final ConfigDescriptor outputFieldConfig = ConfigDescriptor
                 .builder()
                 .name("outputField")
                 .description("Output Field")
                 .isRequired(true)
-                .acceptsValue(outputFieldIndex, "The name of the output field.")
-                .acceptsValue(outputFieldName, "The column index containing the data for an output field.")
+                .acceptsValue(outputFieldIndex)
+                .acceptsValue(outputFieldName)
                 .build();
-        static final ConfigKey delimiterKey = ConfigKey.of("delimiter");
+
+        // delimiter
+        static final ConfigKey delimiterKey = ConfigKey.builder()
+                .key("delimiter")
+                .label("Delimiter")
+                .description("A regex delimiter used to split the text. Defaults to comma.")
+                .build();
         static final ConfigDescriptor delimiterConfig = ConfigDescriptor
                 .builder()
-                .name("delimiter")
-                .description("Delimiter")
-                .acceptsValue(delimiterKey, "A regex delimiter used to split the text. Defaults to comma.")
+                .acceptsValue(delimiterKey)
                 .isRequired(false)
                 .build();
-        static final ConfigKey trimKey = ConfigKey.of("trim");
+
+        // trim
+        static final ConfigKey trimKey = ConfigKey.builder()
+                .key("trim")
+                .label("Trim Whitespace")
+                .description("Trim whitespace from each value. Defaults to true.")
+                .build();
         static final ConfigDescriptor trimConfig = ConfigDescriptor
                 .builder()
-                .name("trim")
-                .description("Trim")
-                .acceptsValue(trimKey, "Trim whitespace from each value. Defaults to true.")
+                .acceptsValue(trimKey)
                 .isRequired(false)
                 .build();
+
         private DelimitedTextParser parser;
 
         Configurer(DelimitedTextParser parser) {

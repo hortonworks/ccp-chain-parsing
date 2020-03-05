@@ -26,7 +26,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SyslogParserTest {
@@ -106,9 +105,9 @@ public class SyslogParserTest {
     }
 
     @Test
-    void inputFieldNotDefined() {
-        Message input = Message.builder().build();
-        assertThrows(IllegalStateException.class, () -> new SyslogParser().parse(input));
+    void defaultInputField() {
+        SyslogParser parser = new SyslogParser();
+        assertEquals("original_string", parser.getInputField().get());
     }
 
     @Test

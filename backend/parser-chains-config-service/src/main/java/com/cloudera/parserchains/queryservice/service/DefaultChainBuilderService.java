@@ -156,7 +156,7 @@ public class DefaultChainBuilderService implements ChainBuilderService {
                             .entrySet()
                             .stream()
                             .collect(Collectors.toMap(
-                                    e -> ConfigKey.of(e.getKey()),
+                                    e -> ConfigKey.builder().key(e.getKey()).build(),
                                     e -> ConfigValue.of(e.getValue())));
                     parser.configure(ConfigName.of(configName), values);
                 }

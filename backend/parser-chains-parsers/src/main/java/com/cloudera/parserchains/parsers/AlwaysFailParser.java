@@ -72,12 +72,14 @@ public class AlwaysFailParser implements Parser {
      * Handles configuration for the {@link AlwaysFailParser}.
      */
     static class Configurer {
-        static final ConfigKey errorMessageKey = ConfigKey.of("errorMessage");
+        static final ConfigKey errorMessageKey = ConfigKey.builder()
+                .key("errorMessage")
+                .label("Message")
+                .description("The error message.")
+                .build();
         static final ConfigDescriptor errorMessageConfig = ConfigDescriptor
                 .builder()
-                .name("errorMessage")
-                .description("Error Message")
-                .acceptsValue(errorMessageKey, "The error message to throw.")
+                .acceptsValue(errorMessageKey)
                 .isRequired(false)
                 .build();
         private AlwaysFailParser parser;

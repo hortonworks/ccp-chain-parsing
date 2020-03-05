@@ -85,25 +85,43 @@ public class SyslogParser implements Parser {
         configurer.configure(name, values);
     }
 
+    public FieldName getInputField() {
+        return inputField;
+    }
+
+    public SyslogSpecification getSpecification() {
+        return specification;
+    }
+
     /**
      * Handles configuration for the {@link SyslogParser}.
      */
     static class Configurer {
-        static final ConfigKey inputFieldKey = ConfigKey.of("inputField");
+        // input field definition
+        static final ConfigKey inputFieldKey = ConfigKey.builder()
+                .key("inputField")
+                .label("Input Field")
+                .description("The name of the input field to parse.")
+                .build();
         static final ConfigDescriptor inputFieldConfig = ConfigDescriptor
                 .builder()
                 .name("inputField")
                 .description("Input Field")
-                .acceptsValue(inputFieldKey, "The name of the input field to parse.")
+                .acceptsValue(inputFieldKey)
                 .isRequired(false)
                 .build();
 
-        static final ConfigKey specKey = ConfigKey.of("specification");
+        // specification definition
+        static final ConfigKey specKey = ConfigKey.builder()
+                .key("specification")
+                .label("Specification")
+                .description("The Syslog specification; 'RFC_5424' or 'RFC_3164'. Defaults to 'RFC_5424'")
+                .build();
         static final ConfigDescriptor specConfig = ConfigDescriptor
                 .builder()
                 .name("specification")
                 .description("Specification")
-                .acceptsValue(specKey, "The Syslog specification; 'RFC_5424' or 'RFC_3164'. Defaults to 'RFC_5424'")
+                .acceptsValue(specKey)
                 .isRequired(false)
                 .build();
         private SyslogParser parser;

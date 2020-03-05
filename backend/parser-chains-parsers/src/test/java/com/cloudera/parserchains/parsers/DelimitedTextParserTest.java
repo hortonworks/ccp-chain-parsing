@@ -1,6 +1,6 @@
 package com.cloudera.parserchains.parsers;
 
-import com.cloudera.parserchains.core.FieldName;
+import  com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Regex;
@@ -26,7 +26,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DelimitedTextParserTest {
@@ -174,13 +173,6 @@ public class DelimitedTextParserTest {
             "Expected the 'third' field to have been added to the message.");
         assertFalse(output.getError().isPresent(),
             "Expected no parsing errors.");
-    }
-
-    @Test
-    void inputFieldNotDefined() {
-        Message input = Message.builder().build();
-        assertThrows(IllegalStateException.class, () -> new DelimitedTextParser().parse(input),
-            "Expected parsing error because no input field has been defined.");
     }
 
     @Test

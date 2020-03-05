@@ -68,15 +68,23 @@ public class RenameFieldParser implements Parser {
      * Handles configuration for the {@link RenameFieldParser}.
      */
     static class Configurer {
-        static final ConfigKey fromFieldKey = ConfigKey.of("from");
-        static final ConfigKey toFieldKey = ConfigKey.of("to");
+        static final ConfigKey fromFieldKey = ConfigKey.builder()
+                .key("from")
+                .label("Rename From")
+                .description("The original name of the field to rename.")
+                .build();
+        static final ConfigKey toFieldKey = ConfigKey.builder()
+                .key("to")
+                .label("Rename To")
+                .description("The new name of the field.")
+                .build();
         static final ConfigDescriptor renameFieldConfig = ConfigDescriptor
                 .builder()
                 .name("fieldToRename")
                 .description("Field to Rename")
                 .isRequired(true)
-                .acceptsValue(fromFieldKey, "The original name of the field to rename.")
-                .acceptsValue(toFieldKey, "The new name of the field.")
+                .acceptsValue(fromFieldKey)
+                .acceptsValue(toFieldKey)
                 .build();
         private RenameFieldParser parser;
 

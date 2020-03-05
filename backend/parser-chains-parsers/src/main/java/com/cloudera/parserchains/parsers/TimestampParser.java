@@ -88,11 +88,15 @@ public class TimestampParser implements Parser {
      * Handles configuration for the {@link TimestampParser}.
      */
     static class Configurer {
-        static final ConfigKey outputFieldKey = ConfigKey.of("outputField");
+        static final ConfigKey outputFieldKey = ConfigKey.builder()
+                .key("outputField")
+                .label("Output Field")
+                .description("The name of the field that will contain the timestamp.  Defaults to 'timestamp'.")
+                .build();
         static final ConfigDescriptor outputFieldConfig = ConfigDescriptor.builder()
                 .name("outputField")
                 .description("Output Field")
-                .acceptsValue(outputFieldKey,"The name of the field that will contain the timestamp.  Defaults to 'timestamp'.")
+                .acceptsValue(outputFieldKey)
                 .isRequired(false)
                 .build();
         private TimestampParser parser;

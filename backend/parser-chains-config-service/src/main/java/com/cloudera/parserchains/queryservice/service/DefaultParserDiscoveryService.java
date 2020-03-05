@@ -22,7 +22,6 @@ import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.ParserBuilder;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
-import com.cloudera.parserchains.core.config.ConfigDescription;
 import com.cloudera.parserchains.core.config.ConfigDescriptor;
 import com.cloudera.parserchains.core.config.ConfigKey;
 import com.cloudera.parserchains.queryservice.model.ParserID;
@@ -95,22 +94,19 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
 
     Parser parser = builder.build(parserInfo);
     for(ConfigDescriptor param: parser.validConfigurations()) {
-      for(Map.Entry<ConfigKey, ConfigDescription> entry: param.getAcceptedValues().entrySet()) {
+      for(ConfigKey configKey: param.getAcceptedValues()) {
 
         // describe each parameter accepted by the parser
-        ConfigKey configKey = entry.getKey();
-        ConfigDescription description = entry.getValue();
         ConfigParamDescriptor paramDescriptor = new ConfigParamDescriptor()
                 .setName(configKey.getKey())
-                .setLabel(param.getDescription().get())
-                .setDescription(description.get())
+                .setLabel(configKey.getLabel())
+                .setDescription(configKey.getDescription().get())
                 .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + param.getName().get())
                 .setRequired(Boolean.toString(param.isRequired()))
                 .setType(DEFAULT_SCHEMA_TYPE);
         descriptor.addConfiguration(paramDescriptor);
       }
     }
-
     return descriptor;
   }
 }
