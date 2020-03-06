@@ -1,6 +1,15 @@
 <ng-template #AddButton>
-  <button nz-button data-qe-id="add-chain-btn" nzType="primary" (click)="showAddChainModal()">
-    <span>Add Chain</span>
+  <button
+    class="add-new-chain-button"
+    nz-tooltip
+    nzTooltipTitle="Add New Chain"
+    nzTooltipPlacement="left"
+    nz-button
+    data-qe-id="add-chain-btn"
+    nzType="primary"
+    (click)="showAddChainModal()"
+  >
+    <i nz-icon nzType="plus" nzTheme="outline"></i>
   </button>
 </ng-template>
 <nz-modal
