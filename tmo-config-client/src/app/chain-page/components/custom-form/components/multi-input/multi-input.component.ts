@@ -31,7 +31,7 @@ export class MultiInputComponent implements OnInit {
 
   onChange(event: Event, index: number, config: CustomFormConfig) {
     const value = ((event.currentTarget as HTMLInputElement).value || '').trim();
-    this.value[index][this.config.name] = value;
+    this.value[index][config.name] = value;
     this.changeValue.emit(this.value);
   }
 
