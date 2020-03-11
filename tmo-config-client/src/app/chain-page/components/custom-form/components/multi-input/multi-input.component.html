@@ -1,15 +1,16 @@
 <div class="multi-input">
   <span *ngIf="config.type === 'text'">
-    <nz-form-item *ngFor="let item of value; let i = index;">
-      <nz-form-control [nzSm]="24" [nzXs]="24">
-        <input
-          nz-input
-          (keyup)="onChange($event, i, config)"
-        />
-      </nz-form-control>
-    </nz-form-item>
+    <nz-form-control *ngFor="let item of value; let i = index;" [nzSm]="24" [nzXs]="24">
+      <input
+        nz-input
+        (keyup)="onChange($event, i, config)"
+      />
+    </nz-form-control>
   </span>
   <button
+    nz-button
+    nzType="primary"
+    nzShape="circle"
     (click)="onAddClick($event, config)"
-  >Add</button>
+  ><i nz-icon nzType="plus-circle" nzTheme="fill"></i></button>
 </div>

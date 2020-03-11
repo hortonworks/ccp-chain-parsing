@@ -112,7 +112,7 @@ export class ParserComponent implements OnInit, OnChanges {
           } else {
             let current;
             if (formFieldData.path) {
-              current = get(this.parser, [formFieldData.path, formFieldData.name].join('.'));
+              current = get(this.parser, formFieldData.path);
             } else {
               current = this.parser[formFieldData.name];
             }
@@ -127,8 +127,11 @@ export class ParserComponent implements OnInit, OnChanges {
                 }
               });
             } else {
-              current = current.map((item, i) => {
-                return { ...item, ...formFieldData.value[i] };
+              current = formFieldData.value.map((item, i) => {
+                return {
+                  ...current[i],
+                  ...item
+                };
               });
               partialParser = produce(this.parser, (draftParser) => {
                 set({
