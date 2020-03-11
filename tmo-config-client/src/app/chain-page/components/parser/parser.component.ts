@@ -97,7 +97,9 @@ export class ParserComponent implements OnInit, OnChanges {
       draft.forEach(field => {
         field.onChange = debounce((formFieldData) => {
           this.dirty = true;
-          const partialParser = formFieldData.path
+          let partialParser;
+          if (formFieldData.multiple !== true) {
+            partialParser = formFieldData.path
             ? produce(this.parser, (draftParser) => {
                 set({
                   ...draftParser
@@ -107,6 +109,35 @@ export class ParserComponent implements OnInit, OnChanges {
               id: this.parser.id,
               [formFieldData.name]: formFieldData.value
             };
+          } else {
+            let current;
+            if (formFieldData.path) {
+              current = get(this.parser, [formFieldData.path, formFieldData.name].join('.'));
+            } else {
+              current = this.parser[formFieldData.name];
+            }
+            if (!current) {
+              partialParser = produce(this.parser, (draftParser) => {
+                if (formFieldData.path) {
+                  set({
+                    ...draftParser
+                  }, formFieldData.path, formFieldData.value);
+                } else {
+                  draftParser[formFieldData.name] = formFieldData.value;
+                }
+              });
+            } else {
+              current = current.map((item, i) => {
+                return { ...item, ...formFieldData.value[i] };
+              });
+              partialParser = produce(this.parser, (draftParser) => {
+                set({
+                  ...draftParser
+                }, formFieldData.path, current);
+              });
+            }
+          }
+
           this.parserChange.emit(partialParser);
         }, 400);
       });

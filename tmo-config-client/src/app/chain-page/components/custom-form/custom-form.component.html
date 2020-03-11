@@ -11,7 +11,7 @@
         {{ formConfig.label }}
       </nz-form-label>
 
-      <nz-form-control *ngIf="formConfig.type === 'text'" [nzSm]="14" [nzXs]="24">
+      <nz-form-control *ngIf="formConfig.type === 'text' && formConfig.multiple !== true" [nzSm]="14" [nzXs]="24">
         <input
           id="{{ formConfig.id }}"
           nz-input
@@ -19,6 +19,13 @@
           (keyup)="onChange($event, formConfig)"
           placeholder="{{ formConfig.placeholder }}"
         />
+      </nz-form-control>
+      <nz-form-control *ngIf="formConfig.type === 'text' && formConfig.multiple === true" [nzSm]="14" [nzXs]="24">
+        <app-multi-input
+          [config]="formConfig"
+          (changeValue)="onChange($event, formConfig)"
+        >
+        </app-multi-input>
       </nz-form-control>
       <nz-form-control *ngIf="formConfig.type === 'textarea'" [nzSm]="14" [nzXs]="24">
         <textarea

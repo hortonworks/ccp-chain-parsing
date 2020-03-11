@@ -1,0 +1,15 @@
+<div class="multi-input">
+  <span *ngIf="config.type === 'text'">
+    <nz-form-item *ngFor="let item of value; let i = index;">
+      <nz-form-control [nzSm]="24" [nzXs]="24">
+        <input
+          nz-input
+          (keyup)="onChange($event, i, config)"
+        />
+      </nz-form-control>
+    </nz-form-item>
+  </span>
+  <button
+    (click)="onAddClick($event, config)"
+  >Add</button>
+</div>
