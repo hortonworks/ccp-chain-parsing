@@ -52,7 +52,7 @@
         nzType="link"
         data-qe-id="remove-parser"
         class="parser-delete-btn"
-        (click)="stopEventPropagation($event)"
+        (click)="preventCollapseOnDelete($event)"
       >
         <i nz-icon nzType="delete" nzTheme="fill"></i>
       </button>
