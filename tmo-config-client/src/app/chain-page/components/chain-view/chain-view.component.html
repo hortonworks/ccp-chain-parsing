@@ -5,6 +5,7 @@
         [parserId]="parserId"
         [chainId]="chainId"
         [dirty]="(dirtyParsers || []).includes(parserId)"
+        [failedParser]="failedParser | async"
         [metaDataForm]="metaDataForm"
         (subchainSelect)="onChainSelected($event)"
         (parserRemove)="onParserRemove($event)"

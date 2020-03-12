@@ -19,7 +19,7 @@ export const SAVE_PARSER_CONFIG = '[Chain Details] save parser config';
 export const SAVE_PARSER_CONFIG_SUCCESS = '[Chain Details] save parser config success';
 export const SAVE_PARSER_CONFIG_FAIL = '[Chain Details] save parser config fail';
 export const ADD_CHAIN = '[Chain Details] add chain';
-export const FAILED_PARSER_SELECTED = '[Chain Details] failed parser selected';
+export const INVESTIGATE_PARSER = '[Chain Details] investigate parser';
 export const UPDATE_CHAIN = '[Chain Details] update chain';
 export const GET_FORM_CONFIG = '[Chain Details] get form config start';
 export const GET_FORM_CONFIG_SUCCESS = '[Chain Details] get form config success';
@@ -87,8 +87,8 @@ export class AddChainAction implements Action {
   constructor(public payload: { chain: PartialParserChainModel }) {}
 }
 
-export class FailedParserSelected implements Action {
-  readonly type = FAILED_PARSER_SELECTED;
+export class InvestigateParserAction implements Action {
+  readonly type = INVESTIGATE_PARSER;
   constructor(public payload: { id: string }) {}
 }
 
@@ -182,7 +182,7 @@ export type ChainDetailsAction = LoadChainDetailsAction
   | SaveParserConfigFailAction
   | SaveParserConfigFailAction
   | AddChainAction
-  | FailedParserSelected
+  | InvestigateParserAction
   | UpdateChainAction
   | GetFormConfigAction
   | GetFormConfigSuccessAction

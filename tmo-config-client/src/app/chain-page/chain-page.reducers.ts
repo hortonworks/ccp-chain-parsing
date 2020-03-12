@@ -14,6 +14,7 @@ export interface ChainPageState {
   routes: { [key: string]: RouteModel };
   error: string;
   parserToBeInvestigated: string;
+  failedParser: string;
   formConfigs?: { [key: string]: CustomFormConfig[] };
   dirtyParsers: string[];
   dirtyChains: string[];
@@ -26,6 +27,7 @@ export const initialState: ChainPageState = {
   routes: {},
   error: '',
   parserToBeInvestigated: '',
+  failedParser: '',
   formConfigs: {},
   dirtyParsers: [],
   dirtyChains: [],
@@ -129,7 +131,7 @@ export function reducer(
         }
       };
     }
-    case chainPageActions.FAILED_PARSER_SELECTED: {
+    case chainPageActions.INVESTIGATE_PARSER: {
       return {
         ...state,
         parserToBeInvestigated: action.payload.id

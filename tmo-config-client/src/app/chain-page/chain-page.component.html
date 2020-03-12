@@ -1,11 +1,11 @@
 <nz-card class="parser-chain" *ngIf="chain" [nzTitle]="breadcrumbsCardTitle">
   <div nz-row nzGutter="16">
     <div nz-col nzSpan="10">
-      <div *ngIf="">test</div>
       <app-chain-view
         [parsers]="parsers"
         [chainId]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].id) || (chain && chain.id)"
         [dirtyParsers]="dirtyParsers"
+        [failedParser]="failedParser$"
         (removeParserEmitter)="removeParser($event)"
         (chainLevelChange)="onChainLevelChange($event)"
       ></app-chain-view>
@@ -24,7 +24,7 @@
       </div>
     </div>
     <div nz-col nzSpan="14">
-      <app-live-view [chainConfig$]="chainConfig$"></app-live-view>
+      <app-live-view [chainConfig$]="chainConfig$" ></app-live-view>
     </div>
   </div>
 </nz-card>

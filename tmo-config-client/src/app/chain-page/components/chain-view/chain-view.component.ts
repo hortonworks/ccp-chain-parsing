@@ -12,6 +12,7 @@ export class ChainViewComponent {
   @Input() parsers: ParserModel[];
   @Input() dirtyParsers: string[];
   @Input() chainId: string;
+  @Input() failedParser: string;
   @Output() removeParserEmitter = new EventEmitter<string>();
   @Output() chainLevelChange = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<PartialParserModel>();

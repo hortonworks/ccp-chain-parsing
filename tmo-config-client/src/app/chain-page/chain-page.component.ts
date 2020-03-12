@@ -19,6 +19,7 @@ import {
   getParserToBeInvestigated,
   getPathWithChains
 } from './chain-page.reducers';
+import { getFailedParser } from './components/live-view/live-view.reducers';
 
 @Component({
   selector: 'app-chain-page',
@@ -41,6 +42,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
   popOverVisible = false;
   @ViewChild('chainNameInput', { static: false }) chainNameInput: ElementRef;
   editChainNameForm: FormGroup;
+  failedParser$: Observable<string>;
 
   constructor(
     private store: Store<ChainPageState>,
@@ -110,10 +112,12 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
     });
 
     this.store.dispatch(new fromActions.GetFormConfigsAction());
+
+    this.failedParser$ = this.store.pipe(select(getFailedParser));
   }
 
   exitFailedParserEditView() {
-    this.store.dispatch(new fromActions.FailedParserSelected({ id: '' }));
+    this.store.dispatch(new fromActions.InvestigateParserAction({ id: '' }));
   }
 
   removeParser(id: string) {
@@ -200,7 +204,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
         this.store.dispatch(new fromActions.LoadChainDetailsAction({
           id: this.chainId
         }));
-        this.store.dispatch(new fromActions.FailedParserSelected({ id: '' }));
+        this.store.dispatch(new fromActions.InvestigateParserAction({ id: '' }));
       }
     });
   }
@@ -214,7 +218,7 @@ export class ChainPageComponent implements OnInit, OnDestroy, DeactivatePrevente
       nzCancelText: 'Cancel',
       nzOnOk: () => {
         this.store.dispatch(new fromActions.SaveParserConfigAction({ chainId: this.chainId }));
-        this.store.dispatch(new fromActions.FailedParserSelected({ id: '' }));
+        this.store.dispatch(new fromActions.InvestigateParserAction({ id: '' }));
       }
     });
   }

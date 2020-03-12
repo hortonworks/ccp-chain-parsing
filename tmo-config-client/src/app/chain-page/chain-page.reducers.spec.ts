@@ -303,7 +303,7 @@ describe('chain-page: reducers', () => {
       parserToBeInvestigated: '1234',
     };
 
-    const investigatedParserReducer = fromReducers.reducer(state, new fromActions.FailedParserSelected({ id: '1234'}));
+    const investigatedParserReducer = fromReducers.reducer(state, new fromActions.InvestigateParserAction({ id: '1234'}));
     expect(investigatedParserReducer.parserToBeInvestigated).toBe('1234');
   });
 

@@ -2,7 +2,7 @@
   parser: true,
   dirty: dirty
 }">
-  <nz-card class="chain-item" [nzBordered]="true" [nzTitle]="parser.name" [nzExtra]="extraTemplate" [ngClass]="{ 'investigated': isolatedParserView }">
+  <nz-card class="chain-item" [nzBordered]="true" [nzTitle]="parser.name" [nzExtra]="extraTemplate" [ngClass]="{ 'failed': parsingFailed }">
     <nz-tabset
       nzTabPosition="top"
       nzType="line"
