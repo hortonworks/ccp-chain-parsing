@@ -40,6 +40,8 @@ export class LiveViewComponent implements OnInit, AfterViewInit, OnDestroy {
   sampleDataChange$ = new Subject<SampleDataModel>();
   featureToggleChange$ = new Subject<boolean>();
 
+  selectedTabIndex = 0;
+
   constructor(private store: Store<LiveViewState>) {
     this.isExecuting$ = this.store.pipe(select(getExecutionStatus));
     this.results$ = this.store.pipe(select(getResults));
@@ -49,6 +51,7 @@ export class LiveViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.store.dispatch(liveViewInitialized());
+    this.selectedTabIndex = this.restoreSelectedTab();
   }
 
   ngAfterViewInit() {
@@ -85,6 +88,18 @@ export class LiveViewComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe(sampleData => {
       this.store.dispatch(sampleDataInputChanged({ sampleData }));
     });
+  }
+
+  onSelectedTabChange(index: number) {
+    this.persistSelectedTab(index);
+  }
+
+  private persistSelectedTab(index: number) {
+    localStorage.setItem('liveViewSelectedTabIndex', JSON.stringify(index));
+  }
+
+  private restoreSelectedTab() {
+    return parseInt(localStorage.getItem('liveViewSelectedTabIndex'), 10);
   }
 
   ngOnDestroy(): void {
