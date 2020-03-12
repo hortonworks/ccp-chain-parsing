@@ -128,3 +128,10 @@
     opacity: 0.8;
   }
 }
+
+.chain-item {
+  background-color: var(--card-head-bg);
+  .ant-tabs-content {
+    min-height: 150px !important;
+  }
+}
