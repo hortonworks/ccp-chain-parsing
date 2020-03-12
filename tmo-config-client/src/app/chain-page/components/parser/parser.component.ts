@@ -121,4 +121,8 @@ export class ParserComponent implements OnInit, OnChanges {
     this.parserChange.emit({ id: this.parser.id, config: event.value });
   }
 
+  preventCollapseOnDelete(event: Event) {
+    event.stopPropagation();
+  }
+
 }

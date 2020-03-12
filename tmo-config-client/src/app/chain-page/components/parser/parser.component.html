@@ -2,39 +2,42 @@
   parser: true,
   dirty: dirty
 }">
-  <nz-card class="chain-item" [nzBordered]="true" [nzTitle]="parser.name" [nzExtra]="extraTemplate" [ngClass]="{ 'investigated': isolatedParserView }">
-    <nz-tabset
-      nzTabPosition="top"
-      nzType="line"
-    >
-      <nz-tab nzTitle="Basics">
-        <app-custom-form
-          *ngIf="areFormsReadyToRender && metaDataForm != null"
-          [config]="metaDataForm"
-        ></app-custom-form>
-        <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="24">
-            Type
-          </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24">
-            {{ parserType }}
-          </nz-form-control>
-        </nz-form-item>
-      </nz-tab>
-      <nz-tab nzTitle="Config">
-        <app-custom-form
-          *ngIf="areFormsReadyToRender && configForm != null"
-          [config]="configForm"
-        ></app-custom-form>
-      </nz-tab>
-      <nz-tab nzTitle="Advanced">
-        <app-advanced-editor
-          [config]="parser.config"
-          (configChanged)="onAdvancedEditorChanged($event)"
-          ></app-advanced-editor>
-      </nz-tab>
-    </nz-tabset>
-  </nz-card>
+  <nz-collapse>
+    <nz-collapse-panel [nzHeader]="parser.name" class="chain-item" [nzExtra]="extraTemplate" [ngClass]="{ 'investigated': isolatedParserView }">
+      <nz-tabset
+        nzTabPosition="top"
+        nzType="line"
+      >
+        <nz-tab nzTitle="Basics">
+          <app-custom-form
+            *ngIf="areFormsReadyToRender && metaDataForm != null"
+            [config]="metaDataForm"
+          ></app-custom-form>
+          <nz-form-item>
+            <nz-form-label [nzSm]="8" [nzXs]="24">
+              Type
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              {{ parserType }}
+            </nz-form-control>
+          </nz-form-item>
+        </nz-tab>
+        <nz-tab nzTitle="Config">
+          <app-custom-form
+            *ngIf="areFormsReadyToRender && configForm != null"
+            [config]="configForm"
+          ></app-custom-form>
+        </nz-tab>
+        <nz-tab nzTitle="Advanced">
+          <app-advanced-editor
+            [config]="parser.config"
+            (configChanged)="onAdvancedEditorChanged($event)"
+            ></app-advanced-editor>
+        </nz-tab>
+      </nz-tabset>
+    </nz-collapse-panel>
+  </nz-collapse>
+
   <ng-template #extraTemplate>
     <div *ngIf="dirty" class="parser-dirty">
       <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#1890ff'"></i>
@@ -49,6 +52,7 @@
         nzType="link"
         data-qe-id="remove-parser"
         class="parser-delete-btn"
+        (click)="preventCollapseOnDelete($event)"
       >
         <i nz-icon nzType="delete" nzTheme="fill"></i>
       </button>
