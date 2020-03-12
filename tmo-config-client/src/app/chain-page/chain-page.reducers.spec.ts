@@ -35,6 +35,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
     expect(
       fromReducers.reducer(state, new fromActions.RemoveParserAction({
@@ -59,6 +60,7 @@ describe('chain-page: reducers', () => {
       },
       routes: {},
       parserToBeInvestigated: '',
+      failedParser: '',
       dirtyParsers: [],
       dirtyChains: ['4533'],
       path: [],
@@ -82,6 +84,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
     const newState = fromReducers.reducer(state, new fromAddParserActions.AddParserAction({
       chainId: '456',
@@ -107,6 +110,7 @@ describe('chain-page: reducers', () => {
       parsers: null,
       routes: null,
       parserToBeInvestigated: '',
+      failedParser: '',
       dirtyParsers: [],
       dirtyChains: [],
       path: [],
@@ -139,6 +143,7 @@ describe('chain-page: reducers', () => {
       },
       routes: null,
       parserToBeInvestigated: '',
+      failedParser: '',
       dirtyParsers: [],
       dirtyChains: [],
       path: [],
@@ -177,6 +182,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
     const newState = fromReducers.reducer(state, new fromActions.UpdateChainAction({
       chain: {
@@ -203,6 +209,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
     const newState = fromReducers.reducer(state, new fromActions.AddChainAction({
       chain: {
@@ -301,6 +308,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '1234',
+      failedParser: '',
     };
 
     const investigatedParserReducer = fromReducers.reducer(state, new fromActions.InvestigateParserAction({ id: '1234'}));
@@ -411,6 +419,7 @@ describe('chain-page: reducers', () => {
       path: ['123', '456', '678'],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
 
     const newState = fromReducers.reducer(state, new fromActions.RemoveFromPathAction({
@@ -429,6 +438,7 @@ describe('chain-page: reducers', () => {
       path: ['123', '456', '678'],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
 
     const newState = fromReducers.reducer(state, new fromActions.AddToPathAction({
@@ -470,6 +480,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
 
     const newState = fromReducers.reducer(state, new fromActions.RemoveRouteAction({
@@ -508,6 +519,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
 
     const newState = fromReducers.reducer(state, new fromActions.AddRouteAction({
@@ -568,6 +580,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
 
     const newState = fromReducers.reducer(state, new fromActions.UpdateRouteAction({
@@ -601,6 +614,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
 
     const newState = fromReducers.reducer(state, new fromActions.GetFormConfigSuccessAction({
@@ -630,6 +644,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
 
     const newState = fromReducers.reducer(state, new fromActions.GetFormConfigsSuccessAction({
@@ -660,6 +675,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
     const newState = fromReducers.reducer(state, new fromActions.SaveParserConfigAction({ chainId: '123' }));
     expect(newState.dirtyChains).toEqual([]);
@@ -701,6 +717,7 @@ describe('chain-page: reducers', () => {
       path: [],
       error: '',
       parserToBeInvestigated: '',
+      failedParser: '',
     };
     const newState = fromReducers.reducer(state,
       new fromActions.SetRouteAsDefaultAction({

@@ -24,6 +24,7 @@ class MockChainViewComponent {
   @Input() parsers: ParserModel[];
   @Input() dirtyParsers;
   @Input() chainId;
+  @Input() failedParser;
 }
 
 @Component({
