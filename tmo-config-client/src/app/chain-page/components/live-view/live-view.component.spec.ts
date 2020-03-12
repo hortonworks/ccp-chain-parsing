@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -83,6 +84,8 @@ describe('LiveViewComponent', () => {
   }));
 
   beforeEach(() => {
+    spyOn(localStorage, 'getItem');
+
     fixture = TestBed.createComponent(LiveViewComponent);
     component = fixture.componentInstance;
     component.chainConfig$ = new Subject<{}>();
@@ -170,6 +173,20 @@ describe('LiveViewComponent', () => {
       value: true,
       type: onOffToggleChanged.type
     });
+  });
+
+  it('should persist selected tab on change', fakeAsync(() => {
+    spyOn(localStorage, 'setItem');
+
+    fixture.debugElement.query(By.css('.ant-tabs-tab:nth-child(2)')).nativeElement.click();
+    fixture.detectChanges();
+
+    tick(); // needed by the animation
+    expect(localStorage.setItem).toHaveBeenCalledWith('liveViewSelectedTabIndex', '1');
+  }));
+
+  it('should restore selected tab on init', () => {
+    expect(localStorage.getItem).toHaveBeenCalledWith('liveViewSelectedTabIndex');
   });
 
   it('should unsubscribe on destroy', fakeAsync(() => {
