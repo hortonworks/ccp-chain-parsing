@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { DeleteFill } from '@ant-design/icons-angular/icons';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
@@ -236,6 +237,30 @@ describe('ParserComponent', () => {
       id: '123',
       config: value,
     });
+  });
+
+  it('should style a parser as failed', () => {
+    component.parser = {
+      id: '123',
+      name: 'Some parser',
+      type: 'Bro',
+      config: {
+        outputFields: {
+          fieldName: 'field name INIT',
+          fieldIndex: 'field index INIT'
+        }
+      }
+    };
+    component.failedParser = '123';
+    fixture.detectChanges();
+    const card = fixture.debugElement.query(By.css('[data-qe-id="chain-item"]'));
+    expect(component.parsingFailed).toBe(true);
+    expect(card.classes.failed).toBeTruthy();
+
+    component.failedParser = '';
+    fixture.detectChanges();
+    expect(component.parsingFailed).toBe(false);
+    expect(card.classes.failed).toBeFalsy();
   });
 
 });
