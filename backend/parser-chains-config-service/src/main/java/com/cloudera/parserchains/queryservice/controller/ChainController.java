@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_READ_URL;
@@ -44,6 +45,11 @@ import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.error;
 @RestController
 @RequestMapping(value = PARSER_CONFIG_BASE_URL)
 public class ChainController {
+
+    /**
+     * The maximum number of sample text values that can be used to test a parser chain.
+     */
+    static final int MAX_SAMPLES_PER_TEST = 200;
 
     @Autowired
     ChainPersistenceService chainPersistenceService;
@@ -155,14 +161,22 @@ public class ChainController {
     ResponseEntity<ParserResults> test(
             @ApiParam(name = "testRun", value = "Describes the parser chain test to run.", required = true)
             @RequestBody ParserTestRun testRun) {
+        ParserChainSchema chain = testRun.getParserChainSchema();
         ParserResults results = new ParserResults();
-        for(String textToParse: testRun.getSampleData().getSource()) {
-            ParserResult result = doTest(testRun.getParserChainSchema(), textToParse);
-            results.addResult(result);
-        }
+        testRun.getSampleData().getSource()
+                .stream()
+                .limit(MAX_SAMPLES_PER_TEST)
+                .map(sample -> doTest(chain, sample))
+                .forEach(result -> results.addResult(result));
         return ResponseEntity.ok(results);
     }
 
+    /**
+     * Parse sample text using a parser chain.
+     * @param schema Defines the parser chain that needs to be constructed.
+     * @param textToParse The text to parse.
+     * @return
+     */
     private ParserResult doTest(ParserChainSchema schema, String textToParse) {
         ParserResult result;
         try {
