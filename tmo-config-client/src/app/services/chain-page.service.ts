@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 import { ChainDetailsModel } from '../chain-page/chain-page.models';
 
@@ -7,7 +8,7 @@ import { ChainDetailsModel } from '../chain-page/chain-page.models';
     providedIn: 'root'
 })
 export class ChainPageService {
-
+    private collapseAll = new BehaviorSubject(true);
     private readonly BASE_URL = '/api/v1/parserconfig/';
 
     constructor(
@@ -32,5 +33,12 @@ export class ChainPageService {
 
     public getFormConfigs() {
       return this.http.get(this.BASE_URL + `parser-form-configuration`);
+    }
+
+    public getCollapseState() {
+      return this.collapseAll;
+    }
+    public collapseAllParser() {
+      this.collapseAll.next(false);
     }
 }

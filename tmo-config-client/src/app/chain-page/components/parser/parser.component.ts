@@ -7,6 +7,7 @@ import set from 'lodash.set';
 import { ParserModel } from '../../chain-page.models';
 import { CustomFormConfig } from '../custom-form/custom-form.component';
 
+import { ChainPageService } from './../../../services/chain-page.service';
 import { ConfigChangedEvent } from './advanced-editor/advanced-editor.component';
 
 @Component({
@@ -26,6 +27,8 @@ export class ParserComponent implements OnInit, OnChanges {
   @Output() parserChange = new EventEmitter<any>();
 
   areFormsReadyToRender = false;
+  parserCollapseState = true;
+  constructor(private chainPageService: ChainPageService) {}
 
   ngOnInit() {
     this.configForm = this.setFormFieldValues(this.configForm);
@@ -33,6 +36,11 @@ export class ParserComponent implements OnInit, OnChanges {
 
     this.configForm = this.addFormFieldListeners(this.configForm);
     this.metaDataForm = this.addFormFieldListeners(this.metaDataForm);
+
+    this.chainPageService.getCollapseState().subscribe(state => {
+      this.parserCollapseState = state;
+      console.log('data', state);
+    });
 
     setTimeout(() => {
       this.areFormsReadyToRender = true;

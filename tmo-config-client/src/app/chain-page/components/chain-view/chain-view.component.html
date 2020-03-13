@@ -1,7 +1,9 @@
 <div class="parser-chain">
-  <div *ngFor="let parserId of parsers; trackBy: trackByFn" class="parser-chain-item">
+  <button (click)="collapseAllParsers()">Collapse All</button>
+  <div *ngFor="let parserId of parsers; trackBy: trackByFn; i: index" class="parser-chain-item">
     <div class="chain-item">
       <app-parser-composer
+        [parserCollapseState]="parserCollapseStateArray[i]"
         [parserId]="parserId"
         [chainId]="chainId"
         [dirty]="(dirtyParsers || []).includes(parserId)"

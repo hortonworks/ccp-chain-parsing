@@ -1,13 +1,15 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { ParserModel, PartialParserModel } from '../../chain-page.models';
+
+import { ChainPageService } from './../../../services/chain-page.service';
 
 @Component({
   selector: 'app-chain-view',
   templateUrl: './chain-view.component.html',
   styleUrls: ['./chain-view.component.scss']
 })
-export class ChainViewComponent {
+export class ChainViewComponent implements AfterViewInit {
 
   @Input() parsers: ParserModel[];
   @Input() dirtyParsers: string[];
@@ -16,6 +18,12 @@ export class ChainViewComponent {
   @Output() chainLevelChange = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<PartialParserModel>();
 
+  parserCollapseStateArray: boolean[];
+  constructor(private chainPageService: ChainPageService) {
+  }
+  ngAfterViewInit() {
+    this.parserCollapseStateArray = new Array(this.parsers.length).fill(true);
+  }
   removeParser(id: string) {
     this.removeParserEmitter.emit(id);
   }
@@ -34,6 +42,11 @@ export class ChainViewComponent {
 
   trackByFn(index: number, parserId: string): string {
     return parserId;
+  }
+
+  collapseAllParsers() {
+    this.chainPageService.collapseAllParser();
+    console.log('collapseAllParsers called');
   }
 
 }
