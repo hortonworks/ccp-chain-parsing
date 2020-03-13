@@ -1,7 +1,7 @@
 package com.cloudera.parserchains.queryservice.controller;
 
-import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
 import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
@@ -31,6 +31,7 @@ import static com.cloudera.parserchains.queryservice.common.ApplicationConstants
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_UPDATE_URL;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_URL;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_PARSER_TEST_URL;
+import static com.cloudera.parserchains.queryservice.controller.ChainController.MAX_SAMPLES_PER_TEST;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -41,8 +42,6 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static com.cloudera.parserchains.queryservice.controller.ChainController.MAX_SAMPLES_PER_TEST;
 
 @SpringBootTest
 @AutoConfigureMockMvc

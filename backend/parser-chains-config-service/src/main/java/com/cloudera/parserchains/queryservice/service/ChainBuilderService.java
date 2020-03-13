@@ -1,7 +1,8 @@
 package com.cloudera.parserchains.queryservice.service;
 
 import com.cloudera.parserchains.core.ChainLink;
-import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.model.define.InvalidParserException;
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 
 /**
  * A service that builds a parser chain from a parser chain schema.

@@ -1,6 +1,4 @@
-package com.cloudera.parserchains.queryservice.service;
-
-import com.cloudera.parserchains.queryservice.model.define.ParserSchema;
+package com.cloudera.parserchains.core.model.define;
 
 /**
  * An exception that occurs when the user has defined a parser that is invalid

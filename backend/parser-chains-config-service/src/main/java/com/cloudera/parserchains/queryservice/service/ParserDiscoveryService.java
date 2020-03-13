@@ -1,6 +1,6 @@
 package com.cloudera.parserchains.queryservice.service;
 
-import com.cloudera.parserchains.queryservice.model.ParserID;
+import com.cloudera.parserchains.core.model.define.ParserID;
 import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
 

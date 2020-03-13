@@ -1,11 +1,14 @@
 package com.cloudera.parserchains.queryservice.service;
 
+import com.cloudera.parserchains.core.ChainBuilder;
 import com.cloudera.parserchains.core.ChainLink;
+import com.cloudera.parserchains.core.DefaultChainBuilder;
 import com.cloudera.parserchains.core.DefaultChainRunner;
 import com.cloudera.parserchains.core.ReflectiveParserBuilder;
 import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
-import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.model.define.InvalidParserException;
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 import org.adrianwalker.multilinestring.Multiline;
 import org.apache.commons.lang3.StringUtils;
@@ -30,9 +33,8 @@ public class DefaultChainExecutorServiceTest {
     void beforeEach() {
         service = new DefaultChainExecutorService(
                 new DefaultChainRunner());
-        chainBuilderService = new DefaultChainBuilderService(
-                new ReflectiveParserBuilder(),
-                new ClassIndexParserCatalog());
+        ChainBuilder chainBuilder = new DefaultChainBuilder(new ReflectiveParserBuilder(), new ClassIndexParserCatalog());
+        chainBuilderService = new DefaultChainBuilderService(chainBuilder);
     }
 
     private ChainLink buildChain(ParserChainSchema chainSchema) throws InvalidParserException {

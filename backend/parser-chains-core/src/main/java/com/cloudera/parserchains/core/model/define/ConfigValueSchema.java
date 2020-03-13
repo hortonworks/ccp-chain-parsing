@@ -1,4 +1,4 @@
-package com.cloudera.parserchains.queryservice.model.define;
+package com.cloudera.parserchains.core.model.define;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;

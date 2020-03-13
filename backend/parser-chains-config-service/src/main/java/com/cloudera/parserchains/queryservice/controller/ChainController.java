@@ -1,8 +1,8 @@
 package com.cloudera.parserchains.queryservice.controller;
 
 import com.cloudera.parserchains.core.ChainLink;
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.config.AppProperties;
-import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResults;
 import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
@@ -11,7 +11,7 @@ import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ChainBuilderService;
 import com.cloudera.parserchains.queryservice.service.ChainExecutorService;
 import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
-import com.cloudera.parserchains.queryservice.service.InvalidParserException;
+import com.cloudera.parserchains.core.model.define.InvalidParserException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_READ_URL;

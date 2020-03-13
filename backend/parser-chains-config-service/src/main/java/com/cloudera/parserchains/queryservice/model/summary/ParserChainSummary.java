@@ -18,7 +18,7 @@
 
 package com.cloudera.parserchains.queryservice.model.summary;
 
-import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 
 import java.util.Objects;
 

@@ -1,19 +1,11 @@
-package com.cloudera.parserchains.queryservice.model.define;
+package com.cloudera.parserchains.core.model.define;
 
 import com.cloudera.parserchains.core.Parser;
+import com.cloudera.parserchains.core.TestParser;
 import com.cloudera.parserchains.core.catalog.AnnotationBasedParserInfoBuilder;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
 import com.cloudera.parserchains.core.catalog.ParserInfoBuilder;
-import com.cloudera.parserchains.parsers.AlwaysFailParser;
-import com.cloudera.parserchains.parsers.DelimitedTextParser;
-import com.cloudera.parserchains.parsers.RenameFieldParser;
-import com.cloudera.parserchains.parsers.SyslogParser;
-import com.cloudera.parserchains.parsers.TimestampParser;
-import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.ParserID;
-import com.cloudera.parserchains.queryservice.model.ParserName;
-import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
-import com.cloudera.parserchains.queryservice.model.summary.ParserSummaryMapper;
+import com.cloudera.parserchains.core.utils.JSONUtils;
 import org.adrianwalker.multilinestring.Multiline;
 import org.junit.jupiter.api.Test;
 
@@ -29,27 +21,23 @@ public class ParserChainSchemaTest {
      *   "name" : "My Parser Chain",
      *   "parsers" : [ {
      *     "id" : "26bf648f-930e-44bf-a4de-bfd34ac16165",
-     *     "name" : "Syslog",
-     *     "type" : "com.cloudera.parserchains.parsers.SyslogParser",
+     *     "name" : "Test Parser",
+     *     "type" : "com.cloudera.parserchains.core.TestParser",
      *     "config" : {
      *       "inputField" : [ {
      *         "inputField" : "input"
-     *       } ],
-     *       "specification" : [ {
-     *         "specification" : "RFC_5424"
      *       } ]
      *     }
      *   }, {
      *     "id" : "bdf7d8be-50b1-4998-8b3f-f525d1e95931",
-     *     "name" : "Rename Field(s)",
-     *     "type" : "com.cloudera.parserchains.parsers.RenameFieldParser",
+     *     "name" : "Test Parser",
+     *     "type" : "com.cloudera.parserchains.core.TestParser",
      *     "config" : {
-     *       "fieldToRename" : [ {
-     *         "from" : "syslog.header.timestamp",
-     *         "to" : "timestamp"
-     *       }, {
-     *         "from" : "syslog.header.hostName",
-     *         "to" : "host"
+     *       "inputField" : [ {
+     *         "inputField" : "input"
+     *       } ],
+     *       "outputField" : [ {
+     *         "outputField" : "output"
      *       } ]
      *     }
      *   } ]
@@ -61,38 +49,28 @@ public class ParserChainSchemaTest {
     @Test
     void chainWithParsersToJSON() throws Exception {
         // create a parser
-        ParserSchema syslogParserSchema = createParser(SyslogParser.class)
+        ParserSchema parserSchema1 = createParser(TestParser.class)
                 .setLabel("26bf648f-930e-44bf-a4de-bfd34ac16165")
                 .addConfig("inputField",
                         new ConfigValueSchema()
-                                .addValue("inputField", "input"))
-                .addConfig("specification",
-                        new ConfigValueSchema()
-                                .addValue("specification", "RFC_5424"));
+                                .addValue("inputField", "input"));
 
         // create another parser
-        ParserInfo renameInfo = parserInfoBuilder.build(RenameFieldParser.class).get();
-        ParserSummary renameType = new ParserSummaryMapper()
-                .reform(renameInfo);
-        ParserSchema renameParserSchema = new ParserSchema()
-                .setId(renameType.getId())
+        ParserSchema parserSchema2 = createParser(TestParser.class)
                 .setLabel("bdf7d8be-50b1-4998-8b3f-f525d1e95931")
-                .setName(ParserName.of(renameInfo.getName()))
-                .addConfig("fieldToRename",
+                .addConfig("inputField",
                         new ConfigValueSchema()
-                                .addValue("from", "syslog.header.timestamp")
-                                .addValue("to", "timestamp"))
-                .addConfig("fieldToRename",
+                                .addValue("inputField", "input"))
+                .addConfig("outputField",
                         new ConfigValueSchema()
-                                .addValue("from", "syslog.header.hostName")
-                                .addValue("to", "host"));
+                                .addValue("outputField", "output"));
 
         // create the chain
         ParserChainSchema chain = new ParserChainSchema()
                 .setId("3b31e549-340f-47ce-8a71-d702685137f4")
                 .setName("My Parser Chain")
-                .addParser(syslogParserSchema)
-                .addParser(renameParserSchema);
+                .addParser(parserSchema1)
+                .addParser(parserSchema2);
 
         String actual = JSONUtils.INSTANCE.toJSON(chain, true);
         assertThat(actual, equalToCompressingWhiteSpace(chainWithParsersExpectedJSON));
@@ -104,12 +82,11 @@ public class ParserChainSchemaTest {
      *   "name" : "My Parser Chain",
      *   "parsers" : [ {
      *     "id" : "26bf648f-930e-44bf-a4de-bfd34ac16165",
-     *     "name" : "Delimited Text",
-     *     "type" : "com.cloudera.parserchains.parsers.DelimitedTextParser",
+     *     "name" : "Test Parser",
+     *     "type" : "com.cloudera.parserchains.core.TestParser",
      *     "config" : {
      *       "outputField" : [ {
-     *         "fieldIndex" : "0",
-     *         "fieldName" : "name"
+     *         "inputField" : "input"
      *       } ]
      *     }
      *   }, {
@@ -128,12 +105,12 @@ public class ParserChainSchemaTest {
      *           "id" : "3b31e549-340f-47ce-8a71-d702685137f4",
      *           "name" : "Success Chain",
      *           "parsers" : [ {
-     *             "id" : "123e4567-e89b-12d3-a456-556642440000",
-     *             "name" : "Timestamp",
-     *             "type" : "com.cloudera.parserchains.parsers.TimestampParser",
+     *             "id" : "26bf648f-930e-44bf-a4de-bfd34ac16165",
+     *             "name" : "Test Parser",
+     *             "type" : "com.cloudera.parserchains.core.TestParser",
      *             "config" : {
-     *               "outputField" : [ {
-     *                 "outputField" : "processing_time"
+     *               "inputField" : [ {
+     *                 "inputField" : "input"
      *               } ]
      *             }
      *           } ]
@@ -147,10 +124,17 @@ public class ParserChainSchemaTest {
      *           "id" : "cdb0729f-a929-4f3c-9cb7-675b57d10a73",
      *           "name" : "Default Chain",
      *           "parsers" : [ {
-     *             "id" : "ceb95dd5-1e3f-41f2-bf60-ee2fe2c962c6",
-     *             "name" : "Error",
-     *             "type" : "com.cloudera.parserchains.parsers.AlwaysFailParser",
-     *             "config" : { }
+     *             "id" : "bdf7d8be-50b1-4998-8b3f-f525d1e95931",
+     *             "name" : "Test Parser",
+     *             "type" : "com.cloudera.parserchains.core.TestParser",
+     *             "config" : {
+     *               "inputField" : [ {
+     *                 "inputField" : "input"
+     *               } ],
+     *               "outputField" : [ {
+     *                 "outputField" : "output"
+     *               } ]
+     *             }
      *           } ]
      *         }
      *       } ]
@@ -163,38 +147,38 @@ public class ParserChainSchemaTest {
 
     @Test
     void chainWithRoutingToJSON() throws Exception {
-        // create the "success" route -> timestamp
-        ParserSchema timestamper = createParser(TimestampParser.class)
-                .setLabel("123e4567-e89b-12d3-a456-556642440000")
-                .addConfig("outputField",
-                        new ConfigValueSchema()
-                                .addValue("outputField", "processing_time"));
-        ParserChainSchema timestamperChain = new ParserChainSchema()
+        // create the "success" route
+        ParserSchema successParser = createParser(TestParser.class)
+                .setLabel("26bf648f-930e-44bf-a4de-bfd34ac16165")
+                .addConfig("inputField", new ConfigValueSchema().addValue("inputField", "input"));
+        ParserChainSchema successChain = new ParserChainSchema()
                 .setId("3b31e549-340f-47ce-8a71-d702685137f4")
                 .setName("Success Chain")
-                .addParser(timestamper);
+                .addParser(successParser);
         RouteSchema successRoute = new RouteSchema()
                 .setLabel("3b31e549-340f-47ce-8a71-d702685137f4")
                 .setName(ParserName.of("successRoute"))
                 .setDefault(false)
                 .setMatchingValue("Ada Lovelace")
-                .setSubChain(timestamperChain);
+                .setSubChain(successChain);
 
-        // create the "default" route -> error
-        ParserSchema error = createParser(AlwaysFailParser.class)
-                .setLabel("ceb95dd5-1e3f-41f2-bf60-ee2fe2c962c6");
-        ParserChainSchema errorChain = new ParserChainSchema()
+        // create the "default" route
+        ParserSchema defaultParser = createParser(TestParser.class)
+                .setLabel("bdf7d8be-50b1-4998-8b3f-f525d1e95931")
+                .addConfig("inputField", new ConfigValueSchema().addValue("inputField", "input"))
+                .addConfig("outputField", new ConfigValueSchema().addValue("outputField", "output"));
+        ParserChainSchema defaultChain = new ParserChainSchema()
                 .setId("cdb0729f-a929-4f3c-9cb7-675b57d10a73")
                 .setName("Default Chain")
-                .addParser(error);
+                .addParser(defaultParser);
         RouteSchema defaultRoute = new RouteSchema()
                 .setLabel("cdb0729f-a929-4f3c-9cb7-675b57d10a73")
                 .setName(ParserName.of("defaultRoute"))
                 .setDefault(true)
                 .setMatchingValue("")
-                .setSubChain(errorChain);
+                .setSubChain(defaultChain);
 
-        // define the available routes
+        // define the router
         RoutingSchema routingSchema = new RoutingSchema()
                 .setMatchingField("name")
                 .addRoute(successRoute)
@@ -206,15 +190,13 @@ public class ParserChainSchemaTest {
                 .setRouting(routingSchema);
 
         // create the main chain
-        ParserSchema csvParser = createParser(DelimitedTextParser.class)
+        ParserSchema firstParser = createParser(TestParser.class)
                 .setLabel("26bf648f-930e-44bf-a4de-bfd34ac16165")
-                .addConfig("outputField", new ConfigValueSchema()
-                        .addValue("fieldName", "name")
-                        .addValue("fieldIndex", "0"));
+                .addConfig("outputField", new ConfigValueSchema().addValue("inputField", "input"));
         ParserChainSchema mainChain = new ParserChainSchema()
                 .setId("3b31e549-340f-47ce-8a71-d702685137f4")
                 .setName("My Parser Chain")
-                .addParser(csvParser)
+                .addParser(firstParser)
                 .addParser(routerSchema);
 
         String actual = JSONUtils.INSTANCE.toJSON(mainChain, true);
@@ -223,9 +205,8 @@ public class ParserChainSchemaTest {
 
     private ParserSchema createParser(Class<? extends Parser> parserClass) {
         ParserInfo parserInfo = parserInfoBuilder.build(parserClass).get();
-        ParserSummary parserSummary = new ParserSummaryMapper().reform(parserInfo);
         return new ParserSchema()
-                .setId(parserSummary.getId())
+                .setId(ParserID.of(parserClass))
                 .setName(ParserName.of(parserInfo.getName()));
     }
 }
