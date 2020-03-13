@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DeleteFill } from '@ant-design/icons-angular/icons';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
@@ -32,6 +33,7 @@ describe('ParserComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
+        FormsModule,
         NgZorroAntdModule,
         NoopAnimationsModule,
         MonacoEditorModule.forRoot({

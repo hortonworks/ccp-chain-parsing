@@ -25,6 +25,8 @@ export class ParserComponent implements OnInit, OnChanges {
   @Output() removeParser = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<any>();
 
+  editName = false;
+
   areFormsReadyToRender = false;
 
   ngOnInit() {
@@ -121,7 +123,11 @@ export class ParserComponent implements OnInit, OnChanges {
     this.parserChange.emit({ id: this.parser.id, config: event.value });
   }
 
-  preventCollapseOnDelete(event: Event) {
+  onParserNameChange(name: string) {
+    this.parserChange.emit({ id: this.parser.id, name });
+  }
+
+  preventCollapse(event: Event) {
     event.stopPropagation();
   }
 
