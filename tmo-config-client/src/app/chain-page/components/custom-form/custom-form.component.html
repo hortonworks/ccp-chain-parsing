@@ -23,6 +23,7 @@
       <nz-form-control *ngIf="formConfig.type === 'text' && formConfig.multiple === true" [nzSm]="14" [nzXs]="24">
         <app-multi-input
           [config]="formConfig"
+          [value]="formConfig.value"
           (changeValue)="onChange($event, formConfig)"
         >
         </app-multi-input>

@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PlusCircleFill } from '@ant-design/icons-angular/icons';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 
@@ -11,7 +12,8 @@ describe('MultiInputComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        NgZorroAntdModule
+        NgZorroAntdModule,
+        ReactiveFormsModule
       ],
       declarations: [ MultiInputComponent ],
       providers: [
@@ -32,43 +34,41 @@ describe('MultiInputComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should add an item to the array', () => {
+  it('should add one form control', () => {
     component.config = {
       type: 'text',
       name: 'foo'
     };
-    expect(component.value).toEqual([{
-      foo: ''
-    }]);
+    expect(component.controls.length).toBe(1);
+    expect(component.controls[0].value).toEqual('');
     component.onAddClick();
-    expect(component.value).toEqual([{
-      foo: ''
-    }, {
-      foo: ''
-    }]);
+    expect(component.controls.length).toBe(2);
+    expect(component.controls[0].value).toEqual('');
+    expect(component.controls[1].value).toEqual('');
     component.onAddClick();
-    expect(component.value).toEqual([{
-      foo: ''
-    }, {
-      foo: ''
-    }, {
-      foo: ''
-    }]);
+    expect(component.controls.length).toBe(3);
+    expect(component.controls[0].value).toEqual('');
+    expect(component.controls[1].value).toEqual('');
+    expect(component.controls[2].value).toEqual('');
   });
 
   it('should emit change with the proper payload', () => {
     const spy = spyOn(component.changeValue, 'emit');
-    component.onChange(({
-      currentTarget: {
-        value: '   trim me!!    '
-      }
-    } as unknown) as Event, 0, {
+    component.controls = [
+      new FormControl('value 1'),
+      new FormControl('value 2'),
+      new FormControl('value 3'),
+    ];
+    component.onChange({
       type: 'text',
       name: 'foo'
     });
-    expect(component.value[0].foo).toBe('trim me!!');
     expect(spy).toHaveBeenCalledWith([{
-      foo: 'trim me!!'
+      foo: 'value 1'
+    }, {
+      foo: 'value 2'
+    }, {
+      foo: 'value 3'
     }]);
   });
 });

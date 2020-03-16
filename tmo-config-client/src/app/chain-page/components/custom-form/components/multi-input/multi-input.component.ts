@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 import { CustomFormConfig } from '../../custom-form.component';
 
@@ -10,29 +11,38 @@ import { CustomFormConfig } from '../../custom-form.component';
 export class MultiInputComponent implements OnInit {
 
   @Input() config: CustomFormConfig;
+  @Input() value: { [key: string]: string }[] = [];
   @Output() changeValue = new EventEmitter<{ [key: string]: string }[]>();
 
   count = 0;
-  value: { [key: string]: string }[] = [];
+  controls = [];
 
   constructor() { }
 
   ngOnInit() {
-    this.value = [{
-      [this.config.name]: ''
-    }];
+    if (!Array.isArray(this.value) || this.value.length === 0) {
+      this.controls.push(
+        new FormControl('')
+      );
+    } else {
+      this.controls = this.value.map(item => {
+        return new FormControl(item[this.config.name]);
+      });
+    }
   }
 
   onAddClick() {
-    this.value.push({
-      [this.config.name]: ''
+    this.controls.push(
+      new FormControl('')
+    );
+  }
+
+  onChange(config: CustomFormConfig) {
+    const value = this.controls.map(control => {
+      return {
+        [config.name]: control.value
+      };
     });
+    this.changeValue.emit(value);
   }
-
-  onChange(event: Event, index: number, config: CustomFormConfig) {
-    const value = ((event.currentTarget as HTMLInputElement).value || '').trim();
-    this.value[index][config.name] = value;
-    this.changeValue.emit(this.value);
-  }
-
 }

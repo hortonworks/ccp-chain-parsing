@@ -66,7 +66,15 @@ export class ParserComponent implements OnInit, OnChanges {
     return produce(fields, (draft) => {
       draft.forEach(field => {
         if (field.path && field.path.split('.')[0] === key) {
-          const value = get(this.parser, field.path + '.' + field.name);
+          let value;
+          if (field.multiple !== true) {
+            value = get(this.parser, field.path + '.' + field.name);
+          } else {
+            value = get(this.parser, field.path);
+            value = Array.isArray(value) ? value.map((item) => {
+              return { [field.name]: item[field.name] || '' };
+            }) : [];
+          }
           field.value = value || field.defaultValue || '';
         } else if (field.name === key) {
           field.value = this.parser[key];
@@ -83,7 +91,15 @@ export class ParserComponent implements OnInit, OnChanges {
           field.path ? [field.path, field.name].join('.') : field.name
         ].join('-');
         if (field.path) {
-          const value = get(this.parser, [field.path, field.name].join('.'));
+          let value;
+          if (field.multiple !== true) {
+            value = get(this.parser, [field.path, field.name].join('.'));
+          } else {
+            value = get(this.parser, field.path);
+            value = Array.isArray(value) ? value.map((item) => {
+              return { [field.name]: item[field.name] || '' };
+            }) : [];
+          }
           field.value = value || field.defaultValue || '';
         } else {
           field.value = this.parser[field.name] || field.defaultValue || '';

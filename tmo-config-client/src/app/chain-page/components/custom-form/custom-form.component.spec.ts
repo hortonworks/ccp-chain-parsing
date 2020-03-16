@@ -11,6 +11,7 @@ import { CustomFormComponent } from './custom-form.component';
 })
 export class MockMultiInputComponent {
   @Input() config = [];
+  @Input() value;
 }
 
 describe('CustomFormComponent', () => {
