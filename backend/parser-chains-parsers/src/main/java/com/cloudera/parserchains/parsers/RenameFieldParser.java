@@ -99,7 +99,7 @@ public class RenameFieldParser implements Parser {
             if(renameFieldConfig.getName().equals(name)) {
                 configureRenameField(values);
             } else {
-                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
+                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name.get()));
             }
         }
 
@@ -114,7 +114,8 @@ public class RenameFieldParser implements Parser {
         }
 
         private IllegalArgumentException missingConfig(ConfigKey missing) {
-            String error = String.format("No value defined for %s.%s", renameFieldConfig.getName(), missing.getKey());
+            String error = String.format("No value defined for %s - %s",
+                    renameFieldConfig.getDescription().get(), missing.getLabel());
             return new IllegalArgumentException(error);
         }
     }

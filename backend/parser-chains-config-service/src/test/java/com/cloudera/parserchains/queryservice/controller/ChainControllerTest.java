@@ -3,6 +3,7 @@ package com.cloudera.parserchains.queryservice.controller;
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.core.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
+import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
 import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
 import org.adrianwalker.multilinestring.Multiline;
@@ -360,13 +361,13 @@ public class ChainControllerTest {
                 // the error result for the first message
                 .andExpect(jsonPath("$.results.[0].log.type", is("error")))
                 .andExpect(jsonPath("$.results.[0].log.message",
-                        is("java.lang.IllegalArgumentException: Invalid field name: 'null'")))
+                        is("Invalid field name: 'null'")))
                 .andExpect(jsonPath("$.results.[0].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
 
                  // the error result for the second message
                 .andExpect(jsonPath("$.results.[1].log.type", is("error")))
                 .andExpect(jsonPath("$.results.[1].log.message",
-                        is("java.lang.IllegalArgumentException: Invalid field name: 'null'")))
+                        is("Invalid field name: 'null'")))
                 .andExpect(jsonPath("$.results.[1].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")));
     }
 
@@ -417,5 +418,55 @@ public class ChainControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results", instanceOf(List.class)))
                 .andExpect(jsonPath("$.results", hasSize(MAX_SAMPLES_PER_TEST)));
+    }
+
+    /**
+     * {
+     *    "sampleData":{
+     *       "type":"manual",
+     *       "source":[
+     *          "ASas"
+     *       ]
+     *    },
+     *    "chainConfig":{
+     *       "id":"1",
+     *       "name":"hello",
+     *       "parsers":[
+     *          {
+     *             "name":"Syslog",
+     *             "type":"com.cloudera.parserchains.parsers.SyslogParser",
+     *             "id":"8f498980-5f13-11ea-9ea2-a3a38413c812",
+     *             "config":{
+     *
+     *             }
+     *          }
+     *       ]
+     *    }
+     * }
+     */
+    @Multiline
+    static String test_get_useful_error_message;
+
+    @Test
+    void test_get_useful_error_message() throws Exception {
+        /*
+         * in some cases the root exception doesn't contain
+         * a useful error message.  this test ensures that
+         * we always get a useful error message for the user.
+         */
+        RequestBuilder postRequest = MockMvcRequestBuilders
+                .post(API_PARSER_TEST_URL)
+                .content(test_get_useful_error_message)
+                .contentType(MediaType.APPLICATION_JSON);
+        mvc.perform(postRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results", instanceOf(List.class)))
+                .andExpect(jsonPath("$.results", hasSize(1)))
+
+                // the error result for the first message
+                .andExpect(jsonPath("$.results.[0].log.type", is("error")))
+                .andExpect(jsonPath("$.results.[0].log.parserId", is("8f498980-5f13-11ea-9ea2-a3a38413c812")))
+                .andExpect(jsonPath("$.results.[0].log.message",
+                        is("Syntax error @ 1:0 no viable alternative at input 'A'")));
     }
 }

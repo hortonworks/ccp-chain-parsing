@@ -22,9 +22,9 @@ public class ParserInfo {
      * Private constructor.  See {@link Builder#builder()}.
      */
     private ParserInfo(String name, String description, Class<? extends Parser> parserClass) {
-        this.name = Objects.requireNonNull(name);
-        this.description = Objects.requireNonNull(description);
-        this.parserClass = Objects.requireNonNull(parserClass);
+        this.name = Objects.requireNonNull(name, "A name is required.");
+        this.description = Objects.requireNonNull(description, "A description is required.");
+        this.parserClass = Objects.requireNonNull(parserClass, "A parserClass is required.");
     }
 
     /**

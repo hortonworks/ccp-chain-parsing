@@ -12,7 +12,6 @@ import com.cloudera.parserchains.core.model.config.ConfigName;
 import com.cloudera.parserchains.core.model.config.ConfigValue;
 import com.github.palindromicity.syslog.SyslogParserBuilder;
 import com.github.palindromicity.syslog.SyslogSpecification;
-import com.github.palindromicity.syslog.dsl.ParseException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +68,7 @@ public class SyslogParser implements Parser {
                     .parseLine(valueToParse)
                     .forEach((k, v) -> output.addField(FieldName.of(k), FieldValue.of(v.toString())));
 
-        } catch(ParseException e) {
+        } catch(Exception e) {
             output.withError(e);
         }
     }
@@ -139,7 +138,7 @@ public class SyslogParser implements Parser {
             } else if(specConfig.getName().equals(name)) {
                 configureSpec(values);
             } else {
-                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
+                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name.get()));
             }
         }
 
