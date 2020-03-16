@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import uuidv1 from 'uuid/v1';
 
+import * as fromChainPageActions from '../chain-page/chain-page.actions';
 import { ParserModel } from '../chain-page/chain-page.models';
+import { ParserChainModel } from '../chain-page/chain-page.models';
+import { getChain } from '../chain-page/chain-page.reducers';
 
 import * as fromActions from './chain-add-parser-page.actions';
 import { AddParserPageState, getParserTypes } from './chain-add-parser-page.reducers';
@@ -14,12 +18,14 @@ import { AddParserPageState, getParserTypes } from './chain-add-parser-page.redu
   templateUrl: './chain-add-parser-page.component.html',
   styleUrls: ['./chain-add-parser-page.component.scss']
 })
-export class ChainAddParserPageComponent implements OnInit {
+export class ChainAddParserPageComponent implements OnInit, OnDestroy {
   addParserForm: FormGroup;
   typesList: { id: string, name: string }[] = [];
   parsersList: ParserModel[] = [];
   chainId: string;
   subchainId: string;
+  getChainSubscription: Subscription;
+  getParserTypesSubscription: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -66,19 +72,27 @@ export class ChainAddParserPageComponent implements OnInit {
       this.subchainId = params.subchain;
     });
 
-    this.store.dispatch(new fromActions.GetParserTypesAction());
-
-    this.store.pipe(select(getParserTypes)).subscribe((parserTypes) => {
-      this.typesList = parserTypes;
+    this.getChainSubscription = this.store.pipe(select(getChain, { id: this.chainId })).subscribe((chain: ParserChainModel) => {
+      if (!chain) {
+        this.store.dispatch(new fromChainPageActions.LoadChainDetailsAction({
+          id: this.chainId
+        }));
+      }
     });
 
-    // this.store.pipe(select(getParsers)).subscribe((parsers) => {
-    //   this.parsersList = parsers || [];
+    this.store.dispatch(new fromActions.GetParserTypesAction());
 
-    //   if (this.parsersList.length) {
-    //     this.addParserForm.addControl('parentId', new FormControl(null));
-    //     this.addParserForm.addControl('outputs', new FormControl(''));
-    //   }
-    // });
+    this.getParserTypesSubscription = this.store.pipe(select(getParserTypes)).subscribe((parserTypes) => {
+      this.typesList = parserTypes;
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.getChainSubscription) {
+      this.getChainSubscription.unsubscribe();
+    }
+    if (this.getParserTypesSubscription) {
+      this.getParserTypesSubscription.unsubscribe();
+    }
   }
 }
