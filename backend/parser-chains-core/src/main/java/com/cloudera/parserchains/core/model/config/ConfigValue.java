@@ -1,4 +1,4 @@
-package com.cloudera.parserchains.core.config;
+package com.cloudera.parserchains.core.model.config;
 
 import com.cloudera.parserchains.core.Regex;
 import org.apache.commons.lang3.builder.EqualsBuilder;

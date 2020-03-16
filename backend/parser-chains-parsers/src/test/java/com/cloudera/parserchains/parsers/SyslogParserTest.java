@@ -6,9 +6,6 @@ import com.cloudera.parserchains.core.Message;
 import com.github.palindromicity.syslog.SyslogSpecification;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.cloudera.parserchains.parsers.SyslogParser.Configurer.inputFieldConfig;
 import static com.cloudera.parserchains.parsers.SyslogParser.Configurer.specConfig;
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_APPNAME;
@@ -23,7 +20,6 @@ import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_VERSIO
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.MESSAGE;
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.STRUCTURED_BASE;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -93,7 +89,7 @@ public class SyslogParserTest {
     @Test
     void parseError() {
         Message input = Message.builder()
-                .addField(FieldName.of("original_string"), FieldValue.of("<1> malformed input"))
+                .addField(FieldName.of("original_string"), FieldValue.of(" SasaS"))
                 .build();
         Message output = new SyslogParser()
                 .withInputField(FieldName.of("original_string"))
@@ -105,9 +101,30 @@ public class SyslogParserTest {
     }
 
     @Test
-    void defaultInputField() {
-        SyslogParser parser = new SyslogParser();
-        assertEquals("original_string", parser.getInputField().get());
+    void inputFieldMissing() {
+        Message input = Message.builder()
+                 .build();
+        Message output = new SyslogParser()
+                .withInputField(FieldName.of("original_string"))
+                .parse(input);
+        assertTrue(output.getError().isPresent(),
+                "Expected a parsing error to have occurred.");
+        assertEquals(input.getFields(), output.getFields(),
+                "Expected the same input fields to be available on the output message.");
+    }
+
+    @Test
+    void emptyInput() {
+        Message input = Message.builder()
+                .addField(FieldName.of("original_string"), FieldValue.of(""))
+                .build();
+        Message output = new SyslogParser()
+                .withInputField(FieldName.of("original_string"))
+                .parse(input);
+        assertTrue(output.getError().isPresent(),
+                "Expected a parsing error to have occurred.");
+        assertEquals(input.getFields(), output.getFields(),
+                "Expected the same input fields to be available on the output message.");
     }
 
     @Test

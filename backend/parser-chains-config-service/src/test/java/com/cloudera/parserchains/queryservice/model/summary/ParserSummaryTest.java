@@ -1,8 +1,8 @@
 package com.cloudera.parserchains.queryservice.model.summary;
 
 import com.cloudera.parserchains.parsers.SyslogParser;
-import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.ParserID;
+import com.cloudera.parserchains.core.utils.JSONUtils;
+import com.cloudera.parserchains.core.model.define.ParserID;
 import org.adrianwalker.multilinestring.Multiline;
 import org.junit.jupiter.api.Test;
 

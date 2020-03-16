@@ -47,7 +47,7 @@ public class DefaultChainRunnerTest {
         when(parser2.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
 
         // run the parser chain
-        ChainLink chain = ChainBuilder.init()
+        ChainLink chain = ChainHelper.init()
                 .then(parser1, linkName1)
                 .then(parser2, linkName2)
                 .head();
@@ -85,7 +85,7 @@ public class DefaultChainRunnerTest {
         Parser parser1 = mock(Parser.class);
         when(parser1.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        ChainLink chain = ChainBuilder.init()
+        ChainLink chain = ChainHelper.init()
                 .then(parser1, LinkName.of("parser1"))
                 .head();
 
@@ -120,7 +120,7 @@ public class DefaultChainRunnerTest {
         when(parser3.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
 
         // run the parser chain
-        ChainLink chain = ChainBuilder.init()
+        ChainLink chain = ChainHelper.init()
                 .then(parser1, linkName1)
                 .then(parser2, linkName2)
                 .then(parser3, linkName3)

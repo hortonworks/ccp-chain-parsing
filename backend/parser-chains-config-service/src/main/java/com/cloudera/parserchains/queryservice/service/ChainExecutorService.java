@@ -1,11 +1,7 @@
 package com.cloudera.parserchains.queryservice.service;
 
 import com.cloudera.parserchains.core.ChainLink;
-import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * A service that executes a parser chain on sample data.

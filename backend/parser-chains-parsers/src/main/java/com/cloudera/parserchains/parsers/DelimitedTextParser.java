@@ -7,10 +7,10 @@ import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.Regex;
 import com.cloudera.parserchains.core.catalog.MessageParser;
-import com.cloudera.parserchains.core.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.config.ConfigKey;
-import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValue;
+import com.cloudera.parserchains.core.model.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.model.config.ConfigKey;
+import com.cloudera.parserchains.core.model.config.ConfigName;
+import com.cloudera.parserchains.core.model.config.ConfigValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -39,7 +38,7 @@ public class DelimitedTextParser implements Parser {
         int index;
 
         OutputField(FieldName fieldName, int index) {
-            this.fieldName = Objects.requireNonNull(fieldName);
+            this.fieldName = Objects.requireNonNull(fieldName, "An output field name is required.");
             this.index = index;
         }
     }
@@ -62,7 +61,7 @@ public class DelimitedTextParser implements Parser {
      * @param inputField The name of the field containing the text to parse.
      */
     public DelimitedTextParser withInputField(FieldName inputField) {
-        this.inputField = Objects.requireNonNull(inputField);
+        this.inputField = Objects.requireNonNull(inputField, "An input field name is required.");
         return this;
     }
 
@@ -231,7 +230,7 @@ public class DelimitedTextParser implements Parser {
             } else if(trimConfig.getName().equals(name)) {
                 configureTrim(values);
             } else {
-                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
+                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name.get()));
             }
         }
 
@@ -267,7 +266,8 @@ public class DelimitedTextParser implements Parser {
         }
 
         private IllegalArgumentException missingConfig(ConfigKey missing) {
-            String error = String.format("No value defined for %s.%s", outputFieldConfig.getName(), missing.getKey());
+            String error = String.format("No value defined for %s - %s",
+                    outputFieldConfig.getDescription().get(), missing.getLabel());
             return new IllegalArgumentException(error);
         }
     }

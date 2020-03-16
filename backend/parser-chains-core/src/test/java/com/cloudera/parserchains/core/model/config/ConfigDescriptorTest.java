@@ -1,4 +1,4 @@
-package com.cloudera.parserchains.core.config;
+package com.cloudera.parserchains.core.model.config;
 
 import org.junit.jupiter.api.Test;
 

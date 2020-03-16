@@ -6,14 +6,12 @@ import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.catalog.MessageParser;
-import com.cloudera.parserchains.core.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.config.ConfigKey;
-import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValue;
+import com.cloudera.parserchains.core.model.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.model.config.ConfigKey;
+import com.cloudera.parserchains.core.model.config.ConfigName;
+import com.cloudera.parserchains.core.model.config.ConfigValue;
 import com.github.palindromicity.syslog.SyslogParserBuilder;
 import com.github.palindromicity.syslog.SyslogSpecification;
-import com.github.palindromicity.syslog.dsl.ParseException;
-import com.github.palindromicity.syslog.dsl.SyslogFieldKeys;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,7 +68,7 @@ public class SyslogParser implements Parser {
                     .parseLine(valueToParse)
                     .forEach((k, v) -> output.addField(FieldName.of(k), FieldValue.of(v.toString())));
 
-        } catch(ParseException e) {
+        } catch(Exception e) {
             output.withError(e);
         }
     }
@@ -140,7 +138,7 @@ public class SyslogParser implements Parser {
             } else if(specConfig.getName().equals(name)) {
                 configureSpec(values);
             } else {
-                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
+                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name.get()));
             }
         }
 

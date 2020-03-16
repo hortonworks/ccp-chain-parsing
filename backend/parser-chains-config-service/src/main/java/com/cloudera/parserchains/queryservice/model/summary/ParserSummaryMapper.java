@@ -2,7 +2,7 @@ package com.cloudera.parserchains.queryservice.model.summary;
 
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
-import com.cloudera.parserchains.queryservice.model.ParserID;
+import com.cloudera.parserchains.core.model.define.ParserID;
 
 public class ParserSummaryMapper implements ObjectMapper<ParserSummary, ParserInfo> {
 

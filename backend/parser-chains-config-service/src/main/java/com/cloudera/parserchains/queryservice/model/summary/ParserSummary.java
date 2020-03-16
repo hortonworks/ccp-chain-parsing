@@ -18,8 +18,8 @@
 
 package com.cloudera.parserchains.queryservice.model.summary;
 
-import com.cloudera.parserchains.queryservice.model.ParserID;
-import com.cloudera.parserchains.queryservice.model.ParserName;
+import com.cloudera.parserchains.core.model.define.ParserID;
+import com.cloudera.parserchains.core.model.define.ParserName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

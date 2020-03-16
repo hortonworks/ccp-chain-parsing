@@ -1,6 +1,5 @@
-package com.cloudera.parserchains.queryservice.model.define;
+package com.cloudera.parserchains.core.model.define;
 
-import com.cloudera.parserchains.queryservice.model.ParserName;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang3.builder.EqualsBuilder;

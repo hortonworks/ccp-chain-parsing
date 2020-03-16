@@ -3,9 +3,9 @@ package com.cloudera.parserchains.parsers;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.config.ConfigKey;
-import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValue;
+import com.cloudera.parserchains.core.model.config.ConfigKey;
+import com.cloudera.parserchains.core.model.config.ConfigName;
+import com.cloudera.parserchains.core.model.config.ConfigValue;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

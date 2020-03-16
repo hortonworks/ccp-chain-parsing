@@ -10,60 +10,25 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * data model used for the "Live View" feature.
  */
 public class ResultLog {
-    public static final String DEFAULT_SUCCESS_MESSAGE = "success";
-    public static final String INFO_TYPE = "info";
-    public static final String ERROR_TYPE = "error";
+
 
     private String type;
     private String message;
     private String parserId;
 
-    /**
-     * Create a result that is returned when a message is successfully
-     * parsed by a parser chain.
-     * @param lastParserId The id of the last parser in the parser chain.
-     * @param message A message describing what happened that will be displayed to the user.
-     * @return A {@link ResultLog}
-     */
-    public static ResultLog success(String lastParserId, String message) {
-        ResultLog log = new ResultLog();
-        log.type = INFO_TYPE;
-        log.message = message;
-        log.parserId = lastParserId;
-        return log;
+    public ResultLog setType(String type) {
+        this.type = type;
+        return this;
     }
 
-    /**
-     * Create a result that is returned when a message is successfully
-     * parsed by a parser chain.
-     * @param lastParserId The id of the last parser in the parser chain.
-     * @return A {@link ResultLog}
-     */
-    public static ResultLog success(String lastParserId) {
-        return success(lastParserId, DEFAULT_SUCCESS_MESSAGE);
+    public ResultLog setMessage(String message) {
+        this.message = message;
+        return this;
     }
 
-    /**
-     * Creates a result that is returned when an error occurs while
-     * parsing a message with a parser chain.
-     * @param parserId The id of the parser that failed.
-     * @param message A message describing the error condition that will be displayed to the user.
-     * @return A {@link ResultLog}
-     */
-    public static ResultLog error(String parserId, String message) {
-        ResultLog log = new ResultLog();
-        log.type = ERROR_TYPE;
-        log.message = message;
-        log.parserId = parserId;
-        return log;
-    }
-
-    /**
-     * Use the static factory methods instead. See {@link #success(String)}, {@link #success(String, String)},
-     * or {@link #error(String, String)}.
-     */
-    private ResultLog() {
-        // do not use
+    public ResultLog setParserId(String parserId) {
+        this.parserId = parserId;
+        return this;
     }
 
     public String getType() {

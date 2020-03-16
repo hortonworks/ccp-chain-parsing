@@ -1,8 +1,9 @@
 package com.cloudera.parserchains.queryservice.controller;
 
 import com.cloudera.parserchains.core.ChainLink;
+import com.cloudera.parserchains.core.model.define.InvalidParserException;
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.config.AppProperties;
-import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResults;
 import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
@@ -11,11 +12,13 @@ import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ChainBuilderService;
 import com.cloudera.parserchains.queryservice.service.ChainExecutorService;
 import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
-import com.cloudera.parserchains.queryservice.service.InvalidParserException;
+import com.cloudera.parserchains.queryservice.service.ResultLogBuilder;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,13 +34,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_READ_URL;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_PARSER_TEST;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.PARSER_CONFIG_BASE_URL;
-import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.error;
 
 /**
  * The controller responsible for operations on parser chains.
@@ -45,6 +46,7 @@ import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.error;
 @RestController
 @RequestMapping(value = PARSER_CONFIG_BASE_URL)
 public class ChainController {
+    private static final Logger logger = LogManager.getLogger(ChainController.class);
 
     /**
      * The maximum number of sample text values that can be used to test a parser chain.
@@ -184,9 +186,13 @@ public class ChainController {
             result = chainExecutorService.execute(chain, textToParse);
 
         } catch(InvalidParserException e) {
-            String parserId = e.getBadParser().getLabel();
-            ResultLog log = error(parserId, e.getMessage());
-            result = new ParserResult().setLog(log);
+            logger.info("The parser chain is invalid as constructed.", e);
+            ResultLog log = ResultLogBuilder.error()
+                    .parserId(e.getBadParser().getLabel())
+                    .exception(e)
+                    .build();
+            result = new ParserResult()
+                    .setLog(log);
         }
         return result;
     }

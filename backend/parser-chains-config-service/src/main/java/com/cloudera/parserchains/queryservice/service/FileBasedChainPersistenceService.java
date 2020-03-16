@@ -18,9 +18,9 @@
 
 package com.cloudera.parserchains.queryservice.service;
 
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.common.utils.IDGenerator;
-import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;

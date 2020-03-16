@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.cloudera.parserchains.queryservice.model.define;
+package com.cloudera.parserchains.core.model.define;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;

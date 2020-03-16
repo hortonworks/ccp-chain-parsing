@@ -5,16 +5,12 @@ import com.cloudera.parserchains.core.ChainRunner;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 import com.cloudera.parserchains.queryservice.model.exec.ResultLog;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.error;
-import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.success;
 
 @Service
 public class DefaultChainExecutorService implements ChainExecutorService {
@@ -66,14 +62,15 @@ public class DefaultChainExecutorService implements ChainExecutorService {
                         e -> e.getValue().get())));
 
         // define the log section
-        ResultLog log;
         String parserId = output.getCreatedBy().get();
-        if(output.getError().isPresent()) {
-            Throwable rootCause = ExceptionUtils.getRootCause(output.getError().get());
-            log = error(parserId, rootCause.getMessage());
-        } else {
-            log = success(parserId);
-        }
+        ResultLog log = output.getError()
+                .map(e -> ResultLogBuilder.error()
+                            .parserId(parserId)
+                            .exception(e)
+                            .build())
+                .orElseGet(() -> ResultLogBuilder.success()
+                            .parserId(parserId)
+                            .build());
         return result.setLog(log);
     }
 
@@ -94,11 +91,12 @@ public class DefaultChainExecutorService implements ChainExecutorService {
                         e -> e.getKey().get(),
                         e -> e.getValue().get())));
 
-        // define the log section
-        Throwable rootCause = ExceptionUtils.getRootCause(t);
-        ResultLog log = error(original.getCreatedBy().get(), rootCause.getMessage());
-
         // there are no output fields
+        // define the log section
+        ResultLog log = ResultLogBuilder.error()
+                .parserId(original.getCreatedBy().get())
+                .exception(t)
+                .build();
         return result.setLog(log);
     }
 
@@ -122,7 +120,10 @@ public class DefaultChainExecutorService implements ChainExecutorService {
 
         // there are no output fields
         // define the log section
-        ResultLog log = success(original.getCreatedBy().get(), "No parser chain defined.");
+        ResultLog log = ResultLogBuilder.success()
+                .parserId(original.getCreatedBy().get())
+                .message("No parser chain defined.")
+                .build();
         return result.setLog(log);
     }
 }

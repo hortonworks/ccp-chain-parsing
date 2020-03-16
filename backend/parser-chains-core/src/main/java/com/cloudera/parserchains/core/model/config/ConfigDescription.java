@@ -1,4 +1,4 @@
-package com.cloudera.parserchains.core.config;
+package com.cloudera.parserchains.core.model.config;
 
 import com.cloudera.parserchains.core.Regex;
 

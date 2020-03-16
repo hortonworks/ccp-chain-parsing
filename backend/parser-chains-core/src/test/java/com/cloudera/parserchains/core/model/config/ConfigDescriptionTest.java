@@ -1,6 +1,5 @@
-package com.cloudera.parserchains.core.config;
+package com.cloudera.parserchains.core.model.config;
 
-import com.cloudera.parserchains.core.config.ConfigDescription;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

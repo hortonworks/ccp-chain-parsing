@@ -1,6 +1,5 @@
-package com.cloudera.parserchains.queryservice.model;
+package com.cloudera.parserchains.core.model.define;
 
-import com.cloudera.parserchains.core.RouterLink;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.apache.commons.lang3.builder.EqualsBuilder;
