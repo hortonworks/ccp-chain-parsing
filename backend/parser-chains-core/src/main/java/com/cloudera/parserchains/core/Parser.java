@@ -1,9 +1,9 @@
 package com.cloudera.parserchains.core;
 
-import com.cloudera.parserchains.core.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.config.ConfigKey;
-import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValue;
+import com.cloudera.parserchains.core.model.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.model.config.ConfigKey;
+import com.cloudera.parserchains.core.model.config.ConfigName;
+import com.cloudera.parserchains.core.model.config.ConfigValue;
 
 import java.util.List;
 import java.util.Map;

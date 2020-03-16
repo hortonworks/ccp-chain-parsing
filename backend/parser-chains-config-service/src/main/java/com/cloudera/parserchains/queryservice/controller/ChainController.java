@@ -1,8 +1,9 @@
 package com.cloudera.parserchains.queryservice.controller;
 
 import com.cloudera.parserchains.core.ChainLink;
+import com.cloudera.parserchains.core.model.define.InvalidParserException;
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.config.AppProperties;
-import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResults;
 import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
@@ -11,11 +12,13 @@ import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ChainBuilderService;
 import com.cloudera.parserchains.queryservice.service.ChainExecutorService;
 import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
-import com.cloudera.parserchains.queryservice.service.InvalidParserException;
+import com.cloudera.parserchains.queryservice.service.ResultLogBuilder;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,7 +39,6 @@ import static com.cloudera.parserchains.queryservice.common.ApplicationConstants
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_READ_URL;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_PARSER_TEST;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.PARSER_CONFIG_BASE_URL;
-import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.error;
 
 /**
  * The controller responsible for operations on parser chains.
@@ -44,6 +46,12 @@ import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.error;
 @RestController
 @RequestMapping(value = PARSER_CONFIG_BASE_URL)
 public class ChainController {
+    private static final Logger logger = LogManager.getLogger(ChainController.class);
+
+    /**
+     * The maximum number of sample text values that can be used to test a parser chain.
+     */
+    static final int MAX_SAMPLES_PER_TEST = 200;
 
     @Autowired
     ChainPersistenceService chainPersistenceService;
@@ -155,14 +163,22 @@ public class ChainController {
     ResponseEntity<ParserResults> test(
             @ApiParam(name = "testRun", value = "Describes the parser chain test to run.", required = true)
             @RequestBody ParserTestRun testRun) {
+        ParserChainSchema chain = testRun.getParserChainSchema();
         ParserResults results = new ParserResults();
-        for(String textToParse: testRun.getSampleData().getSource()) {
-            ParserResult result = doTest(testRun.getParserChainSchema(), textToParse);
-            results.addResult(result);
-        }
+        testRun.getSampleData().getSource()
+                .stream()
+                .limit(MAX_SAMPLES_PER_TEST)
+                .map(sample -> doTest(chain, sample))
+                .forEach(result -> results.addResult(result));
         return ResponseEntity.ok(results);
     }
 
+    /**
+     * Parse sample text using a parser chain.
+     * @param schema Defines the parser chain that needs to be constructed.
+     * @param textToParse The text to parse.
+     * @return
+     */
     private ParserResult doTest(ParserChainSchema schema, String textToParse) {
         ParserResult result;
         try {
@@ -170,9 +186,13 @@ public class ChainController {
             result = chainExecutorService.execute(chain, textToParse);
 
         } catch(InvalidParserException e) {
-            String parserId = e.getBadParser().getLabel();
-            ResultLog log = error(parserId, e.getMessage());
-            result = new ParserResult().setLog(log);
+            logger.info("The parser chain is invalid as constructed.", e);
+            ResultLog log = ResultLogBuilder.error()
+                    .parserId(e.getBadParser().getLabel())
+                    .exception(e)
+                    .build();
+            result = new ParserResult()
+                    .setLog(log);
         }
         return result;
     }

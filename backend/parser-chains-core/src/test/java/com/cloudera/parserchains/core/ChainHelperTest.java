@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ChainBuilderTest {
+public class ChainHelperTest {
     Message message;
     Parser firstParser;
     Parser secondParser;
@@ -32,7 +32,7 @@ public class ChainBuilderTest {
 
     @Test
     void parserThenParser() {
-        ChainLink head = ChainBuilder.init()
+        ChainLink head = ChainHelper.init()
                 .then(firstParser, firstLinkName)
                 .then(secondParser, secondLinkName)
                 .head();
@@ -54,7 +54,7 @@ public class ChainBuilderTest {
 
     @Test
     void parserThenRouter() {
-        ChainLink head = ChainBuilder.init()
+        ChainLink head = ChainHelper.init()
                 .then(firstParser, firstLinkName)
                 .routeBy(FieldName.of("timestamp"), secondLinkName)
                 .thenMatch(Regex.of("[0-9]+"), secondParser, thirdLinkName)
@@ -75,11 +75,11 @@ public class ChainBuilderTest {
 
     @Test
     void parserThenChain() {
-        ChainLink subChain = ChainBuilder.init()
+        ChainLink subChain = ChainHelper.init()
                 .then(secondParser, thirdLinkName)
                 .head();
 
-        ChainLink head = ChainBuilder.init()
+        ChainLink head = ChainHelper.init()
                 .then(firstParser, firstLinkName)
                 .routeBy(FieldName.of("timestamp"), secondLinkName)
                 .thenMatch(Regex.of("[0-9]+"), subChain)
@@ -100,7 +100,7 @@ public class ChainBuilderTest {
 
     @Test
     void parserThenParserThenRouter() {
-        ChainLink head = ChainBuilder.init()
+        ChainLink head = ChainHelper.init()
                 .then(firstParser, firstLinkName)
                 .then(secondParser, secondLinkName)
                 .routeBy(FieldName.of("timestamp"), thirdLinkName)
@@ -130,7 +130,7 @@ public class ChainBuilderTest {
     @Test
     void routerOnly() {
         FieldName routeBy = FieldName.of("timestamp");
-        ChainLink head = ChainBuilder.init()
+        ChainLink head = ChainHelper.init()
                 .routeBy(routeBy, firstLinkName)
                 .thenMatch(Regex.of("[0-9]+"), secondParser, secondLinkName)
                 .head();
@@ -150,7 +150,7 @@ public class ChainBuilderTest {
     @Test
     void defaultRoute() {
         FieldName routeBy = FieldName.of("timestamp");
-        ChainLink head = ChainBuilder.init()
+        ChainLink head = ChainHelper.init()
                 .routeBy(routeBy, firstLinkName)
                 .thenMatch(Regex.of("[0-9]+"), secondParser, secondLinkName)
                 .thenDefault(firstParser, thirdLinkName)
@@ -173,10 +173,10 @@ public class ChainBuilderTest {
 
     @Test
     void routerThenSubChain() {
-        ChainLink subChain = ChainBuilder.init()
+        ChainLink subChain = ChainHelper.init()
                 .then(secondParser, secondLinkName)
                 .head();
-        ChainLink mainChain = ChainBuilder.init()
+        ChainLink mainChain = ChainHelper.init()
                 .routeBy(FieldName.of("timestamp"), firstLinkName)
                 .thenMatch(Regex.of("[0-9]+"), subChain)
                 .head();

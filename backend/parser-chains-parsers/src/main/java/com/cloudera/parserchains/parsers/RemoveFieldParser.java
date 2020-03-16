@@ -4,14 +4,13 @@ import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.catalog.MessageParser;
-import com.cloudera.parserchains.core.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.config.ConfigKey;
-import com.cloudera.parserchains.core.config.ConfigName;
-import com.cloudera.parserchains.core.config.ConfigValue;
+import com.cloudera.parserchains.core.model.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.model.config.ConfigKey;
+import com.cloudera.parserchains.core.model.config.ConfigName;
+import com.cloudera.parserchains.core.model.config.ConfigValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -88,7 +87,7 @@ public class RemoveFieldParser implements Parser {
             if(removeFieldConfig.getName().equals(name)) {
                 configureRemoveField(values);
             } else {
-                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
+                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name.get()));
             }
         }
 

@@ -1,7 +1,9 @@
 package com.cloudera.parserchains.queryservice.controller;
 
-import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.utils.JSONUtils;
+import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
+import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
 import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
 import org.adrianwalker.multilinestring.Multiline;
@@ -22,6 +24,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_CREATE_URL;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_DELETE_URL;
@@ -29,6 +32,7 @@ import static com.cloudera.parserchains.queryservice.common.ApplicationConstants
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_UPDATE_URL;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_URL;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_PARSER_TEST_URL;
+import static com.cloudera.parserchains.queryservice.controller.ChainController.MAX_SAMPLES_PER_TEST;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -281,13 +285,13 @@ public class ChainControllerTest {
      * }
      */
     @Multiline
-    static String test_chain_with_2_messages;
+    static String test_chain_with_2_samples;
 
     @Test
-    void test_chain_with_2_messages() throws Exception {
+    void test_chain_with_2_samples() throws Exception {
         RequestBuilder postRequest = MockMvcRequestBuilders
                 .post(API_PARSER_TEST_URL)
-                .content(test_chain_with_2_messages)
+                .content(test_chain_with_2_samples)
                 .contentType(MediaType.APPLICATION_JSON);
         mvc.perform(postRequest)
                 .andExpect(status().isOk())
@@ -341,13 +345,13 @@ public class ChainControllerTest {
      * }
      */
     @Multiline
-    static String test_invalid_chain_with_2_messages;
+    static String test_invalid_chain_with_2_samples;
 
     @Test
-    void test_invalid_chain_with_2_messages() throws Exception {
+    void test_invalid_chain_with_2_samples() throws Exception {
         RequestBuilder postRequest = MockMvcRequestBuilders
                 .post(API_PARSER_TEST_URL)
-                .content(test_invalid_chain_with_2_messages)
+                .content(test_invalid_chain_with_2_samples)
                 .contentType(MediaType.APPLICATION_JSON);
          mvc.perform(postRequest)
                 .andExpect(status().isOk())
@@ -357,13 +361,112 @@ public class ChainControllerTest {
                 // the error result for the first message
                 .andExpect(jsonPath("$.results.[0].log.type", is("error")))
                 .andExpect(jsonPath("$.results.[0].log.message",
-                        is("java.lang.IllegalArgumentException: Invalid field name: 'null'")))
+                        is("Invalid field name: 'null'")))
                 .andExpect(jsonPath("$.results.[0].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
 
                  // the error result for the second message
                 .andExpect(jsonPath("$.results.[1].log.type", is("error")))
                 .andExpect(jsonPath("$.results.[1].log.message",
-                        is("java.lang.IllegalArgumentException: Invalid field name: 'null'")))
+                        is("Invalid field name: 'null'")))
                 .andExpect(jsonPath("$.results.[1].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")));
+    }
+
+    /**
+     * {
+     *   "sampleData": {
+     *     "type": "manual",
+     *     "source": [
+     *      ]
+     *   },
+     *   "chainConfig": {
+     *     "id": "3b31e549-340f-47ce-8a71-d702685137f4",
+     *     "name": "My Parser Chain",
+     *     "parsers": [
+     *       {
+     *         "id": "61e99275-e076-46b6-aaed-8acce58cc0e4",
+     *         "name": "Timestamp",
+     *         "type": "com.cloudera.parserchains.parsers.TimestampParser",
+     *         "config": {
+     *           "outputField": [
+     *             {
+     *               "outputField": "timestamp"
+     *             }
+     *           ]
+     *         }
+     *       }
+     *     ]
+     *   }
+     * }
+     */
+    @Multiline
+    static String test_chain_with_too_many_samples;
+
+    @Test
+    void test_chain_with_too_many_samples() throws Exception {
+        // add to the request more test samples than are allowed
+        String sample = "a sample of text to parse";
+        ParserTestRun testRequest = JSONUtils.INSTANCE.load(test_chain_with_too_many_samples, ParserTestRun.class);
+        IntStream.range(0, MAX_SAMPLES_PER_TEST + 10).forEach(i -> testRequest.getSampleData().addSource(sample));
+
+        // expect the number of results returned to be capped at the maximum allowed
+        String request = JSONUtils.INSTANCE.toJSON(testRequest, true);
+        RequestBuilder postRequest = MockMvcRequestBuilders
+                .post(API_PARSER_TEST_URL)
+                .content(request)
+                .contentType(MediaType.APPLICATION_JSON);
+        mvc.perform(postRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results", instanceOf(List.class)))
+                .andExpect(jsonPath("$.results", hasSize(MAX_SAMPLES_PER_TEST)));
+    }
+
+    /**
+     * {
+     *    "sampleData":{
+     *       "type":"manual",
+     *       "source":[
+     *          "ASas"
+     *       ]
+     *    },
+     *    "chainConfig":{
+     *       "id":"1",
+     *       "name":"hello",
+     *       "parsers":[
+     *          {
+     *             "name":"Syslog",
+     *             "type":"com.cloudera.parserchains.parsers.SyslogParser",
+     *             "id":"8f498980-5f13-11ea-9ea2-a3a38413c812",
+     *             "config":{
+     *
+     *             }
+     *          }
+     *       ]
+     *    }
+     * }
+     */
+    @Multiline
+    static String test_get_useful_error_message;
+
+    @Test
+    void test_get_useful_error_message() throws Exception {
+        /*
+         * in some cases the root exception doesn't contain
+         * a useful error message.  this test ensures that
+         * we always get a useful error message for the user.
+         */
+        RequestBuilder postRequest = MockMvcRequestBuilders
+                .post(API_PARSER_TEST_URL)
+                .content(test_get_useful_error_message)
+                .contentType(MediaType.APPLICATION_JSON);
+        mvc.perform(postRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.results", instanceOf(List.class)))
+                .andExpect(jsonPath("$.results", hasSize(1)))
+
+                // the error result for the first message
+                .andExpect(jsonPath("$.results.[0].log.type", is("error")))
+                .andExpect(jsonPath("$.results.[0].log.parserId", is("8f498980-5f13-11ea-9ea2-a3a38413c812")))
+                .andExpect(jsonPath("$.results.[0].log.message",
+                        is("Syntax error @ 1:0 no viable alternative at input 'A'")));
     }
 }

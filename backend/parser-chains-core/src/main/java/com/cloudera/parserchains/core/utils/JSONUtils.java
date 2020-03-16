@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.cloudera.parserchains.queryservice.common.utils;
+package com.cloudera.parserchains.core.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;

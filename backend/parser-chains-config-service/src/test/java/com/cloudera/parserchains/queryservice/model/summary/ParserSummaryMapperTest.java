@@ -2,7 +2,7 @@ package com.cloudera.parserchains.queryservice.model.summary;
 
 import com.cloudera.parserchains.core.catalog.ParserInfo;
 import com.cloudera.parserchains.parsers.SyslogParser;
-import com.cloudera.parserchains.queryservice.model.ParserID;
+import com.cloudera.parserchains.core.model.define.ParserID;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

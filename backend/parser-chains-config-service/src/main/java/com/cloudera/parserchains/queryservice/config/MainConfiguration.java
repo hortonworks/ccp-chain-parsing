@@ -18,7 +18,9 @@
 
 package com.cloudera.parserchains.queryservice.config;
 
+import com.cloudera.parserchains.core.ChainBuilder;
 import com.cloudera.parserchains.core.ChainRunner;
+import com.cloudera.parserchains.core.DefaultChainBuilder;
 import com.cloudera.parserchains.core.DefaultChainRunner;
 import com.cloudera.parserchains.core.ParserBuilder;
 import com.cloudera.parserchains.core.ReflectiveParserBuilder;
@@ -26,7 +28,7 @@ import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
 import com.cloudera.parserchains.queryservice.common.utils.IDGenerator;
-import com.cloudera.parserchains.queryservice.common.utils.JSONUtils;
+import com.cloudera.parserchains.core.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.common.utils.UniqueIDGenerator;
 import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
@@ -72,5 +74,10 @@ public class MainConfiguration {
   @Bean
   public ChainRunner chainRunner() {
     return new DefaultChainRunner();
+  }
+
+  @Bean
+  public ChainBuilder chainBuilder() {
+    return new DefaultChainBuilder(parserBuilder(), parserCatalog());
   }
 }
