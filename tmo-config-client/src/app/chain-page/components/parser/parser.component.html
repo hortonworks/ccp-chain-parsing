@@ -27,6 +27,7 @@
       <span *ngIf="!editName" class="parser-name"
         nz-tooltip nzTitle="Click to edit name"
         (click)="editName=!editName; preventCollapse($event);"
+        data-qe-id="parser-name"
         >{{ parser.name }}</span>
       <input *ngIf="editName" class="parser-name-input"
         type="text" [ngModel]="parser.name"
@@ -34,7 +35,8 @@
         (blur)="editName=!editName"
         (ngModelChange)="onParserNameChange($event)"
         (click)="preventCollapse($event)"
-        autofocus>
+        autofocus
+        data-qe-id="parser-name-input">
         - {{ parserType }}
     </div>
   </ng-template>
