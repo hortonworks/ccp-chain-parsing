@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Parses a {@link Message} using a parser chain.
@@ -34,10 +33,12 @@ public class DefaultChainRunner implements ChainRunner {
 
     @Override
     public List<Message> run(String toParse, ChainLink chain) {
-        List<Message> results;
+        List<Message> results = new ArrayList<>();
         Message original = originalMessage(toParse);
+        results.add(original);
         try {
-            results = doRun(original, chain);
+            List<Message> chainResults = chain.process(original);
+            results.addAll(chainResults);
 
         } catch(Throwable t) {
             String msg = "An unexpected error occurred while running a parser chain. " +
@@ -59,37 +60,5 @@ public class DefaultChainRunner implements ChainRunner {
                 .addField(inputField, FieldValue.of(toParse))
                 .createdBy(ORIGINAL_MESSAGE_NAME)
                 .build();
-    }
-
-    private List<Message> doRun(Message original, ChainLink chain) {
-        List<Message> results = new ArrayList<>();
-        results.add(original);
-
-        Optional<ChainLink> nextLink = Optional.ofNullable(chain);
-        do {
-            // parse the message
-            Message input = results.get(results.size()-1);
-            Parser parser = nextLink.get().getParser();
-            Message output = parser.parse(input);
-
-            // mark which link created this message
-            LinkName linkName = nextLink.get().getLinkName();
-            Message result = Message.builder()
-                    .clone(output)
-                    .createdBy(linkName)
-                    .build();
-            results.add(result);
-
-            // get the next link in the chain
-            nextLink = nextLink.get().getNext(output);
-
-            // if there is an error, stop parsing the message
-            if(output.getError().isPresent()) {
-                break;
-            }
-
-        } while(nextLink.isPresent());
-
-        return results;
     }
 }

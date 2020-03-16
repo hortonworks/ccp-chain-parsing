@@ -30,20 +30,12 @@ public class RouterLink implements ChainLink {
     private FieldName inputField;
     private List<Route> routes;
     private Optional<ChainLink> defaultRoute;
-    private LinkName linkName;
+    private Optional<ChainLink> nextLink;
 
-    /**
-     * @param linkName The name assigned to this link in the chain.
-     */
-    public RouterLink(LinkName linkName) {
-        this.linkName = Objects.requireNonNull(linkName, "A link name is required.");
+    public RouterLink() {
         this.routes = new ArrayList<>();
         this.defaultRoute = Optional.empty();
-    }
-
-    @Override
-    public LinkName getLinkName() {
-        return linkName;
+        this.nextLink = Optional.empty();
     }
 
     public RouterLink withInputField(FieldName fieldName) {
@@ -73,14 +65,7 @@ public class RouterLink implements ChainLink {
         return defaultRoute;
     }
 
-    @Override
-    public Parser getParser() {
-        // no parsing is performed when routing
-        return new NoopParser();
-    }
-
-    @Override
-    public Optional<ChainLink> getNext(Message input) {
+    private Optional<ChainLink> findRoute(Message input) {
         if(inputField == null) {
             throw new IllegalStateException("The routing field was not defined.");
         }
@@ -99,5 +84,35 @@ public class RouterLink implements ChainLink {
 
         // no routes matched, use the default next link if one is present
         return defaultRoute;
+    }
+
+    @Override
+    public List<Message> process(Message input) {
+        List<Message> results = new ArrayList<>();
+
+        // route the message to the correct sub-chain
+        findRoute(input).ifPresent(next -> {
+            List<Message> nextResults = next.process(input);
+            results.addAll(nextResults);
+        });
+
+        // retrieve the last output from the route taken;
+        Message output = input;
+        if(results.size() > 0) {
+            output = results.get(results.size() - 1);
+        }
+
+        // if no errors, allow the next link in the chain to process the message
+        boolean noError = !output.getError().isPresent();
+        if(noError && nextLink.isPresent()) {
+            List<Message> nextResults = nextLink.get().process(output);
+            results.addAll(nextResults);
+        }
+        return results;
+    }
+
+    @Override
+    public void setNext(ChainLink nextLink) {
+        this.nextLink = Optional.of(nextLink);
     }
 }

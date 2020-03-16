@@ -1,6 +1,6 @@
 package com.cloudera.parserchains.core;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * One link in a parser chain.
@@ -8,20 +8,17 @@ import java.util.Optional;
 public interface ChainLink {
 
     /**
-     * @return The {@link Parser} that is executed at this step in the parser chain.
+     * Parses an message starting at this link in the chain.
+     * <p>This involves all of the downstream links in this chain, not just this chain link.
+     * @param input The input message to parse.
+     * @return One {@link Message} for every link in the parser chain.
      */
-    Parser getParser();
+    List<Message> process(Message input);
 
     /**
-     * Returns the next {@link ChainLink} in the parser chain.
-     * @param message The message that is being parsed.
-     * @return The next {@link ChainLink}.
+     * Define the next link in the chain.
+     * <p>If not defined, this is the last link in the parser chain.
+     * @param nextLink The next chain link.
      */
-    Optional<ChainLink> getNext(Message message);
-
-    /**
-     * Returns the name assigned to this link in the chain.
-     * @return The name assigned to this chain link.
-     */
-    LinkName getLinkName();
+    void setNext(ChainLink nextLink);
 }
