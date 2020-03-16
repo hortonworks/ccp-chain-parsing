@@ -8,8 +8,10 @@ import { ChainDetailsModel } from '../chain-page/chain-page.models';
     providedIn: 'root'
 })
 export class ChainPageService {
-    private collapseAll = new BehaviorSubject(true);
+    private parserChainCollapseState: BehaviorSubject<boolean[]>;
+    private parserChainSize: number;
     private readonly BASE_URL = '/api/v1/parserconfig/';
+    public collapseAll = false;
 
     constructor(
       private http: HttpClient
@@ -35,10 +37,15 @@ export class ChainPageService {
       return this.http.get(this.BASE_URL + `parser-form-configuration`);
     }
 
-    public getCollapseState() {
-      return this.collapseAll;
+    public createChainCollapseArray(size: number) {
+      this.parserChainSize = size;
+      this.parserChainCollapseState = new BehaviorSubject(new Array(this.parserChainSize).fill(false));
     }
-    public collapseAllParser() {
-      this.collapseAll.next(false);
+    public getCollapseExpandState() {
+      return this.parserChainCollapseState;
+    }
+    public collapseExpandAllParsers() {
+      this.collapseAll = !this.collapseAll;
+      this.parserChainCollapseState.next(new Array(this.parserChainSize).fill(this.collapseAll));
     }
 }

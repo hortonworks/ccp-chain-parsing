@@ -1,6 +1,7 @@
 <div *ngIf="parser" class="parser-container">
   <app-parser
     *ngIf="parser.type !== 'Router'"
+    [collapsed]="collapsed"
     [parser]="parser"
     [dirty]="dirty"
     [configForm]="configForm"
@@ -12,6 +13,7 @@
   ></app-parser>
   <app-router
     *ngIf="parser.type === 'Router'"
+    [collapsed]="collapsed"
     [parser]="parser"
     [dirty]="dirty"
     [metaDataForm]="[{ name: 'name', type: 'text', label: 'Name' }]"
