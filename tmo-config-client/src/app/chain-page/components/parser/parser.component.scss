@@ -17,11 +17,8 @@
   padding-right: 30px;
 
   .parser-name {
-    max-width: 100%;
-    float: left;
     font-weight: bold;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    word-break: break-all;
   }
 
   .parser-name-input {

@@ -24,11 +24,11 @@
 
   <ng-template #titleTemplate>
     <div class="parser-name-bar">
-      <div *ngIf="!editName" class="parser-name"
+      <span *ngIf="!editName" class="parser-name"
         nz-tooltip nzTitle="Click to edit name"
         (click)="editName=!editName; preventCollapse($event);"
         data-qe-id="parser-name"
-        >{{ parser.name }}</div>
+        >{{ parser.name }}</span>
       <input *ngIf="editName" class="parser-name-input"
         type="text" [ngModel]="parser.name"
         (keydown.enter)="editName=!editName"
