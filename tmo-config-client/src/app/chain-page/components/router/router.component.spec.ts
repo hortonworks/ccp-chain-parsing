@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DeleteFill } from '@ant-design/icons-angular/icons';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 
@@ -30,6 +31,7 @@ describe('RouterComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         NgZorroAntdModule,
+        NoopAnimationsModule
       ],
       declarations: [
         MockRouteComponent,

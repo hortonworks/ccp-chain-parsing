@@ -17,6 +17,7 @@ class MockParserComponent {
   @Input() isolatedParserView;
   @Input() metaDataForm;
   @Input() parserType;
+  @Input() collapsed;
 }
 
 @Component({
