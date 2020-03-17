@@ -42,7 +42,8 @@
         "value":"",
         "description":"The name(s) of field(s) to rename from",
         "required":true,
-        "path":"config"
+        "path":"config.renameField",
+        "multiple": true
       },
       {
         "name":"renameTo",
@@ -51,7 +52,8 @@
         "value":"",
         "description":"The name(s) of field(s) to rename to",
         "required":true,
-        "path":"config"
+        "path":"config.renameField",
+        "multiple": true
       }
   ]},
   "RemoveField":{
@@ -65,7 +67,8 @@
         "value":"",
         "description":"The name(s) of fields to remove from the message",
         "required":true,
-        "path":"config"
+        "path":"config.fieldToRemove",
+        "multiple": true
       }
   ]},
   "Timestamp":{
@@ -100,6 +103,7 @@
         "label":"Output field name",
         "description":"",
         "required":true,
+        "multiple": true,
         "path":"config.outputFields"
       },
       {
@@ -108,6 +112,7 @@
         "label":"Output field index",
         "description":"",
         "required":true,
+        "multiple": true,
         "path":"config.outputFields"
       },
       {
