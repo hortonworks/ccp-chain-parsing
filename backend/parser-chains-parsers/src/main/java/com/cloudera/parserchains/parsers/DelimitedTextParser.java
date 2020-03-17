@@ -182,6 +182,7 @@ public class DelimitedTextParser implements Parser {
                 .name("outputField")
                 .description("Output Field")
                 .isRequired(true)
+                .isCumulative(true)
                 .acceptsValue(outputFieldIndex)
                 .acceptsValue(outputFieldName)
                 .build();

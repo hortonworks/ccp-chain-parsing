@@ -24,12 +24,50 @@ import java.util.Objects;
  * Describes a configuration parameter accepted by a parser.
  */
 public class ConfigParamDescriptor {
+  /**
+   * The unique name of the configuration parameter.  This value
+   * is used only to identify the parameter and is not displayed
+   * to the user.
+   */
   private String name;
+
+  /**
+   * Defines the type of widget presented to the user when
+   * configuring the parameter.
+   *
+   * <p>Currently, only 'text' is supported.
+   */
   private String type = "text";
+
+  /**
+   * A label for the parameter that is displayed to the user.
+   */
   private String label;
+
+  /**
+   * A description of the parameter that is displayed to the user.
+   */
   private String description;
-  private String required;
+
+  /**
+   * Defines whether the user is required to define a value for this configuration parameter.
+   */
+  private boolean required;
+
+  /**
+   * Defines a path that allows the UI to organize the parameters.
+   *
+   * <p>In cases where multiple, associated values are accepted, like a field rename with a
+   * "from" and "to" value, the associated values should use the same path like "config.fieldToRename".
+   *
+   * <p>The UI expects the root of all paths to be "config".
+   */
   private String path = "config";
+
+  /**
+   * Should the user be allowed to enter multiple values for this parameter?
+   */
+  private boolean multiple = false;
 
   public String getName() {
     return name;
@@ -67,11 +105,11 @@ public class ConfigParamDescriptor {
     return this;
   }
 
-  public String getRequired() {
+  public boolean isRequired() {
     return required;
   }
 
-  public ConfigParamDescriptor setRequired(String required) {
+  public ConfigParamDescriptor setRequired(boolean required) {
     this.required = required;
     return this;
   }
@@ -85,6 +123,15 @@ public class ConfigParamDescriptor {
     return this;
   }
 
+  public boolean isMultiple() {
+    return multiple;
+  }
+
+  public ConfigParamDescriptor setMultiple(boolean multiple) {
+    this.multiple = multiple;
+    return this;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -94,28 +141,30 @@ public class ConfigParamDescriptor {
       return false;
     }
     ConfigParamDescriptor that = (ConfigParamDescriptor) o;
-    return Objects.equals(name, that.name) &&
-        Objects.equals(type, that.type) &&
-        Objects.equals(label, that.label) &&
-        Objects.equals(description, that.description) &&
-        Objects.equals(required, that.required) &&
-        Objects.equals(path, that.path);
+    return multiple == that.multiple &&
+            Objects.equals(name, that.name) &&
+            Objects.equals(type, that.type) &&
+            Objects.equals(label, that.label) &&
+            Objects.equals(description, that.description) &&
+            Objects.equals(required, that.required) &&
+            Objects.equals(path, that.path);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, type, label, description, required, path);
+    return Objects.hash(name, type, label, description, required, path, multiple);
   }
 
   @Override
   public String toString() {
-    return "SchemaItem{" +
+    return "ConfigParamDescriptor{" +
             "name='" + name + '\'' +
             ", type='" + type + '\'' +
             ", label='" + label + '\'' +
             ", description='" + description + '\'' +
             ", required='" + required + '\'' +
             ", path='" + path + '\'' +
+            ", multiple=" + multiple +
             '}';
   }
 }

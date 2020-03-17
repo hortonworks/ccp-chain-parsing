@@ -18,17 +18,19 @@
 
 package com.cloudera.parserchains.queryservice.service;
 
-import com.cloudera.parserchains.core.Parser;
-import com.cloudera.parserchains.core.ParserBuilder;
+import com.cloudera.parserchains.core.ReflectiveParserBuilder;
+import com.cloudera.parserchains.core.catalog.AnnotationBasedParserInfoBuilder;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
-import com.cloudera.parserchains.core.model.config.ConfigDescriptor;
+import com.cloudera.parserchains.core.catalog.ParserInfoBuilder;
 import com.cloudera.parserchains.core.model.define.ParserID;
-import com.cloudera.parserchains.queryservice.model.describe.ConfigParamDescriptor;
+import com.cloudera.parserchains.core.utils.JSONUtils;
+import com.cloudera.parserchains.parsers.DelimitedTextParser;
+import com.cloudera.parserchains.parsers.RemoveFieldParser;
 import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
-import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummaryMapper;
+import org.adrianwalker.multilinestring.Multiline;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,75 +38,45 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.cloudera.parserchains.queryservice.service.DefaultParserDiscoveryService.DEFAULT_PATH_ROOT;
-import static com.cloudera.parserchains.queryservice.service.DefaultParserDiscoveryService.DEFAULT_SCHEMA_TYPE;
-import static com.cloudera.parserchains.queryservice.service.DefaultParserDiscoveryService.PATH_DELIMITER;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DefaultParserDiscoveryServiceTest {
-  @Mock private ParserCatalog catalog;
-  @Mock private ParserBuilder builder;
-  @Mock private Parser parser1;
-  @Mock private Parser parser2;
-  private ParserInfo parserInfo1;
-  private ParserInfo parserInfo2;
-  private ConfigDescriptor descriptor1;
   private ParserDiscoveryService service;
-  private ObjectMapper<ParserSummary, ParserInfo> mapper;
+  private ParserSummaryMapper mapper;
+  @Mock private ParserCatalog catalog;
 
   @BeforeEach
   public void beforeEach() throws IOException {
+    setupParserCatalog();
     mapper = new ParserSummaryMapper();
-    service = new DefaultParserDiscoveryService(catalog, builder, mapper);
-    parserInfo1 = ParserInfo.builder()
-            .name("type1")
-            .description("type 1 description")
-            .parserClass(parser1.getClass())
-            .build();
-    parserInfo2 = ParserInfo.builder()
-            .name("type2")
-            .description("type 2 description")
-            .parserClass(parser2.getClass())
-            .build();
-    descriptor1 = ConfigDescriptor.builder()
-            .name("outputField")
-            .description("The name of the output field.")
-            .isRequired(true)
-            .acceptsValue("outputField", "Output Field", "The name of the output field.")
-            .build();
+    service = new DefaultParserDiscoveryService(catalog, new ReflectiveParserBuilder(), mapper);
   }
 
-  private void setupCatalog(List<ParserInfo> parserInfos) {
+  private void setupParserCatalog() {
+    List<ParserInfo> testCatalog = new ArrayList<>();
+
+    // use a couple of the demo parsers for testing
+    ParserInfoBuilder infoBuilder = new AnnotationBasedParserInfoBuilder();
+    infoBuilder.build(DelimitedTextParser.class)
+            .ifPresent(info -> testCatalog.add(info));
+    infoBuilder.build(RemoveFieldParser.class)
+            .ifPresent(info -> testCatalog.add(info));
+
     when(catalog.getParsers())
-            .thenReturn(parserInfos);
-  }
-
-  private void setupParser(Parser parser, ParserInfo parserInfo1, ConfigDescriptor descriptor) {
-    // the parser needs to return the given descriptors
-    when(parser.validConfigurations())
-            .thenReturn(Arrays.asList(descriptor));
-
-    // the builder needs to return the parser
-    when(builder.build(eq(parserInfo1)))
-            .thenReturn(parser);
+            .thenReturn(testCatalog);
   }
 
   @Test
   void findAll() throws IOException {
-    // the catalog needs to include parser1
-    setupCatalog(Arrays.asList(parserInfo1, parserInfo2));
-
-    // execute - find all parsers
     List<ParserSummary> actual = service.findAll();
     List<ParserSummary> expected = catalog.getParsers()
             .stream()
@@ -114,94 +86,136 @@ public class DefaultParserDiscoveryServiceTest {
     assertThat(actual.size(), equalTo(2));
   }
 
+  /**
+   * {
+   *   "id" : "com.cloudera.parserchains.parsers.DelimitedTextParser",
+   *   "name" : "Delimited Text",
+   *   "schemaItems" : [ {
+   *     "name" : "inputField",
+   *     "type" : "text",
+   *     "label" : "Input Field",
+   *     "description" : "The name of the input field to parse.",
+   *     "required" : true,
+   *     "path" : "config.inputField",
+   *     "multiple" : true
+   *   }, {
+   *     "name" : "fieldIndex",
+   *     "type" : "text",
+   *     "label" : "Column Index",
+   *     "description" : "The index (0-based) of the column containing the data.",
+   *     "required" : true,
+   *     "path" : "config.outputField",
+   *     "multiple" : true
+   *   }, {
+   *     "name" : "fieldName",
+   *     "type" : "text",
+   *     "label" : "Field Name",
+   *     "description" : "The name of the output field.",
+   *     "required" : true,
+   *     "path" : "config.outputField",
+   *     "multiple" : true
+   *   }, {
+   *     "name" : "delimiter",
+   *     "type" : "text",
+   *     "label" : "Delimiter",
+   *     "description" : "A regex delimiter used to split the text. Defaults to comma.",
+   *     "required" : false,
+   *     "path" : "config.delimiter",
+   *     "multiple" : true
+   *   }, {
+   *     "name" : "trim",
+   *     "type" : "text",
+   *     "label" : "Trim Whitespace",
+   *     "description" : "Trim whitespace from each value. Defaults to true.",
+   *     "required" : false,
+   *     "path" : "config.trim",
+   *     "multiple" : true
+   *   } ]
+   * }
+   */
+  @Multiline
+  String describeExpected;
+
   @Test
   void describe() throws IOException {
-    // setup
-    setupParser(parser1, parserInfo1, descriptor1);
-    setupCatalog(Arrays.asList(parserInfo1));
+    ParserID parserId = ParserID.of(DelimitedTextParser.class);
+    ParserDescriptor schema = service.describe(parserId);
 
-    // execute - describe the parameters exposed by parser1
-    ParserID parserID = ParserID.of(parser1.getClass());
-    ParserDescriptor schema = service.describe(parserID);
-
-    // validate
-    assertThat("The parserID should be set to the parser's class name.",
-            schema.getParserName().getName(), equalTo(parserInfo1.getName()));
-    ConfigParamDescriptor expectedItem = new ConfigParamDescriptor()
-            .setName(descriptor1.getName().get())
-            .setDescription(descriptor1.getDescription().get())
-            .setLabel(descriptor1.getAcceptedValues().get(0).getLabel())
-            .setType(DEFAULT_SCHEMA_TYPE)
-            .setRequired(Boolean.toString(descriptor1.isRequired()))
-            .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "outputField");
-    assertThat("Expect the schema item to match the descriptor.",
-            schema.getConfigurations().get(0), equalTo(expectedItem));
+    String actual = JSONUtils.INSTANCE.toJSON(schema, true);
+    assertThat(actual, equalToCompressingWhiteSpace(describeExpected));
   }
 
-  @Test
-  void describeMultipleValues() throws IOException {
-    // setup
-    ConfigDescriptor descriptor = ConfigDescriptor.builder()
-            .name("fieldToRename")
-            .description("Field to Rename")
-            .isRequired(true)
-            .acceptsValue("from", "From", "The original name of the field to rename.")
-            .acceptsValue("to", "To", "The new name of the field.")
-            .build();
-    setupParser(parser1, parserInfo1, descriptor);
-    setupCatalog(Arrays.asList(parserInfo1));
 
-    // execute - describe the parameters exposed by parser1
-    ParserID parserID = ParserID.of(parserInfo1.getParserClass());
-    ParserDescriptor schema = service.describe(parserID);
-
-    // validate
-    assertThat("Expect 1 schema item for each accepted value; from/to in this case.",
-            schema.getConfigurations().size(), equalTo(2));
-    ConfigParamDescriptor expectedFromItem = new ConfigParamDescriptor()
-            .setName("from")
-            .setDescription("The original name of the field to rename.")
-            .setLabel("From")
-            .setType(DEFAULT_SCHEMA_TYPE)
-            .setRequired(Boolean.toString(descriptor.isRequired()))
-            .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "fieldToRename");
-    ConfigParamDescriptor expectedToItem = new ConfigParamDescriptor()
-            .setName("to")
-            .setDescription("The new name of the field.")
-            .setLabel("To")
-            .setType(DEFAULT_SCHEMA_TYPE)
-            .setRequired(Boolean.toString(descriptor.isRequired()))
-            .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "fieldToRename");
-    assertThat("Expected the schema items to describe the 'to' field.",
-            schema.getConfigurations(), hasItem(expectedToItem));
-    assertThat("Expected the schema items to describe the 'from' field.",
-            schema.getConfigurations(), hasItem(expectedFromItem));
-  }
+  /**
+   * {
+   *   "com.cloudera.parserchains.parsers.RemoveFieldParser" : {
+   *     "id" : "com.cloudera.parserchains.parsers.RemoveFieldParser",
+   *     "name" : "Remove Field(s)",
+   *     "schemaItems" : [ {
+   *       "name" : "fieldToRemove",
+   *       "type" : "text",
+   *       "label" : "Field to Remove",
+   *       "description" : "The name of the field to remove.",
+   *       "required" : true,
+   *       "path" : "config.fieldToRemove",
+   *       "multiple" : true
+   *     } ]
+   *   },
+   *   "com.cloudera.parserchains.parsers.DelimitedTextParser" : {
+   *     "id" : "com.cloudera.parserchains.parsers.DelimitedTextParser",
+   *     "name" : "Delimited Text",
+   *     "schemaItems" : [ {
+   *       "name" : "inputField",
+   *       "type" : "text",
+   *       "label" : "Input Field",
+   *       "description" : "The name of the input field to parse.",
+   *       "required" : true,
+   *       "path" : "config.inputField",
+   *       "multiple" : true
+   *     }, {
+   *       "name" : "fieldIndex",
+   *       "type" : "text",
+   *       "label" : "Column Index",
+   *       "description" : "The index (0-based) of the column containing the data.",
+   *       "required" : true,
+   *       "path" : "config.outputField",
+   *       "multiple" : true
+   *     }, {
+   *       "name" : "fieldName",
+   *       "type" : "text",
+   *       "label" : "Field Name",
+   *       "description" : "The name of the output field.",
+   *       "required" : true,
+   *       "path" : "config.outputField",
+   *       "multiple" : true
+   *     }, {
+   *       "name" : "delimiter",
+   *       "type" : "text",
+   *       "label" : "Delimiter",
+   *       "description" : "A regex delimiter used to split the text. Defaults to comma.",
+   *       "required" : false,
+   *       "path" : "config.delimiter",
+   *       "multiple" : true
+   *     }, {
+   *       "name" : "trim",
+   *       "type" : "text",
+   *       "label" : "Trim Whitespace",
+   *       "description" : "Trim whitespace from each value. Defaults to true.",
+   *       "required" : false,
+   *       "path" : "config.trim",
+   *       "multiple" : true
+   *     } ]
+   *   }
+   * }
+   */
+  @Multiline
+  String describeAllExpected;
 
   @Test
   void describeAll() throws IOException {
-    // setup
-    setupParser(parser1, parserInfo1, descriptor1);
-    setupCatalog(Arrays.asList(parserInfo1));
-
-    // execute - describe all available parser
     Map<ParserID, ParserDescriptor> schema = service.describeAll();
 
-    // validate
-    assertThat("Expect 1 parser type to be returned.",
-            schema.size(), equalTo(1));
-    ParserID expected = mapper.reform(parserInfo1).getId();
-    assertThat("Expect the result to be keyed by the parser ID.",
-            schema.containsKey(expected));
-    ParserDescriptor actual = schema.get(expected);
-    ConfigParamDescriptor expectedItem = new ConfigParamDescriptor()
-            .setName(descriptor1.getName().get())
-            .setDescription(descriptor1.getDescription().get())
-            .setLabel(descriptor1.getAcceptedValues().get(0).getLabel())
-            .setType(DEFAULT_SCHEMA_TYPE)
-            .setRequired(Boolean.toString(descriptor1.isRequired()))
-            .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + "outputField");
-    assertThat("Expect the schema item to match the descriptor.",
-            actual.getConfigurations().get(0), equalTo(expectedItem));
+    String actual = JSONUtils.INSTANCE.toJSON(schema, true);
+    assertThat(actual, equalToCompressingWhiteSpace(describeAllExpected));
   }
 }
