@@ -1,12 +1,27 @@
 package com.cloudera.parserchains.core;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import java.util.List;
 
+import static com.cloudera.parserchains.core.ChainLinkTestUtilities.makeEchoParser;
+import static com.cloudera.parserchains.core.ChainLinkTestUtilities.makeErrorParser;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
+@ExtendWith(MockitoExtension.class)
 public class NextChainLinkTest {
-    static LinkName linkName = LinkName.of("parser22");
+    @Mock Parser parser1, parser2;
+    static LinkName linkName1 = LinkName.of("parser1");
+    static LinkName linkName2 = LinkName.of("parser2");
     static Message message = Message
             .builder()
             .createdBy(LinkName.of("original"))
@@ -14,30 +29,74 @@ public class NextChainLinkTest {
 
     @Test
     void nextLink() {
-        NextChainLink next = new NextChainLink(new NoopParser(), linkName);
-        NextChainLink previous = new NextChainLink(new NoopParser(), linkName)
-                .setNext(next);
-        assertEquals(next, previous.getNext(message).get());
+        NextChainLink link1 = new NextChainLink(makeEchoParser(parser1), linkName1);
+        NextChainLink link2 = new NextChainLink(makeEchoParser(parser2), linkName2);
+        link1.setNext(link2);
+        List<Message> results = link1.process(message);
+
+        // validate
+        Message expected1 = Message.builder()
+                .clone(message)
+                .createdBy(linkName1)
+                .build();
+        Message expected2 = Message.builder()
+                .clone(message)
+                .createdBy(linkName2)
+                .build();
+        assertThat("Expected 2 results, 1 result from each link.",
+                results.size(), is(2));
+        assertThat("Expected to see a result from link1.",
+                results, hasItem(expected1));
+        assertThat("Expected to see a result from link2.",
+                results, hasItem(expected2));
     }
 
     @Test
-    void nextLinkEmpty() {
-        NextChainLink link = new NextChainLink(new NoopParser(), linkName);
-        // the next link is not present until set
-        assertFalse(link.getNext(message).isPresent());
+    void noNextLink() {
+        NextChainLink link1 = new NextChainLink(makeEchoParser(parser1), linkName1);
+        List<Message> results = link1.process(message);
+
+        // validate
+        Message expected1 = Message.builder()
+                .clone(message)
+                .createdBy(linkName1)
+                .build();
+        assertThat("Expected only 1 result.",
+                results.size(), is(1));
+        assertThat("Expected to see a result from link1.",
+                results, hasItem(expected1));
     }
 
     @Test
-    void getParser() {
-        Parser parser = new NoopParser();
-        NextChainLink link = new NextChainLink(parser, linkName);
-        assertEquals(parser, link.getParser());
+    void parsingError() {
+        // the first link will trigger a parser error
+        NextChainLink link1 = new NextChainLink(makeErrorParser(parser1), linkName1);
+        NextChainLink link2 = new NextChainLink(parser2, linkName2);
+        link1.setNext(link2);
+        List<Message> results = link1.process(message);
+
+        // validate
+        assertThat("Expected only 1 result; processing stops on error.",
+                results.size(), is(1));
+        assertThat("Expected link1 to report an error.",
+                results.get(0).getError().isPresent());
+        assertThat("Expected the result to be attributed to link1.",
+                results.get(0).getCreatedBy(), is(linkName1));
+        verify(parser2, never().description("Expected no parsing to occur after the error in link1.")).parse(any());
     }
 
     @Test
-    void linkName() {
-        Parser parser = new NoopParser();
-        NextChainLink link = new NextChainLink(parser, linkName);
-        assertEquals(linkName, link.getLinkName());
+    void parserReturnsNull() {
+        Message input = Message.builder()
+                .addField(FieldName.of("tag"), FieldValue.of("route1"))
+                .createdBy(LinkName.of("original"))
+                .build();
+        RouterLink routerLink = new RouterLink()
+                .withInputField(FieldName.of("tag"))
+                .withRoute(Regex.of("route1"), new NextChainLink(parser1, linkName1));
+
+        // validate
+        assertThrows(NullPointerException.class, () -> routerLink.process(input),
+                "Expected an exception because the parser returns a null message.");
     }
 }

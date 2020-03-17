@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 public class DefaultChainBuilder implements ChainBuilder {
     private static final Logger logger = LogManager.getLogger(DefaultChainBuilder.class);
-    private static final String ROUTER_MUST_BE_LAST = "Nothing can follow a router in a parser chain. A router must be last.";
     private ParserBuilder parserBuilder;
     private ParserCatalog parserCatalog;
 
@@ -40,37 +39,25 @@ public class DefaultChainBuilder implements ChainBuilder {
 
         // build the chain
         ChainLink head = null;
-        NextChainLink current = null;
-        int numbeOfParsers = chainSchema.getParsers().size();
-        for(int i=0; i<numbeOfParsers; i++) {
-            ParserSchema parserSchema = chainSchema.getParsers().get(i);
-
+        ChainLink current = null;
+        for(ParserSchema parserSchema: chainSchema.getParsers()) {
+            ChainLink next;
             boolean isRouter = ParserID.router().equals(parserSchema.getId());
             if(isRouter) {
-                // the router must be last in the chain. nothing can come after a router.
-                boolean isNotLast = i != (numbeOfParsers-1);
-                if(isNotLast) {
-                    throw new InvalidParserException(chainSchema.getParsers().get(i++), ROUTER_MUST_BE_LAST);
-                }
-
-                RouterLink next = buildRouter(parserSchema);
-                if(head == null) {
-                    head = next;
-                } else {
-                    current.setNext(next);
-                }
-
+                next = buildRouter(parserSchema);
             } else {
-                NextChainLink next = buildLink(parserSchema, parserInfos);
-                if(head == null) {
-                    head = next;
-                    current = next;
-                } else {
-                    current.setNext(next);
-                    current = next;
-                }
+                next = buildLink(parserSchema, parserInfos);
+            }
+
+            if(head == null) {
+                head = next;
+                current = next;
+            } else {
+                current.setNext(next);
+                current = next;
             }
         }
+
         return head;
     }
 
@@ -102,9 +89,8 @@ public class DefaultChainBuilder implements ChainBuilder {
         RouterLink routerLink;
         try {
             // build the router
-            LinkName linkName = LinkName.of(routerSchema.getLabel());
             FieldName inputField = FieldName.of(routerSchema.getRouting().getMatchingField());
-            routerLink = new RouterLink(linkName)
+            routerLink = new RouterLink()
                     .withInputField(inputField);
 
             // define the router's routes
