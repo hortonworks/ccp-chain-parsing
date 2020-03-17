@@ -10,6 +10,7 @@ import { ParserComponent } from '../parser/parser.component';
 })
 export class RouterComponent extends ParserComponent {
 
+  @Input() collapsed: boolean;
   @Input() dirty = false;
   @Input() parser: ParserModel;
   @Output() subchainSelect = new EventEmitter<string>();
