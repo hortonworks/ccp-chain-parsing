@@ -3,30 +3,28 @@ package com.cloudera.parserchains.queryservice.service;
 import com.cloudera.parserchains.core.ChainBuilder;
 import com.cloudera.parserchains.core.ChainLink;
 import com.cloudera.parserchains.core.DefaultChainBuilder;
+import com.cloudera.parserchains.core.FieldName;
+import com.cloudera.parserchains.core.FieldValue;
+import com.cloudera.parserchains.core.LinkName;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.ReflectiveParserBuilder;
 import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
 import com.cloudera.parserchains.core.model.define.InvalidParserException;
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.core.utils.JSONUtils;
-import com.cloudera.parserchains.parsers.DelimitedTextParser;
-import com.cloudera.parserchains.parsers.TimestampParser;
 import org.adrianwalker.multilinestring.Multiline;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.io.IOException;
+import java.util.List;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultChainBuilderServiceTest {
-
-    @Mock
-    private Message message;
     private DefaultChainBuilderService service;
 
     @BeforeEach
@@ -74,31 +72,31 @@ public class DefaultChainBuilderServiceTest {
     private String parserChain;
 
     @Test
-    void build() throws InvalidParserException, IOException {
+    void success() throws InvalidParserException, IOException {
         ParserChainSchema schema = JSONUtils.INSTANCE.load(parserChain, ParserChainSchema.class);
         ChainLink head = service.build(schema);
 
-        assertThat("Expected the first link name to be set correctly.",
-                head.getLinkName().get(), is("8673f8f4-a308-4689-822c-0b01477ef378"));
-        assertThat("Expected the first parser to be a timestamp parser.",
-                head.getParser(), instanceOf(TimestampParser.class));
-        TimestampParser timestampParser = (TimestampParser) head.getParser();
-        assertThat("Expected the timestamp parser to have the input field set correctly.",
-                timestampParser.getOutputField().get(), is("processing_time"));
+        // validate
+        Message input = Message.builder()
+                .createdBy(LinkName.of("original"))
+                .addField(FieldName.of("original_string"), FieldValue.of("Homer Simpson, 740 Evergreen Terrace, (939)-555-0113"))
+                .build();
+        List<Message> results = head.process(input);
 
-
-        assertThat("Expected the next link to be set.",
-                head.getNext(message).isPresent());
-        ChainLink next = head.getNext(message).get();
-        assertThat("Expected the csv parser to have the correct name.",
-                next.getLinkName().get(), is("3b31e549-340f-47ce-8a71-d702685137f4"));
-        assertThat("Expected the second parser to be a csv parser.",
-                next.getParser(), instanceOf(DelimitedTextParser.class));
-        DelimitedTextParser csvParser = (DelimitedTextParser) next.getParser();
-        assertThat("Expected the input fields to be set.",
-                csvParser.getInputField().get(), is("original_string"));
-        assertThat("Expected the output fields to be set.",
-                csvParser.getOutputFields().size(), is(3));
+        assertThat("Expected 2 results; 1 from each parser in the chain.",
+                results.size(), is(2));
+        assertThat("Expected the message to have been labelled.",
+                results.get(0).getCreatedBy().get(), is("8673f8f4-a308-4689-822c-0b01477ef378"));
+        assertThat("Expected the timestamp to have been added.",
+                results.get(0).getFields().keySet(), hasItem(FieldName.of("processing_time")));
+        assertThat("Expected the message to have been labelled correctly.",
+                results.get(1).getCreatedBy().get(), is("3b31e549-340f-47ce-8a71-d702685137f4"));
+        assertThat("Expected the name field to have been added.",
+                results.get(1).getFields().keySet(), hasItem(FieldName.of("name")));
+        assertThat("Expected the address field to have been added.",
+                results.get(1).getFields().keySet(), hasItem(FieldName.of("address")));
+        assertThat("Expected the phone field to have been added.",
+                results.get(1).getFields().keySet(), hasItem(FieldName.of("phone")));
     }
 
     /**
@@ -124,47 +122,9 @@ public class DefaultChainBuilderServiceTest {
     private String missingMatchingField;
 
     @Test
-    void missingMatchingField() throws IOException {
+    void error() throws IOException {
         ParserChainSchema schema = JSONUtils.INSTANCE.load(missingMatchingField, ParserChainSchema.class);
         assertThrows(InvalidParserException.class, () -> service.build(schema),
                 "Expected exception because the router required a matching field to be defined.");
-    }
-
-    /**
-     * {
-     *       "id":"1",
-     *       "name":"Hello Chain",
-     *       "parsers":[
-     *          {
-     *             "name":"Route by Original",
-     *             "type":"Router",
-     *             "id":"c5df7b70-5d61-11ea-a9b6-9537bbab1bb1",
-     *             "config":{
-     *             },
-     *             "routing":{
-     *                "matchingField":"original_string",
-     *                "routes":[
-     *                ]
-     *             }
-     *          },
-     *          {
-     *             "name":"Timestamper",
-     *             "type":"com.cloudera.parserchains.parsers.TimestampParser",
-     *             "id":"2313a690-5d62-11ea-a9b6-9537bbab1bb1",
-     *             "config":{
-     *             }
-     *          }
-     *       ]
-     *
-     * }
-     */
-    @Multiline
-    private String routerMustBeLast;
-
-    @Test
-    void routerMustBeLast() throws IOException {
-        ParserChainSchema schema = JSONUtils.INSTANCE.load(routerMustBeLast, ParserChainSchema.class);
-        assertThrows(InvalidParserException.class, () -> service.build(schema),
-                "Expected exception because no parser can follow a router in a chain.");
     }
 }

@@ -1,7 +1,19 @@
 <div class="parser-chain">
-  <div *ngFor="let parserId of parsers; trackBy: trackByFn" class="parser-chain-item">
+  <div>
+    <button
+      nz-button
+      nzType="default"
+      nzSize="small"
+      class="parser-expand-collapse-btn"
+      (click)="collapseExpandAllParsers()"
+    >
+      {{(chainPageService.collapseAll) ? 'Expand All' : 'Collapse All'}}
+    </button>
+  </div>
+  <div *ngFor="let parserId of parsers; trackBy: trackByFn; index as i" class="parser-chain-item">
     <div class="chain-item">
       <app-parser-composer
+        [collapsed]="parserCollapseStateArray[i]"
         [parserId]="parserId"
         [chainId]="chainId"
         [dirty]="(dirtyParsers || []).includes(parserId)"

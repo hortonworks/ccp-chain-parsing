@@ -2,27 +2,27 @@ package com.cloudera.parserchains.core;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static com.cloudera.parserchains.core.ChainLinkTestUtilities.makeEchoParser;
+import static com.cloudera.parserchains.core.ChainLinkTestUtilities.makeErrorParser;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.description;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
 
+@ExtendWith(MockitoExtension.class)
 public class DefaultChainRunnerTest {
     static String inputToParse;
     static Message errorMessage;
-    static LinkName linkName1;
-    static LinkName linkName2;
-    static LinkName linkName3;
+    @Mock LinkName linkName1, linkName2;
+    @Mock Parser parser1, parser2;
 
     @BeforeAll
     static void setup() {
@@ -31,125 +31,84 @@ public class DefaultChainRunnerTest {
                 .withError("error")
                 .createdBy(LinkName.of("parserInError"))
                 .build();
-        linkName1 = LinkName.of("parser1");
-        linkName2 = LinkName.of("parser2");
-        linkName3 = LinkName.of("parser3");
     }
 
     @Test
     void runChain() {
-        // parser1 runs successfully and does not modify the message
-        Parser parser1 = mock(Parser.class);
-        when(parser1.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
+        ChainLink head = new NextChainLink(makeEchoParser(parser1), linkName1);
+        ChainLink last = new NextChainLink(makeEchoParser(parser2), linkName2);
+        head.setNext(last);
+        List<Message> results = new DefaultChainRunner().run(inputToParse, head);
 
-        // parser2 runs successfully and does not modify the message
-        Parser parser2 = mock(Parser.class);
-        when(parser2.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        // run the parser chain
-        ChainLink chain = ChainHelper.init()
-                .then(parser1, linkName1)
-                .then(parser2, linkName2)
-                .head();
-        DefaultChainRunner runner = new DefaultChainRunner();
-        List<Message> results = runner.run(inputToParse, chain);
-
-        // verify the input received by each parser
-        Message expectedInput1 = Message.builder()
-                .addField(runner.getInputField(), FieldValue.of(inputToParse))
+        // validate
+        Message expected0 = Message.builder()
+                .addField(Constants.DEFAULT_INPUT_FIELD, FieldValue.of(inputToParse))
                 .createdBy(DefaultChainRunner.ORIGINAL_MESSAGE_NAME)
                 .build();
-        verify(parser1, description("Expected parser1 to get the original message."))
-                .parse(eq(expectedInput1));
-        Message expectedInput2 = Message.builder()
-                .addField(runner.getInputField(), FieldValue.of(inputToParse))
+        Message expected1 = Message.builder()
+                .clone(expected0)
                 .createdBy(linkName1)
                 .build();
-        verify(parser2, description("Expected parser2 to parse the next message."))
-                .parse(eq(expectedInput2));
-
-        // verify the list of results
-        assertEquals(3, results.size(),
-            "Expected 3 = 1 original input + 1 from parser1 + 1 from parser2.");
-        assertEquals(DefaultChainRunner.ORIGINAL_MESSAGE_NAME, results.get(0).getCreatedBy(),
-                "Expected the 1st message to have 'createdBy' defined.");
-        assertEquals(linkName1, results.get(1).getCreatedBy(),
-                "Expected the 2nd message to have been 'createdBy' by " + linkName1);
-        assertEquals(linkName2, results.get(2).getCreatedBy(),
-                "Expected the 3rd message to have been 'createdBy' by " + linkName2);
+        Message expected2 = Message.builder()
+                .clone(expected1)
+                .createdBy(linkName2)
+                .build();
+        assertThat("Expected 3 results, 1 original + 1 link1 + 1 link2.",
+                results.size(), is(3));
+        assertThat("Expected to see a result containing only the original message.",
+                results, hasItem(expected0));
+        assertThat("Expected to see a result from link1.",
+                results, hasItem(expected1));
+        assertThat("Expected to see a result from link2.",
+                results, hasItem(expected2));
     }
 
     @Test
     void changeInputFieldName() {
-        // parser1 runs successfully and does not modify the message
-        Parser parser1 = mock(Parser.class);
-        when(parser1.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
+        // change the name of the input field
+        FieldName newInputField = FieldName.of("the_original_message");
+        ChainLink chain = new NextChainLink(makeEchoParser(parser1), linkName1);
+        List<Message> results = new DefaultChainRunner()
+                .withInputField(newInputField)
+                .run(inputToParse, chain);
 
-        ChainLink chain = ChainHelper.init()
-                .then(parser1, LinkName.of("parser1"))
-                .head();
-
-        // change the name of the input field.
-        DefaultChainRunner runner = new DefaultChainRunner()
-                .withInputField(FieldName.of("the_original_message"));
-        List<Message> results = runner.run(inputToParse, chain);
-
-        // the original message that we expect the ChainRunner to build
-        Message expectedMessage = Message.builder()
-                .addField(runner.getInputField(), FieldValue.of(inputToParse))
+        // validate
+        Message expected0 = Message.builder()
+                .addField(newInputField, FieldValue.of(inputToParse))
                 .createdBy(DefaultChainRunner.ORIGINAL_MESSAGE_NAME)
                 .build();
-
-        // 1 original input + 1 from parser1 = 2
-        assertEquals(2, results.size());
-        verify(parser1, times(1)).parse(eq(expectedMessage));
+        Message expected1 = Message.builder()
+                .clone(expected0)
+                .createdBy(linkName1)
+                .build();
+        assertThat("Expected 2 results, 1 original + 1 link1.",
+                results.size(), is(2));
+        assertThat("Expected to see a result containing only the original message.",
+                results, hasItem(expected0));
+        assertThat("Expected to see a result from link1.",
+                results, hasItem(expected1));
     }
 
     @Test
     void runChainWithError() {
-        // parser1 does not modify the message
-        Parser parser1 = mock(Parser.class);
-        when(parser1.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
+        ChainLink head = new NextChainLink(makeErrorParser(parser1), linkName1);
+        ChainLink next = new NextChainLink(parser2, linkName2);
+        head.setNext(next);
+        List<Message> results = new DefaultChainRunner().run(inputToParse, head);
 
-        // parser2 will error out
-        Parser parser2 = mock(Parser.class);
-        when(parser2.parse(any(Message.class))).thenReturn(errorMessage);
-
-        // parser3 does not modify the message
-        Parser parser3 = Mockito.mock(Parser.class);
-        when(parser3.parse(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        // run the parser chain
-        ChainLink chain = ChainHelper.init()
-                .then(parser1, linkName1)
-                .then(parser2, linkName2)
-                .then(parser3, linkName3)
-                .head();
-        DefaultChainRunner runner = new DefaultChainRunner();
-        List<Message> results = runner.run(inputToParse, chain);
-
-        // verify the input received by each parser
-        Message expectedInput1 = Message.builder()
-                .addField(runner.getInputField(), FieldValue.of(inputToParse))
+        // validate
+        Message expected0 = Message.builder()
+                .addField(Constants.DEFAULT_INPUT_FIELD, FieldValue.of(inputToParse))
                 .createdBy(DefaultChainRunner.ORIGINAL_MESSAGE_NAME)
                 .build();
-        verify(parser1, description("Expected parser1 to get the original message."))
-                .parse(eq(expectedInput1));
-        Message expectedInput2 = Message.builder()
-                .addField(runner.getInputField(), FieldValue.of(inputToParse))
-                .createdBy(linkName1)
-                .build();
-        verify(parser2, description("Expected parser2 to parse the next message."))
-                .parse(eq(expectedInput2));
-        verify(parser3, never()).parse(any());
-        assertEquals(3, results.size(),
-            "Expected 3 = 1 original + 1 from parser1 + 1 error from parser2 + 0 from parser3 (it was not executed).");
-        assertEquals(DefaultChainRunner.ORIGINAL_MESSAGE_NAME, results.get(0).getCreatedBy(),
-                "Expected the 1st message to have 'createdBy' defined.");
-        assertEquals(linkName1, results.get(1).getCreatedBy(),
-                "Expected the 2nd message to have been 'createdBy' by " + linkName1);
-        assertEquals(linkName2, results.get(2).getCreatedBy(),
-                "Expected the 3rd message to have been 'createdBy' by " + linkName2);
+        assertThat("Expected 2 results, 1 original + 1 link1.",
+                results.size(), is(2));
+        assertThat("Expected to see a result containing only the original message.",
+                results, hasItem(expected0));
+        assertThat("Expected link1 to report an error.",
+                results.get(1).getError().isPresent());
+        assertThat("Expected the result to be attributed to link1.",
+                results.get(1).getCreatedBy(), is(linkName1));
     }
 
     @Test

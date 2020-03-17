@@ -3,7 +3,7 @@
   dirty: dirty
 }">
   <nz-collapse>
-    <nz-collapse-panel class="chain-item" [nzHeader]="titleTemplate"
+    <nz-collapse-panel class="chain-item" [nzHeader]="titleTemplate" [nzActive]="!collapsed"
      [nzExtra]="extraTemplate" [ngClass]="{ 'investigated': isolatedParserView }">
       <nz-tabset>
         <nz-tab nzTitle="Configuration">

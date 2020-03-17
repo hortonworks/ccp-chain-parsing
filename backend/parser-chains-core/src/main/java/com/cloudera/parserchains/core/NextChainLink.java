@@ -1,5 +1,7 @@
 package com.cloudera.parserchains.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -8,7 +10,7 @@ import java.util.Optional;
  */
 public class NextChainLink implements ChainLink {
     private Parser parser;
-    private Optional<ChainLink> next;
+    private Optional<ChainLink> nextLink;
     private LinkName linkName;
 
     /**
@@ -17,33 +19,35 @@ public class NextChainLink implements ChainLink {
      */
     public NextChainLink(Parser parser, LinkName linkName) {
         this.parser = Objects.requireNonNull(parser, "A valid parser is required.");
-        this.next = Optional.empty();
+        this.nextLink = Optional.empty();
         this.linkName = Objects.requireNonNull(linkName, "A link name is required.");
     }
 
-    public Parser getParser() {
-        return parser;
+    @Override
+    public List<Message> process(Message input) {
+        // parse the input message
+        Message parsed = parser.parse(input);
+        Objects.requireNonNull(parsed, "Parser must not return a null message.");
+
+        // ensure the message is attributed to this link by name
+        Message output = Message.builder()
+                .clone(parsed)
+                .createdBy(linkName)
+                .build();
+        List<Message> results = new ArrayList<>();
+        results.add(output);
+
+        // if no errors, allow the next link in the chain to process the message
+        boolean noError = !output.getError().isPresent();
+        if(noError && nextLink.isPresent()) {
+            List<Message> nextResults = nextLink.get().process(output);
+            results.addAll(nextResults);
+        }
+        return results;
     }
 
     @Override
-    public LinkName getLinkName() {
-        return linkName;
+    public void setNext(ChainLink nextLink) {
+        this.nextLink = Optional.of(nextLink);
     }
-
-    /**
-     * Get the next link in the chain.
-     * @param message The message that is being parsed.
-     * @return The next link in the chain or Optional.empty if there is no next link.
-     */
-    @Override
-    public Optional<ChainLink> getNext(Message message) {
-        return next;
-    }
-
-    public NextChainLink setNext(ChainLink next) {
-        this.next = Optional.of(next);
-        return this;
-    }
-
-
 }

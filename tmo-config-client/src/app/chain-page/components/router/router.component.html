@@ -1,64 +1,66 @@
 <div class="parser">
-  <nz-card class="chain-item" [nzBordered]="true" [nzTitle]="parser.name" [nzExtra]="extraTemplate">
-    <nz-tabset
-      nzTabPosition="top"
-      nzType="line"
-    >
-      <nz-tab nzTitle="Basics">
-        <app-custom-form
-          *ngIf="areFormsReadyToRender && metaDataForm != null"
-          [config]="metaDataForm"
-        ></app-custom-form>
-        <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="24">
-            Type
-          </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24">
-            Router
-          </nz-form-control>
-        </nz-form-item>
-      </nz-tab>
-      <nz-tab nzTitle="Config">
-        <div class="router-config" *ngIf="parser.routing">
-          <div class="matching-field">
-            <nz-form-item>
-              <nz-form-label
-                [nzSm]="4"
-                [nzFor]="parser.id"
+  <nz-collapse>
+    <nz-collapse-panel [nzActive]="!collapsed" [nzHeader]="parser.name" class="chain-item" [nzExtra]="extraTemplate">
+      <nz-tabset
+        nzTabPosition="top"
+        nzType="line"
+      >
+        <nz-tab nzTitle="Basics">
+          <app-custom-form
+            *ngIf="areFormsReadyToRender && metaDataForm != null"
+            [config]="metaDataForm"
+          ></app-custom-form>
+          <nz-form-item>
+            <nz-form-label [nzSm]="8" [nzXs]="24">
+              Type
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              Router
+            </nz-form-control>
+          </nz-form-item>
+        </nz-tab>
+        <nz-tab nzTitle="Config">
+          <div class="router-config" *ngIf="parser.routing">
+            <div class="matching-field">
+              <nz-form-item>
+                <nz-form-label
+                  [nzSm]="4"
+                  [nzFor]="parser.id"
+                >
+                  Matching field
+                </nz-form-label>
+                <nz-form-control [nzSm]="16">
+                  <input
+                    id="{{ parser.id }}"
+                    nz-input
+                    (blur)="onMatchingFieldBlur($event, parser)"
+                    placeholder="Add matching field"
+                    value="{{ parser.routing.matchingField }}"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="routes">
+              <a
+                href="#"
+                class="add-route"
+                (click)="onAddRouteClick($event, parser)"
               >
-                Matching field
-              </nz-form-label>
-              <nz-form-control [nzSm]="16">
-                <input
-                  id="{{ parser.id }}"
-                  nz-input
-                  (blur)="onMatchingFieldBlur($event, parser)"
-                  placeholder="Add matching field"
-                  value="{{ parser.routing.matchingField }}"
-                />
-              </nz-form-control>
-            </nz-form-item>
+                <i nz-icon nzType="file-add" nzTheme="outline"></i>
+                Add route
+              </a>
+              <app-route
+                *ngFor="let routeId of parser.routing.routes; trackBy: trackByFn"
+                  [parser]="parser"
+                  [routeId]="routeId"
+                  (chainClick)="onSubchainClick($event)"
+                ></app-route>
+            </div>
           </div>
-          <div class="routes">
-            <a
-              href="#"
-              class="add-route"
-              (click)="onAddRouteClick($event, parser)"
-            >
-              <i nz-icon nzType="file-add" nzTheme="outline"></i>
-              Add route
-            </a>
-            <app-route
-              *ngFor="let routeId of parser.routing.routes; trackBy: trackByFn"
-                [parser]="parser"
-                [routeId]="routeId"
-                (chainClick)="onSubchainClick($event)"
-              ></app-route>
-          </div>
-        </div>
-      </nz-tab>
-    </nz-tabset>
-  </nz-card>
+        </nz-tab>
+      </nz-tabset>
+    </nz-collapse-panel>
+  </nz-collapse>
   <ng-template #extraTemplate>
     <div *ngIf="dirty" class="parser-dirty">
       <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#1890ff'"></i>

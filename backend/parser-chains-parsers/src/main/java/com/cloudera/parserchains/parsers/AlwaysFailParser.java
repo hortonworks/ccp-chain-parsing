@@ -94,7 +94,7 @@ public class AlwaysFailParser implements Parser {
             if(errorMessageConfig.getName().equals(name)) {
                 configureErrorMessage(values);
             } else {
-                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
+                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name.get()));
             }
         }
 

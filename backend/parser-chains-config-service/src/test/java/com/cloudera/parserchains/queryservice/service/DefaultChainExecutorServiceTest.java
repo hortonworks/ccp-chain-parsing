@@ -17,9 +17,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.DEFAULT_SUCCESS_MESSAGE;
-import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.ERROR_TYPE;
-import static com.cloudera.parserchains.queryservice.model.exec.ResultLog.INFO_TYPE;
+import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.DEFAULT_SUCCESS_MESSAGE;
+import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.ERROR_TYPE;
+import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.INFO_TYPE;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;

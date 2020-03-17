@@ -16,6 +16,7 @@ import { ConfigChangedEvent } from './advanced-editor/advanced-editor.component'
 })
 export class ParserComponent implements OnInit, OnChanges {
 
+  @Input() collapsed: boolean;
   @Input() dirty = false;
   @Input() parser: ParserModel;
   @Input() metaDataForm: CustomFormConfig[];
@@ -28,6 +29,7 @@ export class ParserComponent implements OnInit, OnChanges {
   editName = false;
 
   areFormsReadyToRender = false;
+  parserCollapseState = [];
 
   ngOnInit() {
     this.configForm = this.setFormFieldValues(this.configForm);
@@ -35,6 +37,7 @@ export class ParserComponent implements OnInit, OnChanges {
 
     this.configForm = this.addFormFieldListeners(this.configForm);
     this.metaDataForm = this.addFormFieldListeners(this.metaDataForm);
+
 
     setTimeout(() => {
       this.areFormsReadyToRender = true;

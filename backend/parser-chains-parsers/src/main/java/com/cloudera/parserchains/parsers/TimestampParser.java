@@ -113,7 +113,7 @@ public class TimestampParser implements Parser {
             if(outputFieldConfig.getName().equals(name)) {
                 configureOutputField(values);
             } else {
-                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
+                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name.get()));
             }
         }
 

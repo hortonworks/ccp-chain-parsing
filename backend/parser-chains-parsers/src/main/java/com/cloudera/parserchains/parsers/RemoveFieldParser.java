@@ -87,7 +87,7 @@ public class RemoveFieldParser implements Parser {
             if(removeFieldConfig.getName().equals(name)) {
                 configureRemoveField(values);
             } else {
-                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
+                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name.get()));
             }
         }
 
