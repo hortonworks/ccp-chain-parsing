@@ -45,4 +45,16 @@ export class MultiInputComponent implements OnInit {
     });
     this.changeValue.emit(value);
   }
+
+  onRemoveFieldClick(control, config) {
+    this.controls = this.controls.filter((item) => {
+      return item !== control;
+    });
+    const value = this.controls.map(item => {
+      return {
+        [config.name]: item.value
+      };
+    });
+    this.changeValue.emit(value);
+  }
 }

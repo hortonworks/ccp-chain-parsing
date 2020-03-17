@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { PlusCircleFill } from '@ant-design/icons-angular/icons';
+import { MinusCircleFill, PlusCircleFill } from '@ant-design/icons-angular/icons';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 
 import { MultiInputComponent } from './multi-input.component';
@@ -17,7 +17,7 @@ describe('MultiInputComponent', () => {
       ],
       declarations: [ MultiInputComponent ],
       providers: [
-        { provide: NZ_ICONS, useValue: [PlusCircleFill] }
+        { provide: NZ_ICONS, useValue: [PlusCircleFill, MinusCircleFill] }
       ]
     })
     .compileComponents();
@@ -69,6 +69,34 @@ describe('MultiInputComponent', () => {
       foo: 'value 2'
     }, {
       foo: 'value 3'
+    }]);
+  });
+
+  it('should remove one form control', () => {
+    const spy = spyOn(component.changeValue, 'emit');
+    component.config = {
+      type: 'text',
+      name: 'foo'
+    };
+    expect(component.controls.length).toBe(1);
+
+    component.onAddClick();
+    component.onAddClick();
+
+    expect(component.controls.length).toBe(3);
+
+    const controlToBeRemoved = component.controls[0];
+    component.onRemoveFieldClick(controlToBeRemoved, component.config);
+
+    expect(component.controls.length).toBe(2);
+
+    expect(component.controls.find((c) => c === controlToBeRemoved))
+      .toBeUndefined();
+
+    expect(spy).toHaveBeenCalledWith([{
+      foo: ''
+    }, {
+      foo: ''
     }]);
   });
 });
