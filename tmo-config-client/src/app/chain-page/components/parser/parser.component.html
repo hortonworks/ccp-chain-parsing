@@ -23,12 +23,12 @@
   </nz-collapse>
 
   <ng-template #titleTemplate>
-    <div>
-      <span *ngIf="!editName" class="parser-name"
+    <div class="parser-name-bar">
+      <div *ngIf="!editName" class="parser-name"
         nz-tooltip nzTitle="Click to edit name"
         (click)="editName=!editName; preventCollapse($event);"
         data-qe-id="parser-name"
-        >{{ parser.name }}</span>
+        >{{ parser.name }}</div>
       <input *ngIf="editName" class="parser-name-input"
         type="text" [ngModel]="parser.name"
         (keydown.enter)="editName=!editName"
@@ -37,7 +37,7 @@
         (click)="preventCollapse($event)"
         autofocus
         data-qe-id="parser-name-input">
-        - {{ parserType }}
+        &nbsp;- {{ parserType }}
     </div>
   </ng-template>
 

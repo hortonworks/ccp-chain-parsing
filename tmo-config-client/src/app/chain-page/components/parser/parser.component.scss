@@ -13,22 +13,32 @@
   max-height: 62rem;
 }
 
-.parser-name {
-  font-weight: bold;
-}
+.parser-name-bar {
+  padding-right: 30px;
 
-.parser-name-input {
-  font-weight: bold;
-  width: 60%;
-  border: none;
-  border-bottom: 1px solid grey;
-  background: none;
+  .parser-name {
+    max-width: 100%;
+    float: left;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-  &:focus {
-    outline: none;
-    border-bottom: 1px solid dodgerblue;
+  .parser-name-input {
+    font-weight: bold;
+    width: 60%;
+    border: none;
+    border-bottom: 1px solid grey;
+    background: none;
+
+    &:focus {
+      outline: none;
+      border-bottom: 1px solid dodgerblue;
+    }
   }
 }
+
+
 
 .parser-header-btn {
   color: grey;
