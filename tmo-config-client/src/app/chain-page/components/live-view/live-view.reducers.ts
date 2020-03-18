@@ -1,3 +1,5 @@
+import { createSelector } from '@ngrx/store';
+
 import {
   executionTriggered,
   LiveViewActionsType,
@@ -16,6 +18,7 @@ export interface LiveViewState {
   isExecuting: boolean;
   sampleData: SampleDataModel;
   result: EntryParsingResultModel[];
+  failedParser?: any;
 }
 
 export const initialState: LiveViewState = {
@@ -26,6 +29,7 @@ export const initialState: LiveViewState = {
     source: '',
   },
   result: [],
+  failedParser: ''
 };
 
 export function reducer(
@@ -41,10 +45,12 @@ export function reducer(
       };
     }
     case liveViewRefreshedSuccessfully.type: {
+      const failedResult = (action.liveViewResult.results.find((result) => result.log.type === 'error'));
       return {
         ...state,
         isExecuting: false,
         result: action.liveViewResult.results,
+        failedParser: failedResult === undefined ? '' : failedResult.log
       };
     }
     case liveViewRefreshFailed.type: {
@@ -86,3 +92,12 @@ export function reducer(
     }
   }
 }
+
+export function getLiveViewState(state: any): LiveViewState {
+  return state['live-view'];
+}
+
+export const getFailedParser = createSelector(
+  getLiveViewState,
+  (state: LiveViewState) => state.failedParser.parserId
+);

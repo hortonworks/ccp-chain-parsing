@@ -3,7 +3,7 @@ import { select, Store } from '@ngrx/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 
-import { FailedParserSelected } from '../../chain-page.actions';
+import { InvestigateParserAction } from '../../chain-page.actions';
 
 import {
   executionTriggered,
@@ -29,6 +29,7 @@ import { SampleDataModel } from './models/sample-data.model';
 export class LiveViewComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() chainConfig$: Observable<{}>;
   @Output() failedParser = new EventEmitter<string>();
+  @Output() parserToBeInvestigated = new EventEmitter<string>();
 
   private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -58,8 +59,8 @@ export class LiveViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscribeToRelevantChanges();
   }
 
-  onFailedParserSelected(failedParserId) {
-    this.store.dispatch(new FailedParserSelected({ id: failedParserId }));
+  onInvestigateParserAction(parserId) {
+    this.store.dispatch(new InvestigateParserAction({ id: parserId }));
   }
 
   private subscribeToRelevantChanges() {

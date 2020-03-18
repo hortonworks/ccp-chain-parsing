@@ -3,8 +3,12 @@
   dirty: dirty
 }">
   <nz-collapse>
-    <nz-collapse-panel class="chain-item" [nzHeader]="titleTemplate" [nzActive]="!collapsed"
-     [nzExtra]="extraTemplate" [ngClass]="{ 'investigated': isolatedParserView }">
+    <nz-collapse-panel class="chain-item"
+                        data-qe-id="chain-item"
+                        [nzHeader]="titleTemplate"
+                        [nzActive]="!collapsed"
+                        [nzExtra]="extraTemplate"
+                        [ngClass]="{ 'failed': parsingFailed  }">
       <nz-tabset>
         <nz-tab nzTitle="Configuration">
           <app-custom-form

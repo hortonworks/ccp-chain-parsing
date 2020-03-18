@@ -14,6 +14,7 @@ import * as fromActions from './chain-page.actions';
 import { ChainPageComponent } from './chain-page.component';
 import { ParserModel } from './chain-page.models';
 import * as fromReducers from './chain-page.reducers';
+import * as fromLiveViewReducers from './components/live-view/live-view.reducers';
 
 const icons: IconDefinition[] = [EditFill, PlusOutline];
 @Component({
@@ -24,6 +25,7 @@ class MockChainViewComponent {
   @Input() parsers: ParserModel[];
   @Input() dirtyParsers;
   @Input() chainId;
+  @Input() failedParser;
 }
 
 @Component({
@@ -48,7 +50,8 @@ describe('ChainPageComponent', () => {
       imports: [
         NgZorroAntdModule,
         StoreModule.forRoot({
-          'chain-page': fromReducers.reducer
+          'chain-page': fromReducers.reducer,
+          'live-view': fromLiveViewReducers.reducer
         }),
         NoopAnimationsModule,
         ReactiveFormsModule,

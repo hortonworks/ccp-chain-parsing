@@ -1,11 +1,11 @@
 <nz-card class="parser-chain" *ngIf="chain" [nzTitle]="breadcrumbsCardTitle">
   <div nz-row nzGutter="16">
     <div nz-col nzSpan="10">
-      <div *ngIf="">test</div>
       <app-chain-view
         [parsers]="parsers"
         [chainId]="(breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length - 1].id) || (chain && chain.id)"
         [dirtyParsers]="dirtyParsers"
+        [failedParser]="failedParser$"
         (removeParserEmitter)="removeParser($event)"
         (chainLevelChange)="onChainLevelChange($event)"
       ></app-chain-view>
@@ -24,7 +24,7 @@
       </div>
     </div>
     <div nz-col nzSpan="14">
-      <app-live-view [chainConfig$]="chainConfig$"></app-live-view>
+      <app-live-view [chainConfig$]="chainConfig$" ></app-live-view>
     </div>
   </div>
 </nz-card>
@@ -81,7 +81,10 @@
               <span *ngIf="i === breadcrumbs.length - 1">{{ breadcrumb.name }}</span>
             </nz-breadcrumb-item>
           </ng-container>
-          <nz-breadcrumb-item *ngIf="this.parserToBeInvestigated.length" (click)="exitFailedParserEditView()" class="error-breadcrumb">
+          <nz-breadcrumb-item *ngIf="this.parserToBeInvestigated.length"
+                              class="investigate-breadcrumb"
+                              (click)="exitFailedParserEditView()"
+                              [ngClass]="{ 'error-breadcrumb': failedParser$ | async }">
             <i nz-icon nzType="left" nzTheme="outline"></i>Back to previous view
           </nz-breadcrumb-item>
         </nz-breadcrumb>

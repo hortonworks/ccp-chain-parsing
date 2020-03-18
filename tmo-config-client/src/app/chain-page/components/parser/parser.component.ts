@@ -23,6 +23,7 @@ export class ParserComponent implements OnInit, OnChanges {
   @Input() configForm: CustomFormConfig[];
   @Input() isolatedParserView = false;
   @Input() parserType: string;
+  @Input() failedParser: string;
   @Output() removeParser = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<any>();
 
@@ -30,6 +31,10 @@ export class ParserComponent implements OnInit, OnChanges {
 
   areFormsReadyToRender = false;
   parserCollapseState = [];
+
+  get parsingFailed() {
+    return this.failedParser === this.parser.id;
+  }
 
   ngOnInit() {
     this.configForm = this.setFormFieldValues(this.configForm);

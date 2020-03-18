@@ -9,9 +9,9 @@ import { LiveViewResultModel } from '../models/live-view.model';
 })
 export class LiveViewResultComponent {
   @Input() results: LiveViewResultModel;
-  @Output() failedParserSelected = new EventEmitter<string>();
+  @Output() investigateParserAction = new EventEmitter<string>();
 
-  onFailedParserClicked(failedParser) {
-    this.failedParserSelected.emit(failedParser);
+  onInvestigateParserClicked(failedParser) {
+    this.investigateParserAction.emit(failedParser);
   }
 }

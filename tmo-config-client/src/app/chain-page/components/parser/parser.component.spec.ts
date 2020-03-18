@@ -243,6 +243,30 @@ describe('ParserComponent', () => {
     });
   });
 
+  it('should style a parser as failed', () => {
+    component.parser = {
+      id: '123',
+      name: 'Some parser',
+      type: 'Bro',
+      config: {
+        outputFields: {
+          fieldName: 'field name INIT',
+          fieldIndex: 'field index INIT'
+        }
+      }
+    };
+    component.failedParser = '123';
+    fixture.detectChanges();
+    const card = fixture.debugElement.query(By.css('[data-qe-id="chain-item"]'));
+    expect(component.parsingFailed).toBe(true);
+    expect(card.classes.failed).toBeTruthy();
+
+    component.failedParser = '';
+    fixture.detectChanges();
+    expect(component.parsingFailed).toBe(false);
+    expect(card.classes.failed).toBeFalsy();
+  });
+
   describe('parser name editing', () => {
     it('should switch to edit mode if user clicks on parser name', () => {
       let nameEl = fixture.debugElement.query(By.css('[data-qe-id="parser-name"]')).nativeElement;
