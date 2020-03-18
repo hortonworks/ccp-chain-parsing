@@ -113,22 +113,6 @@
   align-items: center;
 }
 
-.parser-delete-btn-wrapper {
-  right: 8px;
-  top: 8px;
-  position: absolute;
-  .parser-delete-btn {
-    color: rgb(20,20,20);
-    .anticon-delete {
-      opacity: 0.6;
-    }
-  }
-
-  .parser-delete-btn:hover .anticon-delete {
-    opacity: 0.8;
-  }
-}
-
 .chain-item {
   background-color: var(--card-head-bg);
   .ant-tabs-content {

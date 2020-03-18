@@ -20,3 +20,39 @@
   display: block;
   margin-bottom: 10px;
 }
+
+.parser-name-bar {
+  padding-right: 30px;
+
+  .parser-name {
+    font-weight: bold;
+    word-break: break-all;
+  }
+
+  .parser-name-input {
+    font-weight: bold;
+    width: 60%;
+    border: none;
+    border-bottom: 1px solid grey;
+    background: none;
+
+    &:focus {
+      outline: none;
+      border-bottom: 1px solid dodgerblue;
+    }
+  }
+}
+
+.parser-header-btn {
+  color: grey;
+
+  &:hover {
+    color: inherit;
+  }
+}
+
+.parser-delete-btn-wrapper {
+  right: 8px;
+  top: 8px;
+  position: absolute;
+}

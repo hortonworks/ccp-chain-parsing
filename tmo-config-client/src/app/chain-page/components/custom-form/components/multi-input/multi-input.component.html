@@ -1,0 +1,36 @@
+<div class="multi-input">
+  <span *ngIf="config.type === 'text'">
+    <nz-form-control
+      *ngFor="let item of controls; let i = index;"
+      [nzSm]="24"
+      [nzXs]="20"
+    >
+      <input
+        nz-input
+        [formControl]="controls[i]"
+        (keyup)="onChange(config)"
+      />
+      <button
+        class="remove-field-button"
+        nz-button
+        nzType="danger"
+        nzShape="circle"
+        nzSize="small"
+        *ngIf="i > 0"
+        (click)="onRemoveFieldClick(controls[i], config)"
+        title="Remove field"
+      >
+        <i nz-icon nzType="minus-circle" nzTheme="fill"></i>
+    </button>
+    </nz-form-control>
+  </span>
+  <button
+    class="add-field-button"
+    nz-button
+    nzSize="small"
+    nzType="primary"
+    nzShape="circle"
+    (click)="onAddClick()"
+    title="Add field"
+  ><i nz-icon nzType="plus-circle" nzTheme="fill"></i></button>
+</div>

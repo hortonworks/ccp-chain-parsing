@@ -1,3 +1,4 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -21,6 +22,7 @@ class MockParserComposerComponent {
   @Input() configForm;
   @Input() metaDataForm;
   @Input() failedParser;
+  @Input() collapsed;
 }
 
 describe('ChainViewComponent', () => {
@@ -41,6 +43,7 @@ describe('ChainViewComponent', () => {
         NgZorroAntdModule,
         NoopAnimationsModule,
         ReactiveFormsModule,
+        HttpClientTestingModule
       ],
       declarations: [
         ChainViewComponent,

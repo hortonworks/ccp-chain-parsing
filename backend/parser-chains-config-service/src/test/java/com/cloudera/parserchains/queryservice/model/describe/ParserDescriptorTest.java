@@ -22,15 +22,17 @@ public class ParserDescriptorTest {
      *     "type" : "text",
      *     "label" : "Output Field",
      *     "description" : "The name of the output field.",
-     *     "required" : "true",
-     *     "path" : "config"
+     *     "required" : true,
+     *     "path" : "config",
+     *     "multiple" : false
      *   }, {
      *     "name" : "inputField",
      *     "type" : "text",
      *     "label" : "Input Field",
      *     "description" : "The name of the input field.",
-     *     "required" : "true",
-     *     "path" : "config"
+     *     "required" : true,
+     *     "path" : "config",
+     *     "multiple" : false
      *   } ]
      * }
      */
@@ -47,14 +49,14 @@ public class ParserDescriptorTest {
                         .setDescription("The name of the output field.")
                         .setLabel("Output Field")
                         .setPath("config")
-                        .setRequired("true")
+                        .setRequired(true)
                         .setType("text"))
                 .addConfiguration(new ConfigParamDescriptor()
                         .setName("inputField")
                         .setDescription("The name of the input field.")
                         .setLabel("Input Field")
                         .setPath("config")
-                        .setRequired("true")
+                        .setRequired(true)
                         .setType("text"));
 
         String actual = JSONUtils.INSTANCE.toJSON(schema, true);

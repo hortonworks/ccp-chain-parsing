@@ -89,14 +89,14 @@ public class ParserControllerTest {
             .setDescription("The name of the output field.")
             .setLabel("Output Field")
             .setPath("config")
-            .setRequired("true")
+            .setRequired(true)
             .setType("text");
     ConfigParamDescriptor fieldTwo = new ConfigParamDescriptor()
             .setName("inputField")
             .setDescription("The name of the input field.")
             .setLabel("Input Field")
             .setPath("config")
-            .setRequired("true")
+            .setRequired(true)
             .setType("text");
     ParserSummary type1 = new ParserSummary()
             .setId(ParserID.of(SyslogParser.class))
@@ -135,7 +135,7 @@ public class ParserControllerTest {
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].type", is("text")))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].label", is("Output Field")))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].description", is("The name of the output field.")))
-            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].required", is("true")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].required", is(true)))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[0].path", is("config")))
 
             // Syslog parser, 2nd argument
@@ -143,7 +143,7 @@ public class ParserControllerTest {
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].type", is("text")))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].label", is("Input Field")))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].description", is("The name of the input field.")))
-            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].required", is("true")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].required", is(true)))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.SyslogParser'].schemaItems.[1].path", is("config")))
 
             // Timestamp parser
@@ -155,7 +155,7 @@ public class ParserControllerTest {
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].type", is("text")))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].label", is("Output Field")))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].description", is("The name of the output field.")))
-            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].required", is("true")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].required", is(true)))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[0].path", is("config")))
 
             // Timestamp parser, 2nd argument
@@ -163,7 +163,7 @@ public class ParserControllerTest {
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].type", is("text")))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].label", is("Input Field")))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].description", is("The name of the input field.")))
-            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].required", is("true")))
+            .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].required", is(true)))
             .andExpect(jsonPath("$.['com.cloudera.parserchains.parsers.TimestampParser'].schemaItems.[1].path", is("config")));
   }
 }

@@ -15,6 +15,7 @@ import { CustomFormConfig } from '../custom-form/custom-form.component';
 })
 export class ParserComposerComponent implements OnInit {
 
+  @Input() collapsed: boolean;
   @Input() dirty = false;
   @Input() parserId: string;
   @Input() chainId: string;

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DeleteFill } from '@ant-design/icons-angular/icons';
@@ -33,6 +34,7 @@ describe('ParserComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
+        FormsModule,
         NgZorroAntdModule,
         NoopAnimationsModule,
         MonacoEditorModule.forRoot({
@@ -263,6 +265,70 @@ describe('ParserComponent', () => {
     fixture.detectChanges();
     expect(component.parsingFailed).toBe(false);
     expect(card.classes.failed).toBeFalsy();
+  });
+
+  describe('parser name editing', () => {
+    it('should switch to edit mode if user clicks on parser name', () => {
+      let nameEl = fixture.debugElement.query(By.css('[data-qe-id="parser-name"]')).nativeElement;
+      nameEl.click();
+      fixture.detectChanges();
+
+      nameEl = fixture.debugElement.query(By.css('[data-qe-id="parser-name"]'));
+      expect(nameEl).toBeFalsy();
+
+      const inputField = fixture.debugElement.query(By.css('[data-qe-id="parser-name-input"]')).nativeElement;
+      expect(inputField).toBeTruthy();
+    });
+
+    it('should switch to normal mode if edit input losing focus', () => {
+      let nameEl = fixture.debugElement.query(By.css('[data-qe-id="parser-name"]')).nativeElement;
+      nameEl.click();
+      fixture.detectChanges();
+
+      let inputField = fixture.debugElement.query(By.css('[data-qe-id="parser-name-input"]')).nativeElement;
+      expect(inputField).toBeTruthy();
+
+      inputField.dispatchEvent(new Event('blur'));
+      fixture.detectChanges();
+
+      inputField = fixture.debugElement.query(By.css('[data-qe-id="parser-name-input"]'));
+      expect(inputField).toBeFalsy();
+
+      nameEl = fixture.debugElement.query(By.css('[data-qe-id="parser-name"]'));
+      expect(nameEl).toBeTruthy();
+    });
+
+    it('should switch to normal mode on enter', () => {
+      let nameEl = fixture.debugElement.query(By.css('[data-qe-id="parser-name"]')).nativeElement;
+      nameEl.click();
+      fixture.detectChanges();
+
+      let inputField = fixture.debugElement.query(By.css('[data-qe-id="parser-name-input"]')).nativeElement;
+      expect(inputField).toBeTruthy();
+
+      inputField.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+      fixture.detectChanges();
+
+      inputField = fixture.debugElement.query(By.css('[data-qe-id="parser-name-input"]'));
+      expect(inputField).toBeFalsy();
+
+      nameEl = fixture.debugElement.query(By.css('[data-qe-id="parser-name"]'));
+      expect(nameEl).toBeTruthy();
+    });
+
+    it('should propagate name change', () => {
+      const mockListener = jasmine.createSpy('mockListener');
+      component.parserChange.subscribe(mockListener);
+
+      fixture.debugElement.query(By.css('[data-qe-id="parser-name"]')).nativeElement.click();
+      fixture.detectChanges();
+
+      const inputField = fixture.debugElement.query(By.css('[data-qe-id="parser-name-input"]')).nativeElement;
+      inputField.value = 'edited parser name';
+      inputField.dispatchEvent(new Event('input'));
+
+      expect(mockListener).toHaveBeenCalledWith({ id: '123', name: 'edited parser name' });
+    });
   });
 
 });

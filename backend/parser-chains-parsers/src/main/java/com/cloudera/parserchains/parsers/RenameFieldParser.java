@@ -82,6 +82,7 @@ public class RenameFieldParser implements Parser {
                 .name("fieldToRename")
                 .description("Field to Rename")
                 .isRequired(true)
+                .isCumulative(true)
                 .acceptsValue(fromFieldKey)
                 .acceptsValue(toFieldKey)
                 .build();
