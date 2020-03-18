@@ -11,7 +11,7 @@ export class ChainPageService {
     private parserChainCollapseState: BehaviorSubject<boolean[]>;
     private parserChainSize: number;
     private readonly BASE_URL = '/api/v1/parserconfig/';
-    public collapseAll = false;
+    public collapseAll = new BehaviorSubject(false);
 
     constructor(
       private http: HttpClient
@@ -45,7 +45,7 @@ export class ChainPageService {
       return this.parserChainCollapseState;
     }
     public collapseExpandAllParsers() {
-      this.collapseAll = !this.collapseAll;
-      this.parserChainCollapseState.next(new Array(this.parserChainSize).fill(this.collapseAll));
+      this.collapseAll.next(!this.collapseAll.value);
+      this.parserChainCollapseState.next(new Array(this.parserChainSize).fill(this.collapseAll.value));
     }
 }
