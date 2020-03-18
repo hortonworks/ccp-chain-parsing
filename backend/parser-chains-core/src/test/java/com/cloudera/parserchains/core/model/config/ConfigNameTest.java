@@ -14,6 +14,7 @@ public class ConfigNameTest {
         ConfigName.of("Whitespace is allowed        ");
         ConfigName.of("Some punctuation is allowed , - . : ");
         ConfigName.of("A name of up to 40 characters is allowed");
+        ConfigName.of("Grok Expression(s)");
     }
 
     @Test

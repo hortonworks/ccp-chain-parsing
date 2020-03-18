@@ -11,6 +11,7 @@ public class ConfigDescriptionTest {
         ConfigDescription.of("A description contains letters, numbers, whitespace, and punctuation.");
         ConfigDescription.of("A description can contain between 1 and 80 characters.");
         ConfigDescription.of("A description can contain 'single' or \"double\" quotes.");
+        ConfigDescription.of("Set the zone offset. For example \"+02:00\".");
     }
 
     @Test

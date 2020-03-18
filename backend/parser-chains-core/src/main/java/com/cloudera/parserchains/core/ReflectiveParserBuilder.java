@@ -19,11 +19,11 @@ public class ReflectiveParserBuilder implements ParserBuilder {
 
         } catch(NoSuchMethodException e) {
             throw new RuntimeException("A default constructor is required; class=" +
-                    parserInfo.getParserClass().getCanonicalName());
+                    parserInfo.getParserClass().getCanonicalName(), e);
 
         } catch(InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Unable to instantiate the parser; class=" +
-                    parserInfo.getParserClass().getCanonicalName());
+                    parserInfo.getParserClass().getCanonicalName(), e);
         }
         return parser;
     }

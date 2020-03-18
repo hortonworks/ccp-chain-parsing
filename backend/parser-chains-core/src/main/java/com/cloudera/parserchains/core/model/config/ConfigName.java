@@ -11,7 +11,7 @@ import static com.cloudera.parserchains.core.Validator.mustMatch;
  * The name of a configuration parameter used to configure a {@link Parser}.
  */
 public class ConfigName {
-    private static final Regex validName = Regex.of("^[a-zA-Z_0-9 ,-.:]{1,40}$");
+    private static final Regex validName = Regex.of("^[a-zA-Z_0-9 ,-.:()]{1,40}$");
     private final String name;
 
     /**

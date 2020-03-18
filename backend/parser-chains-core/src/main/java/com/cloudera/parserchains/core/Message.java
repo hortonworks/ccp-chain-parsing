@@ -76,6 +76,16 @@ public class Message {
          * @param value The value of the field to add.
          * @return
          */
+        public Builder addField(FieldName name, String value) {
+            return addField(name, FieldValue.of(value));
+        }
+
+        /**
+         * Add a field to the message.
+         * @param name The name of the field to add.
+         * @param value The value of the field to add.
+         * @return
+         */
         public Builder addField(String name, String value) {
             return addField(FieldName.of(name), FieldValue.of(value));
         }

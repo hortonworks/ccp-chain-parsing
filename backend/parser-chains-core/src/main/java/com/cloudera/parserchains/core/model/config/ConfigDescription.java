@@ -8,7 +8,7 @@ import static com.cloudera.parserchains.core.Validator.mustMatch;
  * Describes a parser's configuration parameter for a user.
  */
 public class ConfigDescription {
-    static final Regex validDescription = Regex.of("^[a-zA-Z_0-9 ,-.:;'\"()]{1,80}$");
+    static final Regex validDescription = Regex.of("^[a-zA-Z_0-9 ,-.:;'\"\\+()]{1,80}$");
     private final String description;
 
     /**

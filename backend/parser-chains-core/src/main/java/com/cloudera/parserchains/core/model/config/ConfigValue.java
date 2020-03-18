@@ -17,7 +17,7 @@ import static com.cloudera.parserchains.core.Validator.mustMatch;
  * label of the output field and another for the index.
  */
 public class ConfigValue {
-    private static final Regex validValue = Regex.of("[\\w\\d\\s-_.,|\\]\\[]*");
+    private static final Regex validValue = Regex.of("^.{1,200}$");
     private String value;
 
     /**
