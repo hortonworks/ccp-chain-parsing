@@ -17,11 +17,12 @@ export class ChainViewComponent implements OnInit {
   @Output() removeParserEmitter = new EventEmitter<string>();
   @Output() chainLevelChange = new EventEmitter<string>();
   @Output() parserChange = new EventEmitter<PartialParserModel>();
-
+  collapseAll: boolean;
   parserCollapseStateArray: boolean[];
-  constructor(private chainPageService: ChainPageService) {
+  constructor(public chainPageService: ChainPageService) {
   }
   ngOnInit() {
+    this.chainPageService.collapseAll.subscribe(value => this.collapseAll = value);
     this.chainPageService.createChainCollapseArray(this.parsers.length);
     this.chainPageService.getCollapseExpandState().subscribe(stateArray => {
       this.parserCollapseStateArray = stateArray;
