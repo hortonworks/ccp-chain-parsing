@@ -30,6 +30,7 @@ import com.cloudera.parserchains.queryservice.model.describe.ConfigParamDescript
 import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
 import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -93,17 +94,29 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
             .setParserName(name);
 
     Parser parser = builder.build(parserInfo);
-    for(ConfigDescriptor param: parser.validConfigurations()) {
-      for(ConfigKey configKey: param.getAcceptedValues()) {
+    for(ConfigDescriptor param: ListUtils.emptyIfNull(parser.validConfigurations())) {
 
-        // describe each parameter accepted by the parser
+      // describe each parameter accepted by the parser
+      for(ConfigKey configKey: param.getAcceptedValues()) {
+        /*
+         * If multiple=true, the front-end expects values to be contained within an array. if
+         * multiple=false, the value should NOT be wrapped in an array; just a single map.
+         * Currently, the backend always wraps values, even single values, in arrays.
+         *
+         * Having the backend adhere to what the front-end expects will take some additional
+         * work. As a work-around all configurations are marked as accepting multiple values,
+         * even those that do not.  The consequence of this is that all fields will show the blue,
+         * plus icon to add a field.
+         */
+        final boolean multiple = true;
         ConfigParamDescriptor paramDescriptor = new ConfigParamDescriptor()
                 .setName(configKey.getKey())
                 .setLabel(configKey.getLabel())
                 .setDescription(configKey.getDescription().get())
                 .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + param.getName().get())
-                .setRequired(Boolean.toString(param.isRequired()))
-                .setType(DEFAULT_SCHEMA_TYPE);
+                .setRequired(param.isRequired())
+                .setType(DEFAULT_SCHEMA_TYPE)
+                .setMultiple(multiple);
         descriptor.addConfiguration(paramDescriptor);
       }
     }

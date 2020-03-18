@@ -72,6 +72,7 @@ public class RemoveFieldParser implements Parser {
                 .description("Field to Remove")
                 .acceptsValue(removeFieldKey)
                 .isRequired(true)
+                .isCumulative(true)
                 .build();
         private RemoveFieldParser parser;
 

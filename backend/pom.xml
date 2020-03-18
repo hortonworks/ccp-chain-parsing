@@ -42,6 +42,7 @@
         <log4j2.version>2.13.0</log4j2.version>
         <commons-io.version>2.6</commons-io.version>
         <commons-lang3.version>3.9</commons-lang3.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
         <swagger.version>2.9.2</swagger.version>
         <jackson.version>2.10.1</jackson.version>
         <!--        <swagger.version>2.5.0</swagger.version>-->
@@ -136,6 +137,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.springfox</groupId>

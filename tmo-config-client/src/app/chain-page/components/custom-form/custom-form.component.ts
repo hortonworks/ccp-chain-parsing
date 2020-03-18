@@ -6,6 +6,7 @@ export interface CustomFormConfig {
   type: string;
   id?: string;
   path?: string;
+  multiple?: boolean;
   value?: string;
   label?: string;
   options?: { id: string, name: string }[];
@@ -55,10 +56,18 @@ export class CustomFormComponent implements OnInit, OnChanges {
       switch (config.type) {
         case 'textarea':
         case 'text': {
-          config.onChange({
-            ...config,
-            value: (event.currentTarget as HTMLFormElement).value
-          });
+          if (config.multiple !== true) {
+            config.onChange({
+              ...config,
+              value: (event.currentTarget as HTMLFormElement).value
+            });
+          } else {
+            config.onChange({
+              ...config,
+              value: event
+            });
+          }
+
           break;
         }
         case 'select': {
