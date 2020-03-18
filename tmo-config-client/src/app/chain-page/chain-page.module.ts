@@ -7,6 +7,8 @@ import { StoreModule } from '@ngrx/store';
 import { NgZorroAntdModule, NzMessageService } from 'ng-zorro-antd';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 
+import { AutofocusDirective } from '../misc/autofocus.directive';
+
 import { ChainPageComponent } from './chain-page.component';
 import { ChainPageEffects } from './chain-page.effects';
 import { reducer } from './chain-page.reducers';
@@ -30,7 +32,8 @@ import { RouterComponent } from './components/router/router.component';
     ParserComposerComponent,
     RouteComponent,
     AdvancedEditorComponent,
-    MultiInputComponent
+    AutofocusDirective,
+    MultiInputComponent,
   ],
   entryComponents: [ ChainViewComponent ],
   imports: [

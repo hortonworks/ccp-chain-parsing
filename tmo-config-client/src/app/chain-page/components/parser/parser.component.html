@@ -3,32 +3,16 @@
   dirty: dirty
 }">
   <nz-collapse>
-    <nz-collapse-panel [nzActive]="!collapsed" [nzHeader]="parser.name" class="chain-item" [nzExtra]="extraTemplate" [ngClass]="{ 'investigated': isolatedParserView }">
-      <nz-tabset
-        nzTabPosition="top"
-        nzType="line"
-      >
-        <nz-tab nzTitle="Basics">
-          <app-custom-form
-            *ngIf="areFormsReadyToRender && metaDataForm != null"
-            [config]="metaDataForm"
-          ></app-custom-form>
-          <nz-form-item>
-            <nz-form-label [nzSm]="8" [nzXs]="24">
-              Type
-            </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-              {{ parserType }}
-            </nz-form-control>
-          </nz-form-item>
-        </nz-tab>
-        <nz-tab nzTitle="Config">
+    <nz-collapse-panel class="chain-item" [nzHeader]="titleTemplate" [nzActive]="!collapsed"
+     [nzExtra]="extraTemplate" [ngClass]="{ 'investigated': isolatedParserView }">
+      <nz-tabset>
+        <nz-tab nzTitle="Configuration">
           <app-custom-form
             *ngIf="areFormsReadyToRender && configForm != null"
             [config]="configForm"
           ></app-custom-form>
         </nz-tab>
-        <nz-tab nzTitle="Advanced">
+        <nz-tab nzTitle="JSON View">
           <app-advanced-editor
             [config]="parser.config"
             (configChanged)="onAdvancedEditorChanged($event)"
@@ -38,11 +22,30 @@
     </nz-collapse-panel>
   </nz-collapse>
 
+  <ng-template #titleTemplate>
+    <div class="parser-name-bar">
+      <span *ngIf="!editName" class="parser-name"
+        nz-tooltip nzTitle="Click to edit name"
+        (click)="editName=!editName; preventCollapse($event);"
+        data-qe-id="parser-name"
+        >{{ parser.name }}</span>
+      <input *ngIf="editName" class="parser-name-input"
+        type="text" [ngModel]="parser.name"
+        (keydown.enter)="editName=!editName"
+        (blur)="editName=!editName"
+        (ngModelChange)="onParserNameChange($event)"
+        (click)="preventCollapse($event)"
+        AutoFocus
+        data-qe-id="parser-name-input">
+        &nbsp;- {{ parserType }}
+    </div>
+  </ng-template>
+
   <ng-template #extraTemplate>
     <div *ngIf="dirty" class="parser-dirty">
       <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#1890ff'"></i>
     </div>
-    <div class="parser-delete-btn-wrapper" nz-tooltip nzTitle="Remove Parser" nzPlacement="right">
+    <div class="parser-delete-btn-wrapper" nz-tooltip nzTitle="Remove Parser">
       <button
         nz-popconfirm
         nzPopconfirmTitle="Are you sure delete this task?"
@@ -51,10 +54,10 @@
         nz-button
         nzType="link"
         data-qe-id="remove-parser"
-        class="parser-delete-btn"
-        (click)="preventCollapseOnDelete($event)"
+        class="parser-header-btn"
+        (click)="preventCollapse($event)"
       >
-        <i nz-icon nzType="delete" nzTheme="fill"></i>
+      <i nz-icon nzType="delete" nzTheme="fill"></i>
       </button>
     </div>
   </ng-template>

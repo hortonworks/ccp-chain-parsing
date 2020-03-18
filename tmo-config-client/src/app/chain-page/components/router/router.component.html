@@ -1,25 +1,11 @@
 <div class="parser">
   <nz-collapse>
-    <nz-collapse-panel [nzActive]="!collapsed" [nzHeader]="parser.name" class="chain-item" [nzExtra]="extraTemplate">
+    <nz-collapse-panel [nzActive]="!collapsed" [nzHeader]="titleTemplate" class="chain-item" [nzExtra]="extraTemplate">
       <nz-tabset
         nzTabPosition="top"
         nzType="line"
       >
-        <nz-tab nzTitle="Basics">
-          <app-custom-form
-            *ngIf="areFormsReadyToRender && metaDataForm != null"
-            [config]="metaDataForm"
-          ></app-custom-form>
-          <nz-form-item>
-            <nz-form-label [nzSm]="8" [nzXs]="24">
-              Type
-            </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-              Router
-            </nz-form-control>
-          </nz-form-item>
-        </nz-tab>
-        <nz-tab nzTitle="Config">
+        <nz-tab nzTitle="Configuration">
           <div class="router-config" *ngIf="parser.routing">
             <div class="matching-field">
               <nz-form-item>
@@ -61,6 +47,26 @@
       </nz-tabset>
     </nz-collapse-panel>
   </nz-collapse>
+
+  <ng-template #titleTemplate>
+    <div class="parser-name-bar">
+      <span *ngIf="!editName" class="parser-name"
+        nz-tooltip nzTitle="Click to edit name"
+        (click)="editName=!editName; preventCollapse($event);"
+        data-qe-id="parser-name"
+        >{{ parser.name }}</span>
+      <input *ngIf="editName" class="parser-name-input"
+        type="text" [ngModel]="parser.name"
+        (keydown.enter)="editName=!editName"
+        (blur)="editName=!editName"
+        (ngModelChange)="onParserNameChange($event)"
+        (click)="preventCollapse($event)"
+        AutoFocus
+        data-qe-id="parser-name-input">
+        &nbsp;- Router
+    </div>
+  </ng-template>
+
   <ng-template #extraTemplate>
     <div *ngIf="dirty" class="parser-dirty">
       <i nz-icon nzType="exclamation-circle" nzTheme="twotone" [nzTwotoneColor]="'#1890ff'"></i>
@@ -74,7 +80,8 @@
         nz-button
         nzType="link"
         data-qe-id="remove-parser"
-        class="parser-delete-btn"
+        class="parser-header-btn"
+        (click)="preventCollapse($event)"
       >
         <i nz-icon nzType="delete" nzTheme="fill"></i>
       </button>
