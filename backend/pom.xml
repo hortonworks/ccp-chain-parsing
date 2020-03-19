@@ -44,8 +44,8 @@
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <swagger.version>2.9.2</swagger.version>
+        <metron.version>0.7.1</metron.version>
         <jackson.version>2.10.1</jackson.version>
-        <!--        <swagger.version>2.5.0</swagger.version>-->
 
         <!-- test dependency versions -->
         <junit.jupiter.version>5.5.2</junit.jupiter.version>

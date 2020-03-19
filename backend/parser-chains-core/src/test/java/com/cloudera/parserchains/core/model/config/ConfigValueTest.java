@@ -15,6 +15,7 @@ public class ConfigValueTest {
         ConfigValue.of("Whitespace is allowed        ");
         ConfigValue.of("Some punctuation is allowed , - . : ) (");
         ConfigValue.of("A name of up to 40 characters is allowed");
+        ConfigValue.of("2 + 2");
         ConfigValue.of("%{UUID}");
         ConfigValue.of("+02:00");
     }
@@ -33,11 +34,6 @@ public class ConfigValueTest {
     @Test
     void notNull() {
         assertThrows(IllegalArgumentException.class, () -> ConfigValue.of(null));
-    }
-
-    @Test
-    void invalidCharacters() {
-        assertThrows(IllegalArgumentException.class, () -> ConfigValue.of("<html></html>"));
     }
 
     @Test

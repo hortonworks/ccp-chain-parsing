@@ -65,7 +65,8 @@ public class Message {
          * @return
          */
         public Builder addField(FieldName name, FieldValue value) {
-            this.fields.put(Objects.requireNonNull(name, "A valid field name is required."),
+            this.fields.put(
+                    Objects.requireNonNull(name, "A valid field name is required."),
                     Objects.requireNonNull(value, "A valid field value is required."));
             return this;
         }

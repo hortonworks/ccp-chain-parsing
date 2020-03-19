@@ -20,13 +20,23 @@
 
     <repositories>
         <repository>
+            <id>hcp-metron-release-repo</id>
+            <url>https://raw.github.com/nickwallen/metron/release-0.7.1/maven-repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
             <id>bintray</id>
             <url>http://dl.bintray.com/palindromicity/simple-syslog</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
             <snapshots>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
     </repositories>
@@ -36,6 +46,19 @@
             <groupId>com.cloudera.parserchains</groupId>
             <artifactId>parser-chains-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <!-- stellar parser dependencies -->
+        <dependency>
+            <groupId>org.apache.metron</groupId>
+            <artifactId>stellar-common</artifactId>
+            <version>${metron.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- grok parser dependencies -->
@@ -58,7 +81,6 @@
         </dependency>
 
         <!-- test dependencies -->
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
