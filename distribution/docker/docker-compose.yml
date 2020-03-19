@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   client:
-    image: tmeller/parserchainer-client:0.0.32-test
+    image: tmeller/parserchainer-client:0.1.0-alpha
     ports:
       - 4200:4200
     depends_on:
@@ -10,6 +10,6 @@ services:
     environment:
       REST_URL: "restservice:3000"
   restservice:
-    image: tmeller/parserchainer-restservice:0.0.32-test
+    image: tmeller/parserchainer-restservice:0.1.0-alpha
     ports:
       - 3000:3000
