@@ -3,6 +3,7 @@ package com.cloudera.parserchains.queryservice.controller;
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.core.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.exec.ChainTestRequest;
+import com.cloudera.parserchains.queryservice.model.exec.ChainTestResponse;
 import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
 import org.adrianwalker.multilinestring.Multiline;
@@ -34,8 +35,8 @@ import static com.cloudera.parserchains.queryservice.common.ApplicationConstants
 import static com.cloudera.parserchains.queryservice.controller.ChainController.MAX_SAMPLES_PER_TEST;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
@@ -218,12 +219,25 @@ public class ChainControllerTest {
      *     "parsers": [
      *       {
      *         "id": "61e99275-e076-46b6-aaed-8acce58cc0e4",
-     *         "name": "Timestamp",
-     *         "type": "com.cloudera.parserchains.parsers.TimestampParser",
+     *         "name": "Rename Field",
+     *         "type": "com.cloudera.parserchains.parsers.RenameFieldParser",
      *         "config": {
-     *           "outputField": [
+     *           "fieldToRename": [
      *             {
-     *               "outputField": "timestamp"
+     *               "from": "original_string",
+     *               "to": "ORIGINAL_STRING"
+     *             }
+     *           ]
+     *         }
+     *       }, {
+     *         "id": "1ee889fc-7495-4b47-8243-c16e5e74bb82",
+     *         "name": "Rename Field",
+     *         "type": "com.cloudera.parserchains.parsers.RenameFieldParser",
+     *         "config": {
+     *           "fieldToRename": [
+     *             {
+     *               "from": "ORIGINAL_STRING",
+     *               "to": "original_string"
      *             }
      *           ]
      *         }
@@ -233,26 +247,72 @@ public class ChainControllerTest {
      * }
      */
     @Multiline
-    static String test_chain;
+    static String test_chain_request;
+
+    /**
+     * {
+     *    "results":[
+     *       {
+     *          "input":{
+     *             "original_string":"Marie, Curie"
+     *          },
+     *          "output":{
+     *             "original_string":"Marie, Curie"
+     *          },
+     *          "log":{
+     *             "type":"info",
+     *             "message":"success",
+     *             "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *          },
+     *          "parserResults":[
+     *             {
+     *                "input":{
+     *                   "original_string":"Marie, Curie"
+     *                },
+     *                "output":{
+     *                   "ORIGINAL_STRING":"Marie, Curie"
+     *                },
+     *                "log":{
+     *                   "type":"info",
+     *                   "message":"success",
+     *                   "parserId":"61e99275-e076-46b6-aaed-8acce58cc0e4"
+     *                }
+     *             },
+     *             {
+     *                "input":{
+     *                   "ORIGINAL_STRING":"Marie, Curie"
+     *                },
+     *                "output":{
+     *                   "original_string":"Marie, Curie"
+     *                },
+     *                "log":{
+     *                   "type":"info",
+     *                   "message":"success",
+     *                   "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *                }
+     *             }
+     *          ]
+     *       }
+     *    ]
+     * }
+     */
+    @Multiline
+    static String test_chain_response;
 
     @Test
     void test_chain() throws Exception {
         RequestBuilder postRequest = MockMvcRequestBuilders
                 .post(API_PARSER_TEST_URL)
-                .content(test_chain)
+                .content(test_chain_request)
                 .contentType(MediaType.APPLICATION_JSON);
-        String result = mvc.perform(postRequest)
+        String response = mvc.perform(postRequest)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results", instanceOf(List.class)))
-                .andExpect(jsonPath("$.results", hasSize(1)))
-                .andExpect(jsonPath("$.results.[0].input.original_string", is("Marie, Curie")))
-                .andExpect(jsonPath("$.results.[0].output.original_string", is("Marie, Curie")))
-                .andExpect(jsonPath("$.results.[0].output.timestamp", matchesPattern("[0-9]+")))
-                .andExpect(jsonPath("$.results.[0].log.type", is("info")))
-                .andExpect(jsonPath("$.results.[0].log.message", is("success")))
-                .andExpect(jsonPath("$.results.[0].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
-                .andReturn().getResponse().getContentAsString();
-        System.out.println(result);
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        ChainTestResponse actual = JSONUtils.INSTANCE.load(response, ChainTestResponse.class);
+        ChainTestResponse expected = JSONUtils.INSTANCE.load(test_chain_response, ChainTestResponse.class);
+        assertThat(actual, is(expected));
     }
 
     /**
@@ -270,12 +330,25 @@ public class ChainControllerTest {
      *     "parsers": [
      *       {
      *         "id": "61e99275-e076-46b6-aaed-8acce58cc0e4",
-     *         "name": "Timestamp",
-     *         "type": "com.cloudera.parserchains.parsers.TimestampParser",
+     *         "name": "Rename Field",
+     *         "type": "com.cloudera.parserchains.parsers.RenameFieldParser",
      *         "config": {
-     *           "outputField": [
+     *           "fieldToRename": [
      *             {
-     *               "outputField": "timestamp"
+     *               "from": "original_string",
+     *               "to": "ORIGINAL_STRING"
+     *             }
+     *           ]
+     *         }
+     *       }, {
+     *         "id": "1ee889fc-7495-4b47-8243-c16e5e74bb82",
+     *         "name": "Rename Field",
+     *         "type": "com.cloudera.parserchains.parsers.RenameFieldParser",
+     *         "config": {
+     *           "fieldToRename": [
+     *             {
+     *               "from": "ORIGINAL_STRING",
+     *               "to": "original_string"
      *             }
      *           ]
      *         }
@@ -285,35 +358,113 @@ public class ChainControllerTest {
      * }
      */
     @Multiline
-    static String test_chain_with_2_samples;
+    static String test_chain_with_2_samples_request;
+
+    /**
+     * {
+     *    "results":[
+     *       {
+     *          "input":{
+     *             "original_string":"Marie, Curie"
+     *          },
+     *          "output":{
+     *             "original_string":"Marie, Curie"
+     *          },
+     *          "log":{
+     *             "type":"info",
+     *             "message":"success",
+     *             "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *          },
+     *          "parserResults":[
+     *             {
+     *                "input":{
+     *                   "original_string":"Marie, Curie"
+     *                },
+     *                "output":{
+     *                   "ORIGINAL_STRING":"Marie, Curie"
+     *                },
+     *                "log":{
+     *                   "type":"info",
+     *                   "message":"success",
+     *                   "parserId":"61e99275-e076-46b6-aaed-8acce58cc0e4"
+     *                }
+     *             },
+     *             {
+     *                "input":{
+     *                   "ORIGINAL_STRING":"Marie, Curie"
+     *                },
+     *                "output":{
+     *                   "original_string":"Marie, Curie"
+     *                },
+     *                "log":{
+     *                   "type":"info",
+     *                   "message":"success",
+     *                   "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *                }
+     *             }
+     *          ]
+     *       },
+     *       {
+     *          "input":{
+     *             "original_string":"Ada, Lovelace"
+     *          },
+     *          "output":{
+     *             "original_string":"Ada, Lovelace"
+     *          },
+     *          "log":{
+     *             "type":"info",
+     *             "message":"success",
+     *             "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *          },
+     *          "parserResults":[
+     *             {
+     *                "input":{
+     *                   "original_string":"Ada, Lovelace"
+     *                },
+     *                "output":{
+     *                   "ORIGINAL_STRING":"Ada, Lovelace"
+     *                },
+     *                "log":{
+     *                   "type":"info",
+     *                   "message":"success",
+     *                   "parserId":"61e99275-e076-46b6-aaed-8acce58cc0e4"
+     *                }
+     *             },
+     *             {
+     *                "input":{
+     *                   "ORIGINAL_STRING":"Ada, Lovelace"
+     *                },
+     *                "output":{
+     *                   "original_string":"Ada, Lovelace"
+     *                },
+     *                "log":{
+     *                   "type":"info",
+     *                   "message":"success",
+     *                   "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *                }
+     *             }
+     *          ]
+     *       }
+     *    ]
+     * }
+     */
+    @Multiline
+    static String test_chain_with_2_samples_response;
 
     @Test
     void test_chain_with_2_samples() throws Exception {
         RequestBuilder postRequest = MockMvcRequestBuilders
                 .post(API_PARSER_TEST_URL)
-                .content(test_chain_with_2_samples)
+                .content(test_chain_with_2_samples_request)
                 .contentType(MediaType.APPLICATION_JSON);
-        mvc.perform(postRequest)
+        String response = mvc.perform(postRequest)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results", instanceOf(List.class)))
-                .andExpect(jsonPath("$.results", hasSize(2)))
-
-                // the result of parsing the first message
-                .andExpect(jsonPath("$.results.[0].input.original_string", is("Marie, Curie")))
-                .andExpect(jsonPath("$.results.[0].output.original_string", is("Marie, Curie")))
-                .andExpect(jsonPath("$.results.[0].output.timestamp", matchesPattern("[0-9]+")))
-                .andExpect(jsonPath("$.results.[0].log.type", is("info")))
-                .andExpect(jsonPath("$.results.[0].log.message", is("success")))
-                .andExpect(jsonPath("$.results.[0].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
-
-                // the result of parsing the second message
-                .andExpect(jsonPath("$.results.[1].input.original_string", is("Ada, Lovelace")))
-                .andExpect(jsonPath("$.results.[1].output.original_string", is("Ada, Lovelace")))
-                .andExpect(jsonPath("$.results.[1].output.timestamp", matchesPattern("[0-9]+")))
-                .andExpect(jsonPath("$.results.[1].log.type", is("info")))
-                .andExpect(jsonPath("$.results.[1].log.message", is("success")))
-                .andExpect(jsonPath("$.results.[1].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
-                .andReturn();
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        ChainTestResponse actual = JSONUtils.INSTANCE.load(response, ChainTestResponse.class);
+        ChainTestResponse expected = JSONUtils.INSTANCE.load(test_chain_with_2_samples_response, ChainTestResponse.class);
+        assertThat(actual, is(expected));
     }
 
     /**
@@ -345,67 +496,61 @@ public class ChainControllerTest {
      * }
      */
     @Multiline
-    static String test_invalid_chain_with_2_samples;
-
-    @Test
-    void test_invalid_chain_with_2_samples() throws Exception {
-        RequestBuilder postRequest = MockMvcRequestBuilders
-                .post(API_PARSER_TEST_URL)
-                .content(test_invalid_chain_with_2_samples)
-                .contentType(MediaType.APPLICATION_JSON);
-         mvc.perform(postRequest)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.results", instanceOf(List.class)))
-                .andExpect(jsonPath("$.results", hasSize(2)))
-
-                // the error result for the first message
-                .andExpect(jsonPath("$.results.[0].log.type", is("error")))
-                .andExpect(jsonPath("$.results.[0].log.message",
-                        is("Invalid field name: 'null'")))
-                .andExpect(jsonPath("$.results.[0].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
-
-                 // the error result for the second message
-                .andExpect(jsonPath("$.results.[1].log.type", is("error")))
-                .andExpect(jsonPath("$.results.[1].log.message",
-                        is("Invalid field name: 'null'")))
-                .andExpect(jsonPath("$.results.[1].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")));
-    }
+    static String test_invalid_chain_request;
 
     /**
      * {
-     *   "sampleData": {
-     *     "type": "manual",
-     *     "source": [
-     *      ]
-     *   },
-     *   "chainConfig": {
-     *     "id": "3b31e549-340f-47ce-8a71-d702685137f4",
-     *     "name": "My Parser Chain",
-     *     "parsers": [
+     *    "results":[
      *       {
-     *         "id": "61e99275-e076-46b6-aaed-8acce58cc0e4",
-     *         "name": "Timestamp",
-     *         "type": "com.cloudera.parserchains.parsers.TimestampParser",
-     *         "config": {
-     *           "outputField": [
-     *             {
-     *               "outputField": "timestamp"
-     *             }
-     *           ]
-     *         }
+     *          "input":{
+     *          },
+     *          "output":{
+     *          },
+     *          "log":{
+     *             "type":"error",
+     *             "message":"Invalid field name: 'null'",
+     *             "parserId":"61e99275-e076-46b6-aaed-8acce58cc0e4"
+     *          }
+     *       },
+     *       {
+     *          "input":{
+     *          },
+     *          "output":{
+     *          },
+     *          "log":{
+     *             "type":"error",
+     *             "message":"Invalid field name: 'null'",
+     *             "parserId":"61e99275-e076-46b6-aaed-8acce58cc0e4"
+     *          }
      *       }
-     *     ]
-     *   }
+     *    ]
      * }
+     *
      */
     @Multiline
-    static String test_chain_with_too_many_samples;
+    static String test_invalid_chain_response;
+
+    @Test
+    void test_invalid_chain() throws Exception {
+        RequestBuilder postRequest = MockMvcRequestBuilders
+                .post(API_PARSER_TEST_URL)
+                .content(test_invalid_chain_request)
+                .contentType(MediaType.APPLICATION_JSON);
+        String response = mvc.perform(postRequest)
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        ChainTestResponse actual = JSONUtils.INSTANCE.load(response, ChainTestResponse.class);
+        ChainTestResponse expected = JSONUtils.INSTANCE.load(test_invalid_chain_response, ChainTestResponse.class);
+        assertThat(actual, is(expected));
+    }
 
     @Test
     void test_chain_with_too_many_samples() throws Exception {
         // add to the request more test samples than are allowed
         String sample = "a sample of text to parse";
-        ChainTestRequest testRequest = JSONUtils.INSTANCE.load(test_chain_with_too_many_samples, ChainTestRequest.class);
+        ChainTestRequest testRequest = JSONUtils.INSTANCE.load(test_chain_request, ChainTestRequest.class);
         IntStream.range(0, MAX_SAMPLES_PER_TEST + 10).forEach(i -> testRequest.getSampleData().addSource(sample));
 
         // expect the number of results returned to be capped at the maximum allowed

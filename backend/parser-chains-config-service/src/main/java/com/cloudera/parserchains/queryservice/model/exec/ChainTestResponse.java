@@ -21,7 +21,7 @@ import java.util.List;
 public class ChainTestResponse {
 
     /**
-     * The individual parser results; one for each parser in the chain.
+     * The individual parser results; one for each sample/message being tested.
      */
     List<ParserResult> results;
 

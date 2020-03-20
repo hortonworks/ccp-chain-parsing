@@ -24,7 +24,21 @@ public class ChainTestResponseTest {
      *       "type" : "info",
      *       "message" : "success",
      *       "parserId" : "74d10881-ae37-4c90-95f5-ae0c10aae1f4"
-     *     }
+     *     },
+     *     "parserResults" : [ {
+     *       "input" : {
+     *         "original_string" : "foo, bar, baz"
+     *       },
+     *       "output" : {
+     *         "original_string" : "foo, bar, baz",
+     *         "timestamp" : "1584721517458"
+     *       },
+     *       "log" : {
+     *         "type" : "info",
+     *         "message" : "success",
+     *         "parserId" : "d8f354dd-51b8-4faf-a7a2-39f73a9bc3dc"
+     *       }
+     *     } ]
      *   }, {
      *     "input" : {
      *       "original_string" : "foo, bar, baz"
@@ -37,7 +51,21 @@ public class ChainTestResponseTest {
      *       "type" : "info",
      *       "message" : "success",
      *       "parserId" : "3b31e549-340f-47ce-8a71-d702685137f4"
-     *     }
+     *     },
+     *     "parserResults" : [ {
+     *       "input" : {
+     *         "original_string" : "foo, bar, baz"
+     *       },
+     *       "output" : {
+     *         "original_string" : "foo, bar, baz",
+     *         "timestamp" : "1584721517458"
+     *       },
+     *       "log" : {
+     *         "type" : "info",
+     *         "message" : "success",
+     *         "parserId" : "bbaa194e-cb1e-41bf-bd3c-c746d13d2acd"
+     *       }
+     *     } ]
      *   } ]
      * }
      */
@@ -45,8 +73,9 @@ public class ChainTestResponseTest {
     private String expected;
 
     @Test
-    void toJSON() throws JsonProcessingException {
+    void multipleMessages() throws JsonProcessingException {
         ChainTestResponse response = new ChainTestResponse()
+                // a result for the first message that was parsed
                 .addResult(new ParserResult()
                         .addInput("original_string", "foo, bar, baz")
                         .addOutput("original_string", "foo, bar, baz")
@@ -56,7 +85,19 @@ public class ChainTestResponseTest {
                                 .setParserId("74d10881-ae37-4c90-95f5-ae0c10aae1f4")
                                 .setType("info")
                         )
+                        // a result for the first parser in the chain
+                        .addParserResult(new ParserResult()
+                                .addInput("original_string", "foo, bar, baz")
+                                .addOutput("original_string", "foo, bar, baz")
+                                .addOutput("timestamp", "1584721517458")
+                                .setLog(new ResultLog()
+                                        .setMessage("success")
+                                        .setParserId("d8f354dd-51b8-4faf-a7a2-39f73a9bc3dc")
+                                        .setType("info")
+                                )
+                        )
                 )
+                // a result for the second message that was parsed
                 .addResult(new ParserResult()
                         .addInput("original_string", "foo, bar, baz")
                         .addOutput("original_string", "foo, bar, baz")
@@ -66,7 +107,19 @@ public class ChainTestResponseTest {
                                 .setParserId("3b31e549-340f-47ce-8a71-d702685137f4")
                                 .setType("info")
                         )
+                        // a result for the first parser in the chain
+                        .addParserResult(new ParserResult()
+                                .addInput("original_string", "foo, bar, baz")
+                                .addOutput("original_string", "foo, bar, baz")
+                                .addOutput("timestamp", "1584721517458")
+                                .setLog(new ResultLog()
+                                        .setMessage("success")
+                                        .setParserId("bbaa194e-cb1e-41bf-bd3c-c746d13d2acd")
+                                        .setType("info")
+                                )
+                        )
                 );
+
         String actual = JSONUtils.INSTANCE.toJSON(response, true);
         assertThat(actual, equalToCompressingWhiteSpace(expected));
     }
