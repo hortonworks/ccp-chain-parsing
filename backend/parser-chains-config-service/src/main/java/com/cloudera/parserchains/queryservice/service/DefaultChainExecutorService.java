@@ -69,7 +69,8 @@ public class DefaultChainExecutorService implements ChainExecutorService {
         result.setLog(buildResultLog(output));
 
         // define the parser-by-parser set of results
-        result.setParserResults(buildParserByParserResults(messages));
+        List<ParserResult> parserResults = buildParserByParserResults(messages);
+        result.setParserResults(parserResults);
 
         return result;
     }
@@ -111,7 +112,9 @@ public class DefaultChainExecutorService implements ChainExecutorService {
                             e -> e.getValue().get())));
 
             // define the log section
-            result.setLog(buildResultLog(output));
+            ResultLog resultLog = buildResultLog(output);
+            result.setLog(resultLog);
+
             results.add(result);
         }
         return results;

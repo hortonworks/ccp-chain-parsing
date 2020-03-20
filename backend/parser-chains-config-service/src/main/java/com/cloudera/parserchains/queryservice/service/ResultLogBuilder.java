@@ -59,13 +59,20 @@ public class ResultLogBuilder {
         }
 
         public ResultLog build() {
+            ResultLog resultLog;
             if(exception != null) {
-                message = getUsefulMessage(exception);
+                resultLog = new ResultLog()
+                        .setParserId(parserId)
+                        .setType(type)
+                        .setMessage(getUsefulMessage(exception))
+                        .setStackTrace(ExceptionUtils.getStackTrace(exception));
+            } else {
+                resultLog = new ResultLog()
+                        .setParserId(parserId)
+                        .setType(type)
+                        .setMessage(message);
             }
-            return new ResultLog()
-                    .setParserId(parserId)
-                    .setMessage(message)
-                    .setType(type);
+            return resultLog;
         }
     }
 

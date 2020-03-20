@@ -12,6 +12,7 @@ import com.cloudera.parserchains.core.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 import org.adrianwalker.multilinestring.Multiline;
 import org.apache.commons.lang3.StringUtils;
+import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,11 +21,14 @@ import java.util.Map;
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.DEFAULT_SUCCESS_MESSAGE;
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.ERROR_TYPE;
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.INFO_TYPE;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
+import static org.hamcrest.collection.IsCollectionWithSize.*;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
 
 public class DefaultChainExecutorServiceTest {
     private DefaultChainExecutorService service;
@@ -125,40 +129,7 @@ public class DefaultChainExecutorServiceTest {
         String actual = JSONUtils.INSTANCE.toJSON(result, true);
         assertThat(actual, equalToCompressingWhiteSpace(successExpected));
     }
-
-    /**
-     * {
-     *   "input" : {
-     *     "original_string" : "Jane Doe"
-     *   },
-     *   "output" : {
-     *     "original_string" : "Jane Doe",
-     *     "name" : "Jane Doe"
-     *   },
-     *   "log" : {
-     *     "type" : "error",
-     *     "message" : "Found 1 column(s), index 2 does not exist.",
-     *     "parserId" : "3b31e549-340f-47ce-8a71-d702685137f4"
-     *   },
-     *   "parserResults" : [ {
-     *     "input" : {
-     *       "original_string" : "Jane Doe"
-     *     },
-     *     "output" : {
-     *       "original_string" : "Jane Doe",
-     *       "name" : "Jane Doe"
-     *     },
-     *     "log" : {
-     *       "type" : "error",
-     *       "message" : "Found 1 column(s), index 2 does not exist.",
-     *       "parserId" : "3b31e549-340f-47ce-8a71-d702685137f4"
-     *     }
-     *   } ]
-     * }
-     */
-    @Multiline
-    private String errorExpected;
-
+    
     @Test
     void error() throws Exception {
         // build a CSV to parse. there are not enough fields, which should result in an error
@@ -172,7 +143,27 @@ public class DefaultChainExecutorServiceTest {
 
         // validate
         String actual = JSONUtils.INSTANCE.toJSON(result, true);
-        assertThat(actual, equalToCompressingWhiteSpace(errorExpected));
+        assertThat(actual, hasJsonPath("$.input"));
+        assertThat(actual, hasJsonPath("$.input.original_string", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.output"));
+        assertThat(actual, hasJsonPath("$.output.original_string", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.output.name", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.log"));
+        assertThat(actual, hasJsonPath("$.log.type", equalTo("error")));
+        assertThat(actual, hasJsonPath("$.log.message", equalTo("Found 1 column(s), index 2 does not exist.")));
+        assertThat(actual, hasJsonPath("$.log.parserId", equalTo("3b31e549-340f-47ce-8a71-d702685137f4")));
+        assertThat(actual, hasJsonPath("$.log.stackTrace", startsWith("java.lang.IllegalStateException")));
+        assertThat(actual, hasJsonPath("$.parserResults[*]", hasSize(1)));
+        assertThat(actual, hasJsonPath("$.parserResults[0].input"));
+        assertThat(actual, hasJsonPath("$.parserResults[0].input.original_string", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].output"));
+        assertThat(actual, hasJsonPath("$.parserResults[0].output.original_string", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].output.name", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].log"));
+        assertThat(actual, hasJsonPath("$.parserResults[0].log.type", equalTo("error")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].log.message", equalTo("Found 1 column(s), index 2 does not exist.")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].log.parserId", equalTo("3b31e549-340f-47ce-8a71-d702685137f4")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].log.stackTrace", startsWith("java.lang.IllegalStateException")));
     }
 
     /**
