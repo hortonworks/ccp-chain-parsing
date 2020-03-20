@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 
-public class ParserTestRunTest {
+public class ChainTestRequestTest {
     private ParserInfoBuilder parserInfoBuilder = new AnnotationBasedParserInfoBuilder();
 
     /**
@@ -64,48 +64,55 @@ public class ParserTestRunTest {
 
     @Test
     void toJSON() throws JsonProcessingException {
-        // create a delimited text parser
+        ChainTestRequest request = new ChainTestRequest()
+                .setParserChainSchema(parserChainSchema())
+                .setSampleData(new SampleData()
+                        .addSource("Marie, Curie")
+                        .setType("manual")
+                );
+        String actual = JSONUtils.INSTANCE.toJSON(request, true);
+        assertThat(actual, equalToCompressingWhiteSpace(expected));
+    }
+
+    private ParserChainSchema parserChainSchema() {
+        return new ParserChainSchema()
+                    .setId("3b31e549-340f-47ce-8a71-d702685137f4")
+                    .setName("My Parser Chain")
+                    .addParser(csvParserSchema())
+                    .addParser(timestampParserSchema());
+    }
+
+    private ParserSchema timestampParserSchema() {
+        ParserInfo timestampInfo = parserInfoBuilder.build(TimestampParser.class).get();
+        ParserSummary timestampType = new ParserSummaryMapper()
+                .reform(timestampInfo);
+        return new ParserSchema()
+                .setId(timestampType.getId())
+                .setLabel("74d10881-ae37-4c90-95f5-ae0c10aae1f4")
+                .setName(ParserName.of(timestampInfo.getName()))
+                .addConfig("outputField",
+                        new ConfigValueSchema()
+                                .addValue("outputField", "timestamp")
+                );
+    }
+
+    private ParserSchema csvParserSchema() {
         ParserInfo csvInfo = parserInfoBuilder.build(DelimitedTextParser.class).get();
         ParserSummary csvType = new ParserSummaryMapper()
                 .reform(csvInfo);
-        ParserSchema csvParserSchema = new ParserSchema()
+        return new ParserSchema()
                 .setId(csvType.getId())
                 .setLabel("3b31e549-340f-47ce-8a71-d702685137f4")
                 .setName(ParserName.of(csvInfo.getName()))
                 .addConfig("outputField",
                         new ConfigValueSchema()
                                 .addValue("fieldName", "firstName")
-                                .addValue("fieldIndex", "0"))
+                                .addValue("fieldIndex", "0")
+                )
                 .addConfig("outputField",
                         new ConfigValueSchema()
                                 .addValue("fieldName", "lastName")
-                                .addValue("fieldIndex", "1"));
-
-        // create a timestamp parser
-        ParserInfo timestampInfo = parserInfoBuilder.build(TimestampParser.class).get();
-        ParserSummary timestampType = new ParserSummaryMapper()
-                .reform(timestampInfo);
-        ParserSchema timestampParserSchema = new ParserSchema()
-                .setId(timestampType.getId())
-                .setLabel("74d10881-ae37-4c90-95f5-ae0c10aae1f4")
-                .setName(ParserName.of(timestampInfo.getName()))
-                .addConfig("outputField",
-                        new ConfigValueSchema().addValue("outputField", "timestamp"));
-
-        // create the parser chain
-        ParserChainSchema parserChainSchema = new ParserChainSchema()
-                .setId("3b31e549-340f-47ce-8a71-d702685137f4")
-                .setName("My Parser Chain")
-                .addParser(csvParserSchema)
-                .addParser(timestampParserSchema);
-
-        ParserTestRun testRun = new ParserTestRun();
-        testRun.setParserChainSchema(parserChainSchema);
-        testRun.setSampleData(new SampleData()
-                .addSource("Marie, Curie")
-                .setType("manual"));
-
-        String actual = JSONUtils.INSTANCE.toJSON(testRun, true);
-        assertThat(actual, equalToCompressingWhiteSpace(expected));
+                                .addValue("fieldIndex", "1")
+                );
     }
 }

@@ -2,8 +2,7 @@ package com.cloudera.parserchains.queryservice.controller;
 
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.core.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
-import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
+import com.cloudera.parserchains.queryservice.model.exec.ChainTestRequest;
 import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
 import org.adrianwalker.multilinestring.Multiline;
@@ -242,7 +241,7 @@ public class ChainControllerTest {
                 .post(API_PARSER_TEST_URL)
                 .content(test_chain)
                 .contentType(MediaType.APPLICATION_JSON);
-        mvc.perform(postRequest)
+        String result = mvc.perform(postRequest)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.results", instanceOf(List.class)))
                 .andExpect(jsonPath("$.results", hasSize(1)))
@@ -252,7 +251,8 @@ public class ChainControllerTest {
                 .andExpect(jsonPath("$.results.[0].log.type", is("info")))
                 .andExpect(jsonPath("$.results.[0].log.message", is("success")))
                 .andExpect(jsonPath("$.results.[0].log.parserId", is("61e99275-e076-46b6-aaed-8acce58cc0e4")))
-                .andReturn();
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
     }
 
     /**
@@ -405,7 +405,7 @@ public class ChainControllerTest {
     void test_chain_with_too_many_samples() throws Exception {
         // add to the request more test samples than are allowed
         String sample = "a sample of text to parse";
-        ParserTestRun testRequest = JSONUtils.INSTANCE.load(test_chain_with_too_many_samples, ParserTestRun.class);
+        ChainTestRequest testRequest = JSONUtils.INSTANCE.load(test_chain_with_too_many_samples, ChainTestRequest.class);
         IntStream.range(0, MAX_SAMPLES_PER_TEST + 10).forEach(i -> testRequest.getSampleData().addSource(sample));
 
         // expect the number of results returned to be capped at the maximum allowed

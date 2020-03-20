@@ -31,7 +31,7 @@ import java.util.Map;
  * describes the intermediate steps involved in parsing a message with
  * a parser chain.
  *
- * <p>See also {@link ParserTestRun} which is the top-level class for the
+ * <p>See also {@link ChainTestRequest} which is the top-level class for the
  * data model used for the "Live View" feature.
  */
 public class ParserResult {
@@ -64,12 +64,22 @@ public class ParserResult {
         return this;
     }
 
+    public ParserResult addInput(String fieldName, String fieldValue) {
+        this.input.put(fieldName, fieldValue);
+        return this;
+    }
+
     public Map<String, String> getOutput() {
         return output;
     }
 
     public ParserResult setOutput(Map<String, String> output) {
         this.output = output;
+        return this;
+    }
+
+    public ParserResult addOutput(String fieldName, String fieldValue) {
+        this.output.put(fieldName, fieldValue);
         return this;
     }
 

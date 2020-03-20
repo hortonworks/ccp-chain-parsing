@@ -7,27 +7,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Describes the result of parsing a message with a parser chain.
+ * Defines the data model for the response to a parser chain
+ * test.
  *
- * <p>See also {@link ParserTestRun} which is the top-level class for the
- * data model used for the "Live View" feature.
+ * <p>Describes the result of testing a parser chain by parsing a
+ * message.
+ *
+ * <p>This is the top-level class for the response message for the
+ * "Live View" feature.
+ *
+ * <p>See also {@link ChainTestRequest}.
  */
-public class ParserResults {
+public class ChainTestResponse {
 
     /**
      * The individual parser results; one for each parser in the chain.
      */
     List<ParserResult> results;
 
-    public ParserResults() {
+    public ChainTestResponse() {
         this(new ArrayList<>());
     }
 
-    public ParserResults(List<ParserResult> results) {
+    public ChainTestResponse(List<ParserResult> results) {
         this.results = results;
     }
 
-    public ParserResults(ParserResult result) {
+    public ChainTestResponse(ParserResult result) {
         this.results = new ArrayList<>();
         this.results.add(result);
     }
@@ -36,11 +42,12 @@ public class ParserResults {
         return results;
     }
 
-    public void setResults(List<ParserResult> results) {
+    public ChainTestResponse setResults(List<ParserResult> results) {
         this.results = results;
+        return this;
     }
 
-    public ParserResults addResult(ParserResult result) {
+    public ChainTestResponse addResult(ParserResult result) {
         this.results.add(result);
         return this;
     }
@@ -53,7 +60,7 @@ public class ParserResults {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ParserResults that = (ParserResults) o;
+        ChainTestResponse that = (ChainTestResponse) o;
         return new EqualsBuilder()
                 .append(results, that.results)
                 .isEquals();
