@@ -12,7 +12,6 @@ import com.cloudera.parserchains.core.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 import org.adrianwalker.multilinestring.Multiline;
 import org.apache.commons.lang3.StringUtils;
-import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,14 +20,14 @@ import java.util.Map;
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.DEFAULT_SUCCESS_MESSAGE;
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.ERROR_TYPE;
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.INFO_TYPE;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
-import static org.hamcrest.collection.IsCollectionWithSize.*;
-import static com.jayway.jsonpath.matchers.JsonPathMatchers.*;
 
 public class DefaultChainExecutorServiceTest {
     private DefaultChainExecutorService service;
@@ -129,7 +128,7 @@ public class DefaultChainExecutorServiceTest {
         String actual = JSONUtils.INSTANCE.toJSON(result, true);
         assertThat(actual, equalToCompressingWhiteSpace(successExpected));
     }
-    
+
     @Test
     void error() throws Exception {
         // build a CSV to parse. there are not enough fields, which should result in an error
