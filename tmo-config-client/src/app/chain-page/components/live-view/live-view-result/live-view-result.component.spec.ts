@@ -10,6 +10,14 @@ import { LiveViewResultComponent } from './live-view-result.component';
 })
 export class MockParserByParserComponent {
   @Input() parserResults = [];
+})
+
+@Component({
+  selector: 'app-stack-trace',
+  template: '',
+})
+class FakeStackTraceComponent {
+  @Input() stackTraceMsg = '';
 }
 
 describe('LiveViewResultComponent', () => {
@@ -18,7 +26,14 @@ describe('LiveViewResultComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+<<<<<<< HEAD
       declarations: [ LiveViewResultComponent, MockParserByParserComponent ],
+=======
+      declarations: [
+        LiveViewResultComponent,
+        FakeStackTraceComponent,
+      ],
+>>>>>>> BUG-123315 Adding initial version of stack trace view
       imports: [ NzCardModule ],
     })
     .compileComponents();

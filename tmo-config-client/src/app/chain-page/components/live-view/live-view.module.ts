@@ -8,12 +8,14 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 import { LiveViewResultComponent } from './live-view-result/live-view-result.component';
+import { StackTraceComponent } from './live-view-result/stack-trace/stack-trace.component';
 import { LiveViewComponent } from './live-view.component';
 import { LiveViewEffects } from './live-view.effects';
 import { reducer } from './live-view.reducers';
@@ -27,6 +29,7 @@ import { LiveViewService } from './services/live-view.service';
     SampleDataFormComponent,
     LiveViewResultComponent,
     ParserByParserComponent,
+    StackTraceComponent,
   ],
   imports: [
     NgZorroAntdModule,
@@ -42,6 +45,7 @@ import { LiveViewService } from './services/live-view.service';
     NzSpinModule,
     NzSwitchModule,
     NzCardModule,
+    NzPopoverModule,
   ],
   providers: [
     LiveViewService
