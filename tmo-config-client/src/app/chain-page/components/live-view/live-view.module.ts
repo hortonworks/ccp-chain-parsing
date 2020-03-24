@@ -17,6 +17,7 @@ import { LiveViewResultComponent } from './live-view-result/live-view-result.com
 import { LiveViewComponent } from './live-view.component';
 import { LiveViewEffects } from './live-view.effects';
 import { reducer } from './live-view.reducers';
+import { ParserByParserComponent } from './parser-by-parser/parser-by-parser.component';
 import { SampleDataFormComponent } from './sample-data-form/sample-data-form.component';
 import { LiveViewService } from './services/live-view.service';
 
@@ -25,6 +26,7 @@ import { LiveViewService } from './services/live-view.service';
     LiveViewComponent,
     SampleDataFormComponent,
     LiveViewResultComponent,
+    ParserByParserComponent,
   ],
   imports: [
     NgZorroAntdModule,

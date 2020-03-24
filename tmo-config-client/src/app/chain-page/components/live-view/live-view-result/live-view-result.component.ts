@@ -10,8 +10,13 @@ import { LiveViewResultModel } from '../models/live-view.model';
 export class LiveViewResultComponent {
   @Input() results: LiveViewResultModel;
   @Output() investigateParserAction = new EventEmitter<string>();
+  parserByParserViewId = null;
 
   onInvestigateParserClicked(failedParser) {
     this.investigateParserAction.emit(failedParser);
+  }
+
+  enableParserByParserView(entry) {
+    this.parserByParserViewId = entry;
   }
 }
