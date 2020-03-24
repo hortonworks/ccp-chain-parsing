@@ -19,7 +19,6 @@ export class ParserComposerComponent implements OnInit {
   @Input() dirty = false;
   @Input() parserId: string;
   @Input() chainId: string;
-  @Input() metaDataForm: CustomFormConfig[];
   @Input() failedParser: string;
   @Output() subchainSelect = new EventEmitter<string>();
   @Output() parserRemove = new EventEmitter<string>();

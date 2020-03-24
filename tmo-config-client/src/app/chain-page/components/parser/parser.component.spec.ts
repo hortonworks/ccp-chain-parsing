@@ -179,14 +179,14 @@ describe('ParserComponent', () => {
       expect(component.parser.config.outputFields.fieldName).toBe('field name UPDATED');
       expect(component.parser.config.outputFields.fieldIndex).toBe('field index');
     }).unsubscribe();
-    component.configForm[0].onChange(component.configForm[0]);
+    component.onCustomFormChange(component.parser, component.configForm[0]);
 
     component.parserChange.subscribe(() => {
       expect(component.parser.config.outputFields.fieldName).toBe('field name UPDATED');
       expect(component.parser.config.outputFields.fieldIndex).toBe('field index UPDATED');
     }).unsubscribe();
-    component.configForm[0].onChange(component.configForm[0]);
-    component.configForm[1].onChange(component.configForm[1]);
+    component.onCustomFormChange(component.parser, component.configForm[0]);
+    component.onCustomFormChange(component.parser, component.configForm[1]);
   });
 
   it('should setup the form fields properly', () => {
@@ -265,6 +265,290 @@ describe('ParserComponent', () => {
     fixture.detectChanges();
     expect(component.parsingFailed).toBe(false);
     expect(card.classes.failed).toBeFalsy();
+  });
+
+  it('should update multi value parsers properly', (done) => {
+    const cases = [
+      {
+        input: {
+          parser: {
+            id: '123',
+            name: 'some parser',
+            type: 'foo',
+            config: {
+              foo: [{
+                bar: 'value 1'
+              }]
+            }
+          },
+          formConfig: {
+            name: 'bar',
+            type: 'text',
+            multiple: true,
+            path: 'config.foo',
+            value: [{
+              foo: 'value 2'
+            }, {
+              bar: 'value 3'
+            }]
+          }
+        },
+        expected: {
+          id: '123',
+          name: 'some parser',
+          type: 'foo',
+          config: {
+            foo: [{
+              bar: 'value 1',
+              foo: 'value 2'
+            }, {
+              bar: 'value 3'
+            }]
+          }
+        }
+      },
+      {
+        input: {
+          parser: {
+            id: '123',
+            name: 'some parser',
+            type: 'foo',
+            config: {}
+          },
+          formConfig: {
+            name: 'bar',
+            type: 'text',
+            multiple: true,
+            path: 'config.foo',
+            value: [{
+              foo: 'value 2'
+            }, {
+              bar: 'value 3'
+            }]
+          }
+        },
+        expected: {
+          id: '123',
+          name: 'some parser',
+          type: 'foo',
+          config: {
+            foo: [{
+              foo: 'value 2'
+            }, {
+              bar: 'value 3'
+            }]
+          }
+        }
+      },
+      {
+        input: {
+          parser: {
+            id: '123',
+            name: 'some parser',
+            type: 'foo',
+            config: {
+              foo: [{
+                bar: 'a'
+              }, {
+                bar: 'b'
+              }, {
+                bar: 'c'
+              }, {
+                bar: 'd'
+              }, {
+                bar: 'e'
+              }]
+            }
+          },
+          formConfig: {
+            name: 'lorem',
+            type: 'text',
+            multiple: true,
+            path: 'config.foo',
+            value: [{
+              bak: '1'
+            }, {
+              bak: '1'
+            }, {
+              bak: 'a+b'
+            }, {
+              bak: 'b+c'
+            }, {
+              bak: 'c+d'
+            }, {
+              bak: 'd+e'
+            }]
+          }
+        },
+        expected: {
+          id: '123',
+          name: 'some parser',
+          type: 'foo',
+          config: {
+            foo: [{
+              bar: 'a',
+              bak: '1'
+            }, {
+              bar: 'b',
+              bak: '1'
+            }, {
+              bar: 'c',
+              bak: 'a+b'
+            }, {
+              bar: 'd',
+              bak: 'b+c'
+            }, {
+              bar: 'e',
+              bak: 'c+d'
+            }, {
+              bak: 'd+e'
+            }]
+          }
+        }
+      },
+      {
+        input: {
+          parser: {
+            id: '123',
+            name: 'some parser',
+            type: 'foo',
+            config: {
+              foo: [{
+                bar: 'a'
+              }, {
+                bar: 'b'
+              }]
+            }
+          },
+          formConfig: {
+            name: 'lorem',
+            type: 'text',
+            multiple: true,
+            path: 'config.foo',
+            value: [{
+              bak: '1'
+            }, {
+              bak: '1'
+            }, {
+              bak: 'a+b'
+            }, {
+              bak: 'b+c'
+            }]
+          }
+        },
+        expected: {
+          id: '123',
+          name: 'some parser',
+          type: 'foo',
+          config: {
+            foo: [{
+              bar: 'a',
+              bak: '1'
+            }, {
+              bar: 'b',
+              bak: '1'
+            }, {
+              bak: 'a+b'
+            }, {
+              bak: 'b+c'
+            }]
+          }
+        }
+      },
+      {
+        input: {
+          parser: {
+            id: '123',
+            name: 'some parser',
+            type: 'foo',
+            lorem: [{
+              bar: 'a'
+            }, {
+              bar: 'b'
+            }]
+          },
+          formConfig: {
+            name: 'lorem',
+            type: 'text',
+            multiple: true,
+            value: [{
+              bak: '1'
+            }, {
+              bak: '1'
+            }, {
+              bak: 'a+b'
+            }, {
+              bak: 'b+c'
+            }]
+          }
+        },
+        expected: {
+          id: '123',
+          name: 'some parser',
+          type: 'foo',
+          lorem: [{
+            bar: 'a',
+            bak: '1'
+          }, {
+            bar: 'b',
+            bak: '1'
+          }, {
+            bak: 'a+b'
+          }, {
+            bak: 'b+c'
+          }]
+        }
+      },
+      {
+        input: {
+          parser: {
+            id: '123',
+            name: 'some parser',
+            type: 'foo',
+          },
+          formConfig: {
+            name: 'lorem',
+            type: 'text',
+            multiple: true,
+            value: [{
+              bak: '1'
+            }, {
+              bak: '1'
+            }, {
+              bak: 'a+b'
+            }, {
+              bak: 'b+c'
+            }]
+          }
+        },
+        expected: {
+          id: '123',
+          name: 'some parser',
+          type: 'foo',
+          lorem: [{
+            bak: '1'
+          }, {
+            bak: '1'
+          }, {
+            bak: 'a+b'
+          }, {
+            bak: 'b+c'
+          }]
+        }
+      },
+    ];
+
+    cases.forEach((testCase, i) => {
+      const localFixture = TestBed.createComponent(ParserComponent);
+      const localComponent = localFixture.componentInstance;
+      localComponent.parserChange.subscribe((partialParser) => {
+        expect(partialParser).toEqual(testCase.expected);
+        if (i === cases.length - 1) {
+          done();
+        }
+      });
+      localComponent.onCustomFormChange(testCase.input.parser, testCase.input.formConfig);
+    });
   });
 
   describe('parser name editing', () => {
