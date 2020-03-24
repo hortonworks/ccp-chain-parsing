@@ -15,13 +15,13 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 import { LiveViewResultComponent } from './live-view-result/live-view-result.component';
-import { StackTraceComponent } from './live-view-result/stack-trace/stack-trace.component';
 import { LiveViewComponent } from './live-view.component';
 import { LiveViewEffects } from './live-view.effects';
 import { reducer } from './live-view.reducers';
 import { ParserByParserComponent } from './parser-by-parser/parser-by-parser.component';
 import { SampleDataFormComponent } from './sample-data-form/sample-data-form.component';
 import { LiveViewService } from './services/live-view.service';
+import { StackTraceComponent } from './stack-trace/stack-trace.component';
 
 @NgModule({
   declarations: [
