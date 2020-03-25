@@ -16,6 +16,7 @@
         <module>parser-chains-core</module>
         <module>parser-chains-parsers</module>
         <module>parser-chains-config-service</module>
+        <module>parser-chains-storm</module>
     </modules>
 
     <properties>
@@ -320,7 +321,7 @@
                         <descriptors>
                             <descriptor>src/assembly/bin.xml</descriptor>
                         </descriptors>
-                        <finalName>${project.name}-${project.version}</finalName>
+                        <finalName>${project.artifactId}-${project.version}</finalName>
                         <appendAssemblyId>false</appendAssemblyId>
                     </configuration>
                     <executions>

@@ -9,6 +9,7 @@ ADD pom.xml .
 ADD parser-chains-core/pom.xml ./parser-chains-core/
 ADD parser-chains-parsers/pom.xml ./parser-chains-parsers/
 ADD parser-chains-config-service/pom.xml ./parser-chains-config-service/
+ADD parser-chains-storm/pom.xml ./parser-chains-storm/
 RUN mvn -B clean install -DskipTests -Dcheckstyle.skip -Dmaven.exec.skip=true -Dmaven.install.skip -Dmaven.resources.skip -Dassembly.skipAssembly=true -Dspring-boot.repackage.skip
 
 # build the project

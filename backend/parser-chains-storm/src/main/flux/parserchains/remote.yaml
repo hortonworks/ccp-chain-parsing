@@ -1,0 +1,174 @@
+
+name: "parserchains"
+config:
+  topology.workers: ${topology.workers}
+  topology.acker.executors: ${topology.acker.executors}
+  topology.worker.childopts: ${topology.worker.childopts}
+  topology.auto-credentials: ${topology.auto-credentials}
+  topology.max.spout.pending: ${topology.max.spout.pending}
+
+components:
+
+  # Config for the spouts
+
+  # kafka/zookeeper
+  # any kafka props for the consumer go here.
+  - id: "kafkaProps"
+    className: "java.util.HashMap"
+    configMethods:
+      - name: "put"
+        args:
+          - "value.deserializer"
+          - "org.apache.kafka.common.serialization.ByteArrayDeserializer"
+      - name: "put"
+        args:
+          - "key.deserializer"
+          - "org.apache.kafka.common.serialization.ByteArrayDeserializer"
+      - name: "put"
+        args:
+          - "group.id"
+          - "enrichments"
+      - name: "put"
+        args:
+          - "security.protocol"
+          - "${kafka.security.protocol}"
+
+  # the fields to pull out of the kafka messages
+  - id: "fields"
+    className: "java.util.ArrayList"
+    configMethods:
+      - name: "add"
+        args:
+          - "value"
+
+  - id: "kafkaConfig"
+    className: "org.apache.metron.storm.kafka.flux.SimpleStormKafkaBuilder"
+    constructorArgs:
+      - ref: "kafkaProps"
+      # topic name
+      - "${parserchains.input.topic}"
+      - "${kafka.zk}"
+      - ref: "fields"
+    configMethods:
+      - name: "setFirstPollOffsetStrategy"
+        args:
+          - "${kafka.start}"
+
+  # stuff for the bolts
+
+  - id: "outputTopicSelector"
+    className: "org.apache.storm.kafka.bolt.selector.DefaultTopicSelector"
+    constructorArgs:
+      - "${parserchains.output.topic}"
+
+  - id: "errorTopicSelector"
+    className: "org.apache.storm.kafka.bolt.selector.DefaultTopicSelector"
+    constructorArgs:
+      - "${parserchains.error.topic}"
+
+  - id: "kafkaMapper"
+    className: "org.apache.storm.kafka.bolt.mapper.FieldNameBasedTupleToKafkaMapper"
+    constructorArgs:
+      - "key"
+      - "message"
+
+  - id: "producerProperties"
+    className: "java.util.Properties"
+    configMethods:
+      - name: "put"
+        args:
+          - "bootstrap.servers"
+          - "${kafka.broker}"
+      - name: "put"
+        args:
+          - "acks"
+          - "1"
+      - name: "put"
+        args:
+          - "key.serializer"
+          - "org.apache.kafka.common.serialization.ByteArraySerializer"
+          # Another serialization option
+          # - "org.apache.kafka.common.serialization.StringSerializer"
+      - name: "put"
+        args:
+          - "value.serializer"
+          - "org.apache.kafka.common.serialization.StringSerializer"
+          #- "org.apache.kafka.common.serialization.ByteArraySerializer"
+      - name: "put"
+        args:
+          - "security.protocol"
+          - "${kafka.security.protocol}"
+
+spouts:
+
+  - id: "kafkaSpout"
+    className: "org.apache.metron.storm.kafka.flux.StormKafkaSpout"
+    constructorArgs:
+      - ref: "kafkaConfig"
+    parallelism: ${kafka.spout.parallelism}
+    
+bolts:
+
+  # parser bolt
+
+  - id: "parserChainsBolt"
+    className: "com.cloudera.parserchains.streaming.storm.ParserBolt"
+    parallelism: ${parserchains.parallelism}
+    configMethods:
+      - name: "withParserChainPath"
+        args: ["${parserchain.config.path}"]
+    
+  # output bolt
+
+  - id: "outputBolt"
+    className: "org.apache.storm.kafka.bolt.KafkaBolt"
+    parallelism: ${kafka.writer.parallelism}
+    configMethods:
+      - name: "withProducerProperties"
+        args: [ref: "producerProperties"]
+      - name: "withTopicSelector"
+        args: [ref: "outputTopicSelector"]
+      - name: "withTupleToKafkaMapper"
+        args: [ref: "kafkaMapper"]
+
+  # error output bolt
+
+  - id: "errorOutputBolt"
+    className: "org.apache.storm.kafka.bolt.KafkaBolt"
+    parallelism: ${kafka.writer.parallelism}
+    configMethods:
+      - name: "withProducerProperties"
+        args: [ref: "producerProperties"]
+      - name: "withTopicSelector"
+        args: [ref: "outputTopicSelector"]
+      - name: "withTupleToKafkaMapper"
+        args: [ref: "kafkaMapper"]
+
+streams:
+
+  # parser
+
+  - name: "kafkaSpout -> parserChainsBolt"
+    from: "kafkaSpout"
+    to: "parserChainsBolt"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+
+  # output
+
+  - name: "parserChainsBolt -> outputBolt"
+    from: "parserChainsBolt"
+    to: "outputBolt"
+    grouping:
+      streamId: "message"
+      type: LOCAL_OR_SHUFFLE
+
+  # error output
+
+  - name: "parserChainsBolt -> errorOutputBolt"
+    from: "parserChainsBolt"
+    to: "errorOutputBolt"
+    grouping:
+      streamId: "error"
+      type: LOCAL_OR_SHUFFLE
+
