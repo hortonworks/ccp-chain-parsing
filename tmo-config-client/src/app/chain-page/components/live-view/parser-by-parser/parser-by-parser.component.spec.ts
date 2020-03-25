@@ -1,5 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { NzCardModule } from 'ng-zorro-antd';
+import { CheckCircleOutline, CloseCircleOutline, WarningFill } from '@ant-design/icons-angular/icons';
+import {
+  NZ_ICONS,
+  NzCardModule,
+  NzResultModule,
+  NzTimelineModule
+} from 'ng-zorro-antd';
 
 import { ParserByParserComponent } from './parser-by-parser.component';
 
@@ -9,10 +15,15 @@ describe('ParserByParserComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ParserByParserComponent ],
-      imports: [ NzCardModule ],
-    })
-    .compileComponents();
+      declarations: [ParserByParserComponent],
+      imports: [NzCardModule, NzTimelineModule, NzResultModule],
+      providers: [
+        {
+          provide: NZ_ICONS,
+          useValue: [CheckCircleOutline, CloseCircleOutline, WarningFill]
+        }
+      ]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

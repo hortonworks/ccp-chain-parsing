@@ -23,13 +23,15 @@
         <div nz-col nzSpan="2" class="label">Log</div>
         <div nz-col nzSpan="22" class="message">{{ entry.log.message }}</div>
         <button nz-button *ngIf="entry.log.type === 'error'" (click)="onInvestigateParserClicked(entry.log.parserId)">Click to see failed Parser</button>
-        <button nz-button (click)="enableParserByParserView(i)">Parser-by-Parser View</button>
+        <button nz-button *ngIf="entry.parserResults" (click)="enableParserByParserView(i)">Parser-by-Parser View</button>
       </div>
     </nz-card>
     <button *ngIf="parserByParserViewId === i" nz-button nzType="link" (click)="parserByParserViewId = null" style="padding-left: 0; margin-bottom: 1rem;">
       <i nz-icon nzType="left"></i>
       Return to Message Results View
     </button>
-    <app-parser-by-parser *ngIf="parserByParserViewId === i" [parserResults]="entry.parserResults"></app-parser-by-parser>
+    <app-parser-by-parser *ngIf="parserByParserViewId === i"
+                          [parserResults]="entry.parserResults"
+                          (investigateParser)="onInvestigateParserClicked($event)"></app-parser-by-parser>
   </div>
 </div>

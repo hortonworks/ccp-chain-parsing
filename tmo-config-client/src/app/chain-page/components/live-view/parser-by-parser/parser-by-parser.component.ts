@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-parser-by-parser',
@@ -7,10 +7,18 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ParserByParserComponent implements OnInit {
   @Input() parserResults: any;
+  @Output() investigateParser = new EventEmitter<string>();
+
+  compileErrorMessage =
+    'There was an error that prevented your parser chain from being constructed. Please review your configuration settings.';
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  enableInvestigateParser(parserId) {
+    this.investigateParser.emit(parserId);
   }
 
 }
