@@ -20,7 +20,7 @@
     <repositories>
         <repository>
             <id>hcp-metron-release-repo</id>
-            <url>https://raw.github.com/nickwallen/metron/release-0.7.1/maven-repo</url>
+            <url>https://raw.github.com/mmiklavc/metron/release-0.7.1/maven-repo</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
