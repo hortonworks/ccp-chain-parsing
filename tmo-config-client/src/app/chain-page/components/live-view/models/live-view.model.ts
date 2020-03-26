@@ -12,6 +12,17 @@ export interface EntryParsingResultModel {
     message: string;
     parserId?: string;
   };
+  parserResults?: ParserResultsModel;
+}
+
+export interface ParserResultsModel {
+  input: {};
+  output: {};
+  log: {
+    type: string;
+    message: string;
+    parserId?: string;
+  };
 }
 
 export interface LiveViewModel {

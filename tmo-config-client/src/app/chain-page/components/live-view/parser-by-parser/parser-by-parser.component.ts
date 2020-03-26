@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
+import { ParserResultsModel } from '../models/live-view.model';
+
 @Component({
   selector: 'app-parser-by-parser',
   templateUrl: './parser-by-parser.component.html',
   styleUrls: ['./parser-by-parser.component.scss']
 })
 export class ParserByParserComponent implements OnInit {
-  @Input() parserResults: any;
+  @Input() parserResults: ParserResultsModel[];
   @Output() investigateParser = new EventEmitter<string>();
 
   compileErrorMessage =
