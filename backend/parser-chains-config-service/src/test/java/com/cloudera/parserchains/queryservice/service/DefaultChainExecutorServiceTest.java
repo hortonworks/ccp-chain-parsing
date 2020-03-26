@@ -20,10 +20,14 @@ import java.util.Map;
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.DEFAULT_SUCCESS_MESSAGE;
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.ERROR_TYPE;
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.INFO_TYPE;
+import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 
 public class DefaultChainExecutorServiceTest {
     private DefaultChainExecutorService service;
@@ -46,15 +50,6 @@ public class DefaultChainExecutorServiceTest {
      *     "id" : "3b31e549-340f-47ce-8a71-d702685137f4",
      *     "name" : "My Parser Chain",
      *     "parsers" : [ {
-     *       "id" : "8673f8f4-a308-4689-822c-0b01477ef378",
-     *       "name" : "Timestamp",
-     *       "type" : "com.cloudera.parserchains.parsers.TimestampParser",
-     *       "config" : {
-     *         "outputField" : {
-     *           "outputField": "processing_time"
-     *         }
-     *       }
-     *     }, {
      *       "id" : "3b31e549-340f-47ce-8a71-d702685137f4",
      *       "name" : "Delimited Text",
      *       "type" : "com.cloudera.parserchains.parsers.DelimitedTextParser",
@@ -77,7 +72,44 @@ public class DefaultChainExecutorServiceTest {
      * }
      */
     @Multiline
-    private String parserChainJSON;
+    private String parserChain;
+
+    /**
+     * {
+     *   "input" : {
+     *     "original_string" : "Jane Doe,1600 Pennsylvania Ave,614-867-5309"
+     *   },
+     *   "output" : {
+     *     "address" : "1600 Pennsylvania Ave",
+     *     "original_string" : "Jane Doe,1600 Pennsylvania Ave,614-867-5309",
+     *     "phone" : "614-867-5309",
+     *     "name" : "Jane Doe"
+     *   },
+     *   "log" : {
+     *     "type" : "info",
+     *     "message" : "success",
+     *     "parserId" : "3b31e549-340f-47ce-8a71-d702685137f4"
+     *   },
+     *   "parserResults" : [ {
+     *     "input" : {
+     *       "original_string" : "Jane Doe,1600 Pennsylvania Ave,614-867-5309"
+     *     },
+     *     "output" : {
+     *       "address" : "1600 Pennsylvania Ave",
+     *       "original_string" : "Jane Doe,1600 Pennsylvania Ave,614-867-5309",
+     *       "phone" : "614-867-5309",
+     *       "name" : "Jane Doe"
+     *     },
+     *     "log" : {
+     *       "type" : "info",
+     *       "message" : "success",
+     *       "parserId" : "3b31e549-340f-47ce-8a71-d702685137f4"
+     *     }
+     *   } ]
+     * }
+     */
+    @Multiline
+    private String successExpected;
 
     @Test
     void success() throws Exception {
@@ -88,24 +120,13 @@ public class DefaultChainExecutorServiceTest {
         final String toParse = StringUtils.join(new String[] { nameField, addressField, phoneField }, ",");
 
         // execute a parser chain
-        ParserChainSchema schema = JSONUtils.INSTANCE.load(parserChainJSON, ParserChainSchema.class);
+        ParserChainSchema schema = JSONUtils.INSTANCE.load(parserChain, ParserChainSchema.class);
         ChainLink chain = buildChain(schema);
         ParserResult result = service.execute(chain, toParse);
 
-        assertThat("Expected to have 1 input field.", result.getInput().size(), is(1));
-        assertThat("Expected to have 5 output fields.", result.getOutput().size(), is(5));
-        expectField(result.getInput(), "original_string", toParse);
-        expectField(result.getOutput(), "original_string", toParse);
-        expectField(result.getOutput(), "name", nameField);
-        expectField(result.getOutput(), "address", addressField);
-        expectField(result.getOutput(), "phone", phoneField);
-        assertThat(result.getOutput().keySet(), hasItem("processing_time"));
-        assertThat("Expected the 'info' type on success.",
-                result.getLog().getType(), is(INFO_TYPE));
-        assertThat("Expected the 'success' message on success.",
-                result.getLog().getMessage(), is(DEFAULT_SUCCESS_MESSAGE));
-        assertThat("Expected the parserId to be set to the last parser in the chain.",
-                result.getLog().getParserId(), is("3b31e549-340f-47ce-8a71-d702685137f4"));
+        // validate
+        String actual = JSONUtils.INSTANCE.toJSON(result, true);
+        assertThat(actual, equalToCompressingWhiteSpace(successExpected));
     }
 
     @Test
@@ -115,20 +136,33 @@ public class DefaultChainExecutorServiceTest {
         final String toParse = StringUtils.join(new String[] { nameField }, ",");
 
         // execute a parser chain
-        ParserChainSchema schema = JSONUtils.INSTANCE.load(parserChainJSON, ParserChainSchema.class);
+        ParserChainSchema schema = JSONUtils.INSTANCE.load(parserChain, ParserChainSchema.class);
         ChainLink chain = buildChain(schema);
         ParserResult result = service.execute(chain, toParse);
 
-        assertThat("Expected to have 1 input field.", result.getInput().size(), is(1));
-        assertThat("Expected to have 3 output fields.", result.getOutput().size(), is(3));
-        expectField(result.getInput(), "original_string", toParse);
-        expectField(result.getOutput(), "original_string", toParse);
-        expectField(result.getOutput(), "name", nameField);
-        assertThat(result.getOutput().keySet(), hasItem("processing_time"));
-        assertThat("Expected the 'error' type when an error occurs.",
-                result.getLog().getType(), is(ERROR_TYPE));
-        assertThat("Expected the error message to be included in the result.",
-                result.getLog().getMessage(), is("Found 1 column(s), index 2 does not exist."));
+        // validate
+        String actual = JSONUtils.INSTANCE.toJSON(result, true);
+        assertThat(actual, hasJsonPath("$.input"));
+        assertThat(actual, hasJsonPath("$.input.original_string", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.output"));
+        assertThat(actual, hasJsonPath("$.output.original_string", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.output.name", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.log"));
+        assertThat(actual, hasJsonPath("$.log.type", equalTo("error")));
+        assertThat(actual, hasJsonPath("$.log.message", equalTo("Found 1 column(s), index 2 does not exist.")));
+        assertThat(actual, hasJsonPath("$.log.parserId", equalTo("3b31e549-340f-47ce-8a71-d702685137f4")));
+        assertThat(actual, hasJsonPath("$.log.stackTrace", startsWith("java.lang.IllegalStateException")));
+        assertThat(actual, hasJsonPath("$.parserResults[*]", hasSize(1)));
+        assertThat(actual, hasJsonPath("$.parserResults[0].input"));
+        assertThat(actual, hasJsonPath("$.parserResults[0].input.original_string", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].output"));
+        assertThat(actual, hasJsonPath("$.parserResults[0].output.original_string", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].output.name", equalTo("Jane Doe")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].log"));
+        assertThat(actual, hasJsonPath("$.parserResults[0].log.type", equalTo("error")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].log.message", equalTo("Found 1 column(s), index 2 does not exist.")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].log.parserId", equalTo("3b31e549-340f-47ce-8a71-d702685137f4")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].log.stackTrace", startsWith("java.lang.IllegalStateException")));
     }
 
     /**

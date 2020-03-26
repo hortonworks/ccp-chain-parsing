@@ -5,8 +5,8 @@ import com.cloudera.parserchains.core.model.define.InvalidParserException;
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.config.AppProperties;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
-import com.cloudera.parserchains.queryservice.model.exec.ParserResults;
-import com.cloudera.parserchains.queryservice.model.exec.ParserTestRun;
+import com.cloudera.parserchains.queryservice.model.exec.ChainTestResponse;
+import com.cloudera.parserchains.queryservice.model.exec.ChainTestRequest;
 import com.cloudera.parserchains.queryservice.model.exec.ResultLog;
 import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
 import com.cloudera.parserchains.queryservice.service.ChainBuilderService;
@@ -160,11 +160,11 @@ public class ChainController {
             @ApiResponse(code = 200, message = "The result of parsing the message."),
     })
     @PostMapping(value = API_PARSER_TEST)
-    ResponseEntity<ParserResults> test(
+    ResponseEntity<ChainTestResponse> test(
             @ApiParam(name = "testRun", value = "Describes the parser chain test to run.", required = true)
-            @RequestBody ParserTestRun testRun) {
+            @RequestBody ChainTestRequest testRun) {
         ParserChainSchema chain = testRun.getParserChainSchema();
-        ParserResults results = new ParserResults();
+        ChainTestResponse results = new ChainTestResponse();
         testRun.getSampleData().getSource()
                 .stream()
                 .limit(MAX_SAMPLES_PER_TEST)

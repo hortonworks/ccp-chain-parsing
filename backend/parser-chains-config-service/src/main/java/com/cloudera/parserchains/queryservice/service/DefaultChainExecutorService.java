@@ -9,8 +9,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.error;
+import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.success;
 
 @Service
 public class DefaultChainExecutorService implements ChainExecutorService {
@@ -43,7 +47,7 @@ public class DefaultChainExecutorService implements ChainExecutorService {
     private ParserResult chainExecuted(List<Message> messages) {
         ParserResult result = new ParserResult();
 
-        // define the input fields
+        // define the input fields for the parser chain
         Message input = messages.get(0);
         result.setInput(input.getFields()
                 .entrySet()
@@ -52,7 +56,7 @@ public class DefaultChainExecutorService implements ChainExecutorService {
                         e -> e.getKey().get(),
                         e -> e.getValue().get())));
 
-        // define the output fields
+        // define the fields output by the parser chain
         Message output = messages.get(messages.size()-1);
         result.setOutput(output.getFields()
                 .entrySet()
@@ -62,16 +66,58 @@ public class DefaultChainExecutorService implements ChainExecutorService {
                         e -> e.getValue().get())));
 
         // define the log section
+        result.setLog(buildResultLog(output));
+
+        // define the parser-by-parser set of results
+        List<ParserResult> parserResults = buildParserByParserResults(messages);
+        result.setParserResults(parserResults);
+
+        return result;
+    }
+
+    private ResultLog buildResultLog(Message output) {
         String parserId = output.getCreatedBy().get();
-        ResultLog log = output.getError()
-                .map(e -> ResultLogBuilder.error()
+        return output.getError()
+                    .map(e -> error()
                             .parserId(parserId)
                             .exception(e)
                             .build())
-                .orElseGet(() -> ResultLogBuilder.success()
+                    .orElseGet(() -> success()
                             .parserId(parserId)
                             .build());
-        return result.setLog(log);
+    }
+
+    private List<ParserResult> buildParserByParserResults(List<Message> messages) {
+        List<ParserResult> results = new ArrayList<>();
+
+        for (int i = 0; i < messages.size() - 1; i++) {
+            ParserResult result = new ParserResult();
+
+            // define the input fields
+            Message input = messages.get(i);
+            result.setInput(input.getFields()
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            e -> e.getKey().get(),
+                            e -> e.getValue().get())));
+
+            // define the output fields
+            Message output = messages.get(i + 1);
+            result.setOutput(output.getFields()
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            e -> e.getKey().get(),
+                            e -> e.getValue().get())));
+
+            // define the log section
+            ResultLog resultLog = buildResultLog(output);
+            result.setLog(resultLog);
+
+            results.add(result);
+        }
+        return results;
     }
 
     /**

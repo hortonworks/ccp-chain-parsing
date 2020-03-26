@@ -18,30 +18,25 @@
 
 package com.cloudera.parserchains.queryservice.model.exec;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * The result of parsing a message with a parser chain.
- *
- * <p>A result is captured for each parser in a parser chain. This
- * describes the intermediate steps involved in parsing a message with
- * a parser chain.
- *
- * <p>See also {@link ParserTestRun} which is the top-level class for the
- * data model used for the "Live View" feature.
+ * The result of parsing a message with a parser chain or parser.
  */
 public class ParserResult {
     /**
-     * The input fields provided to the parser.
+     * The input fields.
      */
     private Map<String, String> input;
 
     /**
-     * The output fields produced by the parser.
+     * The output fields produced.
      */
     private Map<String, String> output;
 
@@ -50,9 +45,17 @@ public class ParserResult {
      */
     private ResultLog log;
 
+    /**
+     * The individual parser results; one for each parser in the chain.
+     * <p>If no results, this field should not be shown when serialized to JSON.
+     */
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<ParserResult> parserResults;
+
     public ParserResult() {
         this.input = new HashMap<>();
         this.output = new HashMap<>();
+        this.parserResults = new ArrayList<>();
     }
 
     public Map<String, String> getInput() {
@@ -61,6 +64,11 @@ public class ParserResult {
 
     public ParserResult setInput(Map<String, String> input) {
         this.input = input;
+        return this;
+    }
+
+    public ParserResult addInput(String fieldName, String fieldValue) {
+        this.input.put(fieldName, fieldValue);
         return this;
     }
 
@@ -73,6 +81,11 @@ public class ParserResult {
         return this;
     }
 
+    public ParserResult addOutput(String fieldName, String fieldValue) {
+        this.output.put(fieldName, fieldValue);
+        return this;
+    }
+
     public ResultLog getLog() {
         return log;
     }
@@ -80,6 +93,19 @@ public class ParserResult {
     public ParserResult setLog(ResultLog log) {
         this.log = log;
         return this;
+    }
+
+    public List<ParserResult> getParserResults() {
+        return parserResults;
+    }
+
+    public ParserResult addParserResult(ParserResult result) {
+        parserResults.add(result);
+        return this;
+    }
+
+    public void setParserResults(List<ParserResult> parserResults) {
+        this.parserResults = parserResults;
     }
 
     @Override
@@ -91,20 +117,15 @@ public class ParserResult {
             return false;
         }
         ParserResult that = (ParserResult) o;
-        return new EqualsBuilder()
-                .append(input, that.input)
-                .append(output, that.output)
-                .append(log, that.log)
-                .isEquals();
+        return Objects.equals(input, that.input) &&
+                Objects.equals(output, that.output) &&
+                Objects.equals(log, that.log) &&
+                Objects.equals(parserResults, that.parserResults);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(input)
-                .append(output)
-                .append(log)
-                .toHashCode();
+        return Objects.hash(input, output, log, parserResults);
     }
 
     @Override
@@ -113,6 +134,7 @@ public class ParserResult {
                 "input=" + input +
                 ", output=" + output +
                 ", log=" + log +
+                ", chainResults=" + parserResults +
                 '}';
     }
 }

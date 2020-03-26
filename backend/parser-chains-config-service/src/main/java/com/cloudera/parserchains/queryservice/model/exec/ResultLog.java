@@ -6,15 +6,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Describes the result of parsing a single message.
  *
- * <p>See also {@link ParserTestRun} which is the top-level class for the
+ * <p>See also {@link ChainTestRequest} which is the top-level class for the
  * data model used for the "Live View" feature.
  */
 public class ResultLog {
 
-
     private String type;
     private String message;
     private String parserId;
+    private String stackTrace;
 
     public ResultLog setType(String type) {
         this.type = type;
@@ -31,6 +31,11 @@ public class ResultLog {
         return this;
     }
 
+    public ResultLog setStackTrace(String stackTrace) {
+        this.stackTrace = stackTrace;
+        return this;
+    }
+
     public String getType() {
         return type;
     }
@@ -41,6 +46,10 @@ public class ResultLog {
 
     public String getParserId() {
         return parserId;
+    }
+
+    public String getStackTrace() {
+        return stackTrace;
     }
 
     @Override

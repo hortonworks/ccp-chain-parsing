@@ -21,15 +21,18 @@ package com.cloudera.parserchains.queryservice.model.exec;
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
-
 /**
- * Defines the data model for when a request is made to execute a parser chain on
- * a set of sample data.  This is also called the "Live View" feature.
+ * Defines the data model for a request to test a parser chain.
  *
- * <p>This is the top-level class defining the data model for the "Live View" feature.
+ * <p>Describes the parser chain along with the message that should
+ * be parsed.
+ *
+ * <p>This is the top-level class of the request that is made for
+ * the "Live View" feature.
+ *
+ * <p>See also {@link ChainTestResponse}.
  */
-public class ParserTestRun {
+public class ChainTestRequest {
 
     /**
      * The sample data that needs to be parsed.
@@ -43,34 +46,21 @@ public class ParserTestRun {
     @JsonProperty("chainConfig")
     private ParserChainSchema parserChainSchema;
 
-    /**
-     * Describes the result of parsing each message with the parser chain.
-     * <p>There should be one result for each message received.
-     */
-    @JsonProperty("result")
-    private List<ParserResult> result;
-
     public SampleData getSampleData() {
         return sampleData;
     }
 
-    public void setSampleData(SampleData sampleData) {
+    public ChainTestRequest setSampleData(SampleData sampleData) {
         this.sampleData = sampleData;
+        return this;
     }
 
     public ParserChainSchema getParserChainSchema() {
         return parserChainSchema;
     }
 
-    public void setParserChainSchema(ParserChainSchema parserChainSchema) {
+    public ChainTestRequest setParserChainSchema(ParserChainSchema parserChainSchema) {
         this.parserChainSchema = parserChainSchema;
-    }
-
-    public List<ParserResult> getResult() {
-        return result;
-    }
-
-    public void setResult(List<ParserResult> result) {
-        this.result = result;
+        return this;
     }
 }
