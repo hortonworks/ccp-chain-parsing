@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { NzCardModule } from 'ng-zorro-antd';
 
 import { LiveViewResultComponent } from './live-view-result.component';
@@ -12,13 +13,25 @@ export class MockParserByParserComponent {
   @Input() parserResults = [];
 }
 
+@Component({
+  selector: 'app-stack-trace',
+  template: '',
+})
+class FakeStackTraceComponent {
+  @Input() stackTraceMsg = '';
+}
+
 describe('LiveViewResultComponent', () => {
   let component: LiveViewResultComponent;
   let fixture: ComponentFixture<LiveViewResultComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LiveViewResultComponent, MockParserByParserComponent ],
+      declarations: [
+        LiveViewResultComponent,
+        MockParserByParserComponent,
+        FakeStackTraceComponent,
+      ],
       imports: [ NzCardModule ],
     })
     .compileComponents();
@@ -32,5 +45,27 @@ describe('LiveViewResultComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should bind stack trace msg to stack trace component', () => {
+    component.results =  [
+      {
+        input: 'test sample' ,
+        output: {},
+        log: {
+          type: 'info',
+          message: 'this is a message',
+          parserId: '1234',
+          stackTrace: 'Fake Strack Trace Msg',
+        }
+      }
+    ];
+    fixture.detectChanges();
+
+    const stackTraceComp = fixture.debugElement.query(
+      By.directive(FakeStackTraceComponent)
+      ).componentInstance;
+
+    expect(stackTraceComp.stackTraceMsg).toBe('Fake Strack Trace Msg');
   });
 });

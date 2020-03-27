@@ -24,6 +24,7 @@
         <div nz-col nzSpan="22" class="message">{{ entry.log.message }}</div>
         <button nz-button *ngIf="entry.log.type === 'error'" (click)="onInvestigateParserClicked(entry.log.parserId)">Click to see failed Parser</button>
         <button nz-button *ngIf="entry.parserResults" (click)="enableParserByParserView(i)">Parser-by-Parser View</button>
+        <app-stack-trace *ngIf="entry.log.stackTrace" [stackTraceMsg]="entry.log.stackTrace"></app-stack-trace>
       </div>
     </nz-card>
     <button *ngIf="parserByParserViewId === i" nz-button nzType="link" (click)="parserByParserViewId = null" style="padding-left: 0; margin-bottom: 1rem;">

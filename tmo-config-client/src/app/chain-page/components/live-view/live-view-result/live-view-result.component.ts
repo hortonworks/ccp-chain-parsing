@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { LiveViewResultModel } from '../models/live-view.model';
+import { EntryParsingResultModel } from '../models/live-view.model';
 
 @Component({
   selector: 'app-live-view-result',
@@ -8,7 +8,7 @@ import { LiveViewResultModel } from '../models/live-view.model';
   styleUrls: ['./live-view-result.component.scss']
 })
 export class LiveViewResultComponent {
-  @Input() results: LiveViewResultModel;
+  @Input() results: EntryParsingResultModel[];
   @Output() investigateParserAction = new EventEmitter<string>();
   parserByParserViewId = null;
 

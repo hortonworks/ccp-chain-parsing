@@ -1,3 +1,4 @@
+import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { CheckCircleOutline, CloseCircleOutline, WarningFill } from '@ant-design/icons-angular/icons';
@@ -10,13 +11,24 @@ import {
 
 import { ParserByParserComponent } from './parser-by-parser.component';
 
+@Component({
+  selector: 'app-stack-trace',
+  template: '',
+})
+class FakeStackTraceComponent {
+  @Input() stackTraceMsg = '';
+}
+
 describe('ParserByParserComponent', () => {
   let component: ParserByParserComponent;
   let fixture: ComponentFixture<ParserByParserComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ParserByParserComponent],
+      declarations: [
+        ParserByParserComponent,
+        FakeStackTraceComponent,
+      ],
       imports: [NzCardModule, NzTimelineModule, NzResultModule],
       providers: [
         {
@@ -47,7 +59,8 @@ describe('ParserByParserComponent', () => {
         log: {
           type: 'info',
           message: 'this is a message',
-          parserId: '1234'
+          parserId: '1234',
+          stackTrace: 'Fake Strack Trace Msg',
         }
       }
     ];
@@ -70,5 +83,27 @@ describe('ParserByParserComponent', () => {
     fixture.detectChanges();
 
     expect(emptyMessage.nativeElement.textContent).toContain(component.compileErrorMessage);
+  });
+
+  it('should bind stack trace msg to stack trace component', () => {
+    component.parserResults = [
+      {
+        input: { original_string: 'test sample' },
+        output: {},
+        log: {
+          type: 'info',
+          message: 'this is a message',
+          parserId: '1234',
+          stackTrace: 'Fake Strack Trace Msg',
+        }
+      }
+    ];
+    fixture.detectChanges();
+
+    const stackTraceComp = fixture.debugElement.query(
+      By.directive(FakeStackTraceComponent)
+      ).componentInstance;
+
+    expect(stackTraceComp.stackTraceMsg).toBe('Fake Strack Trace Msg');
   });
 });

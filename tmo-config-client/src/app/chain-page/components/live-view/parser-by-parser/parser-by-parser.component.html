@@ -37,7 +37,9 @@
         <div nz-row class="log">
           <div nz-col nzSpan="2" class="label">Log</div>
           <div nz-col nzSpan="22" class="message">{{ parser.log.message }}</div>
+          <app-stack-trace *ngIf="parser.log.stackTrace" [stackTraceMsg]="parser.log.stackTrace"></app-stack-trace>
         </div>
+
       </nz-card>
       <ng-template #dotTemplate>
         <i
