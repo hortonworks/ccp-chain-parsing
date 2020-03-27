@@ -1,27 +1,37 @@
 <div *ngIf='results'>
-  <nz-card *ngFor="let entry of results" [ngClass]="entry.log.type" [nzBodyStyle]="{ padding: 0 }">
-    <div nz-row class="input">
-      <div nz-col nzSpan="2" class="label">Input</div>
-      <div nz-col nzSpan="22">
-        <div nz-row *ngFor="let item of entry.input | keyvalue">
-          <div nz-col nzSpan="6" class="fieldName">{{ item.key }}:</div>
-          <div nz-col nzSpan="18">{{ item.value }}</div>
+  <div *ngFor="let entry of results; index as i">
+    <nz-card [ngClass]="entry.log.type" [nzBodyStyle]="{ padding: 0 }" *ngIf="parserByParserViewId === null">
+      <div nz-row class="input">
+        <div nz-col nzSpan="2" class="label">Input</div>
+        <div nz-col nzSpan="22">
+          <div nz-row *ngFor="let item of entry.input | keyvalue">
+            <div nz-col nzSpan="6" class="fieldName">{{ item.key }}:</div>
+            <div nz-col nzSpan="18">{{ item.value }}</div>
+          </div>
         </div>
       </div>
-    </div>
-    <div nz-row class="output">
-      <div nz-col nzSpan="2" class="label">Output</div>
-      <div nz-col nzSpan="22">
-        <div nz-row *ngFor="let item of entry.output | keyvalue">
-          <div nz-col nzSpan="6" class="fieldName">{{ item.key }}:</div>
-          <div nz-col nzSpan="18">{{ item.value }}</div>
+      <div nz-row class="output">
+        <div nz-col nzSpan="2" class="label">Output</div>
+        <div nz-col nzSpan="22">
+          <div nz-row *ngFor="let item of entry.output | keyvalue">
+            <div nz-col nzSpan="6" class="fieldName">{{ item.key }}:</div>
+            <div nz-col nzSpan="18">{{ item.value }}</div>
+          </div>
         </div>
       </div>
-    </div>
-    <div nz-row class="log">
-      <div nz-col nzSpan="2" class="label">Log</div>
-      <div nz-col nzSpan="22" class="message">{{ entry.log.message }}</div>
-      <button nz-button *ngIf="entry.log.type === 'error'" (click)="onInvestigateParserClicked(entry.log.parserId)">Click to see failed Parser</button>
-    </div>
-  </nz-card>
+      <div nz-row class="log">
+        <div nz-col nzSpan="2" class="label">Log</div>
+        <div nz-col nzSpan="22" class="message">{{ entry.log.message }}</div>
+        <button nz-button *ngIf="entry.log.type === 'error'" (click)="onInvestigateParserClicked(entry.log.parserId)">Click to see failed Parser</button>
+        <button nz-button *ngIf="entry.parserResults" (click)="enableParserByParserView(i)">Parser-by-Parser View</button>
+      </div>
+    </nz-card>
+    <button *ngIf="parserByParserViewId === i" nz-button nzType="link" (click)="parserByParserViewId = null" style="padding-left: 0; margin-bottom: 1rem;">
+      <i nz-icon nzType="left"></i>
+      Return to Message Results View
+    </button>
+    <app-parser-by-parser *ngIf="parserByParserViewId === i"
+                          [parserResults]="entry.parserResults"
+                          (investigateParser)="onInvestigateParserClicked($event)"></app-parser-by-parser>
+  </div>
 </div>
