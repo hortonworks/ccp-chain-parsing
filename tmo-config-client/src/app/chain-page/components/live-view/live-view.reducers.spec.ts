@@ -47,7 +47,11 @@ describe('live-view.reducers', () => {
       {
         input: 'input result',
         output: 'output result',
-        log: { type: '', message: 'log result'},
+        log: {
+          type: '',
+          message: 'log result',
+          stackTrace: 'Fake Strack Trace Msg',
+        },
       }
     ];
     const newState = reducer(initialState, liveViewRefreshedSuccessfully({ liveViewResult: {
@@ -62,7 +66,11 @@ describe('live-view.reducers', () => {
       {
         input: 'input result',
         output: 'output result',
-        log: { type: '', message: 'log result'},
+        log: {
+          type: '',
+          message: 'log result',
+          stackTrace: 'Fake Strack Trace Msg',
+        },
       }
     ];
 

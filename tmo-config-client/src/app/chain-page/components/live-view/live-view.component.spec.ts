@@ -18,7 +18,7 @@ import {
 import { LiveViewComponent } from './live-view.component';
 import { LiveViewConsts } from './live-view.consts';
 import { LiveViewState } from './live-view.reducers';
-import { LiveViewResultModel } from './models/live-view.model';
+import { EntryParsingResultModel } from './models/live-view.model';
 import { SampleDataModel, SampleDataType } from './models/sample-data.model';
 
 @Component({
@@ -34,7 +34,7 @@ class MockSampleDataFormComponent {
   template: ''
 })
 class MockLiveViewResultComponent {
-  @Input() results: LiveViewResultModel;
+  @Input() results: EntryParsingResultModel[];
 }
 
 describe('LiveViewComponent', () => {

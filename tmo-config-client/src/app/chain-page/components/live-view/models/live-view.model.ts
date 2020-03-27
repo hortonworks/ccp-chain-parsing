@@ -1,8 +1,4 @@
-import { SampleDataModel, SampleDataRequestModel } from './sample-data.model';
-
-export interface LiveViewResultModel {
-  results: EntryParsingResultModel[];
-}
+import { SampleDataRequestModel } from './sample-data.model';
 
 export interface EntryParsingResultModel {
   input: string;
@@ -11,6 +7,7 @@ export interface EntryParsingResultModel {
     type: string;
     message: string;
     parserId?: string;
+    stackTrace: string;
   };
   parserResults?: ParserResultsModel;
 }
@@ -22,13 +19,8 @@ export interface ParserResultsModel {
     type: string;
     message: string;
     parserId?: string;
+    stackTrace: string;
   };
-}
-
-export interface LiveViewModel {
-  sampleData: SampleDataModel;
-  chainConfig: {};
-  results?: EntryParsingResultModel[];
 }
 
 export interface LiveViewRequestModel {
