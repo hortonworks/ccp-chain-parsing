@@ -19,6 +19,7 @@ export interface ParserResultsModel {
     type: string;
     message: string;
     parserId?: string;
+    parserName?: string;
     stackTrace: string;
   };
 }
