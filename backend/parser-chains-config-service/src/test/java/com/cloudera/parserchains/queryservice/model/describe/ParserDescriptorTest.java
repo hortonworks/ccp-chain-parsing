@@ -32,7 +32,10 @@ public class ParserDescriptorTest {
      *     "description" : "The name of the input field.",
      *     "required" : true,
      *     "path" : "config",
-     *     "multiple" : false
+     *     "multiple" : false,
+     *     "defaultValue" : [ {
+     *       "outputField" : "original_string"
+     *     } ]
      *   } ]
      * }
      */
@@ -57,8 +60,8 @@ public class ParserDescriptorTest {
                         .setLabel("Input Field")
                         .setPath("config")
                         .setRequired(true)
-                        .setType("text"));
-
+                        .setType("text")
+                        .addDefaultValue("outputField", "original_string"));
         String actual = JSONUtils.INSTANCE.toJSON(schema, true);
         assertThat(actual, equalToCompressingWhiteSpace(expectedJSON));
     }

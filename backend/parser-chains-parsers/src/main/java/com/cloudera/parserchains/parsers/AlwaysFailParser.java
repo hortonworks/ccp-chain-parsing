@@ -25,11 +25,12 @@ import java.util.Optional;
     name="Error",
     description = "Always results in an error. Can be used with a router to flag unexpected data.")
 public class AlwaysFailParser implements Parser {
+    private static final String DEFAULT_ERROR_MESSAGE = "Parsing error encountered";
     private Throwable error;
     private Configurer configurer;
 
     public AlwaysFailParser() {
-        error = new IllegalStateException("Parsing error encountered");
+        error = new IllegalStateException(DEFAULT_ERROR_MESSAGE);
         configurer = new Configurer(this);
     }
 
@@ -74,6 +75,7 @@ public class AlwaysFailParser implements Parser {
                 .key("errorMessage")
                 .label("Message")
                 .description("The error message.")
+                .defaultValue(DEFAULT_ERROR_MESSAGE)
                 .build();
         static final ConfigDescriptor errorMessageConfig = ConfigDescriptor
                 .builder()

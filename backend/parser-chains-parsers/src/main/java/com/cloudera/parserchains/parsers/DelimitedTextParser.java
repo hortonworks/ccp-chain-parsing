@@ -29,6 +29,8 @@ import static java.lang.String.format;
     name="Delimited Text",
     description="Parses delimited text like CSV or TSV.")
 public class DelimitedTextParser implements Parser {
+    private static final Regex DEFAULT_DELIMITER = Regex.of(",");
+    private static final boolean DEFAULT_TRIM = true;
 
     /**
      * Defines an output field that is created by the parser.
@@ -52,8 +54,8 @@ public class DelimitedTextParser implements Parser {
     public DelimitedTextParser() {
         inputField = Constants.DEFAULT_INPUT_FIELD;
         outputFields = new ArrayList<>();
-        delimiter = Regex.of(",");
-        trimWhitespace = true;
+        delimiter = DEFAULT_DELIMITER;
+        trimWhitespace = DEFAULT_TRIM;
         configurer = new Configurer(this);
     }
 
@@ -159,6 +161,7 @@ public class DelimitedTextParser implements Parser {
                 .key("inputField")
                 .label("Input Field")
                 .description("The name of the input field to parse.")
+                .defaultValue(Constants.DEFAULT_INPUT_FIELD.get())
                 .build();
         static final ConfigDescriptor inputFieldConfig = ConfigDescriptor
                 .builder()
@@ -192,6 +195,7 @@ public class DelimitedTextParser implements Parser {
                 .key("delimiter")
                 .label("Delimiter")
                 .description("A regex delimiter used to split the text. Defaults to comma.")
+                .defaultValue(DEFAULT_DELIMITER.toString())
                 .build();
         static final ConfigDescriptor delimiterConfig = ConfigDescriptor
                 .builder()
@@ -204,6 +208,7 @@ public class DelimitedTextParser implements Parser {
                 .key("trim")
                 .label("Trim Whitespace")
                 .description("Trim whitespace from each value. Defaults to true.")
+                .defaultValue(Boolean.toString(DEFAULT_TRIM))
                 .build();
         static final ConfigDescriptor trimConfig = ConfigDescriptor
                 .builder()

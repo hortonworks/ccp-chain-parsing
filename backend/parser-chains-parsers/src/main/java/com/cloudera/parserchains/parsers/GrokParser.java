@@ -13,10 +13,12 @@ import io.krakens.grok.api.Grok;
 import io.krakens.grok.api.GrokCompiler;
 
 import java.time.ZoneOffset;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,6 +29,7 @@ import static java.lang.String.format;
         description = "Parses a message using Grok expressions."
 )
 public class GrokParser implements Parser {
+    private static final ZoneOffset DEFAULT_ZONE_OFFSET = ZoneOffset.UTC;
     private FieldName inputField;
     private ZoneOffset zoneOffset;
     private Configurer configurer;
@@ -35,7 +38,7 @@ public class GrokParser implements Parser {
 
     public GrokParser() {
         inputField = Constants.DEFAULT_INPUT_FIELD;
-        zoneOffset = ZoneOffset.UTC;
+        zoneOffset = DEFAULT_ZONE_OFFSET;
         configurer = new Configurer(this);
         grokCompiler = GrokCompiler.newInstance();
         grokCompiler.registerDefaultPatterns();
@@ -113,6 +116,7 @@ public class GrokParser implements Parser {
                 .key("inputField")
                 .label("Input Field")
                 .description("The name of the input field to parse.")
+                .defaultValue(Constants.DEFAULT_INPUT_FIELD.get())
                 .build();
         static final ConfigDescriptor inputFieldConfig = ConfigDescriptor
                 .builder()
@@ -139,6 +143,7 @@ public class GrokParser implements Parser {
                 .key("zoneOffset")
                 .label("Zone Offset")
                 .description("Set the zone offset. For example \"+02:00\".")
+                .defaultValue(DEFAULT_ZONE_OFFSET.getDisplayName(TextStyle.FULL, Locale.getDefault()))
                 .build();
         static final ConfigDescriptor zoneOffsetConfig = ConfigDescriptor
                 .builder()

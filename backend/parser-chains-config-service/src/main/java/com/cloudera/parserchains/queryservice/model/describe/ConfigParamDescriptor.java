@@ -18,6 +18,10 @@
 
 package com.cloudera.parserchains.queryservice.model.describe;
 
+import com.cloudera.parserchains.core.model.define.ConfigValueSchema;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -68,6 +72,11 @@ public class ConfigParamDescriptor {
    * Should the user be allowed to enter multiple values for this parameter?
    */
   private boolean multiple = false;
+
+  /**
+   * The default value used if none other is provided.
+   */
+  private List<ConfigValueSchema> defaultValue;
 
   public String getName() {
     return name;
@@ -132,6 +141,16 @@ public class ConfigParamDescriptor {
     return this;
   }
 
+  public List<ConfigValueSchema> getDefaultValue() {
+    return defaultValue;
+  }
+
+  public ConfigParamDescriptor addDefaultValue(String name, String value) {
+    // the front-end requires a list of values. the list will only ever contain a single, default value
+    this.defaultValue = Arrays.asList(new ConfigValueSchema().addValue(name, value));
+    return this;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -141,18 +160,19 @@ public class ConfigParamDescriptor {
       return false;
     }
     ConfigParamDescriptor that = (ConfigParamDescriptor) o;
-    return multiple == that.multiple &&
+    return required == that.required &&
+            multiple == that.multiple &&
             Objects.equals(name, that.name) &&
             Objects.equals(type, that.type) &&
             Objects.equals(label, that.label) &&
             Objects.equals(description, that.description) &&
-            Objects.equals(required, that.required) &&
-            Objects.equals(path, that.path);
+            Objects.equals(path, that.path) &&
+            Objects.equals(defaultValue, that.defaultValue);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, type, label, description, required, path, multiple);
+    return Objects.hash(name, type, label, description, required, path, multiple, defaultValue);
   }
 
   @Override
@@ -162,9 +182,10 @@ public class ConfigParamDescriptor {
             ", type='" + type + '\'' +
             ", label='" + label + '\'' +
             ", description='" + description + '\'' +
-            ", required='" + required + '\'' +
+            ", required=" + required +
             ", path='" + path + '\'' +
             ", multiple=" + multiple +
+            ", defaultValue='" + defaultValue + '\'' +
             '}';
   }
 }

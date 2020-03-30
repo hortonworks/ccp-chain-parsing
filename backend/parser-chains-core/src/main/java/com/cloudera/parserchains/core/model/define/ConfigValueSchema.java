@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Describes the configuration values defined by the user when building a parser chain.
@@ -24,6 +25,8 @@ public class ConfigValueSchema {
 
     @JsonAnySetter
     public ConfigValueSchema addValue(String key, String value) {
+        Objects.requireNonNull(key, "The key must be defined.");
+        Objects.requireNonNull(value, "The value must be defined.");
         this.values.put(key, value);
         return this;
     }

@@ -97,7 +97,10 @@ public class DefaultParserDiscoveryServiceTest {
    *     "description" : "The name of the input field to parse.",
    *     "required" : true,
    *     "path" : "config.inputField",
-   *     "multiple" : true
+   *     "multiple" : true,
+   *     "defaultValue" : [ {
+   *       "inputField" : "original_string"
+   *     } ]
    *   }, {
    *     "name" : "fieldIndex",
    *     "type" : "text",
@@ -121,7 +124,10 @@ public class DefaultParserDiscoveryServiceTest {
    *     "description" : "A regex delimiter used to split the text. Defaults to comma.",
    *     "required" : false,
    *     "path" : "config.delimiter",
-   *     "multiple" : true
+   *     "multiple" : true,
+   *     "defaultValue" : [ {
+   *       "delimiter" : ","
+   *     } ]
    *   }, {
    *     "name" : "trim",
    *     "type" : "text",
@@ -129,7 +135,10 @@ public class DefaultParserDiscoveryServiceTest {
    *     "description" : "Trim whitespace from each value. Defaults to true.",
    *     "required" : false,
    *     "path" : "config.trim",
-   *     "multiple" : true
+   *     "multiple" : true,
+   *     "defaultValue" : [ {
+   *       "trim" : "true"
+   *     } ]
    *   } ]
    * }
    */
@@ -140,11 +149,9 @@ public class DefaultParserDiscoveryServiceTest {
   void describe() throws IOException {
     ParserID parserId = ParserID.of(DelimitedTextParser.class);
     ParserDescriptor schema = service.describe(parserId);
-
     String actual = JSONUtils.INSTANCE.toJSON(schema, true);
     assertThat(actual, equalToCompressingWhiteSpace(describeExpected));
   }
-
 
   /**
    * {
@@ -171,7 +178,10 @@ public class DefaultParserDiscoveryServiceTest {
    *       "description" : "The name of the input field to parse.",
    *       "required" : true,
    *       "path" : "config.inputField",
-   *       "multiple" : true
+   *       "multiple" : true,
+   *       "defaultValue" : [ {
+   *         "inputField" : "original_string"
+   *       } ]
    *     }, {
    *       "name" : "fieldIndex",
    *       "type" : "text",
@@ -195,7 +205,10 @@ public class DefaultParserDiscoveryServiceTest {
    *       "description" : "A regex delimiter used to split the text. Defaults to comma.",
    *       "required" : false,
    *       "path" : "config.delimiter",
-   *       "multiple" : true
+   *       "multiple" : true,
+   *       "defaultValue" : [ {
+   *         "delimiter" : ","
+   *       } ]
    *     }, {
    *       "name" : "trim",
    *       "type" : "text",
@@ -203,7 +216,10 @@ public class DefaultParserDiscoveryServiceTest {
    *       "description" : "Trim whitespace from each value. Defaults to true.",
    *       "required" : false,
    *       "path" : "config.trim",
-   *       "multiple" : true
+   *       "multiple" : true,
+   *       "defaultValue" : [ {
+   *         "trim" : "true"
+   *       } ]
    *     } ]
    *   }
    * }
@@ -214,7 +230,6 @@ public class DefaultParserDiscoveryServiceTest {
   @Test
   void describeAll() throws IOException {
     Map<ParserID, ParserDescriptor> schema = service.describeAll();
-
     String actual = JSONUtils.INSTANCE.toJSON(schema, true);
     assertThat(actual, equalToCompressingWhiteSpace(describeAllExpected));
   }

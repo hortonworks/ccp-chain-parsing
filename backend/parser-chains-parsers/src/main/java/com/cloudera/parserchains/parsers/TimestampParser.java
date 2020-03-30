@@ -92,6 +92,7 @@ public class TimestampParser implements Parser {
                 .key("outputField")
                 .label("Output Field")
                 .description("The name of the field that will contain the timestamp.  Defaults to 'timestamp'.")
+                .defaultValue(DEFAULT_OUTPUT_FIELD.get())
                 .build();
         static final ConfigDescriptor outputFieldConfig = ConfigDescriptor.builder()
                 .name("outputField")

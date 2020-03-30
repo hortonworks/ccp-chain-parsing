@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A {@link ConfigName} is associated with one or more key/value pairs representing
@@ -37,23 +38,26 @@ public class ConfigKey {
      */
     private final ConfigDescription description;
 
+    /**
+     * The default value that is used if none other is provided.
+     */
+    private final Optional<String> defaultValue;
+
     public static Builder builder() {
         return new Builder();
     }
 
     /**
      * Private constructor.  See {@link #builder()}.
-     * @param key A unique key used to identify the configuration element.
-     * @param label A brief label that can be shown to the user.
-     * @param description A description of the configuration element.
      */
-    private ConfigKey(String key, String label, ConfigDescription description) {
-        if(!isValidRegex.matches(key)) {
-            throw new IllegalArgumentException(String.format("Invalid config key: '%s'", key));
+    private ConfigKey(Builder builder) {
+        if(!isValidRegex.matches(builder.key)) {
+            throw new IllegalArgumentException(String.format("Invalid config key: '%s'", builder.key));
         }
-        this.key = key;
-        this.label = label;
-        this.description = description;
+        this.key = builder.key;
+        this.label = builder.label;
+        this.description = builder.description;
+        this.defaultValue = builder.defaultValue;
     }
 
     public String getKey() {
@@ -66,6 +70,10 @@ public class ConfigKey {
 
     public ConfigDescription getDescription() {
         return description;
+    }
+
+    public Optional<String> getDefaultValue() {
+        return defaultValue;
     }
 
     @Override
@@ -100,6 +108,11 @@ public class ConfigKey {
         private String key;
         private String label;
         private ConfigDescription description;
+        private Optional<String> defaultValue;
+
+        public Builder() {
+            defaultValue = Optional.empty();
+        }
 
         /**
          * @param key A unique key used to identify the configuration element.
@@ -127,8 +140,13 @@ public class ConfigKey {
             return this;
         }
 
+        public Builder defaultValue(String defaultValue) {
+            this.defaultValue = Optional.of(defaultValue);
+            return this;
+        }
+
         public ConfigKey build() {
-            return new ConfigKey(key, label, description);
+            return new ConfigKey(this);
         }
     }
 }

@@ -117,6 +117,11 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
                 .setRequired(param.isRequired())
                 .setType(DEFAULT_SCHEMA_TYPE)
                 .setMultiple(multiple);
+
+        // set a default value, if one exists for this parameter
+        configKey.getDefaultValue().ifPresent(defaultVal ->
+                paramDescriptor.addDefaultValue(configKey.getKey(), defaultVal));
+
         descriptor.addConfiguration(paramDescriptor);
       }
     }

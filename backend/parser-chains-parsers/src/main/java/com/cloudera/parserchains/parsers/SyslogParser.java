@@ -25,6 +25,7 @@ import static java.lang.String.format;
     name="Syslog",
     description="Parses Syslog according to RFC 3164 and 5424.")
 public class SyslogParser implements Parser {
+    private static final SyslogSpecification DEFAULT_SYSLOG_SPEC = SyslogSpecification.RFC_5424;
     private FieldName inputField;
     private SyslogSpecification specification;
     private Configurer configurer;
@@ -32,7 +33,7 @@ public class SyslogParser implements Parser {
     public SyslogParser() {
         inputField = Constants.DEFAULT_INPUT_FIELD;
         configurer = new Configurer(this);
-        specification = SyslogSpecification.RFC_5424;
+        specification = DEFAULT_SYSLOG_SPEC;
     }
 
     public SyslogParser withSpecification(SyslogSpecification specification) {
@@ -100,6 +101,7 @@ public class SyslogParser implements Parser {
                 .key("inputField")
                 .label("Input Field")
                 .description("The name of the input field to parse.")
+                .defaultValue(Constants.DEFAULT_INPUT_FIELD.get())
                 .build();
         static final ConfigDescriptor inputFieldConfig = ConfigDescriptor
                 .builder()
@@ -113,7 +115,8 @@ public class SyslogParser implements Parser {
         static final ConfigKey specKey = ConfigKey.builder()
                 .key("specification")
                 .label("Specification")
-                .description("The Syslog specification; 'RFC_5424' or 'RFC_3164'. Defaults to 'RFC_5424'")
+                .description("The Syslog specification; 'RFC_5424' or 'RFC_3164'")
+                .defaultValue(DEFAULT_SYSLOG_SPEC.toString())
                 .build();
         static final ConfigDescriptor specConfig = ConfigDescriptor
                 .builder()
