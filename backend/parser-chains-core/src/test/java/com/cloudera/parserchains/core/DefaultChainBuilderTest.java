@@ -1,22 +1,23 @@
 package com.cloudera.parserchains.core;
 
-import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
-import com.cloudera.parserchains.core.model.define.InvalidParserException;
-import com.cloudera.parserchains.core.model.define.ParserChainSchema;
-import com.cloudera.parserchains.core.utils.JSONUtils;
-import org.adrianwalker.multilinestring.Multiline;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
+import com.cloudera.parserchains.core.model.define.InvalidParserException;
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.model.define.ParserName;
+import com.cloudera.parserchains.core.utils.JSONUtils;
+import java.io.IOException;
+import java.util.List;
+import org.adrianwalker.multilinestring.Multiline;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 public class DefaultChainBuilderTest {
+    static ParserName parserName = ParserName.of("Some Test Parser");
     private DefaultChainBuilder chainBuilder;
 
     @BeforeEach
@@ -56,7 +57,7 @@ public class DefaultChainBuilderTest {
     @Test
     void success() throws InvalidParserException, IOException {
         Message input = Message.builder()
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .addField(FieldName.of("original_string"), FieldValue.of("Homer Simpson, 740 Evergreen Terrace, (939)-555-0113"))
                 .build();
         ParserChainSchema schema = JSONUtils.INSTANCE.load(parserChain, ParserChainSchema.class);
@@ -67,11 +68,11 @@ public class DefaultChainBuilderTest {
         assertThat("Expected 2 results; 1 from each parser in the chain.",
                 results.size(), is(2));
         assertThat("Expected the message to have been labelled.",
-                results.get(0).getCreatedBy().get(), is("8673f8f4-a308-4689-822c-0b01477ef378"));
+                results.get(0).getCreatedBy().getLinkName(), is("8673f8f4-a308-4689-822c-0b01477ef378"));
         assertThat("Expected the original field to remain.",
                 results.get(0).getFields().keySet(), hasItem(FieldName.of("original_string")));
         assertThat("Expected the message to have been labelled correctly.",
-                results.get(1).getCreatedBy().get(), is("3b31e549-340f-47ce-8a71-d702685137f4"));
+                results.get(1).getCreatedBy().getLinkName(), is("3b31e549-340f-47ce-8a71-d702685137f4"));
         assertThat("Expected the original field to remain.",
                 results.get(1).getFields().keySet(), hasItem(FieldName.of("original_string")));
     }
@@ -174,7 +175,7 @@ public class DefaultChainBuilderTest {
     @Test
     void parserAfterRouter() throws IOException, InvalidParserException {
         Message input = Message.builder()
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .addField(FieldName.of("original_string"), FieldValue.of("Homer Simpson, 740 Evergreen Terrace, (939)-555-0113"))
                 .build();
         ParserChainSchema schema = JSONUtils.INSTANCE.load(parserAfterRouter, ParserChainSchema.class);
@@ -185,11 +186,11 @@ public class DefaultChainBuilderTest {
         assertThat("Expected 2 results; 1 from each parser in the chain.",
                 results.size(), is(2));
         assertThat("Expected the message to have gone through the default route.",
-                results.get(0).getCreatedBy().get(), is("bdf7d8be-50b1-4998-8b3f-f525d1e95931"));
+                results.get(0).getCreatedBy().getLinkName(), is("bdf7d8be-50b1-4998-8b3f-f525d1e95931"));
         assertThat("Expected the original field to remain.",
                 results.get(0).getFields().keySet(), hasItem(FieldName.of("original_string")));
         assertThat("Expected the message to have been labelled correctly.",
-                results.get(1).getCreatedBy().get(), is("26bf648f-930e-44bf-a4de-bfd34ac16165"));
+                results.get(1).getCreatedBy().getLinkName(), is("26bf648f-930e-44bf-a4de-bfd34ac16165"));
         assertThat("Expected the original field to remain.",
                 results.get(1).getFields().keySet(), hasItem(FieldName.of("original_string")));
     }

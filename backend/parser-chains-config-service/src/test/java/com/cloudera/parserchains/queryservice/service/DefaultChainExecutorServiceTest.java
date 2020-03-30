@@ -1,22 +1,5 @@
 package com.cloudera.parserchains.queryservice.service;
 
-import com.cloudera.parserchains.core.ChainBuilder;
-import com.cloudera.parserchains.core.ChainLink;
-import com.cloudera.parserchains.core.DefaultChainBuilder;
-import com.cloudera.parserchains.core.DefaultChainRunner;
-import com.cloudera.parserchains.core.ReflectiveParserBuilder;
-import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
-import com.cloudera.parserchains.core.model.define.InvalidParserException;
-import com.cloudera.parserchains.core.model.define.ParserChainSchema;
-import com.cloudera.parserchains.core.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
-import org.adrianwalker.multilinestring.Multiline;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.Map;
-
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.DEFAULT_SUCCESS_MESSAGE;
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.ERROR_TYPE;
 import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.INFO_TYPE;
@@ -28,6 +11,22 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
+
+import com.cloudera.parserchains.core.ChainBuilder;
+import com.cloudera.parserchains.core.ChainLink;
+import com.cloudera.parserchains.core.DefaultChainBuilder;
+import com.cloudera.parserchains.core.DefaultChainRunner;
+import com.cloudera.parserchains.core.ReflectiveParserBuilder;
+import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
+import com.cloudera.parserchains.core.model.define.InvalidParserException;
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.utils.JSONUtils;
+import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
+import java.util.Map;
+import org.adrianwalker.multilinestring.Multiline;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DefaultChainExecutorServiceTest {
     private DefaultChainExecutorService service;
@@ -88,7 +87,8 @@ public class DefaultChainExecutorServiceTest {
      *   "log" : {
      *     "type" : "info",
      *     "message" : "success",
-     *     "parserId" : "3b31e549-340f-47ce-8a71-d702685137f4"
+     *     "parserId" : "3b31e549-340f-47ce-8a71-d702685137f4",
+     *     "parserName" : "Delimited Text"
      *   },
      *   "parserResults" : [ {
      *     "input" : {
@@ -103,7 +103,8 @@ public class DefaultChainExecutorServiceTest {
      *     "log" : {
      *       "type" : "info",
      *       "message" : "success",
-     *       "parserId" : "3b31e549-340f-47ce-8a71-d702685137f4"
+     *       "parserId" : "3b31e549-340f-47ce-8a71-d702685137f4",
+     *       "parserName" : "Delimited Text"
      *     }
      *   } ]
      * }
@@ -151,6 +152,7 @@ public class DefaultChainExecutorServiceTest {
         assertThat(actual, hasJsonPath("$.log.type", equalTo("error")));
         assertThat(actual, hasJsonPath("$.log.message", equalTo("Found 1 column(s), index 2 does not exist.")));
         assertThat(actual, hasJsonPath("$.log.parserId", equalTo("3b31e549-340f-47ce-8a71-d702685137f4")));
+        assertThat(actual, hasJsonPath("$.log.parserName", equalTo("Delimited Text")));
         assertThat(actual, hasJsonPath("$.log.stackTrace", startsWith("java.lang.IllegalStateException")));
         assertThat(actual, hasJsonPath("$.parserResults[*]", hasSize(1)));
         assertThat(actual, hasJsonPath("$.parserResults[0].input"));
@@ -162,6 +164,7 @@ public class DefaultChainExecutorServiceTest {
         assertThat(actual, hasJsonPath("$.parserResults[0].log.type", equalTo("error")));
         assertThat(actual, hasJsonPath("$.parserResults[0].log.message", equalTo("Found 1 column(s), index 2 does not exist.")));
         assertThat(actual, hasJsonPath("$.parserResults[0].log.parserId", equalTo("3b31e549-340f-47ce-8a71-d702685137f4")));
+        assertThat(actual, hasJsonPath("$.parserResults[0].log.parserName", equalTo("Delimited Text")));
         assertThat(actual, hasJsonPath("$.parserResults[0].log.stackTrace", startsWith("java.lang.IllegalStateException")));
     }
 
@@ -304,9 +307,11 @@ public class DefaultChainExecutorServiceTest {
                 result.getLog().getMessage(), is(DEFAULT_SUCCESS_MESSAGE));
         assertThat("Expected the parserId to be set to the last parser in the chain.",
                 result.getLog().getParserId(), is("123e4567-e89b-12d3-a456-556642440000"));
+        assertThat("Expected the parserName to be set to the last parser in the chain.",
+                result.getLog().getParserName(), is("Timestamp"));
     }
 
-    private void expectField(Map<String, String> fields, String fieldName, String expectedValue) {
+  private void expectField(Map<String, String> fields, String fieldName, String expectedValue) {
         assertThat(String.format("Expected a field that does not exist; %s=%s", fieldName, expectedValue),
                 fields.get(fieldName), is(expectedValue));
     }

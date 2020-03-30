@@ -1,12 +1,5 @@
 package com.cloudera.parserchains.core;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
 import static com.cloudera.parserchains.core.ChainLinkTestUtilities.makeEchoParser;
 import static com.cloudera.parserchains.core.ChainLinkTestUtilities.makeErrorParser;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -17,14 +10,22 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import com.cloudera.parserchains.core.model.define.ParserName;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 @ExtendWith(MockitoExtension.class)
 public class NextChainLinkTest {
     @Mock Parser parser1, parser2;
-    static LinkName linkName1 = LinkName.of("parser1");
-    static LinkName linkName2 = LinkName.of("parser2");
+    static ParserName parserName = ParserName.of("Some Test Parser");
+    static LinkName linkName1 = LinkName.of("parser1", parserName);
+    static LinkName linkName2 = LinkName.of("parser2", parserName);
     static Message message = Message
             .builder()
-            .createdBy(LinkName.of("original"))
+            .createdBy(LinkName.of("original", parserName))
             .build();
 
     @Test
@@ -89,7 +90,7 @@ public class NextChainLinkTest {
     void parserReturnsNull() {
         Message input = Message.builder()
                 .addField(FieldName.of("tag"), FieldValue.of("route1"))
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .build();
         RouterLink routerLink = new RouterLink()
                 .withInputField(FieldName.of("tag"))

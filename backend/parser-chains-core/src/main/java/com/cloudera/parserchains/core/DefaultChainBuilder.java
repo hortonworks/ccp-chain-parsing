@@ -70,7 +70,7 @@ public class DefaultChainBuilder implements ChainBuilder {
     private NextChainLink buildLink(ParserSchema parserSchema, List<ParserInfo> parserInfos)
             throws InvalidParserException {
         try {
-            LinkName linkName = LinkName.of(parserSchema.getLabel());
+            LinkName linkName = LinkName.of(parserSchema.getLabel(), parserSchema.getName());
             Parser parser = buildParser(parserSchema, parserInfos);
             return new NextChainLink(parser, linkName);
 

@@ -1,20 +1,19 @@
 package com.cloudera.parserchains.queryservice.service;
 
+import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.error;
+import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.success;
+
 import com.cloudera.parserchains.core.ChainLink;
 import com.cloudera.parserchains.core.ChainRunner;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;
 import com.cloudera.parserchains.queryservice.model.exec.ResultLog;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.error;
-import static com.cloudera.parserchains.queryservice.service.ResultLogBuilder.success;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DefaultChainExecutorService implements ChainExecutorService {
@@ -76,14 +75,17 @@ public class DefaultChainExecutorService implements ChainExecutorService {
     }
 
     private ResultLog buildResultLog(Message output) {
-        String parserId = output.getCreatedBy().get();
+        String parserId = output.getCreatedBy().getLinkName();
+        String parserName = output.getCreatedBy().getParserName().getName();
         return output.getError()
                     .map(e -> error()
                             .parserId(parserId)
+                            .parserName(parserName)
                             .exception(e)
                             .build())
                     .orElseGet(() -> success()
                             .parserId(parserId)
+                            .parserName(parserName)
                             .build());
     }
 
@@ -140,7 +142,8 @@ public class DefaultChainExecutorService implements ChainExecutorService {
         // there are no output fields
         // define the log section
         ResultLog log = ResultLogBuilder.error()
-                .parserId(original.getCreatedBy().get())
+                .parserId(original.getCreatedBy().getLinkName())
+                .parserName(original.getCreatedBy().getParserName().getName())
                 .exception(t)
                 .build();
         return result.setLog(log);
@@ -167,7 +170,8 @@ public class DefaultChainExecutorService implements ChainExecutorService {
         // there are no output fields
         // define the log section
         ResultLog log = ResultLogBuilder.success()
-                .parserId(original.getCreatedBy().get())
+                .parserId(original.getCreatedBy().getLinkName())
+                .parserName(original.getCreatedBy().getParserName().getName())
                 .message("No parser chain defined.")
                 .build();
         return result.setLog(log);

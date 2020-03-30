@@ -1,23 +1,25 @@
 package com.cloudera.parserchains.queryservice.service;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+
 import com.cloudera.parserchains.core.model.define.InvalidParserException;
 import com.cloudera.parserchains.core.model.define.ParserSchema;
 import com.cloudera.parserchains.queryservice.model.exec.ResultLog;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-
 public class ResultLogBuilderTest {
 
     final static String parserId = "11c691cc-a141-43a0-b486-cb0e33bba820";
+    final static String parserName = "Some Test Parser";
     final static String errorMessage = "This is the error to show to the user.";
 
     @Test
     void success() {
         ResultLog result = ResultLogBuilder.success()
                 .parserId(parserId)
+                .parserName(parserName)
                 .build();
         assertThat(result.getMessage(), is(ResultLogBuilder.DEFAULT_SUCCESS_MESSAGE));
         assertThat(result.getParserId(), is(parserId));

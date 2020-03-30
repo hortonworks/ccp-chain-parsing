@@ -1,5 +1,10 @@
 package com.cloudera.parserchains.queryservice.service;
 
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.cloudera.parserchains.core.ChainBuilder;
 import com.cloudera.parserchains.core.ChainLink;
 import com.cloudera.parserchains.core.DefaultChainBuilder;
@@ -11,20 +16,16 @@ import com.cloudera.parserchains.core.ReflectiveParserBuilder;
 import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
 import com.cloudera.parserchains.core.model.define.InvalidParserException;
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.model.define.ParserName;
 import com.cloudera.parserchains.core.utils.JSONUtils;
+import java.io.IOException;
+import java.util.List;
 import org.adrianwalker.multilinestring.Multiline;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class DefaultChainBuilderServiceTest {
+    static ParserName parserName = ParserName.of("Some Test Parser");
     private DefaultChainBuilderService service;
 
     @BeforeEach
@@ -78,7 +79,7 @@ public class DefaultChainBuilderServiceTest {
 
         // validate
         Message input = Message.builder()
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .addField(FieldName.of("original_string"), FieldValue.of("Homer Simpson, 740 Evergreen Terrace, (939)-555-0113"))
                 .build();
         List<Message> results = head.process(input);
@@ -86,11 +87,11 @@ public class DefaultChainBuilderServiceTest {
         assertThat("Expected 2 results; 1 from each parser in the chain.",
                 results.size(), is(2));
         assertThat("Expected the message to have been labelled.",
-                results.get(0).getCreatedBy().get(), is("8673f8f4-a308-4689-822c-0b01477ef378"));
+                results.get(0).getCreatedBy().getLinkName(), is("8673f8f4-a308-4689-822c-0b01477ef378"));
         assertThat("Expected the timestamp to have been added.",
                 results.get(0).getFields().keySet(), hasItem(FieldName.of("processing_time")));
         assertThat("Expected the message to have been labelled correctly.",
-                results.get(1).getCreatedBy().get(), is("3b31e549-340f-47ce-8a71-d702685137f4"));
+                results.get(1).getCreatedBy().getLinkName(), is("3b31e549-340f-47ce-8a71-d702685137f4"));
         assertThat("Expected the name field to have been added.",
                 results.get(1).getFields().keySet(), hasItem(FieldName.of("name")));
         assertThat("Expected the address field to have been added.",

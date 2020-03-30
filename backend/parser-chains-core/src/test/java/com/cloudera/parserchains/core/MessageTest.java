@@ -1,14 +1,15 @@
 package com.cloudera.parserchains.core;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import com.cloudera.parserchains.core.model.define.ParserName;
+import java.util.Arrays;
+import org.junit.jupiter.api.Test;
+
 public class MessageTest {
-    static LinkName createdBy = LinkName.of("parser22");
+    static ParserName parserName = ParserName.of("Some Test Parser");
+    static LinkName createdBy = LinkName.of("parser22", parserName);
 
     @Test
     void addField() {
@@ -178,7 +179,7 @@ public class MessageTest {
 
     @Test
     void createdBy() {
-        LinkName expectedName = LinkName.of("parser22");
+        LinkName expectedName = LinkName.of("parser22", parserName);
         Message message = Message.builder()
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
                 .createdBy(expectedName)

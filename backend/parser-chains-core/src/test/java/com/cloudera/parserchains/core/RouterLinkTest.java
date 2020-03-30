@@ -1,15 +1,5 @@
 package com.cloudera.parserchains.core;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-
-import java.util.List;
-
 import static com.cloudera.parserchains.core.ChainLinkTestUtilities.makeEchoParser;
 import static com.cloudera.parserchains.core.ChainLinkTestUtilities.makeErrorParser;
 import static com.cloudera.parserchains.core.ChainLinkTestUtilities.makeParser;
@@ -20,17 +10,34 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.cloudera.parserchains.core.model.define.ParserName;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class RouterLinkTest {
+    private ParserName parserName;
     @Mock Parser parser1, parser2, parser3;
     @Mock LinkName linkName1, linkName2, linkName3;
+
+    @BeforeEach
+    public void setup() {
+        parserName = ParserName.of("Some Test Parser");
+    }
 
     @Test
     void route() {
         Message input = Message.builder()
                 .addField(FieldName.of("tag"), FieldValue.of("route1"))
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .build();
         ChainLink route1 = new NextChainLink(makeParser(parser1, "route", "route1"), linkName1);
         ChainLink route2 = new NextChainLink(makeParser(parser2, "route", "route2"), linkName2);
@@ -56,7 +63,7 @@ public class RouterLinkTest {
     void noRoute() {
         Message input = Message.builder()
                 .addField(FieldName.of("tag"), FieldValue.of("no_match"))
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .build();
         ChainLink route1 = new NextChainLink(parser1, linkName1);
         ChainLink route2 = new NextChainLink(parser2, linkName2);
@@ -78,7 +85,7 @@ public class RouterLinkTest {
     void routeWithNextLink() {
         Message input = Message.builder()
                 .addField(FieldName.of("tag"), FieldValue.of("route1"))
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .build();
         ChainLink route1 = new NextChainLink(makeParser(parser1, "route1", "route1"), linkName1);
         ChainLink route2 = new NextChainLink(makeParser(parser2, "route2", "route2"), linkName2);
@@ -116,7 +123,7 @@ public class RouterLinkTest {
     void noRouteWithNextLink() {
         Message input = Message.builder()
                 .addField(FieldName.of("tag"), FieldValue.of("route1"))
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .build();
         ChainLink route1 = new NextChainLink(makeEchoParser(parser1), linkName1);
         ChainLink route2 = new NextChainLink(makeEchoParser(parser2), linkName2);
@@ -145,7 +152,7 @@ public class RouterLinkTest {
     void errorRouteWithNextLink() {
         Message input = Message.builder()
                 .addField(FieldName.of("tag"), FieldValue.of("route1"))
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .build();
         ChainLink route1 = new NextChainLink(makeErrorParser(parser1), linkName1);
         RouterLink routerLink = new RouterLink()
@@ -165,7 +172,7 @@ public class RouterLinkTest {
     void defaultRoute() {
         Message input = Message.builder()
                 .addField(FieldName.of("tag"), FieldValue.of("use_default"))
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .build();
         ChainLink route1 = new NextChainLink(makeEchoParser(parser1), linkName1);
         ChainLink route2 = new NextChainLink(makeEchoParser(parser2), linkName2);
@@ -192,7 +199,7 @@ public class RouterLinkTest {
     void undefinedRoutingField() {
         Message input = Message.builder()
                 .addField(FieldName.of("tag"), FieldValue.of("use_default"))
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .build();
         ChainLink route1 = new NextChainLink(makeEchoParser(parser1), linkName1);
         ChainLink route2 = new NextChainLink(makeEchoParser(parser2), linkName2);
@@ -215,7 +222,7 @@ public class RouterLinkTest {
         ChainLink route1 = new NextChainLink(parser1, linkName1);
         Message input = Message.builder()
                 .addField(FieldName.of("tag"), FieldValue.of("route1"))
-                .createdBy(LinkName.of("original"))
+                .createdBy(LinkName.of("original", parserName))
                 .build();
         RouterLink routerLink = new RouterLink()
                 .withInputField(FieldName.of("tag"))

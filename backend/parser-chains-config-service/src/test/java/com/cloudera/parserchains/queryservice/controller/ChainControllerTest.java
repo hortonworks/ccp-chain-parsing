@@ -1,31 +1,5 @@
 package com.cloudera.parserchains.queryservice.controller;
 
-import com.cloudera.parserchains.core.model.define.ParserChainSchema;
-import com.cloudera.parserchains.core.utils.JSONUtils;
-import com.cloudera.parserchains.queryservice.model.exec.ChainTestRequest;
-import com.cloudera.parserchains.queryservice.model.exec.ChainTestResponse;
-import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
-import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
-import org.adrianwalker.multilinestring.Multiline;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.lang.reflect.Method;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.IntStream;
-
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_CREATE_URL;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_DELETE_URL;
 import static com.cloudera.parserchains.queryservice.common.ApplicationConstants.API_CHAINS_READ_URL;
@@ -43,6 +17,31 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.cloudera.parserchains.core.model.define.ParserChainSchema;
+import com.cloudera.parserchains.core.utils.JSONUtils;
+import com.cloudera.parserchains.queryservice.model.exec.ChainTestRequest;
+import com.cloudera.parserchains.queryservice.model.exec.ChainTestResponse;
+import com.cloudera.parserchains.queryservice.model.summary.ParserChainSummary;
+import com.cloudera.parserchains.queryservice.service.ChainPersistenceService;
+import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.IntStream;
+import org.adrianwalker.multilinestring.Multiline;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -262,7 +261,8 @@ public class ChainControllerTest {
      *          "log":{
      *             "type":"info",
      *             "message":"success",
-     *             "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *             "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82",
+     *             "parserName":"Rename Field"
      *          },
      *          "parserResults":[
      *             {
@@ -275,7 +275,8 @@ public class ChainControllerTest {
      *                "log":{
      *                   "type":"info",
      *                   "message":"success",
-     *                   "parserId":"61e99275-e076-46b6-aaed-8acce58cc0e4"
+     *                   "parserId":"61e99275-e076-46b6-aaed-8acce58cc0e4",
+     *                   "parserName":"Rename Field"
      *                }
      *             },
      *             {
@@ -288,7 +289,8 @@ public class ChainControllerTest {
      *                "log":{
      *                   "type":"info",
      *                   "message":"success",
-     *                   "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *                   "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82",
+     *                   "parserName":"Rename Field"
      *                }
      *             }
      *          ]
@@ -373,7 +375,8 @@ public class ChainControllerTest {
      *          "log":{
      *             "type":"info",
      *             "message":"success",
-     *             "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *             "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82",
+     *             "parserName":"Rename Field"
      *          },
      *          "parserResults":[
      *             {
@@ -386,7 +389,8 @@ public class ChainControllerTest {
      *                "log":{
      *                   "type":"info",
      *                   "message":"success",
-     *                   "parserId":"61e99275-e076-46b6-aaed-8acce58cc0e4"
+     *                   "parserId":"61e99275-e076-46b6-aaed-8acce58cc0e4",
+     *                   "parserName":"Rename Field"
      *                }
      *             },
      *             {
@@ -399,7 +403,8 @@ public class ChainControllerTest {
      *                "log":{
      *                   "type":"info",
      *                   "message":"success",
-     *                   "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *                   "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82",
+     *                   "parserName":"Rename Field"
      *                }
      *             }
      *          ]
@@ -414,7 +419,8 @@ public class ChainControllerTest {
      *          "log":{
      *             "type":"info",
      *             "message":"success",
-     *             "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *             "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82",
+     *             "parserName":"Rename Field"
      *          },
      *          "parserResults":[
      *             {
@@ -427,7 +433,8 @@ public class ChainControllerTest {
      *                "log":{
      *                   "type":"info",
      *                   "message":"success",
-     *                   "parserId":"61e99275-e076-46b6-aaed-8acce58cc0e4"
+     *                   "parserId":"61e99275-e076-46b6-aaed-8acce58cc0e4",
+     *                   "parserName":"Rename Field"
      *                }
      *             },
      *             {
@@ -440,7 +447,8 @@ public class ChainControllerTest {
      *                "log":{
      *                   "type":"info",
      *                   "message":"success",
-     *                   "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82"
+     *                   "parserId":"1ee889fc-7495-4b47-8243-c16e5e74bb82",
+     *                   "parserName":"Rename Field"
      *                }
      *             }
      *          ]
