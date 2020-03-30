@@ -5,14 +5,14 @@
       [nzDot]="dotTemplate"
     >
       <h4>
-        Parser ID:
+        Parser:
         <button
           nz-button
           nzType="link"
           (click)="enableInvestigateParser(parser.log.parserId)"
           data-qe-id="investigateParserBtn"
         >
-          {{ parser.log.parserId }}
+          {{ parser.log.parserName }}
         </button>
       </h4>
       <nz-card [ngClass]="parser.log.type" [nzBodyStyle]="{ padding: 0 }">
