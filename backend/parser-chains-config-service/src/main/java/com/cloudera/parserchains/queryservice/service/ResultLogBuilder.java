@@ -35,6 +35,7 @@ public class ResultLogBuilder {
 
     public static class ErrorResultBuilder {
         private String parserId;
+        private String parserName;
         private String message;
         private String type;
         private Throwable exception;
@@ -44,7 +45,12 @@ public class ResultLogBuilder {
         }
 
         public ErrorResultBuilder parserId(String parserId) {
-            this.parserId = parserId;
+          this.parserId = parserId;
+          return this;
+        }
+
+        public ErrorResultBuilder parserName(String parserName) {
+            this.parserName = parserName;
             return this;
         }
 
@@ -59,18 +65,15 @@ public class ResultLogBuilder {
         }
 
         public ResultLog build() {
-            ResultLog resultLog;
+            ResultLog resultLog = new ResultLog()
+                .setParserId(parserId)
+                .setParserName(parserName)
+                .setType(type);
             if(exception != null) {
-                resultLog = new ResultLog()
-                        .setParserId(parserId)
-                        .setType(type)
-                        .setMessage(getUsefulMessage(exception))
-                        .setStackTrace(ExceptionUtils.getStackTrace(exception));
+                resultLog.setMessage(getUsefulMessage(exception))
+                         .setStackTrace(ExceptionUtils.getStackTrace(exception));
             } else {
-                resultLog = new ResultLog()
-                        .setParserId(parserId)
-                        .setType(type)
-                        .setMessage(message);
+              resultLog.setMessage(message);
             }
             return resultLog;
         }
@@ -78,6 +81,7 @@ public class ResultLogBuilder {
 
     public static class SuccessResultBuilder {
         private String parserId;
+        private String parserName;
         private String message;
         private String type;
 
@@ -91,6 +95,11 @@ public class ResultLogBuilder {
             return this;
         }
 
+        public SuccessResultBuilder parserName(String parserName) {
+            this.parserName = parserName;
+            return this;
+        }
+
         public SuccessResultBuilder message(String message) {
             this.message = message;
             return this;
@@ -99,6 +108,7 @@ public class ResultLogBuilder {
         public ResultLog build() {
             return new ResultLog()
                     .setParserId(parserId)
+                    .setParserName(parserName)
                     .setMessage(message)
                     .setType(type);
         }

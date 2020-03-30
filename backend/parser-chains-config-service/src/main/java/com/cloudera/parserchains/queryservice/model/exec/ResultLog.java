@@ -14,6 +14,7 @@ public class ResultLog {
     private String type;
     private String message;
     private String parserId;
+    private String parserName;
     private String stackTrace;
 
     public ResultLog setType(String type) {
@@ -31,6 +32,11 @@ public class ResultLog {
         return this;
     }
 
+    public ResultLog setParserName(String parserName) {
+        this.parserName = parserName;
+        return this;
+    }
+
     public ResultLog setStackTrace(String stackTrace) {
         this.stackTrace = stackTrace;
         return this;
@@ -45,7 +51,11 @@ public class ResultLog {
     }
 
     public String getParserId() {
-        return parserId;
+      return parserId;
+    }
+
+    public String getParserName() {
+        return parserName;
     }
 
     public String getStackTrace() {
@@ -65,6 +75,7 @@ public class ResultLog {
                 .append(type, resultLog.type)
                 .append(message, resultLog.message)
                 .append(parserId, resultLog.parserId)
+                .append(parserName, resultLog.parserName)
                 .isEquals();
     }
 
@@ -74,6 +85,7 @@ public class ResultLog {
                 .append(type)
                 .append(message)
                 .append(parserId)
+                .append(parserName)
                 .toHashCode();
     }
 
@@ -83,6 +95,8 @@ public class ResultLog {
                 "type='" + type + '\'' +
                 ", message='" + message + '\'' +
                 ", parserId='" + parserId + '\'' +
+                ", parserName='" + parserName + '\'' +
                 '}';
     }
+
 }

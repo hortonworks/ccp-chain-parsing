@@ -1,14 +1,5 @@
 package com.cloudera.parserchains.core;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
 import static com.cloudera.parserchains.core.ChainLinkTestUtilities.makeEchoParser;
 import static com.cloudera.parserchains.core.ChainLinkTestUtilities.makeErrorParser;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -17,19 +8,29 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.cloudera.parserchains.core.model.define.ParserName;
+import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 @ExtendWith(MockitoExtension.class)
 public class DefaultChainRunnerTest {
     static String inputToParse;
     static Message errorMessage;
+    static ParserName parserName;
     @Mock LinkName linkName1, linkName2;
     @Mock Parser parser1, parser2;
 
     @BeforeAll
     static void setup() {
+        parserName = ParserName.of("Some Test Parser");
         inputToParse = "some input to parse";
         errorMessage = Message.builder()
                 .withError("error")
-                .createdBy(LinkName.of("parserInError"))
+                .createdBy(LinkName.of("parserInError", parserName))
                 .build();
     }
 
