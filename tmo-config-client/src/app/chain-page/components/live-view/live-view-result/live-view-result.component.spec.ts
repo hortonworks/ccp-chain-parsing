@@ -11,6 +11,7 @@ import { LiveViewResultComponent } from './live-view-result.component';
 })
 export class MockParserByParserComponent {
   @Input() parserResults = [];
+  @Input() logMessage = 'test';
 }
 
 @Component({

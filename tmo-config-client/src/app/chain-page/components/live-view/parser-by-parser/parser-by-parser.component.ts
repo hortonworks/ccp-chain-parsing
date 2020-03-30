@@ -9,9 +9,10 @@ import { ParserResultsModel } from '../models/live-view.model';
 })
 export class ParserByParserComponent implements OnInit {
   @Input() parserResults: ParserResultsModel[];
+  @Input() logMessage: string;
   @Output() investigateParser = new EventEmitter<string>();
 
-  compileErrorMessage =
+  compileErrorDescription =
     'There was an error that prevented your parser chain from being constructed. Please review your configuration settings.';
 
   constructor() { }
