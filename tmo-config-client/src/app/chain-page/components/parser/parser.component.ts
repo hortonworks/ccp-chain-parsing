@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { debounce } from 'debounce';
 import produce from 'immer';
 import get from 'lodash.get';
 import set from 'lodash.set';
@@ -19,7 +18,6 @@ export class ParserComponent implements OnInit, OnChanges {
   @Input() collapsed: boolean;
   @Input() dirty = false;
   @Input() parser: ParserModel;
-  @Input() metaDataForm: CustomFormConfig[];
   @Input() configForm: CustomFormConfig[];
   @Input() isolatedParserView = false;
   @Input() parserType: string;
@@ -38,10 +36,6 @@ export class ParserComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.configForm = this.setFormFieldValues(this.configForm);
-    this.metaDataForm = this.setFormFieldValues(this.metaDataForm);
-
-    this.configForm = this.addFormFieldListeners(this.configForm);
-    this.metaDataForm = this.addFormFieldListeners(this.metaDataForm);
 
 
     setTimeout(() => {
@@ -53,7 +47,6 @@ export class ParserComponent implements OnInit, OnChanges {
     if (changes.configForm) {
       this.areFormsReadyToRender = false;
       this.configForm = this.setFormFieldValues(this.configForm);
-      this.configForm = this.addFormFieldListeners(this.configForm);
       setTimeout(() => {
         this.areFormsReadyToRender = true;
       });
@@ -63,9 +56,6 @@ export class ParserComponent implements OnInit, OnChanges {
         if (changes.parser.previousValue[key] !== changes.parser.currentValue[key]) {
           if (key === 'config') {
             this.configForm = this.updateFormValues('config', this.configForm);
-          }
-          if (['name', 'type'].includes(key)) {
-            this.metaDataForm = this.updateFormValues(key, this.metaDataForm);
           }
         }
       });
@@ -81,13 +71,21 @@ export class ParserComponent implements OnInit, OnChanges {
             value = get(this.parser, field.path + '.' + field.name);
           } else {
             value = get(this.parser, field.path);
-            value = Array.isArray(value) ? value.map((item) => {
+            value = Array.isArray(value) ? value.filter(Boolean).map((item) => {
+              if (item[field.name]) {
+                return {
+                  ...item,
+                  [field.name]: item[field.name]
+                };
+              }
+              return item;
+            }) : Array.isArray(field.defaultValue) ? field.defaultValue.map((item) => {
               return { [field.name]: item[field.name] || '' };
             }) : [];
           }
           field.value = value || field.defaultValue || '';
         } else if (field.name === key) {
-          field.value = this.parser[key];
+          field.value = this.parser[key] || field.defaultValue || '';
         }
       });
     });
@@ -106,7 +104,15 @@ export class ParserComponent implements OnInit, OnChanges {
             value = get(this.parser, [field.path, field.name].join('.'));
           } else {
             value = get(this.parser, field.path);
-            value = Array.isArray(value) ? value.map((item) => {
+            value = Array.isArray(value) ? value.filter(Boolean).map((item) => {
+              if (item[field.name]) {
+                return {
+                  ...item,
+                  [field.name]: item[field.name]
+                };
+              }
+              return item;
+            }) : Array.isArray(field.defaultValue) ? field.defaultValue.map((item) => {
               return { [field.name]: item[field.name] || '' };
             }) : [];
           }
@@ -118,59 +124,83 @@ export class ParserComponent implements OnInit, OnChanges {
     });
   }
 
-  addFormFieldListeners(fields = []) {
-    return produce(fields, (draft) => {
-      draft.forEach(field => {
-        field.onChange = debounce((formFieldData) => {
-          this.dirty = true;
-          let partialParser;
-          if (formFieldData.multiple !== true) {
-            partialParser = formFieldData.path
-            ? produce(this.parser, (draftParser) => {
-                set({
-                  ...draftParser
-                }, [formFieldData.path, formFieldData.name].join('.'), formFieldData.value);
-              })
-            : {
-              id: this.parser.id,
-              [formFieldData.name]: formFieldData.value
-            };
-          } else {
-            let current;
-            if (formFieldData.path) {
-              current = get(this.parser, formFieldData.path);
-            } else {
-              current = this.parser[formFieldData.name];
-            }
-            if (!current) {
-              partialParser = produce(this.parser, (draftParser) => {
-                if (formFieldData.path) {
-                  set({
-                    ...draftParser
-                  }, formFieldData.path, formFieldData.value);
-                } else {
-                  draftParser[formFieldData.name] = formFieldData.value;
-                }
-              });
-            } else {
-              current = formFieldData.value.map((item, i) => {
-                return {
-                  ...current[i],
-                  ...item
-                };
-              });
-              partialParser = produce(this.parser, (draftParser) => {
-                set({
-                  ...draftParser
-                }, formFieldData.path, current);
-              });
-            }
-          }
+  private updateRegularParserWithFormData(parser: ParserModel, formFieldData: CustomFormConfig) {
+    return formFieldData.path
+      ? produce(parser, (draftParser) => {
+          set({
+            ...draftParser
+          }, [formFieldData.path, formFieldData.name].join('.'), formFieldData.value);
+        })
+      : {
+        id: parser.id,
+        [formFieldData.name]: formFieldData.value
+      };
+  }
 
-          this.parserChange.emit(partialParser);
-        }, 400);
+  private updateMultiValueParserWithFormData(parser: ParserModel, formFieldData: CustomFormConfig) {
+    let current;
+    if (formFieldData.path) {
+      current = get(parser, formFieldData.path);
+    } else {
+      current = parser[formFieldData.name];
+    }
+    if (!current) {
+      return produce(parser, (draftParser) => {
+        if (formFieldData.path) {
+          set({
+            ...draftParser
+          }, formFieldData.path, formFieldData.value || formFieldData.defaultValue);
+        } else {
+          draftParser[formFieldData.name] = formFieldData.value || formFieldData.defaultValue;
+        }
       });
-    });
+    } else {
+      const newValue = formFieldData.value;
+      const loopThrough = newValue.length > current.length
+        ? newValue
+        : current;
+      current = loopThrough.map((item, i) => {
+        if (current[i] && newValue[i]) {
+          return {
+            ...current[i],
+            ...newValue[i]
+          };
+        } else if (!newValue[i] && current[i]) {
+          const newItem = { ...current[i] };
+          delete newItem[formFieldData.name];
+          if (Object.keys(newItem).length === 0) {
+            return null;
+          }
+          return newItem;
+        } else if (newValue[i] && !current[i]) {
+          return newValue[i];
+        } else if (!newValue[i] && !current[i]) {
+          return null;
+        }
+        return item;
+      }).filter(Boolean);
+      return produce(parser, (draftParser) => {
+        if (formFieldData.path) {
+          set({
+            ...draftParser
+          }, formFieldData.path, current);
+        } else {
+          draftParser[formFieldData.name] = current;
+        }
+      });
+    }
+  }
+
+  onCustomFormChange(parser: ParserModel, formFieldData: CustomFormConfig) {
+    let partialParser;
+    if (formFieldData.multiple) {
+      partialParser = this.updateMultiValueParserWithFormData(parser, formFieldData);
+    } else {
+      partialParser = this.updateRegularParserWithFormData(parser, formFieldData);
+    }
+
+    this.dirty = true;
+    this.parserChange.emit(partialParser);
   }
 
   onRemoveParser(parserId: string) {

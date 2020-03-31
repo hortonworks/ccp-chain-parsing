@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
 export interface CustomFormConfig {
@@ -7,7 +7,7 @@ export interface CustomFormConfig {
   id?: string;
   path?: string;
   multiple?: boolean;
-  value?: string;
+  value?: string | any[];
   label?: string;
   options?: { id: string, name: string }[];
   onChange?: (config) => {};
@@ -25,6 +25,7 @@ export interface CustomFormConfig {
 export class CustomFormComponent implements OnInit, OnChanges {
 
   @Input() config: CustomFormConfig[] = [];
+  @Output() valueChange = new EventEmitter<any>();
 
   formGroup: FormGroup;
 
@@ -52,33 +53,26 @@ export class CustomFormComponent implements OnInit, OnChanges {
   }
 
   onChange(event: any, config: CustomFormConfig) {
-    if (typeof config.onChange === 'function') {
-      switch (config.type) {
-        case 'textarea':
-        case 'text': {
-          if (config.multiple !== true) {
-            config.onChange({
-              ...config,
-              value: (event.currentTarget as HTMLFormElement).value
-            });
-          } else {
-            config.onChange({
-              ...config,
-              value: event
-            });
-          }
-
-          break;
+    let value;
+    switch (config.type) {
+      case 'textarea':
+      case 'text': {
+        if (config.multiple !== true) {
+          value = (event.currentTarget as HTMLFormElement).value;
+        } else {
+          value = event;
         }
-        case 'select': {
-          config.onChange({
-            ...config,
-            value: event
-          });
-        }
+        break;
       }
-
+      case 'select': {
+        value = event;
+        break;
+      }
     }
+    this.valueChange.emit({
+      ...config,
+      value
+    });
   }
 
   trackByFn(index) {

@@ -26,8 +26,11 @@ export class MultiInputComponent implements OnInit {
       );
     } else {
       this.controls = this.value.map(item => {
-        return new FormControl(item[this.config.name]);
-      });
+        if (item[this.config.name]) {
+          return new FormControl(item[this.config.name]);
+        }
+        return null;
+      }).filter(Boolean);
     }
   }
 

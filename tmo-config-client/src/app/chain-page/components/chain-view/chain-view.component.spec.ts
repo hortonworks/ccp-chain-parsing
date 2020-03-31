@@ -20,7 +20,6 @@ class MockParserComposerComponent {
   @Input() chainId;
   @Input() dirty;
   @Input() configForm;
-  @Input() metaDataForm;
   @Input() failedParser;
   @Input() collapsed;
 }
