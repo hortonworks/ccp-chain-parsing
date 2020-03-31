@@ -1,7 +1,7 @@
 package com.cloudera.parserchains.queryservice.controller;
 
 import com.cloudera.parserchains.core.ChainLink;
-import com.cloudera.parserchains.core.model.define.InvalidParserException;
+import com.cloudera.parserchains.core.InvalidParserException;
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.queryservice.config.AppProperties;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;

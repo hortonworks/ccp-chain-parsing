@@ -1,6 +1,5 @@
 package com.cloudera.parserchains.core;
 
-import com.cloudera.parserchains.core.model.define.InvalidParserException;
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 
 /**

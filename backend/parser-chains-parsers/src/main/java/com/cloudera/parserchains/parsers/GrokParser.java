@@ -5,22 +5,14 @@ import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.catalog.MessageParser;
-import com.cloudera.parserchains.core.model.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.model.config.ConfigKey;
-import com.cloudera.parserchains.core.model.config.ConfigName;
-import com.cloudera.parserchains.core.model.config.ConfigValue;
+import com.cloudera.parserchains.core.catalog.Configurable;
 import io.krakens.grok.api.Grok;
 import io.krakens.grok.api.GrokCompiler;
 
 import java.time.ZoneOffset;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 
 import static java.lang.String.format;
 
@@ -29,17 +21,15 @@ import static java.lang.String.format;
         description = "Parses a message using Grok expressions."
 )
 public class GrokParser implements Parser {
-    private static final ZoneOffset DEFAULT_ZONE_OFFSET = ZoneOffset.UTC;
+    private static final String DEFAULT_ZONE_OFFSET = "+00:00";
     private FieldName inputField;
     private ZoneOffset zoneOffset;
-    private Configurer configurer;
     private GrokCompiler grokCompiler;
     private List<Grok> grokExpressions;
 
     public GrokParser() {
-        inputField = Constants.DEFAULT_INPUT_FIELD;
-        zoneOffset = DEFAULT_ZONE_OFFSET;
-        configurer = new Configurer(this);
+        inputField = FieldName.of(Constants.DEFAULT_INPUT_FIELD);
+        zoneOffset = ZoneOffset.of(DEFAULT_ZONE_OFFSET);
         grokCompiler = GrokCompiler.newInstance();
         grokCompiler.registerDefaultPatterns();
         grokExpressions = new ArrayList<>();
@@ -48,9 +38,9 @@ public class GrokParser implements Parser {
     @Override
     public Message parse(Message input) {
         Message.Builder output = Message.builder().withFields(input);
-        if(inputField == null) {
+        if (inputField == null) {
             output.withError("Input Field has not been defined.");
-        } else if(!input.getField(inputField).isPresent()) {
+        } else if (!input.getField(inputField).isPresent()) {
             output.withError(format("Missing expected input field '%s'", inputField.toString()));
         } else {
             input.getField(inputField).ifPresent(val -> doParse(val.toString(), output));
@@ -59,7 +49,7 @@ public class GrokParser implements Parser {
     }
 
     private void doParse(String textToParse, Message.Builder output) {
-        for(Grok grokPattern: grokExpressions) {
+        for (Grok grokPattern : grokExpressions) {
             grokPattern.match(textToParse)
                     .capture()
                     .entrySet()
@@ -69,6 +59,9 @@ public class GrokParser implements Parser {
         }
     }
 
+    @Configurable(key = "grokExpression",
+            label = "Grok Expression(s)",
+            description = "The grok expression to execute.")
     public GrokParser expression(String grokExpression) {
         Grok grok = grokCompiler.compile(grokExpression, zoneOffset, false);
         this.grokExpressions.add(grok);
@@ -84,6 +77,15 @@ public class GrokParser implements Parser {
         return this;
     }
 
+    @Configurable(key = "inputField",
+            label = "Input Field",
+            description = "The name of the input field to parse.",
+            defaultValue = Constants.DEFAULT_INPUT_FIELD)
+    public GrokParser inputField(String inputField) {
+        this.inputField = FieldName.of(inputField);
+        return this;
+    }
+
     public FieldName getInputField() {
         return inputField;
     }
@@ -93,107 +95,15 @@ public class GrokParser implements Parser {
         return this;
     }
 
+    @Configurable(key = "zoneOffset",
+            label = "Zone Offset",
+            description = "Set the zone offset. For example \"+02:00\".",
+            defaultValue = DEFAULT_ZONE_OFFSET)
+    public void zoneOffset(String offset) {
+        zoneOffset(ZoneOffset.of(offset));
+    }
+
     public ZoneOffset getZoneOffset() {
         return zoneOffset;
-    }
-
-    @Override
-    public List<ConfigDescriptor> validConfigurations() {
-        return configurer.validConfigurations();
-    }
-
-    @Override
-    public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
-        configurer.configure(name, values);
-    }
-
-    /**
-     * Responsible for configuring a {@link GrokParser}.
-     */
-    static class Configurer {
-        // input field
-        static final ConfigKey inputFieldKey = ConfigKey.builder()
-                .key("inputField")
-                .label("Input Field")
-                .description("The name of the input field to parse.")
-                .defaultValue(Constants.DEFAULT_INPUT_FIELD.get())
-                .build();
-        static final ConfigDescriptor inputFieldConfig = ConfigDescriptor
-                .builder()
-                .acceptsValue(inputFieldKey)
-                .isRequired(false)
-                .build();
-
-        // grok expressions
-        static final ConfigKey expressionKey = ConfigKey.builder()
-                .key("grokExpression")
-                .label("Grok Expression(s)")
-                .description("Define a grok expression.")
-                .build();
-        static final ConfigDescriptor expressionConfig = ConfigDescriptor
-                .builder()
-                .name("Grok Expression(s)")
-                .description("Define a grok expression.")
-                .acceptsValue(expressionKey)
-                .isRequired(true)
-                .build();
-
-        // zone offset
-        static final ConfigKey zoneOffsetKey = ConfigKey.builder()
-                .key("zoneOffset")
-                .label("Zone Offset")
-                .description("Set the zone offset. For example \"+02:00\".")
-                .defaultValue(DEFAULT_ZONE_OFFSET.getDisplayName(TextStyle.FULL, Locale.getDefault()))
-                .build();
-        static final ConfigDescriptor zoneOffsetConfig = ConfigDescriptor
-                .builder()
-                .name("Zone Offset")
-                .description("Set the zone offset. For example \"+02:00\".")
-                .acceptsValue(zoneOffsetKey)
-                .isRequired(false)
-                .build();
-
-        private GrokParser parser;
-
-        public Configurer(GrokParser parser) {
-            this.parser = parser;
-        }
-
-        public List<ConfigDescriptor> validConfigurations() {
-            return Arrays.asList(inputFieldConfig, expressionConfig, zoneOffsetConfig);
-        }
-
-        public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
-            if(inputFieldConfig.getName().equals(name)) {
-                configureInput(values);
-            } else if(expressionConfig.getName().equals(name)) {
-                configureGrokExpression(values);
-            } else if(zoneOffsetConfig.getName().equals(name)) {
-                configureZoneOffset(values);
-            } else {
-                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name.get()));
-            }
-        }
-
-        private void configureInput(Map<ConfigKey, ConfigValue> values) {
-            Optional.ofNullable(values.get(inputFieldKey)).ifPresent(value -> {
-                FieldName inputField = FieldName.of(value.get());
-                parser.inputField(inputField);
-            });
-        }
-
-        private void configureGrokExpression(Map<ConfigKey, ConfigValue> values) {
-            Optional.ofNullable(values.get(expressionKey)).ifPresent(value -> {
-                String expression = value.get();
-                parser.expression(expression);
-            });
-        }
-
-        private void configureZoneOffset(Map<ConfigKey, ConfigValue> values) {
-            Optional.ofNullable(values.get(zoneOffsetKey)).ifPresent(value -> {
-                String offset = value.get();
-                parser.zoneOffset(ZoneOffset.of(offset));
-            });
-        }
     }
 }

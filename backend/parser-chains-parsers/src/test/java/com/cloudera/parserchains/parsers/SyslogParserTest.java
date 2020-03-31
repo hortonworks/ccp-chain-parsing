@@ -6,8 +6,6 @@ import com.cloudera.parserchains.core.Message;
 import com.github.palindromicity.syslog.SyslogSpecification;
 import org.junit.jupiter.api.Test;
 
-import static com.cloudera.parserchains.parsers.SyslogParser.Configurer.inputFieldConfig;
-import static com.cloudera.parserchains.parsers.SyslogParser.Configurer.specConfig;
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_APPNAME;
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_HOSTNAME;
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_MSGID;
@@ -19,8 +17,6 @@ import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_TIMEST
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.HEADER_VERSION;
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.MESSAGE;
 import static com.github.palindromicity.syslog.dsl.SyslogFieldKeys.STRUCTURED_BASE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -125,10 +121,5 @@ public class SyslogParserTest {
                 "Expected a parsing error to have occurred.");
         assertEquals(input.getFields(), output.getFields(),
                 "Expected the same input fields to be available on the output message.");
-    }
-
-    @Test
-    void validConfigurations() {
-        assertThat(new SyslogParser().validConfigurations(), hasItems(inputFieldConfig, specConfig));
     }
 }

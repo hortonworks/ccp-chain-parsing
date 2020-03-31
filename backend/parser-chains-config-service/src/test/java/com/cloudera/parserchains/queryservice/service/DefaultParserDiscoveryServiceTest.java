@@ -55,7 +55,7 @@ public class DefaultParserDiscoveryServiceTest {
   @Mock private ParserCatalog catalog;
 
   @BeforeEach
-  public void beforeEach() throws IOException {
+  public void beforeEach() {
     setupParserCatalog();
     mapper = new ParserSummaryMapper();
     service = new DefaultParserDiscoveryService(catalog, new ReflectiveParserBuilder(), mapper);
@@ -91,22 +91,22 @@ public class DefaultParserDiscoveryServiceTest {
    *   "id" : "com.cloudera.parserchains.parsers.DelimitedTextParser",
    *   "name" : "Delimited Text",
    *   "schemaItems" : [ {
-   *     "name" : "inputField",
+   *     "name" : "delimiter",
    *     "type" : "text",
-   *     "label" : "Input Field",
-   *     "description" : "The name of the input field to parse.",
-   *     "required" : true,
-   *     "path" : "config.inputField",
+   *     "label" : "Delimiter",
+   *     "description" : "A regex used to split the text. Defaults to comma.",
+   *     "required" : false,
+   *     "path" : "config.delimiter",
    *     "multiple" : true,
    *     "defaultValue" : [ {
-   *       "inputField" : "original_string"
+   *       "delimiter" : ","
    *     } ]
    *   }, {
    *     "name" : "fieldIndex",
    *     "type" : "text",
    *     "label" : "Column Index",
-   *     "description" : "The index (0-based) of the column containing the data.",
-   *     "required" : true,
+   *     "description" : "The index of the column containing the data.",
+   *     "required" : false,
    *     "path" : "config.outputField",
    *     "multiple" : true
    *   }, {
@@ -114,19 +114,19 @@ public class DefaultParserDiscoveryServiceTest {
    *     "type" : "text",
    *     "label" : "Field Name",
    *     "description" : "The name of the output field.",
-   *     "required" : true,
+   *     "required" : false,
    *     "path" : "config.outputField",
    *     "multiple" : true
    *   }, {
-   *     "name" : "delimiter",
+   *     "name" : "inputField",
    *     "type" : "text",
-   *     "label" : "Delimiter",
-   *     "description" : "A regex delimiter used to split the text. Defaults to comma.",
+   *     "label" : "Input Field",
+   *     "description" : "The name of the input field to parse.",
    *     "required" : false,
-   *     "path" : "config.delimiter",
+   *     "path" : "config.inputField",
    *     "multiple" : true,
    *     "defaultValue" : [ {
-   *       "delimiter" : ","
+   *       "inputField" : "original_string"
    *     } ]
    *   }, {
    *     "name" : "trim",
@@ -153,6 +153,7 @@ public class DefaultParserDiscoveryServiceTest {
     assertThat(actual, equalToCompressingWhiteSpace(describeExpected));
   }
 
+
   /**
    * {
    *   "com.cloudera.parserchains.parsers.RemoveFieldParser" : {
@@ -162,7 +163,7 @@ public class DefaultParserDiscoveryServiceTest {
    *       "name" : "fieldToRemove",
    *       "type" : "text",
    *       "label" : "Field to Remove",
-   *       "description" : "The name of the field to remove.",
+   *       "description" : "The name of a field to remove.",
    *       "required" : true,
    *       "path" : "config.fieldToRemove",
    *       "multiple" : true
@@ -172,22 +173,22 @@ public class DefaultParserDiscoveryServiceTest {
    *     "id" : "com.cloudera.parserchains.parsers.DelimitedTextParser",
    *     "name" : "Delimited Text",
    *     "schemaItems" : [ {
-   *       "name" : "inputField",
+   *       "name" : "delimiter",
    *       "type" : "text",
-   *       "label" : "Input Field",
-   *       "description" : "The name of the input field to parse.",
-   *       "required" : true,
-   *       "path" : "config.inputField",
+   *       "label" : "Delimiter",
+   *       "description" : "A regex used to split the text. Defaults to comma.",
+   *       "required" : false,
+   *       "path" : "config.delimiter",
    *       "multiple" : true,
    *       "defaultValue" : [ {
-   *         "inputField" : "original_string"
+   *         "delimiter" : ","
    *       } ]
    *     }, {
    *       "name" : "fieldIndex",
    *       "type" : "text",
    *       "label" : "Column Index",
-   *       "description" : "The index (0-based) of the column containing the data.",
-   *       "required" : true,
+   *       "description" : "The index of the column containing the data.",
+   *       "required" : false,
    *       "path" : "config.outputField",
    *       "multiple" : true
    *     }, {
@@ -195,19 +196,19 @@ public class DefaultParserDiscoveryServiceTest {
    *       "type" : "text",
    *       "label" : "Field Name",
    *       "description" : "The name of the output field.",
-   *       "required" : true,
+   *       "required" : false,
    *       "path" : "config.outputField",
    *       "multiple" : true
    *     }, {
-   *       "name" : "delimiter",
+   *       "name" : "inputField",
    *       "type" : "text",
-   *       "label" : "Delimiter",
-   *       "description" : "A regex delimiter used to split the text. Defaults to comma.",
+   *       "label" : "Input Field",
+   *       "description" : "The name of the input field to parse.",
    *       "required" : false,
-   *       "path" : "config.delimiter",
+   *       "path" : "config.inputField",
    *       "multiple" : true,
    *       "defaultValue" : [ {
-   *         "delimiter" : ","
+   *         "inputField" : "original_string"
    *       } ]
    *     }, {
    *       "name" : "trim",

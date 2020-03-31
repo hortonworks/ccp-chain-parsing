@@ -20,24 +20,33 @@ package com.cloudera.parserchains.queryservice.service;
 
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.ParserBuilder;
+import com.cloudera.parserchains.core.catalog.Configurable;
+import com.cloudera.parserchains.core.catalog.Parameter;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
-import com.cloudera.parserchains.core.model.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.model.config.ConfigKey;
 import com.cloudera.parserchains.core.model.define.ParserID;
 import com.cloudera.parserchains.core.model.define.ParserName;
 import com.cloudera.parserchains.queryservice.model.describe.ConfigParamDescriptor;
 import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
 import com.cloudera.parserchains.queryservice.model.summary.ObjectMapper;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
-import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.cloudera.parserchains.core.utils.AnnotationUtils.getAnnotatedMethods;
+import static com.cloudera.parserchains.core.utils.AnnotationUtils.getAnnotatedParameters;
 
 @Service
 public class DefaultParserDiscoveryService implements ParserDiscoveryService {
@@ -86,45 +95,81 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
   }
 
   private ParserDescriptor describeParser(ParserInfo parserInfo) {
-    // describe the parser; the parserID == parser class
+    List<ConfigParamDescriptor> descriptors = describeParameters(parserInfo.getParserClass());
+
+    // sort by name for consistency
+    Comparator<ConfigParamDescriptor> compareByName = Comparator.comparing(ConfigParamDescriptor::getName);
+    Collections.sort(descriptors, compareByName);
+
     ParserID id = ParserID.of(parserInfo.getParserClass());
     ParserName name = ParserName.of(parserInfo.getName());
-    ParserDescriptor descriptor = new ParserDescriptor()
+    return new ParserDescriptor()
             .setParserID(id)
-            .setParserName(name);
+            .setParserName(name)
+            .setConfigurations(descriptors);
+  }
 
-    Parser parser = builder.build(parserInfo);
-    for(ConfigDescriptor param: ListUtils.emptyIfNull(parser.validConfigurations())) {
+  private List<ConfigParamDescriptor> describeParameters(Class<? extends Parser> parserClass) {
+    List<ConfigParamDescriptor> results = new ArrayList<>();
+    Set<Map.Entry<Configurable, Method>> annotatedMethods = getAnnotatedMethods(parserClass).entrySet();
+    for(Map.Entry<Configurable, Method> entry: annotatedMethods) {
+      Configurable configurable = entry.getKey();
+      Method method = entry.getValue();
 
-      // describe each parameter accepted by the parser
-      for(ConfigKey configKey: param.getAcceptedValues()) {
-        /*
-         * If multiple=true, the front-end expects values to be contained within an array. if
-         * multiple=false, the value should NOT be wrapped in an array; just a single map.
-         * Currently, the backend always wraps values, even single values, in arrays.
-         *
-         * Having the backend adhere to what the front-end expects will take some additional
-         * work. As a work-around all configurations are marked as accepting multiple values,
-         * even those that do not.  The consequence of this is that all fields will show the blue,
-         * plus icon to add a field.
-         */
-        final boolean multiple = true;
-        ConfigParamDescriptor paramDescriptor = new ConfigParamDescriptor()
-                .setName(configKey.getKey())
-                .setLabel(configKey.getLabel())
-                .setDescription(configKey.getDescription().get())
-                .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + param.getName().get())
-                .setRequired(param.isRequired())
-                .setType(DEFAULT_SCHEMA_TYPE)
-                .setMultiple(multiple);
+      List<Parameter> parameters = getAnnotatedParameters(method);
+      if(parameters.size() == 0) {
+        // there are no parameter annotations
+        ConfigParamDescriptor descriptor = describeByAnnotation(configurable, Optional.empty());
+        results.add(descriptor);
 
-        // set a default value, if one exists for this parameter
-        configKey.getDefaultValue().ifPresent(defaultVal ->
-                paramDescriptor.addDefaultValue(configKey.getKey(), defaultVal));
-
-        descriptor.addConfiguration(paramDescriptor);
+      } else {
+        // there are parameter annotations
+        for (Parameter parameter : parameters) {
+          ConfigParamDescriptor descriptor = describeByAnnotation(configurable, Optional.of(parameter));
+          results.add(descriptor);
+        }
       }
     }
-    return descriptor;
+    return results;
+  }
+
+  private ConfigParamDescriptor describeByAnnotation(Configurable configurable, Optional<Parameter> parameter) {
+    /*
+     * If multiple=true, the front-end expects values to be contained within an array. if
+     * multiple=false, the value should NOT be wrapped in an array; just a single map.
+     * Currently, the backend always wraps values, even single values, in arrays.
+     *
+     * Having the backend adhere to what the front-end expects will take some additional
+     * work. As a work-around all configurations are marked as accepting multiple values,
+     * even those that do not.  The consequence of this is that all fields will show the blue,
+     * plus icon to add a field.
+     */
+    ConfigParamDescriptor paramDescriptor = new ConfigParamDescriptor()
+            .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + configurable.key())
+            .setType(DEFAULT_SCHEMA_TYPE)
+            .setMultiple(true);
+    if (parameter.isPresent()) {
+      // use the parameter-level annotation
+      Parameter p = parameter.get();
+      paramDescriptor.setName(p.key())
+              .setLabel(p.label())
+              .setDescription(p.description())
+              .setRequired(p.required());
+      if (StringUtils.isNotBlank(p.defaultValue())) {
+        paramDescriptor.addDefaultValue(p.key(), p.defaultValue());
+      }
+
+    } else {
+      // use the method-level annotation
+      paramDescriptor.setName(configurable.key())
+              .setLabel(configurable.label())
+              .setDescription(configurable.description())
+              .setRequired(configurable.required());
+      if (StringUtils.isNotBlank(configurable.defaultValue())) {
+        paramDescriptor.addDefaultValue(configurable.key(), configurable.defaultValue());
+      }
+    }
+
+    return paramDescriptor;
   }
 }

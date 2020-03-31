@@ -2,14 +2,9 @@ package com.cloudera.parserchains.core.catalog;
 
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
-import com.cloudera.parserchains.core.model.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.model.config.ConfigKey;
-import com.cloudera.parserchains.core.model.config.ConfigName;
-import com.cloudera.parserchains.core.model.config.ConfigValue;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,17 +18,6 @@ public class ClassIndexParserCatalogTest {
         public Message parse(Message message) {
             // do nothing
             return null;
-        }
-
-        @Override
-        public List<ConfigDescriptor> validConfigurations() {
-            // do nothing
-            return null;
-        }
-
-        @Override
-        public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
-            // do nothing
         }
     }
 

@@ -3,15 +3,8 @@ package com.cloudera.parserchains.parsers;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.model.config.ConfigKey;
-import com.cloudera.parserchains.core.model.config.ConfigValue;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.cloudera.parserchains.parsers.TimestampParser.Configurer.outputFieldKey;
-import static com.cloudera.parserchains.parsers.TimestampParser.Configurer.outputFieldConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -73,12 +66,8 @@ public class TimestampParserTest {
 
     @Test
     void configureTimestampField() {
-        Map<ConfigKey, ConfigValue> timestampField = new HashMap<>();
-        timestampField.put(outputFieldKey, ConfigValue.of("processing_time"));
-
         TimestampParser parser = new TimestampParser();
-        parser.configure(outputFieldConfig.getName(), timestampField);
-
+        parser.withOutputField("processing_time");
         assertEquals(FieldName.of("processing_time"), parser.getOutputField());
     }
 }

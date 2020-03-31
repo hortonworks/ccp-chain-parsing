@@ -1,7 +1,5 @@
 package com.cloudera.parserchains.core.model.config;
 
-import com.cloudera.parserchains.core.utils.JSONUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -10,24 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConfigDescriptorTest {
-
-    @Test
-    void test() throws JsonProcessingException {
-        ConfigKey inputFieldKey = ConfigKey.builder()
-                .key("inputField")
-                .label("Input Field")
-                .description("The input field to use.")
-                .build();
-        ConfigDescriptor descriptor = ConfigDescriptor
-                .builder()
-                .name("inputField")
-                .description("Input Field")
-                .isRequired(true)
-                .acceptsValue(inputFieldKey)
-                .build();
-        String actual = JSONUtils.INSTANCE.toJSON(descriptor, true);
-        System.out.println(actual);
-    }
 
     @Test
     void oneAcceptedValue() {

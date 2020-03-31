@@ -1,13 +1,13 @@
 package com.cloudera.parserchains.queryservice.service;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-
-import com.cloudera.parserchains.core.model.define.InvalidParserException;
+import com.cloudera.parserchains.core.InvalidParserException;
 import com.cloudera.parserchains.core.model.define.ParserSchema;
 import com.cloudera.parserchains.queryservice.model.exec.ResultLog;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class ResultLogBuilderTest {
 

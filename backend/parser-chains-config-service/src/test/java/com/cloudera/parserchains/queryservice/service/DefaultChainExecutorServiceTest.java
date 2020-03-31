@@ -18,7 +18,7 @@ import com.cloudera.parserchains.core.DefaultChainBuilder;
 import com.cloudera.parserchains.core.DefaultChainRunner;
 import com.cloudera.parserchains.core.ReflectiveParserBuilder;
 import com.cloudera.parserchains.core.catalog.ClassIndexParserCatalog;
-import com.cloudera.parserchains.core.model.define.InvalidParserException;
+import com.cloudera.parserchains.core.InvalidParserException;
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.core.utils.JSONUtils;
 import com.cloudera.parserchains.queryservice.model.exec.ParserResult;

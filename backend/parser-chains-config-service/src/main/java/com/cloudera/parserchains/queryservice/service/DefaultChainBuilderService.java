@@ -2,7 +2,7 @@ package com.cloudera.parserchains.queryservice.service;
 
 import com.cloudera.parserchains.core.ChainBuilder;
 import com.cloudera.parserchains.core.ChainLink;
-import com.cloudera.parserchains.core.model.define.InvalidParserException;
+import com.cloudera.parserchains.core.InvalidParserException;
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import org.springframework.stereotype.Service;
 

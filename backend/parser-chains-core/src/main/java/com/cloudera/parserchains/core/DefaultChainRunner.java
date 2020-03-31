@@ -17,7 +17,7 @@ public class DefaultChainRunner implements ChainRunner {
     private FieldName inputField;
 
     public DefaultChainRunner() {
-        inputField = Constants.DEFAULT_INPUT_FIELD;
+        inputField = FieldName.of(Constants.DEFAULT_INPUT_FIELD);
     }
 
     /**

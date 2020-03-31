@@ -6,19 +6,14 @@ import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.Regex;
+import com.cloudera.parserchains.core.catalog.Configurable;
 import com.cloudera.parserchains.core.catalog.MessageParser;
-import com.cloudera.parserchains.core.model.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.model.config.ConfigKey;
-import com.cloudera.parserchains.core.model.config.ConfigName;
-import com.cloudera.parserchains.core.model.config.ConfigValue;
+import com.cloudera.parserchains.core.catalog.Parameter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import static java.lang.String.format;
 
@@ -29,8 +24,8 @@ import static java.lang.String.format;
     name="Delimited Text",
     description="Parses delimited text like CSV or TSV.")
 public class DelimitedTextParser implements Parser {
-    private static final Regex DEFAULT_DELIMITER = Regex.of(",");
-    private static final boolean DEFAULT_TRIM = true;
+    private static final String DEFAULT_DELIMITER = ",";
+    private static final String DEFAULT_TRIM = "true";
 
     /**
      * Defines an output field that is created by the parser.
@@ -49,14 +44,12 @@ public class DelimitedTextParser implements Parser {
     private Regex delimiter;
     private List<OutputField> outputFields;
     private boolean trimWhitespace;
-    private Configurer configurer;
 
     public DelimitedTextParser() {
-        inputField = Constants.DEFAULT_INPUT_FIELD;
+        inputField = FieldName.of(Constants.DEFAULT_INPUT_FIELD);
         outputFields = new ArrayList<>();
-        delimiter = DEFAULT_DELIMITER;
-        trimWhitespace = DEFAULT_TRIM;
-        configurer = new Configurer(this);
+        delimiter = Regex.of(DEFAULT_DELIMITER);
+        trimWhitespace = Boolean.valueOf(DEFAULT_TRIM);
     }
 
     /**
@@ -64,6 +57,15 @@ public class DelimitedTextParser implements Parser {
      */
     public DelimitedTextParser withInputField(FieldName inputField) {
         this.inputField = Objects.requireNonNull(inputField, "An input field name is required.");
+        return this;
+    }
+
+    @Configurable(key="inputField",
+            label="Input Field",
+            description="The name of the input field to parse.",
+            defaultValue = Constants.DEFAULT_INPUT_FIELD)
+    public DelimitedTextParser withInputField(String fieldName) {
+        withInputField(FieldName.of(fieldName));
         return this;
     }
 
@@ -79,6 +81,14 @@ public class DelimitedTextParser implements Parser {
         return this;
     }
 
+    @Configurable(key="delimiter",
+            label="Delimiter",
+            description="A regex used to split the text. Defaults to comma.",
+            defaultValue=DEFAULT_DELIMITER)
+    public void withDelimiter(String delimiter) {
+        withDelimiter(Regex.of(delimiter));
+    }
+
     public Regex getDelimiter() {
         return delimiter;
     }
@@ -92,6 +102,13 @@ public class DelimitedTextParser implements Parser {
         return this;
     }
 
+    @Configurable(key="outputField", label="Output Field")
+    public void withOutputField(
+            @Parameter(key="fieldName", label="Field Name", description="The name of the output field.") String fieldName,
+            @Parameter(key="fieldIndex", label="Column Index", description="The index of the column containing the data.") String index) {
+        withOutputField(FieldName.of(fieldName), Integer.parseInt(index));
+    }
+
     public List<OutputField> getOutputFields() {
         return Collections.unmodifiableList(outputFields);
     }
@@ -102,6 +119,14 @@ public class DelimitedTextParser implements Parser {
     public DelimitedTextParser trimWhitespace(boolean trimWhitespace) {
         this.trimWhitespace = trimWhitespace;
         return this;
+    }
+
+    @Configurable(key="trim",
+            label="Trim Whitespace",
+            description="Trim whitespace from each value. Defaults to true.",
+            defaultValue=DEFAULT_TRIM)
+    public void trimWhitespace(String trimWhitespace) {
+        trimWhitespace(Boolean.valueOf(trimWhitespace));
     }
 
     public boolean isTrimWhitespace() {
@@ -139,142 +164,6 @@ public class DelimitedTextParser implements Parser {
                 String err = format("Found %d column(s), index %d does not exist.", width, outputField.index);
                 output.withError(err);
             }
-        }
-    }
-
-    @Override
-    public List<ConfigDescriptor> validConfigurations() {
-        return configurer.validConfigurations();
-    }
-
-    @Override
-    public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
-        configurer.configure(name, values);
-    }
-
-    /**
-     * Handles configuration for the {@link DelimitedTextParser}.
-     */
-    static class Configurer {
-        // input field
-        static final ConfigKey inputFieldKey = ConfigKey.builder()
-                .key("inputField")
-                .label("Input Field")
-                .description("The name of the input field to parse.")
-                .defaultValue(Constants.DEFAULT_INPUT_FIELD.get())
-                .build();
-        static final ConfigDescriptor inputFieldConfig = ConfigDescriptor
-                .builder()
-                .acceptsValue(inputFieldKey)
-                .isRequired(true)
-                .build();
-
-        // output field
-        static final ConfigKey outputFieldName = ConfigKey.builder()
-                .key("fieldName")
-                .label("Field Name")
-                .description("The name of the output field.")
-                .build();
-        static final ConfigKey outputFieldIndex = ConfigKey.builder()
-                .key("fieldIndex")
-                .label("Column Index")
-                .description("The index (0-based) of the column containing the data.")
-                .build();
-        static final ConfigDescriptor outputFieldConfig = ConfigDescriptor
-                .builder()
-                .name("outputField")
-                .description("Output Field")
-                .isRequired(true)
-                .isCumulative(true)
-                .acceptsValue(outputFieldIndex)
-                .acceptsValue(outputFieldName)
-                .build();
-
-        // delimiter
-        static final ConfigKey delimiterKey = ConfigKey.builder()
-                .key("delimiter")
-                .label("Delimiter")
-                .description("A regex delimiter used to split the text. Defaults to comma.")
-                .defaultValue(DEFAULT_DELIMITER.toString())
-                .build();
-        static final ConfigDescriptor delimiterConfig = ConfigDescriptor
-                .builder()
-                .acceptsValue(delimiterKey)
-                .isRequired(false)
-                .build();
-
-        // trim
-        static final ConfigKey trimKey = ConfigKey.builder()
-                .key("trim")
-                .label("Trim Whitespace")
-                .description("Trim whitespace from each value. Defaults to true.")
-                .defaultValue(Boolean.toString(DEFAULT_TRIM))
-                .build();
-        static final ConfigDescriptor trimConfig = ConfigDescriptor
-                .builder()
-                .acceptsValue(trimKey)
-                .isRequired(false)
-                .build();
-
-        private DelimitedTextParser parser;
-
-        Configurer(DelimitedTextParser parser) {
-            this.parser = parser;
-        }
-
-        List<ConfigDescriptor> validConfigurations() {
-            return Arrays.asList(inputFieldConfig, outputFieldConfig, delimiterConfig, trimConfig);
-        }
-
-        void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
-            if(inputFieldConfig.getName().equals(name)) {
-                configureInput(values);
-            } else if(outputFieldConfig.getName().equals(name)) {
-                configureOutput(values);
-            } else if(delimiterConfig.getName().equals(name)) {
-                configureDelimiter(values);
-            } else if(trimConfig.getName().equals(name)) {
-                configureTrim(values);
-            } else {
-                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name.get()));
-            }
-        }
-
-        private void configureTrim(Map<ConfigKey, ConfigValue> values) {
-            Optional.ofNullable(values.get(trimKey)).ifPresent(value -> {
-                boolean trim = Boolean.valueOf(value.get());
-                parser.trimWhitespace(trim);
-            });
-        }
-
-        private void configureDelimiter(Map<ConfigKey, ConfigValue> values) {
-            Optional.ofNullable(values.get(delimiterKey)).ifPresent(value -> {
-                Regex delimiter = Regex.of(value.get());
-                parser.withDelimiter(delimiter);
-            });
-        }
-
-        private void configureInput(Map<ConfigKey, ConfigValue> values) {
-            Optional.ofNullable(values.get(inputFieldKey)).ifPresent(value -> {
-                FieldName inputField = FieldName.of(value.get());
-                parser.withInputField(inputField);
-            });
-        }
-
-        private void configureOutput(Map<ConfigKey, ConfigValue> values) {
-            FieldName outputField = Optional.ofNullable(values.get(outputFieldName))
-                    .map(value -> FieldName.of(value.get()))
-                    .orElseThrow(() -> missingConfig(outputFieldName));
-            Integer columnIndex = Optional.ofNullable(values.get(outputFieldIndex))
-                    .map(value -> Integer.parseInt(value.get()))
-                    .orElseThrow(() -> missingConfig(outputFieldIndex));
-            parser.withOutputField(outputField, columnIndex);
-        }
-
-        private IllegalArgumentException missingConfig(ConfigKey missing) {
-            String error = String.format("No value defined for %s - %s",
-                    outputFieldConfig.getDescription().get(), missing.getLabel());
-            return new IllegalArgumentException(error);
         }
     }
 }

@@ -12,12 +12,6 @@ import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.cloudera.parserchains.parsers.GrokParser.Configurer.expressionConfig;
-import static com.cloudera.parserchains.parsers.GrokParser.Configurer.expressionKey;
-import static com.cloudera.parserchains.parsers.GrokParser.Configurer.inputFieldConfig;
-import static com.cloudera.parserchains.parsers.GrokParser.Configurer.inputFieldKey;
-import static com.cloudera.parserchains.parsers.GrokParser.Configurer.zoneOffsetConfig;
-import static com.cloudera.parserchains.parsers.GrokParser.Configurer.zoneOffsetKey;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
@@ -152,7 +146,6 @@ public class GrokParserTest {
                 "\"GET / HTTP/1.1\" 200 44346 \"-\" " +
                 "\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) " +
                 "AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\"";
-        System.out.println(apacheLog);
         Message input = Message.builder()
                 .addField(Constants.DEFAULT_INPUT_FIELD, apacheLog)
                 .build();
@@ -189,45 +182,26 @@ public class GrokParserTest {
 
     @Test
     void configureInputField() {
-        Map<ConfigKey, ConfigValue> values = new HashMap<>();
-        values.put(inputFieldKey, ConfigValue.of("some_input_field"));
-        grokParser.configure(inputFieldConfig.getName(), values);
+        final String fieldName = "some_input_field";
+        grokParser.inputField(fieldName);
         assertThat("Expected the input field to have been configured.",
-                grokParser.getInputField(), is(FieldName.of("some_input_field")));
+                grokParser.getInputField(), is(FieldName.of(fieldName)));
     }
 
     @Test
     void configureExpression() {
-        final String expression1 = "%{UUID}";
-        Map<ConfigKey, ConfigValue> values1 = new HashMap<>();
-        values1.put(expressionKey, ConfigValue.of(expression1));
-        grokParser.configure(expressionConfig.getName(), values1);
-
-        final String expression2 = "%{HOSTPORT}";
-        Map<ConfigKey, ConfigValue> values2 = new HashMap<>();
-        values2.put(expressionKey, ConfigValue.of(expression2));
-        grokParser.configure(expressionConfig.getName(), values2);
-
+        grokParser.expression( "%{UUID}");
+        grokParser.expression("%{HOSTPORT}");
         assertThat("Expected 2 Grok expressions.",
                 grokParser.getGrokExpressions().size(), is(2));
     }
 
     @Test
     void configureZoneOffset() {
-        ZoneOffset expected = ZoneOffset.of("+02:00");
-        Map<ConfigKey, ConfigValue> values = new HashMap<>();
-        values.put(zoneOffsetKey, ConfigValue.of("+02:00"));
-        grokParser.configure(zoneOffsetConfig.getName(), values);
+        final String offset = "+02:00";
+        ZoneOffset expected = ZoneOffset.of(offset);
+        grokParser.zoneOffset(offset);
         assertThat("Expected the zone offset to have been configured.",
                 grokParser.getZoneOffset(), is(expected));
-    }
-
-    @Test
-    void validConfigurations() {
-        assertThat("Expected the grok parser to report all valid configuration.",
-                grokParser.validConfigurations(), hasItems(
-                        GrokParser.Configurer.inputFieldConfig,
-                        GrokParser.Configurer.expressionConfig,
-                        GrokParser.Configurer.zoneOffsetConfig));
     }
 }

@@ -3,22 +3,12 @@ package com.cloudera.parserchains.parsers;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
-import com.cloudera.parserchains.core.model.config.ConfigKey;
-import com.cloudera.parserchains.core.model.config.ConfigName;
-import com.cloudera.parserchains.core.model.config.ConfigValue;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.cloudera.parserchains.parsers.RemoveFieldParser.Configurer.removeFieldConfig;
-import static com.cloudera.parserchains.parsers.RemoveFieldParser.Configurer.removeFieldKey;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RemoveFieldParserTest {
 
@@ -62,18 +52,8 @@ public class RemoveFieldParserTest {
 
     @Test
     void configure() {
-        Map<ConfigKey, ConfigValue> fieldToRemove = new HashMap<>();
-        fieldToRemove.put(removeFieldKey, ConfigValue.of("field1"));
-
         RemoveFieldParser parser = new RemoveFieldParser();
-        parser.configure(removeFieldConfig.getName(), fieldToRemove);
-
+        parser.removeField("field1");
         assertThat(parser.getFieldsToRemove(), hasItems(FieldName.of("field1")));
-    }
-
-    @Test
-    void unexpectedConfig() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new RemoveFieldParser().configure(ConfigName.of("invalid"), Collections.emptyMap()));
     }
 }

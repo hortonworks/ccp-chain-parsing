@@ -9,10 +9,6 @@ import java.util.Objects;
 
 /**
  * Fully describes a parameter that is used to configure a {@link Parser}.
- *
- * <p>A parser author exposes the configuration parameters available for
- * their parser using this class along with the {@link Parser#validConfigurations()}
- * method.
  */
 public class ConfigDescriptor {
 

@@ -3,19 +3,14 @@ package com.cloudera.parserchains.parsers;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
+import com.cloudera.parserchains.core.catalog.Configurable;
 import com.cloudera.parserchains.core.catalog.MessageParser;
-import com.cloudera.parserchains.core.model.config.ConfigDescriptor;
-import com.cloudera.parserchains.core.model.config.ConfigKey;
-import com.cloudera.parserchains.core.model.config.ConfigName;
-import com.cloudera.parserchains.core.model.config.ConfigValue;
+import com.cloudera.parserchains.core.catalog.Parameter;
 import org.apache.metron.stellar.common.shell.DefaultStellarShellExecutor;
 import org.apache.metron.stellar.common.shell.StellarResult;
 import org.apache.metron.stellar.common.shell.StellarShellExecutor;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -33,14 +28,12 @@ import java.util.Properties;
         description = "Apply Stellar expression(s) to normalize data."
 )
 public class StellarParser implements Parser {
-    private Configurer configurer;
     private StellarShellExecutor stellarExecutor;
     private LinkedHashMap<FieldName, String> expressions;
 
     public StellarParser() throws Exception {
         // using a LinkedHashMap to ensure the expressions are executed in the order they were defined
         this.expressions = new LinkedHashMap<>();
-        this.configurer = new Configurer(this);
         this.stellarExecutor = new DefaultStellarShellExecutor(new Properties(), Optional.empty());
     }
 
@@ -97,70 +90,10 @@ public class StellarParser implements Parser {
      * @param expression The Stellar expression to execute.
      * @return
      */
-    public StellarParser expression(String fieldName, String expression) {
+    @Configurable(key="stellarExpression")
+    public StellarParser expression(
+            @Parameter(key="fieldName", label="Field Name", description="The field to create or modify.") String fieldName,
+            @Parameter(key="expression", label="Stellar", description="The Stellar expression to execute.") String expression) {
         return expression(FieldName.of(fieldName), expression);
-    }
-
-    @Override
-    public List<ConfigDescriptor> validConfigurations() {
-        return configurer.validConfigurations();
-    }
-
-    @Override
-    public void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
-        configurer.configure(name, values);
-    }
-
-    static class Configurer {
-        static final ConfigKey fieldNameKey = ConfigKey.builder()
-                .key("fieldName")
-                .label("Field Name")
-                .description("The name of the output field to create or modify.")
-                .build();
-        static final ConfigKey expressionKey = ConfigKey.builder()
-                .key("expression")
-                .label("Stellar Expression")
-                .description("The Stellar expression to execute.")
-                .build();
-        static final ConfigDescriptor stellar = ConfigDescriptor.builder()
-                .name("stellar")
-                .description("Stellar Expression")
-                .isRequired(true)
-                .acceptsValue(fieldNameKey)
-                .acceptsValue(expressionKey)
-                .build();
-
-        private StellarParser parser;
-
-        Configurer(StellarParser parser) {
-            this.parser = parser;
-        }
-
-        List<ConfigDescriptor> validConfigurations() {
-            return Arrays.asList(stellar);
-        }
-
-        void configure(ConfigName name, Map<ConfigKey, ConfigValue> values) {
-            if(stellar.getName().equals(name)) {
-                configureExpressions(values);
-            } else {
-                throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", name));
-            }
-        }
-
-        private void configureExpressions(Map<ConfigKey, ConfigValue> values) {
-            FieldName fieldName = Optional.ofNullable(values.get(fieldNameKey))
-                    .map(value -> FieldName.of(value.get()))
-                    .orElseThrow(() -> missingConfig(fieldNameKey));
-            String expression = Optional.ofNullable((values.get(expressionKey)))
-                    .map(value -> value.get())
-                    .orElseThrow(() -> missingConfig(expressionKey));
-            parser.expression(fieldName, expression);
-        }
-
-        private IllegalArgumentException missingConfig(ConfigKey missing) {
-            String error = String.format("Missing value for '%s'", missing.getLabel());
-            return new IllegalArgumentException(error);
-        }
     }
 }

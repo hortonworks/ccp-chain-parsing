@@ -2,11 +2,6 @@ package com.cloudera.parserchains.core;
 
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
-import com.cloudera.parserchains.core.model.config.ConfigKey;
-import com.cloudera.parserchains.core.model.config.ConfigName;
-import com.cloudera.parserchains.core.model.config.ConfigValue;
-import com.cloudera.parserchains.core.model.define.ConfigValueSchema;
-import com.cloudera.parserchains.core.model.define.InvalidParserException;
 import com.cloudera.parserchains.core.model.define.ParserChainSchema;
 import com.cloudera.parserchains.core.model.define.ParserID;
 import com.cloudera.parserchains.core.model.define.ParserSchema;
@@ -15,9 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class DefaultChainBuilder implements ChainBuilder {
     private static final Logger logger = LogManager.getLogger(DefaultChainBuilder.class);
@@ -116,34 +109,21 @@ public class DefaultChainBuilder implements ChainBuilder {
      * @param parserInfos A list of information about all known parsers.
      * @return A {@link Parser}.
      */
-    private Parser buildParser(ParserSchema parserSchema, List<ParserInfo> parserInfos){
+    private Parser buildParser(ParserSchema parserSchema,
+                               List<ParserInfo> parserInfos) throws InvalidParserException {
         String className = parserSchema.getId().getId();
         Optional<ParserInfo> parserInfo = parserInfos
                 .stream()
                 .filter(info -> className.equals(info.getParserClass().getCanonicalName()))
                 .findFirst();
         if(parserInfo.isPresent()) {
-            // build the parser
-            Parser parser = parserBuilder.build(parserInfo.get());
-            parserSchema.getConfig().forEach((configName, valuesSchema) -> {
-                // configure the parser using the values provided in the schema
-                for(ConfigValueSchema valueSchema: valuesSchema) {
-                    Map<ConfigKey, ConfigValue> values = valueSchema
-                            .getValues()
-                            .entrySet()
-                            .stream()
-                            .collect(Collectors.toMap(
-                                    e -> ConfigKey.builder().key(e.getKey()).build(),
-                                    e -> ConfigValue.of(e.getValue())));
-                    parser.configure(ConfigName.of(configName), values);
-                }
-            });
-            return parser;
+            return parserBuilder.build(parserInfo.get(), parserSchema);
 
         } else {
             String error = String.format("Unable to find parser in catalog; class=%s", className);
             logger.error(error);
-            throw new IllegalStateException(error);
+            throw new InvalidParserException(parserSchema, error);
         }
     }
+
 }
