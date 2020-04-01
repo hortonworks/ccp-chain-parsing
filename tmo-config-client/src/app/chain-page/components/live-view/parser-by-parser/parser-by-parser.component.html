@@ -60,7 +60,15 @@
     </nz-timeline-item>
   </nz-timeline>
   <div *ngIf="!parserResults">
-    <nz-result nzStatus="warning" [nzTitle]="compileErrorMessage">
+    <nz-result nzStatus="warning" [nzTitle]="compileErrorDescription">
+      <div nz-result-content>
+        <div class="desc">
+          <h4 nz-title>Error Message:</h4>
+          <p nz-paragraph data-qe-id="logMessage">
+            {{ logMessage }}
+          </p>
+        </div>
+      </div>
     </nz-result>
   </div>
 </div>

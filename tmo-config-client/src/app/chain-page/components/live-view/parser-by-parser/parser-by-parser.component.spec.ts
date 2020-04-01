@@ -73,16 +73,19 @@ describe('ParserByParserComponent', () => {
 
   it('should display empty message when parserResults is not returned', () => {
     component.parserResults = null;
+    component.logMessage = 'this is a test error message';
     fixture.detectChanges();
 
     const emptyMessage = fixture.debugElement.query(By.css('.ant-result-title'));
+    const logMessage = fixture.debugElement.query(By.css('[data-qe-id="logMessage"'));
 
-    expect(emptyMessage.nativeElement.textContent).toContain(component.compileErrorMessage);
+    expect(emptyMessage.nativeElement.textContent).toContain(component.compileErrorDescription);
 
     component.parserResults = [];
     fixture.detectChanges();
 
-    expect(emptyMessage.nativeElement.textContent).toContain(component.compileErrorMessage);
+    expect(emptyMessage.nativeElement.textContent).toContain(component.compileErrorDescription);
+    expect(logMessage.nativeElement.textContent).toContain(component.logMessage);
   });
 
   it('should bind stack trace msg to stack trace component', () => {
