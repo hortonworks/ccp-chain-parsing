@@ -120,10 +120,12 @@
         "type":"text",
         "label":"Delimiter",
         "description":"A regular expression used to split the text. Defaults to comma",
-        "value":",",
-        "defaultValue":",",
+        "defaultValue": [{
+          "delimiter": ","
+        }],
         "required":false,
-        "path":"config"
+        "multiple": true,
+        "path":"config.delimiter"
       },
       {
         "name":"trim",

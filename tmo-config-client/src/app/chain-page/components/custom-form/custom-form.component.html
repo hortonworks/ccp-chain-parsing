@@ -20,7 +20,7 @@
           placeholder="{{ formConfig.placeholder }}"
         />
       </nz-form-control>
-      <nz-form-control *ngIf="formConfig.type === 'text' && formConfig.multiple === true" [nzSm]="14" [nzXs]="24">
+      <nz-form-control *ngIf="['textarea', 'text'].includes(formConfig.type) && formConfig.multiple === true" [nzSm]="14" [nzXs]="24">
         <app-multi-input
           [config]="formConfig"
           [value]="formConfig.value"
@@ -28,7 +28,7 @@
         >
         </app-multi-input>
       </nz-form-control>
-      <nz-form-control *ngIf="formConfig.type === 'textarea'" [nzSm]="14" [nzXs]="24">
+      <nz-form-control *ngIf="formConfig.type === 'textarea' && formConfig.multiple !== true" [nzSm]="14" [nzXs]="24">
         <textarea
           id="{{ formConfig.id }}"
           rows="4"
