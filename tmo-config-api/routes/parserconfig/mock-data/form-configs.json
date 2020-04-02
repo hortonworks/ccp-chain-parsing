@@ -99,7 +99,7 @@
       },
       {
         "name":"fieldName",
-        "type":"text",
+        "type":"textarea",
         "label":"Output field name",
         "description":"",
         "required":true,
@@ -108,7 +108,7 @@
       },
       {
         "name":"fieldIndex",
-        "type":"text",
+        "type":"textarea",
         "label":"Output field index",
         "description":"",
         "required":true,
