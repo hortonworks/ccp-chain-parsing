@@ -19,6 +19,8 @@
         nzSize="small"
         (keyup)="onChange(config)"
       ></textarea>
+      <i *ngIf="i === 0" nz-icon nzType="info-circle" nzTheme="outline" nzTooltipTitle="{{ config.description }}"
+      nzTooltipPlacement="right" nz-tooltip></i>
       <button
         class="remove-field-button"
         nz-button
