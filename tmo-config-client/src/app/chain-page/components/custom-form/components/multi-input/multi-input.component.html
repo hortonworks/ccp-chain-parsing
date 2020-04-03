@@ -1,15 +1,24 @@
 <div class="multi-input">
-  <span *ngIf="config.type === 'text'">
+  <span>
     <nz-form-control
       *ngFor="let item of controls; let i = index;"
       [nzSm]="24"
       [nzXs]="20"
     >
       <input
+        *ngIf="config.type === 'text'"
         nz-input
         [formControl]="controls[i]"
         (keyup)="onChange(config)"
       />
+      <textarea
+        *ngIf="config.type === 'textarea'"
+        nz-input
+        rows="4"
+        [formControl]="controls[i]"
+        nzSize="small"
+        (keyup)="onChange(config)"
+      ></textarea>
       <button
         class="remove-field-button"
         nz-button
@@ -21,7 +30,7 @@
         title="Remove field"
       >
         <i nz-icon nzType="minus-circle" nzTheme="fill"></i>
-    </button>
+      </button>
     </nz-form-control>
   </span>
   <button

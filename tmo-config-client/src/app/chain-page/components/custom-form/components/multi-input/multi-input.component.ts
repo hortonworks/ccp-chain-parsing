@@ -20,17 +20,17 @@ export class MultiInputComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    if (!Array.isArray(this.value) || this.value.length === 0) {
+    this.controls = (this.value || []).map(item => {
+      if (item[this.config.name]) {
+        return new FormControl(item[this.config.name]);
+      }
+      return null;
+    }).filter(Boolean);
+
+    if (this.controls.length === 0) {
       this.controls.push(
         new FormControl('')
       );
-    } else {
-      this.controls = this.value.map(item => {
-        if (item[this.config.name]) {
-          return new FormControl(item[this.config.name]);
-        }
-        return null;
-      }).filter(Boolean);
     }
   }
 
