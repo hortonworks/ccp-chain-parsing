@@ -97,7 +97,7 @@ public class Message {
          * @return
          */
         public Builder removeField(FieldName name) {
-            this.fields.remove(Objects.requireNonNull(name));
+            this.fields.remove(Objects.requireNonNull(name, "The name of the field to remove is required."));
             return this;
         }
 
@@ -108,7 +108,7 @@ public class Message {
          */
         public Builder removeFields(List<FieldName> fieldNames) {
             for(FieldName fieldName: fieldNames) {
-                this.fields.remove(Objects.requireNonNull(fieldName));
+                this.fields.remove(Objects.requireNonNull(fieldName, "The name of the field to remove is required."));
             }
             return this;
         }
@@ -135,7 +135,7 @@ public class Message {
          * @return
          */
         public Builder withError(Throwable error) {
-            this.error = Objects.requireNonNull(error);
+            this.error = Objects.requireNonNull(error, "An error is required.");
             return this;
         }
 
@@ -146,7 +146,7 @@ public class Message {
          * @return
          */
         public Builder withError(String message) {
-            this.error = new IllegalStateException(Objects.requireNonNull(message));
+            this.error = new IllegalStateException(Objects.requireNonNull(message, "An error message is required."));
             return this;
         }
 

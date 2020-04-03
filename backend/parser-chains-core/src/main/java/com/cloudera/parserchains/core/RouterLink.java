@@ -39,7 +39,7 @@ public class RouterLink implements ChainLink {
     }
 
     public RouterLink withInputField(FieldName fieldName) {
-        inputField = Objects.requireNonNull(fieldName);
+        inputField = Objects.requireNonNull(fieldName, "An input field must be defined.");
         return this;
     }
 
@@ -57,7 +57,7 @@ public class RouterLink implements ChainLink {
     }
 
     public RouterLink withDefault(ChainLink defaultNext) {
-        this.defaultRoute = Optional.of(defaultNext);
+        this.defaultRoute = Optional.ofNullable(defaultNext);
         return this;
     }
 
