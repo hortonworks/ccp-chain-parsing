@@ -151,6 +151,18 @@ public class Message {
         }
 
         /**
+         * Adds an error to the message to indicate that an error occurred
+         * while parsing.
+         * @param message The error message.
+         * @param rootCause The root cause exception.
+         * @return
+         */
+        public Builder withError(String message, Throwable rootCause) {
+            this.error = new RuntimeException(message, rootCause);
+            return this;
+        }
+
+        /**
          * Assigns a {@link LinkName} to this message indicating which link in the
          * chain was responsible for creating the message.
          * @param createdBy The name of the link that created this message.
