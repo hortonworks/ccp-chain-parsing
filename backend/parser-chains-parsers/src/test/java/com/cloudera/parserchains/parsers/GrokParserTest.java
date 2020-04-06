@@ -5,6 +5,7 @@ import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.model.config.ConfigKey;
 import com.cloudera.parserchains.core.model.config.ConfigValue;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +16,8 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GrokParserTest {
     private GrokParser grokParser;
@@ -203,5 +206,24 @@ public class GrokParserTest {
         grokParser.zoneOffset(offset);
         assertThat("Expected the zone offset to have been configured.",
                 grokParser.getZoneOffset(), is(expected));
+    }
+
+    @Test
+    void grokPattern() {
+        final String textToParse = "Orange Cucumber";
+        Message input = Message.builder()
+                .addField(Constants.DEFAULT_INPUT_FIELD, textToParse)
+                .build();
+        Message output = grokParser
+                .pattern("FRUIT", "Orange|Lemon")
+                .pattern("VEGETABLE", "Cucumber|Broccoli")
+                .expression("%{FRUIT:fruit} %{VEGETABLE:veggie}")
+                .parse(input);
+        Message expected = Message.builder()
+                .withFields(input)
+                .addField("fruit", "Orange")
+                .addField("veggie", "Cucumber")
+                .build();
+        assertThat(output, is(expected));
     }
 }

@@ -4,10 +4,12 @@ import com.cloudera.parserchains.core.Constants;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
-import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.catalog.Configurable;
+import com.cloudera.parserchains.core.catalog.MessageParser;
+import com.cloudera.parserchains.core.catalog.Parameter;
 import io.krakens.grok.api.Grok;
 import io.krakens.grok.api.GrokCompiler;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -59,12 +61,24 @@ public class GrokParser implements Parser {
         }
     }
 
+    @Configurable(key="grokPattern", description="Define a Grok pattern that can be referenced from an expression.")
+    public GrokParser pattern(
+            @Parameter(key="name", label="Pattern Name") String patternName,
+            @Parameter(key="regex", label="Pattern Regex") String patternRegex) {
+        if(StringUtils.isNoneBlank(patternName, patternRegex)) {
+            grokCompiler.register(patternName, patternRegex);
+        }
+        return this;
+    }
+
     @Configurable(key = "grokExpression",
             label = "Grok Expression(s)",
             description = "The grok expression to execute.")
     public GrokParser expression(String grokExpression) {
-        Grok grok = grokCompiler.compile(grokExpression, zoneOffset, false);
-        this.grokExpressions.add(grok);
+        if(StringUtils.isNotBlank(grokExpression)) {
+            Grok grok = grokCompiler.compile(grokExpression, zoneOffset, false);
+            this.grokExpressions.add(grok);
+        }
         return this;
     }
 
@@ -82,7 +96,9 @@ public class GrokParser implements Parser {
             description = "The name of the input field to parse.",
             defaultValue = Constants.DEFAULT_INPUT_FIELD)
     public GrokParser inputField(String inputField) {
-        this.inputField = FieldName.of(inputField);
+        if(StringUtils.isNotBlank(inputField)) {
+            this.inputField = FieldName.of(inputField);
+        }
         return this;
     }
 
@@ -100,7 +116,9 @@ public class GrokParser implements Parser {
             description = "Set the zone offset. For example \"+02:00\".",
             defaultValue = DEFAULT_ZONE_OFFSET)
     public void zoneOffset(String offset) {
-        zoneOffset(ZoneOffset.of(offset));
+        if(StringUtils.isNotBlank(offset)) {
+            zoneOffset(ZoneOffset.of(offset));
+        }
     }
 
     public ZoneOffset getZoneOffset() {
