@@ -29,13 +29,11 @@ public class TimestampParserTest {
         Message input = Message.builder()
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
                 .build();
-        FieldName timestampField = FieldName.of("processing_timestamp");
         Message output = new TimestampParser()
                 .withClock(new FixedClock(time))
-                .withOutputField(timestampField)
+                .withOutputField("processing_timestamp")
                 .parse(input);
-
-        assertEquals(FieldValue.of(Long.toString(time)), output.getField(timestampField).get(), 
+        assertEquals(FieldValue.of(Long.toString(time)), output.getField(FieldName.of("processing_timestamp")).get(),
             "Expected a timestamp to have been added to the message.");
         assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get(),
             "Expected the same input fields to be available on the output message.");
@@ -49,12 +47,10 @@ public class TimestampParserTest {
         Message input = Message.builder()
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
                 .build();
-
         TimestampParser parser = new TimestampParser();
         Message output = parser
                 .withClock(new FixedClock(time))
                 .parse(input);
-
         FieldName defaultFieldName = parser.getOutputField();
         assertEquals(FieldValue.of(Long.toString(time)), output.getField(defaultFieldName).get(),
                 "Expected a timestamp to have been added using the default field name.");

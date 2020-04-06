@@ -6,6 +6,7 @@ import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.catalog.Configurable;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -36,20 +37,15 @@ public class TimestampParser implements Parser {
                 .build();
     }
 
-    /**
-     * @param fieldName The name of the field added to each message.
-     */
-    public TimestampParser withOutputField(FieldName fieldName) {
-        this.outputField = Objects.requireNonNull(fieldName, "A valid output field is required.");
-        return this;
-    }
-
     @Configurable(key="outputField",
             label="Output Field",
             description="The field that will contain the timestamp.",
             defaultValue=DEFAULT_OUTPUT_FIELD)
     public TimestampParser withOutputField(String fieldName) {
-        return withOutputField(FieldName.of(fieldName));
+        if(StringUtils.isNotBlank(fieldName)) {
+            this.outputField = FieldName.of(fieldName);
+        }
+        return this;
     }
 
     /**

@@ -6,6 +6,7 @@ import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.catalog.Configurable;
 import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.catalog.Parameter;
+import org.apache.commons.lang3.StringUtils;
 import com.cloudera.parserchains.core.catalog.WidgetType;
 import org.apache.metron.stellar.common.shell.DefaultStellarShellExecutor;
 import org.apache.metron.stellar.common.shell.StellarResult;
@@ -80,17 +81,6 @@ public class StellarParser implements Parser {
      * @param expression The Stellar expression to execute.
      * @return
      */
-    public StellarParser expression(FieldName fieldName, String expression) {
-        this.expressions.put(fieldName, expression);
-        return this;
-    }
-
-    /**
-     * Add a Stellar expression that will be executed.
-     * @param fieldName The name of the field to create or modify.
-     * @param expression The Stellar expression to execute.
-     * @return
-     */
     @Configurable(key="stellarExpression")
     public StellarParser expression(
             @Parameter(
@@ -104,6 +94,9 @@ public class StellarParser implements Parser {
                     description="The Stellar expression to execute.",
                     widgetType = WidgetType.TEXTAREA
             ) String expression) {
-        return expression(FieldName.of(fieldName), expression);
+        if(StringUtils.isNoneBlank(fieldName, expression)) {
+            this.expressions.put(FieldName.of(fieldName), expression);
+        }
+        return this;
     }
 }

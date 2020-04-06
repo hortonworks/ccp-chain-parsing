@@ -1,5 +1,6 @@
 package com.cloudera.parserchains.parsers;
 
+import com.cloudera.parserchains.core.Constants;
 import com.cloudera.parserchains.core.FieldName;
 import com.cloudera.parserchains.core.FieldValue;
 import com.cloudera.parserchains.core.Message;
@@ -31,10 +32,9 @@ public class SyslogParserTest {
     @Test
     void parse5424() {
         Message input = Message.builder()
-                .addField(FieldName.of("original_string"), FieldValue.of(SYSLOG_5424))
+                .addField(Constants.DEFAULT_INPUT_FIELD, SYSLOG_5424)
                 .build();
         Message output = new SyslogParser()
-                .withInputField(FieldName.of("original_string"))
                 .parse(input);
         Message expected = Message.builder()
                 .withFields(input)
@@ -64,10 +64,9 @@ public class SyslogParserTest {
     @Test
     void parse3164() {
         Message input = Message.builder()
-                .addField(FieldName.of("original_string"), FieldValue.of(SYSLOG_3164))
+                .addField(Constants.DEFAULT_INPUT_FIELD, SYSLOG_3164)
                 .build();
         Message output = new SyslogParser()
-                .withInputField(FieldName.of("original_string"))
                 .withSpecification(SyslogSpecification.RFC_3164)
                 .parse(input);
         Message expected = Message.builder()
@@ -85,10 +84,9 @@ public class SyslogParserTest {
     @Test
     void parseError() {
         Message input = Message.builder()
-                .addField(FieldName.of("original_string"), FieldValue.of(" SasaS"))
+                .addField(Constants.DEFAULT_INPUT_FIELD, " SasaS")
                 .build();
         Message output = new SyslogParser()
-                .withInputField(FieldName.of("original_string"))
                 .parse(input);
         assertTrue(output.getError().isPresent(),
             "Expected a parsing error to have occurred.");
@@ -101,7 +99,6 @@ public class SyslogParserTest {
         Message input = Message.builder()
                  .build();
         Message output = new SyslogParser()
-                .withInputField(FieldName.of("original_string"))
                 .parse(input);
         assertTrue(output.getError().isPresent(),
                 "Expected a parsing error to have occurred.");
@@ -112,10 +109,9 @@ public class SyslogParserTest {
     @Test
     void emptyInput() {
         Message input = Message.builder()
-                .addField(FieldName.of("original_string"), FieldValue.of(""))
+                .addField(Constants.DEFAULT_INPUT_FIELD, "")
                 .build();
         Message output = new SyslogParser()
-                .withInputField(FieldName.of("original_string"))
                 .parse(input);
         assertTrue(output.getError().isPresent(),
                 "Expected a parsing error to have occurred.");

@@ -21,29 +21,58 @@ public class JSONParserTest {
 
     /**
      * {
-     *     "first": "one",
-     *     "second": "two",
-     *     "third": "three"
+     *    "name":"Cake",
+     *    "type":"Donut",
+     *    "ppu":0.55,
+     *    "batters":{
+     *       "batter":[
+     *          {
+     *             "id":"1001",
+     *             "type":"Regular"
+     *          },
+     *          {
+     *             "id":"1002",
+     *             "type":"Chocolate"
+     *          }
+     *       ]
+     *    },
+     *    "topping":[
+     *       {
+     *          "id":"5001",
+     *          "type":"None"
+     *       },
+     *       {
+     *          "id":"5002",
+     *          "type":"Glazed"
+     *       }
+     *    ]
      * }
      */
     @Multiline
-    static String fieldForEachElement;
+    static String jsonToParse;
 
     @Test
-    void fieldForEachElement() {
+    void byDefault() {
         Message input = Message.builder()
-                .addField(DEFAULT_INPUT_FIELD, fieldForEachElement)
+                .addField(DEFAULT_INPUT_FIELD, jsonToParse)
                 .build();
         Message output = jsonParser
                 .parse(input);
         Message expected = Message.builder()
                 .withFields(input)
-                .addField("first", "one")
-                .addField("second", "two")
-                .addField("third", "three")
+                .addField("name", "Cake")
+                .addField("type", "Donut")
+                .addField("ppu", "0.55")
+                .addField("batters.batter[0].id", "1001")
+                .addField("batters.batter[0].type", "Regular")
+                .addField("batters.batter[1].id", "1002")
+                .addField("batters.batter[1].type", "Chocolate")
+                .addField("topping[0].id", "5001")
+                .addField("topping[0].type", "None")
+                .addField("topping[1].id", "5002")
+                .addField("topping[1].type", "Glazed")
                 .build();
-        assertThat("Expected a new field for each JSON element.",
-                output, is(expected));
+        assertThat(output, is(expected));
     }
 
     /**
@@ -76,102 +105,83 @@ public class JSONParserTest {
                 "Expected a parsing error because there is no 'input' field to parse.");
     }
 
-    /**
-     * {
-     *     "list": [ "one", "two", "three" ]
-     * }
-     */
-    @Multiline
-    static String arrays;
-
     @Test
-    void arrays() {
+    void unfoldNested() {
         Message input = Message.builder()
-                .addField(DEFAULT_INPUT_FIELD, arrays)
-                .build();
-        Message output = jsonParser
-                .parse(input);
-        Message expected = Message.builder()
-                .withFields(input)
-                .addField("list", "[one, two, three]")
-                .build();
-        assertThat(output, is(expected));
-    }
-
-    /**
-     * {
-     *    "object": {
-     *       "first":"one",
-     *       "second":"two",
-     *       "third":"three"
-     *    }
-     * }
-     */
-    @Multiline
-    static String objects;
-
-    @Test
-    void unfoldNestedObjects() {
-        Message input = Message.builder()
-                .addField(DEFAULT_INPUT_FIELD, objects)
+                .addField(DEFAULT_INPUT_FIELD, jsonToParse)
                 .build();
         Message output = jsonParser
                 .normalizer("UNFOLD_NESTED")
                 .parse(input);
         Message expected = Message.builder()
                 .withFields(input)
-                .addField("object.first", "one")
-                .addField("object.second", "two")
-                .addField("object.third", "three")
+                .addField("name", "Cake")
+                .addField("type", "Donut")
+                .addField("ppu", "0.55")
+                .addField("batters.batter[0].id", "1001")
+                .addField("batters.batter[0].type", "Regular")
+                .addField("batters.batter[1].id", "1002")
+                .addField("batters.batter[1].type", "Chocolate")
+                .addField("topping[0].id", "5001")
+                .addField("topping[0].type", "None")
+                .addField("topping[1].id", "5002")
+                .addField("topping[1].type", "Glazed")
                 .build();
         assertThat(output, is(expected));
     }
 
     @Test
-    void dropNestedObjects() {
+    void dropNested() {
         Message input = Message.builder()
-                .addField(DEFAULT_INPUT_FIELD, objects)
+                .addField(DEFAULT_INPUT_FIELD, jsonToParse)
                 .build();
         Message output = jsonParser
                 .normalizer("DROP_NESTED")
                 .parse(input);
         Message expected = Message.builder()
-                .clone(input)
+                .withFields(input)
+                .addField("name", "Cake")
+                .addField("type", "Donut")
+                .addField("ppu", "0.55")
                 .build();
         assertThat(output, is(expected));
     }
 
     @Test
-    void allowNestedObjects() {
+    void allowNested() {
         Message input = Message.builder()
-                .addField(DEFAULT_INPUT_FIELD, objects)
+                .addField(DEFAULT_INPUT_FIELD, jsonToParse)
                 .build();
         Message output = jsonParser
                 .normalizer("ALLOW_NESTED")
                 .parse(input);
         Message expected = Message.builder()
                 .withFields(input)
-                .addField("object", "{first=one, second=two, third=three}")
+                .addField("name", "Cake")
+                .addField("type", "Donut")
+                .addField("ppu", "0.55")
+                .addField("batters", "{\"batter\":[{\"id\":\"1001\",\"type\":\"Regular\"},{\"id\":\"1002\",\"type\":\"Chocolate\"}]}")
+                .addField("topping", "[{\"id\":\"5001\",\"type\":\"None\"},{\"id\":\"5002\",\"type\":\"Glazed\"}]")
                 .build();
         assertThat(output, is(expected));
     }
 
     @Test
-    void disallowNestedObjects() {
+    void disallowNested() {
         Message input = Message.builder()
-                .addField(DEFAULT_INPUT_FIELD, objects)
+                .addField(DEFAULT_INPUT_FIELD, jsonToParse)
                 .build();
         Message output = jsonParser
                 .normalizer("DISALLOW_NESTED")
                 .parse(input);
         assertTrue(output.getError().isPresent(),
-                "Expected an error because nested objects have been disallowed.");
+                "Expected an error because nested jsonToParse have been disallowed.");
     }
 
     @Test
     void invalidNormalizer() {
         Message input = Message.builder()
-                .addField(DEFAULT_INPUT_FIELD, objects)
+                .addField(DEFAULT_INPUT_FIELD, jsonToParse)
                 .build();
         assertThrows(IllegalArgumentException.class, () -> jsonParser.normalizer("INVALID").parse(input));
     }

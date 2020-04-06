@@ -5,6 +5,7 @@ import com.cloudera.parserchains.core.Message;
 import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.catalog.Configurable;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,8 @@ public class RemoveFieldParser implements Parser {
             description="The name of a field to remove.",
             required=true)
     public void removeField(String fieldName) {
-        removeField(FieldName.of(fieldName));
+        if(StringUtils.isNotBlank(fieldName)) {
+            removeField(FieldName.of(fieldName));
+        }
     }
 }

@@ -9,6 +9,7 @@ import com.cloudera.parserchains.core.Regex;
 import com.cloudera.parserchains.core.catalog.Configurable;
 import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.catalog.Parameter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +66,9 @@ public class DelimitedTextParser implements Parser {
             description="The name of the input field to parse.",
             defaultValue = Constants.DEFAULT_INPUT_FIELD)
     public DelimitedTextParser withInputField(String fieldName) {
-        withInputField(FieldName.of(fieldName));
+        if(StringUtils.isNotEmpty(fieldName)) {
+            withInputField(FieldName.of(fieldName));
+        }
         return this;
     }
 
@@ -86,7 +89,9 @@ public class DelimitedTextParser implements Parser {
             description="A regex used to split the text. Defaults to comma.",
             defaultValue=DEFAULT_DELIMITER)
     public void withDelimiter(String delimiter) {
-        withDelimiter(Regex.of(delimiter));
+        if(StringUtils.isNotEmpty(delimiter)) {
+            withDelimiter(Regex.of(delimiter));
+        }
     }
 
     public Regex getDelimiter() {
@@ -106,7 +111,9 @@ public class DelimitedTextParser implements Parser {
     public void withOutputField(
             @Parameter(key="fieldName", label="Field Name", description="The name of the output field.") String fieldName,
             @Parameter(key="fieldIndex", label="Column Index", description="The index of the column containing the data.") String index) {
-        withOutputField(FieldName.of(fieldName), Integer.parseInt(index));
+        if(StringUtils.isNoneBlank(fieldName, index)) {
+            withOutputField(FieldName.of(fieldName), Integer.parseInt(index));
+        }
     }
 
     public List<OutputField> getOutputFields() {
@@ -126,7 +133,9 @@ public class DelimitedTextParser implements Parser {
             description="Trim whitespace from each value. Defaults to true.",
             defaultValue=DEFAULT_TRIM)
     public void trimWhitespace(String trimWhitespace) {
-        trimWhitespace(Boolean.valueOf(trimWhitespace));
+        if(StringUtils.isNotBlank(trimWhitespace)) {
+            trimWhitespace(Boolean.valueOf(trimWhitespace));
+        }
     }
 
     public boolean isTrimWhitespace() {

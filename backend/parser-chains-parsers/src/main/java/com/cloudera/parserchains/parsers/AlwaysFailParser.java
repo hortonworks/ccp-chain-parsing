@@ -6,6 +6,7 @@ import com.cloudera.parserchains.core.RouterLink;
 import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.catalog.Configurable;
 import com.cloudera.parserchains.core.catalog.Parameter;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Objects;
 
@@ -40,8 +41,9 @@ public class AlwaysFailParser implements Parser {
                     label="Error Message",
                     description="The error message explaining the error.",
                     defaultValue=DEFAULT_ERROR_MESSAGE) String message) {
-        Objects.requireNonNull(message, "A valid error message is required.");
-        error = new IllegalStateException(message);
+        if(StringUtils.isNotEmpty(message)) {
+            error = new IllegalStateException(message);
+        }
         return this;
     }
 

@@ -7,6 +7,7 @@ import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.catalog.Configurable;
 import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.catalog.Parameter;
+import com.cloudera.parserchains.core.catalog.WidgetType;
 import io.krakens.grok.api.Grok;
 import io.krakens.grok.api.GrokCompiler;
 import org.apache.commons.lang3.StringUtils;
@@ -64,7 +65,7 @@ public class GrokParser implements Parser {
     @Configurable(key="grokPattern", description="Define a Grok pattern that can be referenced from an expression.")
     public GrokParser pattern(
             @Parameter(key="name", label="Pattern Name") String patternName,
-            @Parameter(key="regex", label="Pattern Regex") String patternRegex) {
+            @Parameter(key="regex", label="Pattern Regex", widgetType= WidgetType.TEXTAREA) String patternRegex) {
         if(StringUtils.isNoneBlank(patternName, patternRegex)) {
             grokCompiler.register(patternName, patternRegex);
         }

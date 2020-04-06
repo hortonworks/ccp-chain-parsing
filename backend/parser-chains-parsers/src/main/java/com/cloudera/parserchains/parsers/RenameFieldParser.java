@@ -6,6 +6,7 @@ import com.cloudera.parserchains.core.Parser;
 import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.catalog.Parameter;
 import com.cloudera.parserchains.core.catalog.Configurable;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,6 +51,8 @@ public class RenameFieldParser implements Parser {
     public void renameField(
             @Parameter(key="from", label="Rename From", description="The original name of the field.") String from,
             @Parameter(key="to", label="Rename To", description="The new name of the field.") String to) {
-        renameField(FieldName.of(from), FieldName.of(to));
+        if(StringUtils.isNoneBlank(from, to)) {
+            renameField(FieldName.of(from), FieldName.of(to));
+        }
     }
 }

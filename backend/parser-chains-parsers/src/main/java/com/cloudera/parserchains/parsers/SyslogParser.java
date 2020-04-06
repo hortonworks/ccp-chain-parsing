@@ -9,6 +9,7 @@ import com.cloudera.parserchains.core.catalog.MessageParser;
 import com.cloudera.parserchains.core.catalog.Configurable;
 import com.github.palindromicity.syslog.SyslogParserBuilder;
 import com.github.palindromicity.syslog.SyslogSpecification;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -33,8 +34,10 @@ public class SyslogParser implements Parser {
             description="The Syslog specification; 'RFC_5424' or 'RFC_3164'",
             defaultValue=DEFAULT_SYSLOG_SPEC)
     public void withSpecification(String specification) {
-        SyslogSpecification spec = SyslogSpecification.valueOf(specification);
-        withSpecification(spec);
+        if(StringUtils.isNotBlank(specification)) {
+            SyslogSpecification spec = SyslogSpecification.valueOf(specification);
+            withSpecification(spec);
+        }
     }
 
     public SyslogParser withSpecification(SyslogSpecification specification) {
@@ -50,8 +53,10 @@ public class SyslogParser implements Parser {
             label="Input Field",
             description="The name of the input field to parse.",
             defaultValue = Constants.DEFAULT_INPUT_FIELD)
-    public SyslogParser withInputField(FieldName inputField) {
-        this.inputField = Objects.requireNonNull(inputField, "A valid input field is required.");
+    public SyslogParser withInputField(String inputField) {
+        if(StringUtils.isNotBlank(inputField)) {
+            this.inputField = FieldName.of(inputField);
+        }
         return this;
     }
 
