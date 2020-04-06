@@ -11,8 +11,7 @@ import org.apache.logging.log4j.Logger;
  * Parses a {@link Message} using a parser chain.
  */
 public class DefaultChainRunner implements ChainRunner {
-
-  public static final LinkName ORIGINAL_MESSAGE_NAME = LinkName.of("original", ParserName.of("Test Parser Name"));
+    public static final LinkName ORIGINAL_MESSAGE_NAME = LinkName.of("original", ParserName.of("Test Parser Name"));
     private static final Logger logger = LogManager.getLogger(DefaultChainRunner.class);
     private FieldName inputField;
 
