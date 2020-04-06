@@ -45,4 +45,11 @@ public @interface Configurable {
      * <p>This value is optional.
      */
     String defaultValue() default "";
+
+    /**
+     * Defines the type of widget presented to the user when
+     * configuring the parameter.
+     * <p>Accepts either "text" or "textarea".
+     */
+    WidgetType widgetType() default WidgetType.TEXT;
 }

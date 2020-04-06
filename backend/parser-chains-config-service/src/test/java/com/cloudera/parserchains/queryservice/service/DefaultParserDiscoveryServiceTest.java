@@ -18,7 +18,6 @@
 
 package com.cloudera.parserchains.queryservice.service;
 
-import com.cloudera.parserchains.core.ReflectiveParserBuilder;
 import com.cloudera.parserchains.core.catalog.AnnotationBasedParserInfoBuilder;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
 import com.cloudera.parserchains.core.catalog.ParserInfo;
@@ -27,6 +26,7 @@ import com.cloudera.parserchains.core.model.define.ParserID;
 import com.cloudera.parserchains.core.utils.JSONUtils;
 import com.cloudera.parserchains.parsers.DelimitedTextParser;
 import com.cloudera.parserchains.parsers.RemoveFieldParser;
+import com.cloudera.parserchains.parsers.StellarParser;
 import com.cloudera.parserchains.queryservice.model.describe.ParserDescriptor;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummary;
 import com.cloudera.parserchains.queryservice.model.summary.ParserSummaryMapper;
@@ -58,19 +58,19 @@ public class DefaultParserDiscoveryServiceTest {
   public void beforeEach() {
     setupParserCatalog();
     mapper = new ParserSummaryMapper();
-    service = new DefaultParserDiscoveryService(catalog, new ReflectiveParserBuilder(), mapper);
+    service = new DefaultParserDiscoveryService(catalog, mapper);
   }
 
   private void setupParserCatalog() {
+    // add a few of the demo parsers to a 'test' catalog to use during the tests
     List<ParserInfo> testCatalog = new ArrayList<>();
-
-    // use a couple of the demo parsers for testing
     ParserInfoBuilder infoBuilder = new AnnotationBasedParserInfoBuilder();
     infoBuilder.build(DelimitedTextParser.class)
             .ifPresent(info -> testCatalog.add(info));
     infoBuilder.build(RemoveFieldParser.class)
             .ifPresent(info -> testCatalog.add(info));
-
+    infoBuilder.build(StellarParser.class)
+            .ifPresent(info -> testCatalog.add(info));
     when(catalog.getParsers())
             .thenReturn(testCatalog);
   }
@@ -83,7 +83,7 @@ public class DefaultParserDiscoveryServiceTest {
             .map(info -> mapper.reform(info))
             .collect(Collectors.toList());
     assertThat(actual, equalTo(expected));
-    assertThat(actual.size(), equalTo(2));
+    assertThat(actual.size(), equalTo(3));
   }
 
   /**
@@ -153,7 +153,6 @@ public class DefaultParserDiscoveryServiceTest {
     assertThat(actual, equalToCompressingWhiteSpace(describeExpected));
   }
 
-
   /**
    * {
    *   "com.cloudera.parserchains.parsers.RemoveFieldParser" : {
@@ -166,6 +165,27 @@ public class DefaultParserDiscoveryServiceTest {
    *       "description" : "The name of a field to remove.",
    *       "required" : true,
    *       "path" : "config.fieldToRemove",
+   *       "multiple" : true
+   *     } ]
+   *   },
+   *   "com.cloudera.parserchains.parsers.StellarParser" : {
+   *     "id" : "com.cloudera.parserchains.parsers.StellarParser",
+   *     "name" : "Stellar",
+   *     "schemaItems" : [ {
+   *       "name" : "expression",
+   *       "type" : "textarea",
+   *       "label" : "Stellar",
+   *       "description" : "The Stellar expression to execute.",
+   *       "required" : false,
+   *       "path" : "config.stellarExpression",
+   *       "multiple" : true
+   *     }, {
+   *       "name" : "fieldName",
+   *       "type" : "text",
+   *       "label" : "Field Name",
+   *       "description" : "The field to create or modify.",
+   *       "required" : false,
+   *       "path" : "config.stellarExpression",
    *       "multiple" : true
    *     } ]
    *   },

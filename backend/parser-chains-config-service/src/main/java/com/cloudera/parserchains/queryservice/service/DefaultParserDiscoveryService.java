@@ -19,7 +19,6 @@
 package com.cloudera.parserchains.queryservice.service;
 
 import com.cloudera.parserchains.core.Parser;
-import com.cloudera.parserchains.core.ParserBuilder;
 import com.cloudera.parserchains.core.catalog.Configurable;
 import com.cloudera.parserchains.core.catalog.Parameter;
 import com.cloudera.parserchains.core.catalog.ParserCatalog;
@@ -50,7 +49,6 @@ import static com.cloudera.parserchains.core.utils.AnnotationUtils.getAnnotatedP
 
 @Service
 public class DefaultParserDiscoveryService implements ParserDiscoveryService {
-  static final String DEFAULT_SCHEMA_TYPE = "text";
   static final String DEFAULT_PATH_ROOT = "config";
   static final String PATH_DELIMITER = ".";
 
@@ -58,17 +56,11 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
   private ParserCatalog catalog;
 
   @Autowired
-  private ParserBuilder builder;
-
-  @Autowired
   private ObjectMapper<ParserSummary, ParserInfo> mapper;
 
   @Autowired
-  public DefaultParserDiscoveryService(ParserCatalog catalog,
-                                       ParserBuilder builder,
-                                       ObjectMapper<ParserSummary, ParserInfo> mapper) {
+  public DefaultParserDiscoveryService(ParserCatalog catalog, ObjectMapper<ParserSummary, ParserInfo> mapper) {
     this.catalog = catalog;
-    this.builder = builder;
     this.mapper = mapper;
   }
 
@@ -146,7 +138,6 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
      */
     ConfigParamDescriptor paramDescriptor = new ConfigParamDescriptor()
             .setPath(DEFAULT_PATH_ROOT + PATH_DELIMITER + configurable.key())
-            .setType(DEFAULT_SCHEMA_TYPE)
             .setMultiple(true);
     if (parameter.isPresent()) {
       // use the parameter-level annotation
@@ -154,7 +145,8 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
       paramDescriptor.setName(p.key())
               .setLabel(p.label())
               .setDescription(p.description())
-              .setRequired(p.required());
+              .setRequired(p.required())
+              .setType(p.widgetType());
       if (StringUtils.isNotBlank(p.defaultValue())) {
         paramDescriptor.addDefaultValue(p.key(), p.defaultValue());
       }
@@ -164,7 +156,8 @@ public class DefaultParserDiscoveryService implements ParserDiscoveryService {
       paramDescriptor.setName(configurable.key())
               .setLabel(configurable.label())
               .setDescription(configurable.description())
-              .setRequired(configurable.required());
+              .setRequired(configurable.required())
+              .setType(configurable.widgetType());
       if (StringUtils.isNotBlank(configurable.defaultValue())) {
         paramDescriptor.addDefaultValue(configurable.key(), configurable.defaultValue());
       }

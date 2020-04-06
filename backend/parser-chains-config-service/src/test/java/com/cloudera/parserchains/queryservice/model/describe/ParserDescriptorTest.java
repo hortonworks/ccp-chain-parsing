@@ -1,6 +1,7 @@
 package com.cloudera.parserchains.queryservice.model.describe;
 
 
+import com.cloudera.parserchains.core.catalog.WidgetType;
 import com.cloudera.parserchains.parsers.SyslogParser;
 import com.cloudera.parserchains.core.utils.JSONUtils;
 import com.cloudera.parserchains.core.model.define.ParserID;
@@ -53,14 +54,14 @@ public class ParserDescriptorTest {
                         .setLabel("Output Field")
                         .setPath("config")
                         .setRequired(true)
-                        .setType("text"))
+                        .setType(WidgetType.TEXT))
                 .addConfiguration(new ConfigParamDescriptor()
                         .setName("inputField")
                         .setDescription("The name of the input field.")
                         .setLabel("Input Field")
                         .setPath("config")
                         .setRequired(true)
-                        .setType("text")
+                        .setType(WidgetType.TEXT)
                         .addDefaultValue("outputField", "original_string"));
         String actual = JSONUtils.INSTANCE.toJSON(schema, true);
         assertThat(actual, equalToCompressingWhiteSpace(expectedJSON));

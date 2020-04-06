@@ -18,6 +18,7 @@
 
 package com.cloudera.parserchains.queryservice.model.describe;
 
+import com.cloudera.parserchains.core.catalog.WidgetType;
 import com.cloudera.parserchains.core.model.define.ConfigValueSchema;
 
 import java.util.Arrays;
@@ -28,6 +29,7 @@ import java.util.Objects;
  * Describes a configuration parameter accepted by a parser.
  */
 public class ConfigParamDescriptor {
+
   /**
    * The unique name of the configuration parameter.  This value
    * is used only to identify the parameter and is not displayed
@@ -38,10 +40,9 @@ public class ConfigParamDescriptor {
   /**
    * Defines the type of widget presented to the user when
    * configuring the parameter.
-   *
-   * <p>Currently, only 'text' is supported.
    */
-  private String type = "text";
+  private WidgetType type;
+  private static final WidgetType DEFAULT_WIDGET_TYPE = WidgetType.TEXT;
 
   /**
    * A label for the parameter that is displayed to the user.
@@ -66,17 +67,25 @@ public class ConfigParamDescriptor {
    *
    * <p>The UI expects the root of all paths to be "config".
    */
-  private String path = "config";
+  private String path;
+  private static final String DEFAULT_PATH = "config";
 
   /**
    * Should the user be allowed to enter multiple values for this parameter?
    */
-  private boolean multiple = false;
+  private boolean multiple;
+  private static final boolean DEFAULT_MULTIPLE = false;
 
   /**
    * The default value used if none other is provided.
    */
   private List<ConfigValueSchema> defaultValue;
+
+  public ConfigParamDescriptor() {
+    this.path = DEFAULT_PATH;
+    this.multiple = DEFAULT_MULTIPLE;
+    this.type = DEFAULT_WIDGET_TYPE;
+  }
 
   public String getName() {
     return name;
@@ -87,11 +96,11 @@ public class ConfigParamDescriptor {
     return this;
   }
 
-  public String getType() {
+  public WidgetType getType() {
     return type;
   }
 
-  public ConfigParamDescriptor setType(String type) {
+  public ConfigParamDescriptor setType(WidgetType type) {
     this.type = type;
     return this;
   }

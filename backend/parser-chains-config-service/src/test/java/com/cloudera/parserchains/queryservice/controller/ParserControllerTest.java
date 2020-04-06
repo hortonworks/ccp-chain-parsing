@@ -18,6 +18,7 @@
 
 package com.cloudera.parserchains.queryservice.controller;
 
+import com.cloudera.parserchains.core.catalog.WidgetType;
 import com.cloudera.parserchains.parsers.SyslogParser;
 import com.cloudera.parserchains.parsers.TimestampParser;
 import com.cloudera.parserchains.queryservice.common.utils.CollectionsUtils;
@@ -90,14 +91,14 @@ public class ParserControllerTest {
             .setLabel("Output Field")
             .setPath("config")
             .setRequired(true)
-            .setType("text");
+            .setType(WidgetType.TEXT);
     ConfigParamDescriptor fieldTwo = new ConfigParamDescriptor()
             .setName("inputField")
             .setDescription("The name of the input field.")
             .setLabel("Input Field")
             .setPath("config")
             .setRequired(true)
-            .setType("text");
+            .setType(WidgetType.TEXT);
     ParserSummary type1 = new ParserSummary()
             .setId(ParserID.of(SyslogParser.class))
             .setName("Syslog");

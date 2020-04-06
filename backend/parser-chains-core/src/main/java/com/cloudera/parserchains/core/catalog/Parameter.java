@@ -49,4 +49,11 @@ public @interface Parameter {
      * <p>This value is optional.
      */
     String defaultValue() default "";
+
+    /**
+     * Defines the type of widget presented to the user when
+     * configuring the parameter.
+     * <p>This value is optional and defaults to a simple text box.
+     */
+    WidgetType widgetType() default WidgetType.TEXT;
 }
