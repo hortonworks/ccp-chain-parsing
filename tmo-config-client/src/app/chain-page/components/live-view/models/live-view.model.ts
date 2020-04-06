@@ -1,7 +1,6 @@
 import { SampleDataRequestModel } from './sample-data.model';
 
 export interface EntryParsingResultModel {
-  input: string;
   output: {};
   log: {
     type: string;
@@ -13,7 +12,6 @@ export interface EntryParsingResultModel {
 }
 
 export interface ParserResultsModel {
-  input: {};
   output: {};
   log: {
     type: string;

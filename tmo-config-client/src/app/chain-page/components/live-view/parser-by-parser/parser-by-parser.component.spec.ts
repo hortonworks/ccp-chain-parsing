@@ -54,7 +54,6 @@ describe('ParserByParserComponent', () => {
 
     component.parserResults = [
       {
-        input: { original_string: 'test sample' },
         output: {},
         log: {
           type: 'info',
@@ -91,7 +90,6 @@ describe('ParserByParserComponent', () => {
   it('should bind stack trace msg to stack trace component', () => {
     component.parserResults = [
       {
-        input: { original_string: 'test sample' },
         output: {},
         log: {
           type: 'info',

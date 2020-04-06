@@ -46,7 +46,6 @@ describe('live-view.effects', () => {
   const testResult = {
     entries: [
       {
-        input: 'input result',
         output: 'output result',
         log: { type: '', message: 'log result'},
       }

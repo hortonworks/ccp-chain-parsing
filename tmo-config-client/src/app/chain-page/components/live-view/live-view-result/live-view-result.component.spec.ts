@@ -51,7 +51,6 @@ describe('LiveViewResultComponent', () => {
   it('should bind stack trace msg to stack trace component', () => {
     component.results =  [
       {
-        input: 'test sample' ,
         output: {},
         log: {
           type: 'info',

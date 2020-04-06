@@ -45,7 +45,6 @@ describe('live-view.reducers', () => {
   it('should update isExecuting on liveViewRefreshedSuccessfully action', () => {
     const results = [
       {
-        input: 'input result',
         output: 'output result',
         log: {
           type: '',
@@ -64,7 +63,6 @@ describe('live-view.reducers', () => {
   it('should update result on liveViewRefreshedSuccessfully action', () => {
     const results = [
       {
-        input: 'input result',
         output: 'output result',
         log: {
           type: '',

@@ -16,15 +16,6 @@
         </button>
       </h4>
       <nz-card [ngClass]="parser.log.type" [nzBodyStyle]="{ padding: 0 }">
-        <div nz-row class="input">
-          <div nz-col nzSpan="2" class="label">Input</div>
-          <div nz-col nzSpan="22">
-            <div nz-row *ngFor="let item of parser.input | keyvalue">
-              <div nz-col nzSpan="6" class="fieldName">{{ item.key }}:</div>
-              <div nz-col nzSpan="18">{{ item.value }}</div>
-            </div>
-          </div>
-        </div>
         <div nz-row class="output">
           <div nz-col nzSpan="2" class="label">Output</div>
           <div nz-col nzSpan="22">
