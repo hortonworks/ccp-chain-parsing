@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { saveAs } from 'file-saver';
 
 import { EntryParsingResultModel } from '../models/live-view.model';
 
@@ -18,5 +19,14 @@ export class LiveViewResultComponent {
 
   enableParserByParserView(entry) {
     this.parserByParserViewId = entry;
+  }
+
+  downloadEntries() {
+    const outputArray = [];
+    this.results.map((result) => {
+      outputArray.push(JSON.stringify(result.output));
+    });
+    const outputBlob = new Blob([`[${outputArray}]`], {type: 'application/json;charset=utf-8'});
+    saveAs(outputBlob, `results-${Date.now()}.json`);
   }
 }
