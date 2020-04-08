@@ -1,4 +1,4 @@
-# ccp-tmo-search-client
+# Parser Chains
 
 ## Quick Start
 
@@ -46,7 +46,7 @@ In order to run the application on your local computer, you need to run two serv
 ### Running the Mock API
 
 ```bash
-$ cd tmo-config-api
+$ cd frontend/parser-chains-api
 ```
 
 ```bash
@@ -61,7 +61,7 @@ $ npm start
 The following spins up the client application using a development server. The dev server uses the proxy configuration set in proxy.conf.dev.json
 
 ```bash
-$ cd tmo-config-client
+$ cd frontend/parser-chains-client
 ```
 
 ```bash
@@ -80,7 +80,7 @@ docker-compose up
 ```
 
 ```bash
-$ cd tmo-config-client
+$ cd frontend/parser-chains-client
 ```
 
 ```bash
