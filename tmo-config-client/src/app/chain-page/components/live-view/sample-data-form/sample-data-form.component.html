@@ -10,6 +10,25 @@
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
+    <label
+      class="upload-btn-label"
+      nz-button
+      nzType="default"
+      for="upload"
+      (input)="uploadToForm($event)"
+      ><i nz-icon nzType="upload" nzTheme="outline"></i>Upload From File
+    </label>
+    <input
+      class="upload-btn"
+      nz-input
+      id="upload"
+      name="upload"
+      type="file"
+      value="Upload from file"
+      (input)="uploadToForm($event)"
+    />
+  </nz-form-item>
+  <nz-form-item>
     <nz-form-label nzFor="sourceType">Sample data</nz-form-label>
     <nz-form-control>
       <textarea
