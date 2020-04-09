@@ -1,4 +1,5 @@
 <div *ngIf='results'>
+  <button nz-button (click)="downloadEntries()" class="download-btn"><i nz-icon nzType="download" nzTheme="outline"></i>Download Output</button>
   <div *ngFor="let entry of results; index as i">
     <nz-card [ngClass]="entry.log.type" [nzBodyStyle]="{ padding: 0 }" *ngIf="parserByParserViewId === null">
       <div nz-row class="output">
