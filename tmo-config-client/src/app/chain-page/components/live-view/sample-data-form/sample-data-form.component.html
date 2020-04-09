@@ -11,21 +11,21 @@
   </nz-form-item>
   <nz-form-item>
     <label
+      class="upload-btn-label"
       nz-button
       nzType="default"
       for="upload"
       (input)="uploadToForm($event)"
-      style="display: inline-flex; align-items: center;"
       ><i nz-icon nzType="upload" nzTheme="outline"></i>Upload From File
     </label>
     <input
+      class="upload-btn"
       nz-input
       id="upload"
       name="upload"
       type="file"
       value="Upload from file"
       (input)="uploadToForm($event)"
-      style="display: none;"
     />
   </nz-form-item>
   <nz-form-item>
