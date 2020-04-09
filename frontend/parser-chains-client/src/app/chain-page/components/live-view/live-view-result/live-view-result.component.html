@@ -5,9 +5,9 @@
       <div nz-row class="output">
         <div nz-col nzSpan="2" class="label">Output</div>
         <div nz-col nzSpan="22">
-          <div nz-row *ngFor="let item of entry.output | keyvalue">
+          <div nz-row *ngFor="let item of entry.output | keyvalue" class="output-item-container">
             <div nz-col nzSpan="6" class="fieldName">{{ item.key }}:</div>
-            <div nz-col nzSpan="18">{{ item.value }}</div>
+            <div nz-col nzSpan="18" class="output-item-val">{{ item.value }}</div>
           </div>
         </div>
       </div>
