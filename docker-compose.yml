@@ -13,3 +13,8 @@ services:
     build: ./backend
     ports: 
       - 3000:3000
+    environment:
+      LOGGING_LEVEL_COM_CLOUDERA_PARSERCHAINS: "DEBUG"
+      CONFIG_PATH: "/data"
+    volumes:
+      - /tmp/parser-chains:/data
