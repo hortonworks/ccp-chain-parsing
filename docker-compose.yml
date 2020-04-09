@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   client:
-    build: ./tmo-config-client
+    build: ./frontend/parser-chains-client
     ports: 
       - 4200:4200
     depends_on: 
