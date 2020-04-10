@@ -14,7 +14,7 @@ public class FieldNameTest {
         FieldName.of(name);
         FieldName.of("Field names can contain letters and whitespace");
         FieldName.of("Field names can contain numbers 0123456789");
-        FieldName.of("Field names can contain some punctuation  , - . : @");
+        FieldName.of("Field names can contain some punctuation  , - . : @ #");
         String maxLengthName = StringUtils.repeat("A", 120);
         FieldName.of(maxLengthName);
     }

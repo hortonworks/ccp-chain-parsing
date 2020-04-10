@@ -108,7 +108,6 @@ public class GrokParserTest {
 
     @Test
     void missingInputField() {
-        final String textToParse = "Foo Bar Baz 7F8C7CB0-4786-11E3-8F96-0800200C9A66";
         Message input = Message.builder()
                 .addField("foo", "bar")
                 .build();
@@ -116,10 +115,6 @@ public class GrokParserTest {
                 .inputField(FieldName.of("input"))
                 .expression("%{UUID}")
                 .parse(input);
-        Message expected = Message.builder()
-                .addField("input", textToParse)
-                .addField("UUID", "7F8C7CB0-4786-11E3-8F96-0800200C9A66")
-                .build();
         assertThat("Expected all the input fields to remain.",
                 output.getFields(), is(input.getFields()));
         assertThat("Expected an error to have occurred.",
