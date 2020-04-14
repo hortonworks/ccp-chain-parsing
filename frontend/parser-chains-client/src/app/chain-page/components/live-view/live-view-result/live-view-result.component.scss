@@ -7,10 +7,10 @@
   }
 
   .ant-row {
-    padding: .5em 1em;
+    padding: 0.5em 1em;
 
     div {
-      padding: 0 .2em .4em .2em;
+      padding: 0 0.2em 0.4em 0.2em;
     }
 
     .fieldName {
@@ -22,7 +22,7 @@
       border-bottom: 1px solid grey;
     }
     &.log {
-      background-color: #EEEEEE;
+      background-color: #eeeeee;
     }
   }
 
@@ -43,4 +43,15 @@
   }
 }
 
-.download-btn { margin-bottom: 1rem; }
+.download-btn {
+  margin-bottom: 1rem;
+}
+
+.output-item-container {
+  display: flex;
+}
+
+.output-item-val {
+  display: flex;
+  align-items: flex-end;
+}
